@@ -17,14 +17,20 @@ import type {
 
 import type {
   EmailVerifiedResponseDto,
+  ForgotPasswordRequestDto,
   LoginRequestDto,
-  LoginResponseDto,
   LogoutRequestDto,
+  MfaChallengeResponseDto,
+  MfaLoginResponseDto,
+  MfaVerifyRequestDto,
+  PasswordChangedResponseDto,
+  PasswordResetRequestedResponseDto,
   ProblemDetailsDto,
   RefreshRequestDto,
   RefreshResponseDto,
   RegisterRequestDto,
   ResendEmailVerificationRequestDto,
+  ResetPasswordRequestDto,
   VerificationSentResponseDto,
   VerifyEmailRequestDto
 } from '../../model';
@@ -307,9 +313,9 @@ export const useAuthResendEmailVerification = <TError = ErrorType<ProblemDetails
 }
 
 /**
- * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual.
+ * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual. Con segundo factor activo devuelve un desafío (`status: mfa_required`) en lugar de la sesión.
  */
-export const authLogin = async (loginRequestDto: LoginRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<LoginResponseDto> => {
+export const authLogin = async (loginRequestDto: LoginRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<MfaLoginResponseDto | MfaChallengeResponseDto> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -325,7 +331,7 @@ export const authLogin = async (loginRequestDto: LoginRequestDto, options?: Para
     }
     return headers;
   };
-return apiMutator<LoginResponseDto>(getAuthLoginUrl(),
+return apiMutator<MfaLoginResponseDto | MfaChallengeResponseDto>(getAuthLoginUrl(),
   {
     ...options,
     method: 'POST',
@@ -373,7 +379,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AuthLoginMutationVariables = {data: LoginRequestDto}
 
     /**
- * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual.
+ * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual. Con segundo factor activo devuelve un desafío (`status: mfa_required`) en lugar de la sesión.
  */
 export const useAuthLogin = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authLogin>>, TError,AuthLoginMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -385,6 +391,93 @@ export const useAuthLogin = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getAuthLoginMutationOptions(options), queryClient);
     }
+    export const getAuthVerifyMfaUrl = () => {
+
+
+
+
+  return `/v1/auth/mfa/verify`
+}
+
+/**
+ * @summary Completa el inicio de sesión con el código de la app de autenticación o un código de recuperación. Cada código de la app sirve una sola vez.
+ */
+export const authVerifyMfa = async (mfaVerifyRequestDto: MfaVerifyRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<MfaLoginResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<MfaLoginResponseDto>(getAuthVerifyMfaUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(mfaVerifyRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAuthVerifyMfaMutationKey = () => ['authVerifyMfa'] as const;
+
+export const getAuthVerifyMfaMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authVerifyMfa>>, TError,AuthVerifyMfaMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof authVerifyMfa>>, TError,AuthVerifyMfaMutationVariables, TContext> => {
+
+const mutationKey = getAuthVerifyMfaMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof authVerifyMfa>>, AuthVerifyMfaMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  authVerifyMfa(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AuthVerifyMfaMutationResult = NonNullable<Awaited<ReturnType<typeof authVerifyMfa>>>
+    export type AuthVerifyMfaMutationBody = MfaVerifyRequestDto
+    export type AuthVerifyMfaMutationError = ErrorType<ProblemDetailsDto>
+    export type AuthVerifyMfaMutationVariables = {data: MfaVerifyRequestDto}
+
+    /**
+ * @summary Completa el inicio de sesión con el código de la app de autenticación o un código de recuperación. Cada código de la app sirve una sola vez.
+ */
+export const useAuthVerifyMfa = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authVerifyMfa>>, TError,AuthVerifyMfaMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof authVerifyMfa>>,
+        TError,
+        AuthVerifyMfaMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAuthVerifyMfaMutationOptions(options), queryClient);
+    }
     export const getAuthRefreshUrl = () => {
 
 
@@ -394,7 +487,7 @@ export const useAuthLogin = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo.
+ * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo. Conserva el nivel de autenticación de la sesión (con o sin segundo factor).
  */
 export const authRefresh = async (refreshRequestDto: RefreshRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RefreshResponseDto> => {
 
@@ -460,7 +553,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AuthRefreshMutationVariables = {data: RefreshRequestDto}
 
     /**
- * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo.
+ * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo. Conserva el nivel de autenticación de la sesión (con o sin segundo factor).
  */
 export const useAuthRefresh = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authRefresh>>, TError,AuthRefreshMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -558,4 +651,178 @@ export const useAuthLogout = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getAuthLogoutMutationOptions(options), queryClient);
+    }
+    export const getAuthForgotPasswordUrl = () => {
+
+
+
+
+  return `/v1/auth/password/forgot`
+}
+
+/**
+ * @summary Envía un código de 6 dígitos para cambiar la contraseña. Responde igual exista o no la cuenta.
+ */
+export const authForgotPassword = async (forgotPasswordRequestDto: ForgotPasswordRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PasswordResetRequestedResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PasswordResetRequestedResponseDto>(getAuthForgotPasswordUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(forgotPasswordRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAuthForgotPasswordMutationKey = () => ['authForgotPassword'] as const;
+
+export const getAuthForgotPasswordMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authForgotPassword>>, TError,AuthForgotPasswordMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof authForgotPassword>>, TError,AuthForgotPasswordMutationVariables, TContext> => {
+
+const mutationKey = getAuthForgotPasswordMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof authForgotPassword>>, AuthForgotPasswordMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  authForgotPassword(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AuthForgotPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof authForgotPassword>>>
+    export type AuthForgotPasswordMutationBody = ForgotPasswordRequestDto
+    export type AuthForgotPasswordMutationError = ErrorType<ProblemDetailsDto>
+    export type AuthForgotPasswordMutationVariables = {data: ForgotPasswordRequestDto}
+
+    /**
+ * @summary Envía un código de 6 dígitos para cambiar la contraseña. Responde igual exista o no la cuenta.
+ */
+export const useAuthForgotPassword = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authForgotPassword>>, TError,AuthForgotPasswordMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof authForgotPassword>>,
+        TError,
+        AuthForgotPasswordMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAuthForgotPasswordMutationOptions(options), queryClient);
+    }
+    export const getAuthResetPasswordUrl = () => {
+
+
+
+
+  return `/v1/auth/password/reset`
+}
+
+/**
+ * @summary Cambia la contraseña con el código (30 minutos, 5 intentos) y cierra la sesión en todos los dispositivos.
+ */
+export const authResetPassword = async (resetPasswordRequestDto: ResetPasswordRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PasswordChangedResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PasswordChangedResponseDto>(getAuthResetPasswordUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(resetPasswordRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAuthResetPasswordMutationKey = () => ['authResetPassword'] as const;
+
+export const getAuthResetPasswordMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authResetPassword>>, TError,AuthResetPasswordMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof authResetPassword>>, TError,AuthResetPasswordMutationVariables, TContext> => {
+
+const mutationKey = getAuthResetPasswordMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof authResetPassword>>, AuthResetPasswordMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  authResetPassword(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AuthResetPasswordMutationResult = NonNullable<Awaited<ReturnType<typeof authResetPassword>>>
+    export type AuthResetPasswordMutationBody = ResetPasswordRequestDto
+    export type AuthResetPasswordMutationError = ErrorType<ProblemDetailsDto>
+    export type AuthResetPasswordMutationVariables = {data: ResetPasswordRequestDto}
+
+    /**
+ * @summary Cambia la contraseña con el código (30 minutos, 5 intentos) y cierra la sesión en todos los dispositivos.
+ */
+export const useAuthResetPassword = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authResetPassword>>, TError,AuthResetPasswordMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof authResetPassword>>,
+        TError,
+        AuthResetPasswordMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAuthResetPasswordMutationOptions(options), queryClient);
     }

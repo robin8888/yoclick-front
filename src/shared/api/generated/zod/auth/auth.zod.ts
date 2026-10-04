@@ -68,7 +68,7 @@ export const AuthResendEmailVerificationResponse = zod.object({
 })
 
 /**
- * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual.
+ * @summary Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual. Con segundo factor activo devuelve un desafío (`status: mfa_required`) en lugar de la sesión.
  */
 export const authLoginBodyEmailMax = 254;
 
@@ -84,25 +84,69 @@ export const AuthLoginBody = zod.object({
   "deviceName": zod.string().min(1).max(authLoginBodyDeviceNameMax).optional()
 })
 
-export const authLoginResponseAccessTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
-export const authLoginResponseRefreshTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
-export const authLoginResponseUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const authLoginResponseOneAccessTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const authLoginResponseOneRefreshTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const authLoginResponseOneUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const authLoginResponseTwoMfaTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
-export const AuthLoginResponse = zod.object({
+export const AuthLoginResponse = zod.union([zod.object({
+  "status": zod.enum(['authenticated']),
   "accessToken": zod.string(),
-  "accessTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseAccessTokenExpiresAtRegExp),
+  "accessTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseOneAccessTokenExpiresAtRegExp),
   "refreshToken": zod.string(),
-  "refreshTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseRefreshTokenExpiresAtRegExp),
+  "refreshTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseOneRefreshTokenExpiresAtRegExp),
   "user": zod.object({
-  "id": zod.uuid().regex(authLoginResponseUserIdRegExp),
+  "id": zod.uuid().regex(authLoginResponseOneUserIdRegExp),
+  "email": zod.string(),
+  "fullName": zod.string()
+})
+}),zod.object({
+  "status": zod.enum(['mfa_required']),
+  "mfaToken": zod.string(),
+  "mfaTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseTwoMfaTokenExpiresAtRegExp)
+})])
+
+/**
+ * @summary Completa el inicio de sesión con el código de la app de autenticación o un código de recuperación. Cada código de la app sirve una sola vez.
+ */
+export const authVerifyMfaBodyMfaTokenMax = 2048;
+
+export const authVerifyMfaBodyCodeRegExp = new RegExp('^\\d{6}$');
+export const authVerifyMfaBodyRecoveryCodeMin = 8;
+export const authVerifyMfaBodyRecoveryCodeMax = 24;
+
+export const authVerifyMfaBodyDeviceNameMax = 100;
+
+
+
+export const AuthVerifyMfaBody = zod.object({
+  "mfaToken": zod.string().min(1).max(authVerifyMfaBodyMfaTokenMax),
+  "code": zod.string().regex(authVerifyMfaBodyCodeRegExp).optional(),
+  "recoveryCode": zod.string().min(authVerifyMfaBodyRecoveryCodeMin).max(authVerifyMfaBodyRecoveryCodeMax).optional(),
+  "deviceName": zod.string().min(1).max(authVerifyMfaBodyDeviceNameMax).optional()
+})
+
+export const authVerifyMfaResponseAccessTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const authVerifyMfaResponseRefreshTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const authVerifyMfaResponseUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const AuthVerifyMfaResponse = zod.object({
+  "status": zod.enum(['authenticated']),
+  "accessToken": zod.string(),
+  "accessTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authVerifyMfaResponseAccessTokenExpiresAtRegExp),
+  "refreshToken": zod.string(),
+  "refreshTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authVerifyMfaResponseRefreshTokenExpiresAtRegExp),
+  "user": zod.object({
+  "id": zod.uuid().regex(authVerifyMfaResponseUserIdRegExp),
   "email": zod.string(),
   "fullName": zod.string()
 })
 })
 
 /**
- * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo.
+ * @summary Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo. Conserva el nivel de autenticación de la sesión (con o sin segundo factor).
  */
 export const authRefreshBodyRefreshTokenMax = 128;
 
@@ -143,4 +187,39 @@ export const AuthLogoutBody = zod.object({
 })
 
 export const AuthLogoutResponse = zod.void()
+
+/**
+ * @summary Envía un código de 6 dígitos para cambiar la contraseña. Responde igual exista o no la cuenta.
+ */
+export const authForgotPasswordBodyEmailMax = 254;
+
+
+
+export const AuthForgotPasswordBody = zod.object({
+  "email": zod.string().max(authForgotPasswordBodyEmailMax)
+})
+
+export const AuthForgotPasswordResponse = zod.object({
+  "status": zod.enum(['reset_requested'])
+})
+
+/**
+ * @summary Cambia la contraseña con el código (30 minutos, 5 intentos) y cierra la sesión en todos los dispositivos.
+ */
+export const authResetPasswordBodyEmailMax = 254;
+
+export const authResetPasswordBodyCodeRegExp = new RegExp('^\\d{6}$');
+export const authResetPasswordBodyNewPasswordMax = 256;
+
+
+
+export const AuthResetPasswordBody = zod.object({
+  "email": zod.string().max(authResetPasswordBodyEmailMax),
+  "code": zod.string().regex(authResetPasswordBodyCodeRegExp),
+  "newPassword": zod.string().min(1).max(authResetPasswordBodyNewPasswordMax)
+})
+
+export const AuthResetPasswordResponse = zod.object({
+  "status": zod.enum(['password_changed'])
+})
 

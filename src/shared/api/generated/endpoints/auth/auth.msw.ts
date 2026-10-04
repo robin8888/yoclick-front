@@ -15,20 +15,26 @@ import type {
 
 import type {
   EmailVerifiedResponseDto,
-  LoginResponseDto,
+  MfaChallengeResponseDto,
+  MfaLoginResponseDto,
+  PasswordChangedResponseDto,
+  PasswordResetRequestedResponseDto,
   RefreshResponseDto,
   VerificationSentResponseDto
 } from '../../model';
 
 import {
+  getAuthForgotPasswordResponseMock,
   getAuthLoginResponseMock,
   getAuthRefreshResponseMock,
   getAuthRegisterResponseMock,
   getAuthResendEmailVerificationResponseMock,
-  getAuthVerifyEmailResponseMock
+  getAuthResetPasswordResponseMock,
+  getAuthVerifyEmailResponseMock,
+  getAuthVerifyMfaResponseMock
 } from './auth.faker.ts';
 
-export { getAuthRegisterResponseMock, getAuthVerifyEmailResponseMock, getAuthResendEmailVerificationResponseMock, getAuthLoginResponseMock, getAuthRefreshResponseMock } from './auth.faker.ts';
+export { getAuthRegisterResponseMock, getAuthVerifyEmailResponseMock, getAuthResendEmailVerificationResponseMock, getAuthLoginResponseMock, getAuthVerifyMfaResponseMock, getAuthRefreshResponseMock, getAuthForgotPasswordResponseMock, getAuthResetPasswordResponseMock } from './auth.faker.ts';
 
 
 export const getAuthRegisterMockHandler = (overrideResponse?: VerificationSentResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<VerificationSentResponseDto> | VerificationSentResponseDto), options?: RequestHandlerOptions) => {
@@ -67,13 +73,25 @@ export const getAuthResendEmailVerificationMockHandler = (overrideResponse?: Ver
   }, options)
 }
 
-export const getAuthLoginMockHandler = (overrideResponse?: LoginResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<LoginResponseDto> | LoginResponseDto), options?: RequestHandlerOptions) => {
+export const getAuthLoginMockHandler = (overrideResponse?: MfaLoginResponseDto | MfaChallengeResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<MfaLoginResponseDto | MfaChallengeResponseDto> | MfaLoginResponseDto | MfaChallengeResponseDto), options?: RequestHandlerOptions) => {
   return http.post('*/v1/auth/login', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
 
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getAuthLoginResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getAuthVerifyMfaMockHandler = (overrideResponse?: MfaLoginResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<MfaLoginResponseDto> | MfaLoginResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/auth/mfa/verify', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAuthVerifyMfaResponseMock(),
       { status: 200
       })
   }, options)
@@ -100,11 +118,38 @@ export const getAuthLogoutMockHandler = (overrideResponse?: void | ((info: Param
       })
   }, options)
 }
+
+export const getAuthForgotPasswordMockHandler = (overrideResponse?: PasswordResetRequestedResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PasswordResetRequestedResponseDto> | PasswordResetRequestedResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/auth/password/forgot', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAuthForgotPasswordResponseMock(),
+      { status: 202
+      })
+  }, options)
+}
+
+export const getAuthResetPasswordMockHandler = (overrideResponse?: PasswordChangedResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PasswordChangedResponseDto> | PasswordChangedResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/auth/password/reset', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAuthResetPasswordResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getAuthMock = () => [
   getAuthRegisterMockHandler(),
   getAuthVerifyEmailMockHandler(),
   getAuthResendEmailVerificationMockHandler(),
   getAuthLoginMockHandler(),
+  getAuthVerifyMfaMockHandler(),
   getAuthRefreshMockHandler(),
-  getAuthLogoutMockHandler()
+  getAuthLogoutMockHandler(),
+  getAuthForgotPasswordMockHandler(),
+  getAuthResetPasswordMockHandler()
 ]

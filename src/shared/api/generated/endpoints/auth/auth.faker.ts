@@ -11,7 +11,10 @@ import {
 
 import type {
   EmailVerifiedResponseDto,
-  LoginResponseDto,
+  MfaChallengeResponseDto,
+  MfaLoginResponseDto,
+  PasswordChangedResponseDto,
+  PasswordResetRequestedResponseDto,
   RefreshResponseDto,
   VerificationSentResponseDto
 } from '../../model';
@@ -23,7 +26,17 @@ export const getAuthVerifyEmailResponseMock = (overrideResponse: Partial<Extract
 
 export const getAuthResendEmailVerificationResponseMock = (overrideResponse: Partial<Extract<VerificationSentResponseDto, object>> = {}): VerificationSentResponseDto => ({status: faker.helpers.arrayElement(['verification_sent'] as const), ...overrideResponse})
 
-export const getAuthLoginResponseMock = (overrideResponse: Partial<Extract<LoginResponseDto, object>> = {}): LoginResponseDto => ({accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', user: {id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}})}, ...overrideResponse})
+export const getAuthLoginResponseMfaLoginResponseDtoMock = (overrideResponse: Partial<MfaLoginResponseDto> = {}): MfaLoginResponseDto => ({...{status: faker.helpers.arrayElement(['authenticated'] as const), accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', user: {id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}})}}, ...overrideResponse});
+
+export const getAuthLoginResponseMfaChallengeResponseDtoMock = (overrideResponse: Partial<MfaChallengeResponseDto> = {}): MfaChallengeResponseDto => ({...{status: faker.helpers.arrayElement(['mfa_required'] as const), mfaToken: faker.string.alpha({length: {min: 10, max: 20}}), mfaTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z'}, ...overrideResponse});
+
+export const getAuthLoginResponseMock = (): MfaLoginResponseDto | MfaChallengeResponseDto => (faker.helpers.arrayElement([{...getAuthLoginResponseMfaLoginResponseDtoMock()},{...getAuthLoginResponseMfaChallengeResponseDtoMock()},]))
+
+export const getAuthVerifyMfaResponseMock = (overrideResponse: Partial<Extract<MfaLoginResponseDto, object>> = {}): MfaLoginResponseDto => ({status: faker.helpers.arrayElement(['authenticated'] as const), accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', user: {id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}})}, ...overrideResponse})
 
 export const getAuthRefreshResponseMock = (overrideResponse: Partial<Extract<RefreshResponseDto, object>> = {}): RefreshResponseDto => ({accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
+
+export const getAuthForgotPasswordResponseMock = (overrideResponse: Partial<Extract<PasswordResetRequestedResponseDto, object>> = {}): PasswordResetRequestedResponseDto => ({status: faker.helpers.arrayElement(['reset_requested'] as const), ...overrideResponse})
+
+export const getAuthResetPasswordResponseMock = (overrideResponse: Partial<Extract<PasswordChangedResponseDto, object>> = {}): PasswordChangedResponseDto => ({status: faker.helpers.arrayElement(['password_changed'] as const), ...overrideResponse})
 
