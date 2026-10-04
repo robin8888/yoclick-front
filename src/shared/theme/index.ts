@@ -11,3 +11,6 @@ export type {
   TypeStyle,
   TypeStyleName,
 } from './theme.types';
+export { colorTokens } from './tokens';
+export { resolveFontFaceName } from './font-faces';
+export { useAppFonts } from './useAppFonts';

@@ -20,6 +20,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@expo-google-fonts/archivo": "0.4.2",
+    "@expo-google-fonts/figtree": "0.4.1",
     "expo": "57.0.26",
     "expo-build-properties": "57.0.22",
     "expo-constants": "57.0.20",
