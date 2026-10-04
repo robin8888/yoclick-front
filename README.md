@@ -32,3 +32,21 @@ Antes de cada commit se ejecutan lint-staged, `typecheck` y gitleaks (si está i
 ## Decisiones
 
 Las decisiones técnicas que se desvían de la especificación están en `docs/adr/`.
+
+## Entornos y variantes (`app.config.ts`)
+
+La configuración se construye en `config/app-config/` (funciones puras con tests) y la lee `app.config.ts`.
+
+| Variable                                  | Valores                                              | Notas                                                                              |
+| ----------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `APP_ENV`                                 | `development` (por defecto), `preview`, `production` | Un valor desconocido falla el build                                                |
+| `API_URL`                                 | origen de la API                                     | `production` solo acepta `https://api.yoclick.app` (SEC-31); `preview` exige https |
+| `APP_VARIANT`                             | `shared` (por defecto), `premium`                    |                                                                                    |
+| `CENTER_SLUG`, `CENTER_NAME`, `CENTER_ID` | solo Premium                                         | Fijan nombre, slug, esquema, id de bundle y `extra.lockedCenterId`                 |
+
+Los perfiles de EAS (`eas.json`) fijan `APP_ENV`/`API_URL`. Para un centro Premium crea un perfil que
+extienda `production` con `APP_VARIANT=premium` y los datos del centro, y añade sus iconos en
+`assets/centers/<slug>/{icon,adaptive-icon,splash-icon}.png` (el build falla si faltan).
+
+El id `com.yoclick.app` es **provisional** y no se puede cambiar tras publicar (ver `STORE_CHECKLIST.md`).
+Los iconos de `assets/` son marcadores de posición. La URL de staging de `eas.json` también es provisional.

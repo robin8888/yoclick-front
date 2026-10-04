@@ -255,6 +255,11 @@ export default tseslint.config(
     },
   },
   {
+    // La configuración nativa se evalúa antes del tema: ahí los hex son inevitables.
+    files: ['config/**', 'app.config.ts'],
+    rules: { 'no-restricted-syntax': 'off' },
+  },
+  {
     files: ['src/shared/storage/secure.ts'],
     rules: { 'no-restricted-imports': 'off' },
   },
