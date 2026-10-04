@@ -9,11 +9,13 @@ const APP_VERSION = '0.1.0';
 const UNIVERSAL_LINK_HOST = 'yoclick.app';
 const UNIVERSAL_LINK_PATH_PREFIXES = ['/j/', '/i/'] as const;
 const SPLASH_IMAGE_WIDTH = 200;
-// Mismos neutros que docs/design/tokens.json (bg claro y oscuro): la configuración nativa
-// se evalúa antes de que exista el tema, así que no puede leerlo en tiempo de ejecución.
-const SPLASH_BACKGROUND_LIGHT = '#F5F5F2';
-const SPLASH_BACKGROUND_DARK = '#0D0E10';
-const ADAPTIVE_ICON_BACKGROUND = '#121416';
+// Azul noche del logotipo de Yoclick: el símbolo tiene un resplandor pensado para fondo oscuro, así
+// que la pantalla de carga y el fondo del icono adaptativo de Android usan el mismo color en claro y
+// oscuro. La configuración nativa se evalúa antes de que exista el tema, por eso no se lee de él.
+const BRAND_NIGHT_BLUE = '#020A1A';
+const SPLASH_BACKGROUND_LIGHT = BRAND_NIGHT_BLUE;
+const SPLASH_BACKGROUND_DARK = BRAND_NIGHT_BLUE;
+const ADAPTIVE_ICON_BACKGROUND = BRAND_NIGHT_BLUE;
 
 const CAMERA_USAGE_DESCRIPTION =
   'Usamos la cámara para escanear el código QR de tu centro y, si tú quieres, para hacerte una foto de perfil.';
