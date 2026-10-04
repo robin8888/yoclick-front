@@ -14,3 +14,8 @@ export type {
 export { colorTokens } from './tokens';
 export { resolveFontFaceName } from './font-faces';
 export { useAppFonts } from './useAppFonts';
+export { useReducedMotion } from './useReducedMotion';
+export { MIN_TOUCH_TARGET_SIZE } from './touch-target';
+export { motionTokens } from './motion';
+export type { MotionTokens } from './motion';
+export { usePressableStyle } from './usePressableStyle';
