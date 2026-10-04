@@ -11,4 +11,3 @@ export { JoinSearchScreen } from './screens/JoinSearchScreen';
 export { JoinStartScreen } from './screens/JoinStartScreen';
 export { MyCentersScreen } from './screens/MyCentersScreen';
 export { WelcomeScreen } from './screens/WelcomeScreen';
-export { JoinScanScreen } from './screens/JoinScanScreen';
