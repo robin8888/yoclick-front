@@ -123,12 +123,19 @@ const crossFeaturePolicy = {
   },
 };
 
+// Los tests de cualquier capa pueden usar las utilidades de src/test (fake-fetch, factories).
+const testFilesPolicy = {
+  from: { file: { path: '**/*.test.{ts,tsx}' } },
+  allow: { to: { element: { type: 'test' } } },
+};
+
 const boundaryPolicies = Object.entries(allowedTargetsByElement)
   .map(([sourceType, targetTypes]) => ({
     from: { element: { type: sourceType } },
     allow: { to: { element: { types: { anyOf: targetTypes } } } },
   }))
-  .concat(crossFeaturePolicy);
+  .concat(crossFeaturePolicy)
+  .concat(testFilesPolicy);
 
 export default tseslint.config(
   {
@@ -260,11 +267,8 @@ export default tseslint.config(
     rules: { 'no-restricted-syntax': 'off' },
   },
   {
-    files: ['src/shared/storage/secure.ts'],
-    rules: { 'no-restricted-imports': 'off' },
-  },
-  {
-    files: ['src/shared/storage/public-cache.ts'],
+    // �nico lugar con acceso a los almacenes nativos (SEC-03/SEC-33), tests incluidos.
+    files: ['src/shared/storage/**'],
     rules: { 'no-restricted-imports': 'off' },
   },
   {

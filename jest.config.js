@@ -6,5 +6,10 @@ module.exports = {
   coverageThreshold: {
     './src/shared/theme/': { statements: 90, branches: 90, functions: 90, lines: 90 },
   },
-  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.test.{ts,tsx}', '!src/**/index.ts'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/**/index.ts',
+    '!src/shared/api/generated/**',
+  ],
 };

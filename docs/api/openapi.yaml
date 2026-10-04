@@ -1,0 +1,406 @@
+openapi: 3.0.0
+paths:
+  /v1/auth/register:
+    post:
+      operationId: auth_register
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequestDto"
+      responses:
+        "202":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationSentResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Crea una cuenta y envía un código de 6 dígitos al correo. Responde igual exista o no la cuenta.
+      tags:
+        - auth
+  /v1/auth/email/verify:
+    post:
+      operationId: auth_verify_email
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyEmailRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailVerifiedResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Confirma el correo con el código de 6 dígitos (5 intentos, 15 minutos).
+      tags:
+        - auth
+  /v1/auth/email/resend:
+    post:
+      operationId: auth_resend_email_verification
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendEmailVerificationRequestDto"
+      responses:
+        "202":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationSentResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Reenvía el código. Responde igual exista o no la cuenta.
+      tags:
+        - auth
+  /v1/auth/login:
+    post:
+      operationId: auth_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Inicia sesión con correo y contraseña. Un correo inexistente, una contraseña errónea y una cuenta bloqueada responden igual.
+      tags:
+        - auth
+  /v1/auth/refresh:
+    post:
+      operationId: auth_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Rota el refresh token y devuelve tokens nuevos. Reutilizar un token ya rotado revoca toda la sesión de ese dispositivo.
+      tags:
+        - auth
+  /v1/auth/logout:
+    post:
+      operationId: auth_logout
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutRequestDto"
+      responses:
+        "204":
+          description: ""
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Cierra la sesión de este dispositivo, o de todos con `everywhere`.
+      tags:
+        - auth
+  /health:
+    get:
+      operationId: health_check_liveness
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponseDto"
+      summary: Comprueba que la API está viva. No requiere autenticación.
+      tags:
+        - health
+info:
+  title: Yoclick API
+  description: API multi-centro de reservas en marca blanca. Contrato canónico para la app.
+  version: 0.1.0
+  contact: {}
+tags: []
+servers:
+  - url: https://api.yoclick.app
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    ProblemDetailsDto:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        code:
+          type: string
+        traceId:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              code:
+                type: string
+            required:
+              - path
+              - code
+      required:
+        - type
+        - title
+        - status
+        - code
+        - traceId
+    RegisterRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 254
+        password:
+          type: string
+          minLength: 1
+          maxLength: 256
+        fullName:
+          type: string
+          minLength: 2
+          maxLength: 100
+        consents:
+          type: object
+          properties:
+            privacy:
+              type: boolean
+            terms:
+              type: boolean
+            marketing:
+              default: false
+              type: boolean
+          required:
+            - privacy
+            - terms
+          additionalProperties: false
+      required:
+        - email
+        - password
+        - fullName
+        - consents
+      additionalProperties: false
+    VerificationSentResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - verification_sent
+      required:
+        - status
+      additionalProperties: false
+    VerifyEmailRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 254
+        code:
+          type: string
+          pattern: ^\d{6}$
+      required:
+        - email
+        - code
+      additionalProperties: false
+    EmailVerifiedResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - verified
+      required:
+        - status
+      additionalProperties: false
+    ResendEmailVerificationRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 254
+      required:
+        - email
+      additionalProperties: false
+    LoginRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 254
+        password:
+          type: string
+          minLength: 1
+          maxLength: 256
+        deviceName:
+          type: string
+          minLength: 1
+          maxLength: 100
+      required:
+        - email
+        - password
+      additionalProperties: false
+    LoginResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        accessTokenExpiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        refreshToken:
+          type: string
+        refreshTokenExpiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            email:
+              type: string
+            fullName:
+              type: string
+          required:
+            - id
+            - email
+            - fullName
+          additionalProperties: false
+      required:
+        - accessToken
+        - accessTokenExpiresAt
+        - refreshToken
+        - refreshTokenExpiresAt
+        - user
+      additionalProperties: false
+    RefreshRequestDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        deviceName:
+          type: string
+          minLength: 1
+          maxLength: 100
+      required:
+        - refreshToken
+      additionalProperties: false
+    RefreshResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        accessTokenExpiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        refreshToken:
+          type: string
+        refreshTokenExpiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+      required:
+        - accessToken
+        - accessTokenExpiresAt
+        - refreshToken
+        - refreshTokenExpiresAt
+      additionalProperties: false
+    LogoutRequestDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          maxLength: 128
+          pattern: ^[A-Za-z0-9_-]+$
+        everywhere:
+          default: false
+          type: boolean
+      additionalProperties: false
+    HealthResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - ok
+      required:
+        - status
+      additionalProperties: false

@@ -10,3 +10,4 @@ docs
 CLAUDE.md
 STORE_CHECKLIST.md
 src/shared/theme/tokens.ts
+src/shared/api/generated
