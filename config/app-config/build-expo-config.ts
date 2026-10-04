@@ -4,6 +4,8 @@ import type { BuildEnvironment } from './parse-build-environment.ts';
 import { resolveAppIdentity, type AppIdentity } from './resolve-app-identity.ts';
 
 const APP_VERSION = '0.1.0';
+// Id público del proyecto «yoclick» en expo.dev (no es un secreto). Cada centro Premium usa su propio proyecto.
+const SHARED_EAS_PROJECT_ID = 'b1d194fb-d580-45f0-8266-b0e1c7965f54';
 // Dominio de los universal links https://yoclick.app/j/{code} e /i/{token}.
 // Provisional: hay que publicar apple-app-site-association y assetlinks.json en este dominio.
 const UNIVERSAL_LINK_HOST = 'yoclick.app';
@@ -90,6 +92,9 @@ function buildExtra(buildEnvironment: BuildEnvironment): Record<string, unknown>
     appEnvironment: buildEnvironment.appEnvironment,
     apiUrl: buildEnvironment.apiUrl,
   };
+  if (buildEnvironment.variant.kind === 'shared') {
+    extra.eas = { projectId: SHARED_EAS_PROJECT_ID };
+  }
   if (buildEnvironment.variant.kind === 'premium') {
     extra.lockedCenterId = buildEnvironment.variant.centerId;
   }

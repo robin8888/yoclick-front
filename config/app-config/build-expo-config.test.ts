@@ -17,7 +17,11 @@ describe('buildExpoConfig (shared variant)', () => {
     expect(config.scheme).toBe('yoclick');
     expect(config.ios?.bundleIdentifier).toBe('com.yoclick.app');
     expect(config.android?.package).toBe('com.yoclick.app');
-    expect(config.extra).toEqual({ appEnvironment: 'production', apiUrl: PRODUCTION_ENV.API_URL });
+    expect(config.extra).toEqual({
+      appEnvironment: 'production',
+      apiUrl: PRODUCTION_ENV.API_URL,
+      eas: { projectId: 'b1d194fb-d580-45f0-8266-b0e1c7965f54' },
+    });
   });
 
   it('lets dev and preview builds coexist with production', () => {
