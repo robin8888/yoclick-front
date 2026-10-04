@@ -245,7 +245,7 @@ export default tseslint.config(
   {
     // Los hex, números sueltos y funciones largas son normales en la definición
     // de tokens y en los tests (describe agrupa muchos casos).
-    files: ['src/shared/theme/**', '**/*.test.{ts,tsx}', 'src/test/**'],
+    files: ['src/shared/theme/**', '**/*.test.{ts,tsx}', 'src/test/**', 'scripts/**'],
     rules: {
       'no-restricted-syntax': 'off',
       'react-native/no-color-literals': 'off',
