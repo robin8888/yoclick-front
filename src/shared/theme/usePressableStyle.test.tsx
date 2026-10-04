@@ -3,8 +3,8 @@ import { AccessibilityInfo, type PressableStateCallbackType } from 'react-native
 
 import { usePressableStyle } from './usePressableStyle';
 
-const PRESSED_STATE: PressableStateCallbackType = { pressed: true };
-const IDLE_STATE: PressableStateCallbackType = { pressed: false };
+const PRESSED_STATE: PressableStateCallbackType = { pressed: true, hovered: false };
+const IDLE_STATE: PressableStateCallbackType = { pressed: false, hovered: false };
 const BASE_STYLE = { minHeight: 48 };
 const PRESSED_SCALE = 0.97;
 
