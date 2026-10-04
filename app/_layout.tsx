@@ -1,8 +1,12 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
-import { ThemeProvider, useAppFonts } from '@/shared/theme';
+import { SessionBootstrap } from '@/features/auth';
+import { AppThemeProvider } from '@/features/join';
+import { queryClient } from '@/shared/api/query-client';
+import { useAppFonts } from '@/shared/theme';
 
 // El splash nativo se mantiene hasta tener las fuentes para evitar un parpadeo de tipografía.
 void SplashScreen.preventAutoHideAsync();
@@ -17,8 +21,12 @@ export default function RootLayout(): React.JSX.Element | null {
   if (!areFontsReady) return null;
 
   return (
-    <ThemeProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppThemeProvider>
+        <SessionBootstrap>
+          <Stack screenOptions={{ headerShown: false }} />
+        </SessionBootstrap>
+      </AppThemeProvider>
+    </QueryClientProvider>
   );
 }

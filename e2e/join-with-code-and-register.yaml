@@ -1,0 +1,26 @@
+# APP-2 · Unirse con el código NORTE7 y crear la cuenta (docs/spec/05-plan-de-trabajo.md).
+# SIN EJECUTAR: requiere build de desarrollo, un backend con el centro demo y acceso al código
+# de verificación del correo (en staging, el buzón de pruebas).
+appId: com.yoclick.app.dev
+---
+- launchApp:
+    clearState: true
+- tapOn: 'Tengo un código'
+- tapOn: 'Código del centro'
+- inputText: 'NORTE7'
+- tapOn: 'Buscar mi centro'
+- assertVisible: '¿Es este tu centro?'
+- tapOn: 'Unirme a Studio Norte'
+- tapOn: 'Crear cuenta'
+- tapOn: 'Nombre y apellidos'
+- inputText: 'Marta Ruiz'
+- tapOn: 'Correo electrónico'
+- inputText: 'marta.e2e@example.com'
+- tapOn: 'Contraseña'
+- inputText: 'una-clave-e2e-segura'
+- tapOn: 'Acepto la política de privacidad.'
+- tapOn: 'Acepto las condiciones del servicio.'
+- tapOn: 'Continuar'
+- tapOn: '1–2 años'
+- tapOn: 'Crear cuenta'
+- assertVisible: 'Verifica tu correo'
