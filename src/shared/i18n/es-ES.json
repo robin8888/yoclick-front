@@ -55,5 +55,23 @@
     "too_big": "Es demasiado grande",
     "required": "Este campo es obligatorio",
     "taken": "Ya está en uso"
+  },
+  "states": {
+    "loading": {
+      "label": "Cargando"
+    },
+    "error": {
+      "title": "Algo no ha salido bien",
+      "retryLabel": "Reintentar",
+      "supportCode": "Código de error: {{code}} (para soporte)"
+    },
+    "offline": {
+      "message": "Sin conexión · mostrando lo último que guardamos"
+    },
+    "forceUpdate": {
+      "title": "Actualiza la app",
+      "message": "Hay una versión nueva con mejoras de seguridad. Tus datos y tus citas no cambian.",
+      "buttonLabel": "Actualizar ahora"
+    }
   }
 }

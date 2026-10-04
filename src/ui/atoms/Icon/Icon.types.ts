@@ -33,6 +33,7 @@ export const ICON_NAMES = [
   'edit',
   'mapPin',
   'creditCard',
+  'download',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
@@ -43,7 +44,16 @@ export type IconSize = 'inline' | 'navigation' | 'large';
 /** Colores de contenido permitidos: `brand` es un relleno, nunca un color de icono. */
 export type IconColor = Extract<
   keyof ThemeColors,
-  'ink' | 'ink2' | 'brandInk' | 'onBrand' | 'success' | 'warning' | 'danger' | 'onDanger' | 'info'
+  | 'ink'
+  | 'ink2'
+  | 'brandInk'
+  | 'onBrand'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'onDanger'
+  | 'info'
+  | 'surface'
 >;
 
 export interface IconProps {

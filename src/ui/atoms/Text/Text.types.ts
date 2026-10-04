@@ -6,7 +6,17 @@ export type TextVariant = TypeStyleName;
 
 /** Colores de texto permitidos. `brand` queda fuera a propósito: nunca va como texto. */
 export type TextColor =
-  'ink' | 'ink2' | 'brandInk' | 'onBrand' | 'success' | 'warning' | 'danger' | 'onDanger' | 'info';
+  | 'ink'
+  | 'ink2'
+  | 'brandInk'
+  | 'onBrand'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'onDanger'
+  | 'info'
+  // Solo sobre un fondo `ink` (franja «sin conexión»): `surface` es lo que contrasta con `ink`.
+  | 'surface';
 
 /** Solo las métricas grandes pueden limitar el escalado de fuente. */
 export type BigMetricVariant = 'display' | 'metric';

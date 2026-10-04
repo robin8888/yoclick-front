@@ -12,6 +12,7 @@ import {
   CircleX,
   Clock,
   CreditCard,
+  Download,
   Eye,
   EyeOff,
   House,
@@ -70,4 +71,5 @@ export const ICON_REGISTRY: Readonly<Record<IconName, LucideIcon>> = {
   edit: Pencil,
   mapPin: MapPin,
   creditCard: CreditCard,
+  download: Download,
 };
