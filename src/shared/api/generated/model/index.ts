@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './centerBrandingResponseDto.ts';
+export * from './centerSearchResponseDto.ts';
+export * from './centerSearchResponseDtoCentersItem.ts';
 export * from './changePasswordRequestDto.ts';
 export * from './deleteAccountRequestDto.ts';
 export * from './deleteAccountRequestDtoConfirmation.ts';
@@ -15,6 +18,11 @@ export * from './exportDataRequestDto.ts';
 export * from './forgotPasswordRequestDto.ts';
 export * from './healthResponseDto.ts';
 export * from './healthResponseDtoStatus.ts';
+export * from './joinCenterRequestDto.ts';
+export * from './joinCenterResponseDto.ts';
+export * from './joinCenterResponseDtoRole.ts';
+export * from './joinCenterResponseDtoStatus.ts';
+export * from './joinSearchCentersParams.ts';
 export * from './loginRequestDto.ts';
 export * from './logoutRequestDto.ts';
 export * from './mfaChallengeResponseDto.ts';
@@ -52,6 +60,7 @@ export * from './personalDataExportResponseDtoProfile.ts';
 export * from './problemDetailsDto.ts';
 export * from './problemDetailsDtoErrorsItem.ts';
 export * from './profileResponseDto.ts';
+export * from './publicCenterResponseDto.ts';
 export * from './refreshRequestDto.ts';
 export * from './refreshResponseDto.ts';
 export * from './regeneratedRecoveryCodesResponseDto.ts';
