@@ -20,3 +20,4 @@ export { motionTokens } from './motion';
 export type { MotionTokens } from './motion';
 export { usePressableStyle } from './usePressableStyle';
 export { YOCLICK_LOGO_ASPECT_RATIO, YOCLICK_LOGO_MARKUP } from './brand-logo-markup';
+export { platformHeroDarkGradient } from './platform-hero';

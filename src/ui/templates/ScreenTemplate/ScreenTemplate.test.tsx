@@ -45,4 +45,32 @@ describe('ScreenTemplate', () => {
 
     expect(screen.queryByRole('button')).not.toBeOnTheScreen();
   });
+
+  it('renders the header accessory above the title', () => {
+    renderInTheme(
+      <ScreenTemplate
+        title="Encuentra tu centro"
+        headerAccessory={<Text>Logo</Text>}
+        isHeaderCentered
+      >
+        <Text>Contenido</Text>
+      </ScreenTemplate>,
+    );
+
+    expect(screen.getByText('Logo')).toBeOnTheScreen();
+    expect(screen.getByRole('heading', { name: 'Encuentra tu centro' })).toHaveStyle({
+      textAlign: 'center',
+    });
+  });
+
+  it('renders with the platform hero background in both modes', () => {
+    renderInTheme(
+      <ScreenTemplate title="Encuentra tu centro" hasPlatformHeroBackground>
+        <Text>Contenido</Text>
+      </ScreenTemplate>,
+      { mode: 'dark' },
+    );
+
+    expect(screen.getByText('Contenido')).toBeOnTheScreen();
+  });
 });

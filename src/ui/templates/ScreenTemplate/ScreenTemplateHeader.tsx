@@ -9,7 +9,7 @@ import type { ScreenTemplateProps } from './ScreenTemplate.types';
 
 type ScreenTemplateHeaderProps = Pick<
   ScreenTemplateProps,
-  'title' | 'subtitle' | 'onBackPress' | 'backLabel' | 'headerAccessory'
+  'title' | 'subtitle' | 'onBackPress' | 'backLabel' | 'headerAccessory' | 'isHeaderCentered'
 >;
 
 export function ScreenTemplateHeader({
@@ -18,8 +18,10 @@ export function ScreenTemplateHeader({
   onBackPress,
   backLabel,
   headerAccessory,
+  isHeaderCentered = false,
 }: Readonly<ScreenTemplateHeaderProps>): React.JSX.Element {
   const theme = useTheme();
+  const textAlign = isHeaderCentered ? 'center' : 'left';
 
   return (
     <>
@@ -34,9 +36,11 @@ export function ScreenTemplateHeader({
         <View style={createHeaderAccessoryStyle(theme)}>{headerAccessory}</View>
       )}
       <View style={createHeaderStyle(theme)}>
-        <Text variant="titleLg">{title}</Text>
+        <Text variant="titleLg" align={textAlign}>
+          {title}
+        </Text>
         {subtitle === undefined ? null : (
-          <Text variant="body" color="ink2">
+          <Text variant="body" color="ink2" align={textAlign}>
             {subtitle}
           </Text>
         )}

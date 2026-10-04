@@ -84,7 +84,14 @@
       "codeOptionDescription": "Letras y números, p. ej. NORTE7",
       "searchOptionTitle": "Buscar por nombre o ciudad",
       "searchOptionDescription": "Encuentra tu centro en el directorio",
-      "haveAccountAction": "Ya tengo cuenta"
+      "haveAccountAction": "Ya tengo cuenta",
+      "qrOptionTitle": "Escanear el QR del centro",
+      "qrOptionDescription": "Lo tienes en recepción",
+      "inviteNoticeLead": "¿Te ha llegado un ",
+      "inviteNoticeEmphasis": "enlace de invitación",
+      "inviteNoticeTail": "? Ábrelo desde el móvil y entrarás directamente en tu centro.",
+      "createCenterPrompt": "¿Tienes un gimnasio, academia o escuela?",
+      "createCenterAction": "Crea la app de tu centro"
     },
     "code": {
       "title": "Código del centro",
@@ -129,6 +136,15 @@
       "emptyDescription": "Únete con el código que te dio tu centro.",
       "emptyActionLabel": "Unirme a un centro",
       "errorTitle": "No hemos podido cargar tus centros"
+    },
+    "scan": {
+      "title": "Escanear QR",
+      "subtitle": "Apunta al código del mostrador",
+      "unrecognized": "Este QR no es de un centro de Yoclick. Prueba con otro o usa el código.",
+      "permissionExplanation": "Usamos la cámara solo mientras escaneas. Nada se guarda.",
+      "allowCameraAction": "Permitir la cámara",
+      "openSettingsAction": "Abrir ajustes",
+      "useCodeInsteadAction": "Tengo un código"
     }
   },
   "auth": {

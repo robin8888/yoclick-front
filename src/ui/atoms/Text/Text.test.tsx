@@ -148,4 +148,10 @@ describe('Text', () => {
 
     expect(screen.getByText('Texto normal')).toBeOnTheScreen();
   });
+
+  it('centers the text when asked to', () => {
+    renderInTheme(<Text align="center">Encuentra tu centro</Text>);
+
+    expect(screen.getByText('Encuentra tu centro')).toHaveStyle({ textAlign: 'center' });
+  });
 });

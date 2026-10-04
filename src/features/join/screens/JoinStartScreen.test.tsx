@@ -1,4 +1,5 @@
 import { fireEvent, screen } from '@testing-library/react-native';
+import { Linking } from 'react-native';
 
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -44,5 +45,28 @@ describe('JoinStartScreen', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Ya tengo cuenta' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(auth)/login');
+  });
+
+  it('goes to the QR scanner', () => {
+    renderScreen(<JoinStartScreen />);
+
+    fireEvent.press(screen.getByRole('button', { name: /Escanear el QR del centro/ }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith('/join/scan');
+  });
+
+  it('explains how invitation links work', () => {
+    renderScreen(<JoinStartScreen />);
+
+    expect(screen.getByText(/enlace de invitación/)).toBeOnTheScreen();
+  });
+
+  it('opens the center sign-up page from the footer prompt', () => {
+    const openUrlSpy = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+    renderScreen(<JoinStartScreen />);
+
+    fireEvent.press(screen.getByRole('button', { name: 'Crea la app de tu centro' }));
+
+    expect(openUrlSpy).toHaveBeenCalledWith('https://yoclick.app');
   });
 });

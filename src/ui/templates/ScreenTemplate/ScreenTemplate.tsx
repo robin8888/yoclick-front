@@ -7,8 +7,10 @@ import {
   createContentStyle,
   createFooterStyle,
   createScreenStyle,
+  TRANSPARENT_SAFE_AREA_STYLE,
   KEYBOARD_AVOIDING_STYLE,
 } from './ScreenTemplate.styles';
+import { PlatformHeroBackground } from './PlatformHeroBackground';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
 import { ScreenTemplateHeader } from './ScreenTemplateHeader';
 
@@ -16,25 +18,29 @@ import { ScreenTemplateHeader } from './ScreenTemplateHeader';
 export function ScreenTemplate({
   footer,
   children,
+  hasPlatformHeroBackground = false,
   ...headerProps
 }: Readonly<ScreenTemplateProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
-    <SafeAreaView style={createScreenStyle(theme)}>
-      <KeyboardAvoidingView
-        style={KEYBOARD_AVOIDING_STYLE}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={createContentStyle(theme)}
-          keyboardShouldPersistTaps="handled"
+    <View style={createScreenStyle(theme, hasPlatformHeroBackground)}>
+      {hasPlatformHeroBackground && theme.mode === 'dark' ? <PlatformHeroBackground /> : null}
+      <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
+        <KeyboardAvoidingView
+          style={KEYBOARD_AVOIDING_STYLE}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <ScreenTemplateHeader {...headerProps} />
-          {children}
-        </ScrollView>
-        {footer === undefined ? null : <View style={createFooterStyle(theme)}>{footer}</View>}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          <ScrollView
+            contentContainerStyle={createContentStyle(theme)}
+            keyboardShouldPersistTaps="handled"
+          >
+            <ScreenTemplateHeader {...headerProps} />
+            {children}
+          </ScrollView>
+          {footer === undefined ? null : <View style={createFooterStyle(theme)}>{footer}</View>}
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }

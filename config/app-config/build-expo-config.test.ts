@@ -64,6 +64,15 @@ describe('buildExpoConfig (shared variant)', () => {
     });
   });
 
+  it('configures the camera for QR scanning only, without microphone', () => {
+    const { plugins } = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
+
+    expect(plugins).toContainEqual([
+      'expo-camera',
+      expect.objectContaining({ microphonePermission: false, recordAudioAndroid: false }),
+    ]);
+  });
+
   it('declares Spanish permission usage strings', () => {
     const infoPlist = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV)).ios?.infoPlist;
 

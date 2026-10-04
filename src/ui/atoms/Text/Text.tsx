@@ -10,11 +10,12 @@ const HEADING_VARIANTS: readonly TextVariant[] = ['display', 'titleLg', 'titleMd
 export function Text({
   variant = 'body',
   color = 'ink',
+  align,
   role,
   maxFontSizeMultiplier,
   ...nativeTextProps
 }: Readonly<TextProps>): React.JSX.Element {
-  const textStyle = useTextStyle(variant, color);
+  const textStyle = useTextStyle(variant, color, align);
   const defaultRole = HEADING_VARIANTS.includes(variant) ? 'heading' : undefined;
 
   return (

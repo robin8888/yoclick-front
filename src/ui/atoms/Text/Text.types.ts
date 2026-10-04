@@ -26,6 +26,8 @@ interface BaseTextProps extends Omit<
   'style' | 'allowFontScaling' | 'maxFontSizeMultiplier'
 > {
   color?: TextColor;
+  /** `center` para titulares y mensajes de pantallas con cabecera centrada. */
+  align?: 'left' | 'center';
 }
 
 interface ScalableTextProps extends BaseTextProps {

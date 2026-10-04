@@ -81,6 +81,15 @@ function buildPlugins(
       },
     ],
     ['expo-build-properties', { android: { usesCleartextTraffic: false } }],
+    // Solo se escanean QR: sin micrófono, ni su permiso en iOS ni RECORD_AUDIO en Android (SEC-22).
+    [
+      'expo-camera',
+      {
+        cameraPermission: CAMERA_USAGE_DESCRIPTION,
+        microphonePermission: false,
+        recordAudioAndroid: false,
+      },
+    ],
   ];
   // SEC-32: el dev client y su menú de depuración solo existen en builds de desarrollo.
   if (buildEnvironment.appEnvironment === 'development') plugins.push('expo-dev-client');
