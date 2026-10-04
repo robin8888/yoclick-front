@@ -14,6 +14,10 @@ export function createHeaderStyle(theme: Theme): ViewStyle {
   return { gap: theme.space[2] };
 }
 
+export function createHeaderAccessoryStyle(theme: Theme): ViewStyle {
+  return { alignItems: 'center', gap: theme.space[3] };
+}
+
 export function createFooterStyle(theme: Theme): ViewStyle {
   return {
     gap: theme.space[3],

@@ -4,12 +4,12 @@ import { useTheme } from '@/shared/theme';
 import { IconButton } from '@/ui/atoms/IconButton';
 import { Text } from '@/ui/atoms/Text';
 
-import { createHeaderStyle } from './ScreenTemplate.styles';
+import { createHeaderAccessoryStyle, createHeaderStyle } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
 
 type ScreenTemplateHeaderProps = Pick<
   ScreenTemplateProps,
-  'title' | 'subtitle' | 'onBackPress' | 'backLabel'
+  'title' | 'subtitle' | 'onBackPress' | 'backLabel' | 'headerAccessory'
 >;
 
 export function ScreenTemplateHeader({
@@ -17,6 +17,7 @@ export function ScreenTemplateHeader({
   subtitle,
   onBackPress,
   backLabel,
+  headerAccessory,
 }: Readonly<ScreenTemplateHeaderProps>): React.JSX.Element {
   const theme = useTheme();
 
@@ -28,6 +29,9 @@ export function ScreenTemplateHeader({
           accessibilityLabel={backLabel ?? title}
           onPress={onBackPress}
         />
+      )}
+      {headerAccessory === undefined ? null : (
+        <View style={createHeaderAccessoryStyle(theme)}>{headerAccessory}</View>
       )}
       <View style={createHeaderStyle(theme)}>
         <Text variant="titleLg">{title}</Text>

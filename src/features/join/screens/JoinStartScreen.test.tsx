@@ -16,6 +16,12 @@ describe('JoinStartScreen', () => {
     expect(screen.getByRole('button', { name: /Buscar por nombre o ciudad/ })).toBeOnTheScreen();
   });
 
+  it('shows the YoClick symbol and wordmark above the title', () => {
+    renderScreen(<JoinStartScreen />);
+
+    expect(screen.getAllByRole('img', { name: 'YoClick' })).toHaveLength(2);
+  });
+
   it('goes to the code screen', () => {
     renderScreen(<JoinStartScreen />);
 

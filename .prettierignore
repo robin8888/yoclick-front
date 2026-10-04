@@ -11,3 +11,4 @@ CLAUDE.md
 STORE_CHECKLIST.md
 src/shared/theme/tokens.ts
 src/shared/api/generated
+src/shared/theme/brand-logo-markup.ts

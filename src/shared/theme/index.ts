@@ -19,3 +19,4 @@ export { MIN_TOUCH_TARGET_SIZE } from './touch-target';
 export { motionTokens } from './motion';
 export type { MotionTokens } from './motion';
 export { usePressableStyle } from './usePressableStyle';
+export { YOCLICK_LOGO_ASPECT_RATIO, YOCLICK_LOGO_MARKUP } from './brand-logo-markup';
