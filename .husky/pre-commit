@@ -1,0 +1,4 @@
+npx lint-staged
+npm run typecheck
+# gitleaks (SEC-02): se ejecuta si está instalado; el CI lo exige siempre.
+if command -v gitleaks >/dev/null 2>&1; then gitleaks protect --staged --redact; else echo "aviso: gitleaks no instalado, se omite el escaneo de secretos local"; fi

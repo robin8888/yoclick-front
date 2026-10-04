@@ -1,0 +1,11 @@
+node_modules
+coverage
+.expo
+dist
+package-lock.json
+docs/design/prototipo-yoclick.html
+ios
+android
+docs
+CLAUDE.md
+STORE_CHECKLIST.md

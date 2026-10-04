@@ -5,18 +5,19 @@ App móvil marca blanca de Yoclick (iOS y Android) con Expo + React Native + Typ
 ## Comandos
 
 ```bash
-pnpm i                 # instalar (nunca npm/yarn)
-pnpm start             # Expo dev server (dev client)
-pnpm ios | pnpm android
-pnpm lint              # ESLint + Prettier check
-pnpm typecheck         # tsc --noEmit
-pnpm test              # Jest + RNTL
-pnpm test:e2e          # Maestro (requiere build de dev)
-pnpm storybook         # Storybook RN
-pnpm api:gen           # Orval: docs/api/openapi.yaml → src/shared/api/generated
+npm ci                  # instalar (npm, nunca pnpm/yarn; package-lock.json commiteado)
+npm start                #  Expo dev server (dev client)
+npm run ios | npm run android
+npm run lint              # ESLint + Prettier check
+npm run format            # Prettier --write
+npm run typecheck         # tsc --noEmit
+npm test                 # Jest + RNTL
+npm run test:e2e          # Maestro (requiere build de dev)
+npm run storybook         # Storybook RN
+npm run api:gen           # Orval: docs/api/openapi.yaml → src/shared/api/generated
 ```
 
-Antes de dar una tarea por terminada: `pnpm lint && pnpm typecheck && pnpm test` en verde.
+Antes de dar una tarea por terminada: `npm run lint && npm run typecheck && npm test` en verde.
 
 ## Stack (no cambiar sin ADR en `docs/adr/`)
 
@@ -121,7 +122,7 @@ Button/
 
 ## Tema y marca blanca
 
-- Tokens desde `docs/design/tokens.json` → `src/shared/theme/tokens.ts` (script `pnpm tokens:gen`).
+- Tokens desde `docs/design/tokens.json` → `src/shared/theme/tokens.ts` (script `npm run tokens:gen`).
 - `brand-engine.ts` según `docs/design/brand-engine.md`; los 6 vectores son test obligatorio.
 - `useTheme()` devuelve `{ colors, space, radius, type, motion, mode }`. **Prohibido** escribir colores hex en componentes (regla ESLint `no-restricted-syntax` para literales `#…` fuera de `shared/theme`).
 - `brand` solo como relleno; texto de marca con `brandInk`; sobre `brand` siempre `onBrand`.
@@ -150,7 +151,7 @@ Button/
 Los ids `SEC-xx` están en `docs/spec/04-seguridad.md`. Resumen operativo:
 
 1. **Credenciales (M1)**: ningún secreto en el código ni en `EXPO_PUBLIC_*`. Tokens solo vía `shared/storage/secure.ts` (SecureStore, `WHEN_UNLOCKED_THIS_DEVICE_ONLY`). Access token en memoria.
-2. **Cadena de suministro (M2)**: no añadir dependencias sin justificarlo en el PR; `pnpm audit` limpio; EAS Update con code signing.
+2. **Cadena de suministro (M2)**: no añadir dependencias sin justificarlo en el PR; `npm audit --omit=dev` revisado; EAS Update con code signing.
 3. **AuthN/AuthZ (M3)**: la app oculta UI por rol pero nunca decide permisos; reautenticación para borrar cuenta, ver salud, exportar datos.
 4. **Validación (M4)**: zod en formularios, parámetros de ruta, deep links, contenido de QR (`yoclick:checkin:<jwt>` y nada más). Sin WebView con contenido de usuario.
 5. **Comunicación (M5)**: solo HTTPS; nada sensible en URLs ni en el texto de las push.
