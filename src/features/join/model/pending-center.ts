@@ -1,0 +1,65 @@
+import type {
+  CenterBrandingResponseDto,
+  CenterSearchResponseDtoCentersItem,
+  PublicCenterResponseDto,
+} from '@/shared/api/generated/model';
+
+/** El centro que la persona ha elegido unirse; la app se viste con su marca desde ese momento. */
+export interface PendingCenter {
+  readonly id: string;
+  readonly name: string;
+  readonly sectorId: string;
+  readonly brandHexColor: string;
+  /** Solo si entró con código: un centro privado lo exige al unirse. */
+  readonly joinCode?: string | undefined;
+}
+
+interface CenterWithBrand {
+  id: string;
+  name: string;
+  sectorId: string;
+  brandColor: string;
+}
+
+function mapCenterToPendingCenter(center: CenterWithBrand, joinCode?: string): PendingCenter {
+  return {
+    id: center.id,
+    name: center.name,
+    sectorId: center.sectorId,
+    brandHexColor: center.brandColor,
+    joinCode,
+  };
+}
+
+export function mapPublicCenterToPendingCenter(
+  center: PublicCenterResponseDto,
+  joinCode: string,
+): PendingCenter {
+  return mapCenterToPendingCenter(center, joinCode);
+}
+
+export function mapSearchResultToPendingCenter(
+  center: CenterSearchResponseDtoCentersItem,
+): PendingCenter {
+  return mapCenterToPendingCenter(center);
+}
+
+export function mapBrandingToPendingCenter(
+  branding: CenterBrandingResponseDto,
+  joinCode?: string,
+): PendingCenter {
+  return mapCenterToPendingCenter({ ...branding, id: branding.centerId }, joinCode);
+}
+
+/**
+ * El contrato declara `city` como lista de textos en la respuesta por código y como texto en la
+ * búsqueda: se acepta cualquiera de las dos formas hasta que el backend lo unifique.
+ */
+export function formatCenterCity(city: unknown): string | null {
+  if (typeof city === 'string') return city.trim() === '' ? null : city.trim();
+  if (Array.isArray(city)) {
+    const cityNames = city.filter((name): name is string => typeof name === 'string');
+    return cityNames.length === 0 ? null : cityNames.join(', ');
+  }
+  return null;
+}

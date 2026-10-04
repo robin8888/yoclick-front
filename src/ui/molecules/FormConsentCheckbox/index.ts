@@ -1,0 +1,1 @@
+export { FormConsentCheckbox } from './FormConsentCheckbox';

@@ -56,6 +56,164 @@
     "required": "Este campo es obligatorio",
     "taken": "Ya está en uso"
   },
+  "actions": {
+    "back": "Volver",
+    "continue": "Continuar",
+    "signOut": "Cerrar sesión"
+  },
+  "validation": {
+    "emailRequired": "Escribe tu correo",
+    "emailInvalid": "El correo no parece válido",
+    "passwordRequired": "Escribe tu contraseña",
+    "passwordTooShort": "Usa al menos 10 caracteres",
+    "fullNameTooShort": "Escribe tu nombre y apellidos",
+    "verificationCodeInvalid": "El código tiene 6 dígitos",
+    "recoveryCodeRequired": "Escribe tu código de recuperación",
+    "joinCodeInvalid": "El código tiene entre 4 y 16 letras o números",
+    "privacyConsentRequired": "Tienes que aceptar la política de privacidad",
+    "termsConsentRequired": "Tienes que aceptar las condiciones del servicio",
+    "searchQueryTooShort": "Escribe al menos 2 letras",
+    "experienceRequired": "Elige una opción"
+  },
+  "join": {
+    "start": {
+      "overline": "Yoclick",
+      "title": "Encuentra tu centro",
+      "subtitle": "Únete a tu centro para reservar clases y citas y recibir sus avisos.",
+      "codeOptionTitle": "Tengo un código",
+      "codeOptionDescription": "Letras y números, p. ej. NORTE7",
+      "searchOptionTitle": "Buscar por nombre o ciudad",
+      "searchOptionDescription": "Encuentra tu centro en el directorio",
+      "haveAccountAction": "Ya tengo cuenta"
+    },
+    "code": {
+      "title": "Código del centro",
+      "subtitle": "Te lo da tu centro en recepción o por correo.",
+      "fieldLabel": "Código del centro",
+      "fieldHelper": "Letras y números, sin espacios.",
+      "submitLabel": "Buscar mi centro",
+      "notFound": "No encontramos ningún centro con ese código. Revísalo o pídelo en recepción."
+    },
+    "search": {
+      "title": "Buscar centro",
+      "fieldLabel": "Nombre o ciudad",
+      "resultsLabel": "Resultados de la búsqueda",
+      "distanceInKilometers": "{{distance}} km",
+      "idleHint": "Escribe el nombre del centro o su ciudad.",
+      "emptyTitle": "Sin resultados",
+      "emptyDescription": "Si tu centro no aparece, pídele su código.",
+      "emptyActionLabel": "Tengo un código",
+      "errorTitle": "No hemos podido buscar centros"
+    },
+    "confirm": {
+      "title": "¿Es este tu centro?",
+      "privacyNote": "Al unirte, {{centerName}} podrá ver tus datos de perfil, reservas y progreso. Puedes salir del centro cuando quieras desde Perfil › Mis centros.",
+      "joinAction": "Unirme a {{centerName}}",
+      "notMyCenterAction": "No es mi centro",
+      "errorTitle": "No hemos podido cargar el centro",
+      "needsCodeMessage": "Este centro es privado. Vuelve atrás e introduce su código."
+    },
+    "welcome": {
+      "pitch": "Reserva tus {{sessionPlural}} y sigue tu progreso en {{centerName}}.",
+      "createAccountAction": "Crear cuenta",
+      "haveAccountAction": "Ya tengo cuenta",
+      "changeCenterAction": "Elegir otro centro"
+    },
+    "centers": {
+      "title": "Mis centros",
+      "subtitle": "Cambia de centro y la app cambia con él",
+      "currentCenter": "Centro actual",
+      "joinAnotherAction": "Unirme a otro centro",
+      "privacyNote": "Tus datos de cada centro están separados: un centro no ve lo que haces en otro.",
+      "emptyTitle": "Aún no estás en ningún centro",
+      "emptyDescription": "Únete con el código que te dio tu centro.",
+      "emptyActionLabel": "Unirme a un centro",
+      "errorTitle": "No hemos podido cargar tus centros"
+    }
+  },
+  "auth": {
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "passwordHelper": "Mínimo 10 caracteres.",
+    "verificationCodeLabel": "Código de 6 dígitos",
+    "passwordChangedNotice": "Contraseña cambiada. Entra con la nueva.",
+    "emailVerifiedNotice": "Correo verificado. Ya puedes entrar.",
+    "login": {
+      "title": "Hola de nuevo",
+      "subtitleWithCenter": "Entra en {{centerName}}",
+      "subtitleWithoutCenter": "Entra en tu cuenta de Yoclick",
+      "forgotPasswordAction": "He olvidado mi contraseña",
+      "submitLabel": "Entrar",
+      "registerPrompt": "¿Aún no tienes cuenta?",
+      "registerAction": "Crear cuenta"
+    },
+    "register": {
+      "title": "Crea tu cuenta",
+      "accountSubtitle": "Paso 1 de 2 · Tus datos",
+      "fullNameLabel": "Nombre y apellidos",
+      "privacyConsent": "Acepto la política de privacidad.",
+      "termsConsent": "Acepto las condiciones del servicio.",
+      "marketingConsent": "Quiero recibir novedades y ofertas del centro (opcional).",
+      "continueLabel": "Continuar",
+      "goalsTitle": "Tu experiencia",
+      "goalsSubtitle": "Paso 2 de 2 · Así adaptamos tus {{sessionPlural}}",
+      "experienceQuestion": "¿Cuánta experiencia tienes?",
+      "goalsQuestion": "¿Qué quieres conseguir? (elige varios)",
+      "levelNote": "Empezarás en nivel {{levelName}}. Tu {{staffSingular}} puede ajustarlo.",
+      "submitLabel": "Crear cuenta",
+      "experience": {
+        "lessThanSixMonths": "Menos de 6 meses",
+        "sixToTwelveMonths": "6–12 meses",
+        "oneToTwoYears": "1–2 años",
+        "moreThanTwoYears": "Más de 2 años"
+      },
+      "goals": {
+        "improveTechnique": "Mejorar mi técnica",
+        "stayActive": "Mantenerme activo",
+        "gainConfidence": "Ganar confianza",
+        "prepareForEvent": "Prepararme para algo concreto",
+        "recoverFromInjury": "Recuperarme de una lesión",
+        "learnSomethingNew": "Aprender algo nuevo"
+      }
+    },
+    "verifyEmail": {
+      "title": "Verifica tu correo",
+      "subtitle": "Escribe el código de 6 dígitos que hemos enviado a {{email}}.",
+      "submitLabel": "Verificar correo",
+      "resendAction": "Reenviar código",
+      "resentNotice": "Si el correo existe, te hemos enviado un código nuevo."
+    },
+    "forgotPassword": {
+      "title": "Recuperar contraseña",
+      "subtitle": "Te enviaremos un código a tu correo para crear una contraseña nueva.",
+      "submitLabel": "Enviar código"
+    },
+    "resetPassword": {
+      "title": "Nueva contraseña",
+      "subtitle": "Escribe el código que te hemos enviado a {{email}} y tu nueva contraseña.",
+      "newPasswordLabel": "Nueva contraseña",
+      "submitLabel": "Guardar contraseña"
+    },
+    "mfa": {
+      "title": "Verificación en dos pasos",
+      "appCodeSubtitle": "Escribe el código de 6 dígitos de tu app de autenticación.",
+      "recoveryCodeSubtitle": "Escribe uno de tus códigos de recuperación. Cada uno sirve una sola vez.",
+      "recoveryCodeLabel": "Código de recuperación",
+      "submitLabel": "Verificar",
+      "useRecoveryCodeAction": "Usar un código de recuperación",
+      "useAppCodeAction": "Usar el código de la app",
+      "missingChallengeMessage": "La verificación ha caducado. Vuelve a iniciar sesión."
+    },
+    "session": {
+      "errorTitle": "No hemos podido abrir tu sesión",
+      "placeholderTitle": "Inicio de {{centerName}}",
+      "placeholderDescription": "Tu sesión está abierta. Esta pantalla llega en la siguiente entrega.",
+      "noCenterTitle": "Aún no estás en ningún centro",
+      "noCenterDescription": "Únete con el código de tu centro para empezar."
+    }
+  },
   "states": {
     "loading": {
       "label": "Cargando"

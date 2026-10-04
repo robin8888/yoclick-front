@@ -1,8 +1,8 @@
 import type { Control, FieldValues, Path } from 'react-hook-form';
 
-import type { FormFieldProps } from '@/ui/molecules/FormField';
+import type { DistributiveOmit, FormFieldProps } from '@/ui/molecules/FormField';
 
-export type FormTextFieldProps<TFieldValues extends FieldValues> = Omit<
+export type FormTextFieldProps<TFieldValues extends FieldValues> = DistributiveOmit<
   FormFieldProps,
   'value' | 'onChangeText' | 'errorMessage'
 > & {

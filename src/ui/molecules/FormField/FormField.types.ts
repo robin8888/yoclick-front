@@ -1,6 +1,6 @@
 import type { InputProps } from '@/ui/atoms/Input';
 
-type DistributiveOmit<TSource, TKey extends PropertyKey> = TSource extends unknown
+export type DistributiveOmit<TSource, TKey extends PropertyKey> = TSource extends unknown
   ? Omit<TSource, Extract<keyof TSource, TKey>>
   : never;
 
