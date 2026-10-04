@@ -6,6 +6,7 @@ import { resolveAppIdentity, type AppIdentity } from './resolve-app-identity.ts'
 const APP_VERSION = '0.1.0';
 // Id público del proyecto «yoclick» en expo.dev (no es un secreto). Cada centro Premium usa su propio proyecto.
 const SHARED_EAS_PROJECT_ID = 'b1d194fb-d580-45f0-8266-b0e1c7965f54';
+const SHARED_UPDATES_URL = `https://u.expo.dev/${SHARED_EAS_PROJECT_ID}`;
 // Dominio de los universal links https://yoclick.app/j/{code} e /i/{token}.
 // Provisional: hay que publicar apple-app-site-association y assetlinks.json en este dominio.
 const UNIVERSAL_LINK_HOST = 'yoclick.app';
@@ -101,6 +102,15 @@ function buildExtra(buildEnvironment: BuildEnvironment): Record<string, unknown>
   return extra;
 }
 
+// Los centros Premium tienen su propio proyecto de EAS: sin URL propia no reciben OTA.
+function buildUpdatesConfig(
+  buildEnvironment: BuildEnvironment,
+): NonNullable<ExpoConfig['updates']> {
+  return buildEnvironment.variant.kind === 'shared'
+    ? { url: SHARED_UPDATES_URL }
+    : { enabled: false };
+}
+
 export function buildExpoConfig(buildEnvironment: BuildEnvironment): ExpoConfig {
   const appIdentity = resolveAppIdentity(buildEnvironment);
   const isProductionBuild = buildEnvironment.appEnvironment === 'production';
@@ -132,6 +142,10 @@ export function buildExpoConfig(buildEnvironment: BuildEnvironment): ExpoConfig 
       blockedPermissions: isProductionBuild ? [...ANDROID_PERMISSIONS_TO_BLOCK] : [],
     },
     plugins: buildPlugins(buildEnvironment, appIdentity),
+    // SEC-08: runtimeVersion por huella nativa, para que una OTA nunca llegue a un binario incompatible.
+    // Pendiente: code signing de las actualizaciones (certificado) antes de publicar OTA.
+    runtimeVersion: { policy: 'fingerprint' },
+    updates: buildUpdatesConfig(buildEnvironment),
     experiments: { typedRoutes: true },
     extra: buildExtra(buildEnvironment),
   };

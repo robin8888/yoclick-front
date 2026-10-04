@@ -86,6 +86,23 @@ describe('buildExpoConfig (shared variant)', () => {
   });
 });
 
+describe('buildExpoConfig (updates)', () => {
+  it('uses a fingerprint runtime version and the yoclick update channel URL for the shared app', () => {
+    const config = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
+
+    expect(config.runtimeVersion).toEqual({ policy: 'fingerprint' });
+    expect(config.updates).toEqual({
+      url: 'https://u.expo.dev/b1d194fb-d580-45f0-8266-b0e1c7965f54',
+    });
+  });
+
+  it('disables OTA updates for premium apps until they have their own EAS project', () => {
+    const config = buildExpoConfig(parseBuildEnvironment({ ...PRODUCTION_ENV, ...PREMIUM_ENV }));
+
+    expect(config.updates).toEqual({ enabled: false });
+  });
+});
+
 describe('buildExpoConfig (premium variant)', () => {
   it('takes name, slug, identifiers and locked center from the center', () => {
     const config = buildExpoConfig(parseBuildEnvironment({ ...PRODUCTION_ENV, ...PREMIUM_ENV }));
