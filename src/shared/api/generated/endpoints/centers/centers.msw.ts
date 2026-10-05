@@ -14,14 +14,18 @@ import type {
 } from 'msw';
 
 import type {
-  CenterBrandingResponseDto
+  CenterBrandingResponseDto,
+  CenterSettingsResponseDto
 } from '../../model';
 
 import {
-  getCentersGetBrandingResponseMock
+  getCentersGetBrandingResponseMock,
+  getCentersGetLogoResponseMock,
+  getCentersGetSettingsResponseMock,
+  getCentersUpdateSettingsResponseMock
 } from './centers.faker.ts';
 
-export { getCentersGetBrandingResponseMock } from './centers.faker.ts';
+export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
 
 
 export const getCentersGetBrandingMockHandler = (overrideResponse?: CenterBrandingResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterBrandingResponseDto> | CenterBrandingResponseDto), options?: RequestHandlerOptions) => {
@@ -35,6 +39,46 @@ export const getCentersGetBrandingMockHandler = (overrideResponse?: CenterBrandi
       })
   }, options)
 }
+
+export const getCentersGetSettingsMockHandler = (overrideResponse?: CenterSettingsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterSettingsResponseDto> | CenterSettingsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersGetSettingsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCentersUpdateSettingsMockHandler = (overrideResponse?: CenterSettingsResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<CenterSettingsResponseDto> | CenterSettingsResponseDto), options?: RequestHandlerOptions) => {
+  return http.patch('*/v1/centers/:centerId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersUpdateSettingsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCentersGetLogoMockHandler = (overrideResponse?: Blob | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<Blob> | Blob), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/logo', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+  const binaryBody = overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersGetLogoResponseMock();
+    return new HttpResponse(binaryBody,
+      { status: 200,
+        headers: { 'Content-Type': 'image/png' }
+      })
+  }, options)
+}
 export const getCentersMock = () => [
-  getCentersGetBrandingMockHandler()
+  getCentersGetBrandingMockHandler(),
+  getCentersGetSettingsMockHandler(),
+  getCentersUpdateSettingsMockHandler(),
+  getCentersGetLogoMockHandler()
 ]

@@ -25,6 +25,299 @@ export const CentersGetBrandingResponse = zod.object({
   "centerId": zod.uuid().regex(centersGetBrandingResponseCenterIdRegExp),
   "name": zod.string(),
   "sectorId": zod.string(),
-  "brandColor": zod.string()
+  "brandColor": zod.string(),
+  "logoUrl": zod.string().nullable()
 })
+
+/**
+ * @summary Datos, horario, festivos y política de cancelación del centro. Devuelve ETag.
+ */
+export const centersGetSettingsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersGetSettingsParams = zod.object({
+  "centerId": zod.uuid().regex(centersGetSettingsPathCenterIdRegExp)
+})
+
+export const CentersGetSettingsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const centersGetSettingsResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const centersGetSettingsResponseOpeningHoursMonMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursTueMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursWedMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursThuMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursFriMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursSatMax = 4;
+
+export const centersGetSettingsResponseOpeningHoursSunMax = 4;
+
+export const centersGetSettingsResponseHolidaysItemDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const centersGetSettingsResponseHolidaysItemLabelMax = 60;
+
+export const centersGetSettingsResponseHolidaysMax = 100;
+
+export const centersGetSettingsResponseCancelPolicyFreeCancellationHoursMin = 0;
+export const centersGetSettingsResponseCancelPolicyFreeCancellationHoursMax = 168;
+
+export const centersGetSettingsResponseTrialEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const CentersGetSettingsResponse = zod.object({
+  "id": zod.uuid().regex(centersGetSettingsResponseIdRegExp),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "sectorId": zod.string(),
+  "brandColor": zod.string(),
+  "timezone": zod.string(),
+  "joinCode": zod.string(),
+  "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
+  "isListed": zod.boolean(),
+  "city": zod.string().nullable(),
+  "address": zod.string().nullable(),
+  "latitude": zod.number().nullable(),
+  "longitude": zod.number().nullable(),
+  "openingHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursMonMax),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursTueMax),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursWedMax),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursThuMax),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursFriMax),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursSatMax),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersGetSettingsResponseOpeningHoursSunMax)
+}).nullable(),
+  "holidays": zod.array(zod.object({
+  "date": zod.iso.date().regex(centersGetSettingsResponseHolidaysItemDateRegExp),
+  "label": zod.string().min(1).max(centersGetSettingsResponseHolidaysItemLabelMax)
+})).max(centersGetSettingsResponseHolidaysMax).nullable(),
+  "cancelPolicy": zod.object({
+  "freeCancellationHours": zod.int().min(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMax),
+  "lateCancellationConsumesCredit": zod.boolean()
+}).nullable(),
+  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable()
+})
+
+/**
+ * @summary Modifica datos del centro. Exige If-Match: 428 si falta, 412 si otra persona lo cambió antes.
+ */
+export const centersUpdateSettingsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersUpdateSettingsParams = zod.object({
+  "centerId": zod.uuid().regex(centersUpdateSettingsPathCenterIdRegExp)
+})
+
+export const CentersUpdateSettingsHeader = zod.object({
+  "X-Center-Id": zod.string(),
+  "If-Match": zod.string().describe('El ETag que se leyó')
+})
+
+export const centersUpdateSettingsBodyNameMin = 2;
+export const centersUpdateSettingsBodyNameMax = 80;
+
+export const centersUpdateSettingsBodyBrandColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const centersUpdateSettingsBodyTimezoneMax = 64;
+
+export const centersUpdateSettingsBodyCityMax = 200;
+
+export const centersUpdateSettingsBodyAddressMax = 200;
+
+export const centersUpdateSettingsBodyLatitudeMin = -90;
+export const centersUpdateSettingsBodyLatitudeMax = 90;
+
+export const centersUpdateSettingsBodyLongitudeMin = -180;
+export const centersUpdateSettingsBodyLongitudeMax = 180;
+
+export const centersUpdateSettingsBodyOpeningHoursMonMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursTueMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursWedMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursThuMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursFriMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursSatMax = 4;
+
+export const centersUpdateSettingsBodyOpeningHoursSunMax = 4;
+
+export const centersUpdateSettingsBodyHolidaysItemDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const centersUpdateSettingsBodyHolidaysItemLabelMax = 60;
+
+export const centersUpdateSettingsBodyHolidaysMax = 100;
+
+export const centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMin = 0;
+export const centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax = 168;
+
+
+
+export const CentersUpdateSettingsBody = zod.object({
+  "name": zod.string().min(centersUpdateSettingsBodyNameMin).max(centersUpdateSettingsBodyNameMax).optional(),
+  "brandColor": zod.string().regex(centersUpdateSettingsBodyBrandColorRegExp).optional(),
+  "timezone": zod.string().max(centersUpdateSettingsBodyTimezoneMax).optional(),
+  "isListed": zod.boolean().optional(),
+  "city": zod.string().min(1).max(centersUpdateSettingsBodyCityMax).nullish(),
+  "address": zod.string().min(1).max(centersUpdateSettingsBodyAddressMax).nullish(),
+  "latitude": zod.number().min(centersUpdateSettingsBodyLatitudeMin).max(centersUpdateSettingsBodyLatitudeMax).nullish(),
+  "longitude": zod.number().min(centersUpdateSettingsBodyLongitudeMin).max(centersUpdateSettingsBodyLongitudeMax).nullish(),
+  "openingHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursMonMax).optional(),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursTueMax).optional(),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursWedMax).optional(),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursThuMax).optional(),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursFriMax).optional(),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursSatMax).optional(),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsBodyOpeningHoursSunMax).optional()
+}).optional(),
+  "holidays": zod.array(zod.object({
+  "date": zod.iso.date().regex(centersUpdateSettingsBodyHolidaysItemDateRegExp),
+  "label": zod.string().min(1).max(centersUpdateSettingsBodyHolidaysItemLabelMax)
+})).max(centersUpdateSettingsBodyHolidaysMax).optional(),
+  "cancelPolicy": zod.object({
+  "freeCancellationHours": zod.int().min(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax),
+  "lateCancellationConsumesCredit": zod.boolean()
+}).optional()
+})
+
+export const centersUpdateSettingsResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const centersUpdateSettingsResponseOpeningHoursMonMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursTueMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursWedMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursThuMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursFriMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursSatMax = 4;
+
+export const centersUpdateSettingsResponseOpeningHoursSunMax = 4;
+
+export const centersUpdateSettingsResponseHolidaysItemDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const centersUpdateSettingsResponseHolidaysItemLabelMax = 60;
+
+export const centersUpdateSettingsResponseHolidaysMax = 100;
+
+export const centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMin = 0;
+export const centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMax = 168;
+
+export const centersUpdateSettingsResponseTrialEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const CentersUpdateSettingsResponse = zod.object({
+  "id": zod.uuid().regex(centersUpdateSettingsResponseIdRegExp),
+  "slug": zod.string(),
+  "name": zod.string(),
+  "sectorId": zod.string(),
+  "brandColor": zod.string(),
+  "timezone": zod.string(),
+  "joinCode": zod.string(),
+  "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
+  "isListed": zod.boolean(),
+  "city": zod.string().nullable(),
+  "address": zod.string().nullable(),
+  "latitude": zod.number().nullable(),
+  "longitude": zod.number().nullable(),
+  "openingHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursMonMax),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursTueMax),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursWedMax),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursThuMax),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursFriMax),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursSatMax),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(centersUpdateSettingsResponseOpeningHoursSunMax)
+}).nullable(),
+  "holidays": zod.array(zod.object({
+  "date": zod.iso.date().regex(centersUpdateSettingsResponseHolidaysItemDateRegExp),
+  "label": zod.string().min(1).max(centersUpdateSettingsResponseHolidaysItemLabelMax)
+})).max(centersUpdateSettingsResponseHolidaysMax).nullable(),
+  "cancelPolicy": zod.object({
+  "freeCancellationHours": zod.int().min(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMax),
+  "lateCancellationConsumesCredit": zod.boolean()
+}).nullable(),
+  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable()
+})
+
+/**
+ * @summary Logo del centro (imagen). Público, con ETag y caché de un día; admite If-None-Match (304).
+ */
+export const centersGetLogoPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersGetLogoParams = zod.object({
+  "centerId": zod.uuid().regex(centersGetLogoPathCenterIdRegExp)
+})
+
+export const CentersGetLogoResponse = zod.unknown()
 

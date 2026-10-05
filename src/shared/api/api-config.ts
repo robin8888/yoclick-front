@@ -10,6 +10,21 @@ interface ApiUrlSources {
   extraApiUrl?: unknown;
   environmentApiUrl?: unknown;
   isDevelopmentBuild: boolean;
+  /** `host:puerto` del servidor de desarrollo (Metro) desde el que el móvil cargó la app. */
+  devServerHostUri?: string | null | undefined;
+}
+
+// En desarrollo la API local corre en la misma máquina que Metro. En un móvil real «localhost» es
+// el propio móvil y una IP escrita a mano caduca al cambiar de red, así que se usa la IP de Metro,
+// que la app ya conoce, conservando el puerto de la API configurada.
+function applyDevServerHost(apiUrl: string, devServerHostUri: string): string {
+  const devServerHostname = devServerHostUri.split(':')[0];
+  if (devServerHostname === undefined || devServerHostname === '') return apiUrl;
+  const parsedApiUrl = new URL(apiUrl);
+  // Una API remota (https) no vive en la máquina de Metro.
+  if (parsedApiUrl.protocol !== HTTP_PROTOCOL) return apiUrl;
+  parsedApiUrl.hostname = devServerHostname;
+  return parsedApiUrl.origin;
 }
 
 // En producción solo HTTPS (SEC-19); en desarrollo se admite http para la API local.
@@ -31,9 +46,14 @@ export function resolveApiBaseUrl({
   extraApiUrl,
   environmentApiUrl,
   isDevelopmentBuild,
+  devServerHostUri,
 }: ApiUrlSources): string {
   const candidateUrl = extraApiUrl ?? environmentApiUrl;
-  return createApiUrlSchema(isDevelopmentBuild).parse(candidateUrl);
+  const apiUrl = createApiUrlSchema(isDevelopmentBuild).parse(candidateUrl);
+  if (!isDevelopmentBuild || devServerHostUri === undefined || devServerHostUri === null) {
+    return apiUrl;
+  }
+  return applyDevServerHost(apiUrl, devServerHostUri);
 }
 
 const appConfigExtraSchema = z.object({ apiUrl: z.unknown() });
@@ -45,5 +65,6 @@ export function getApiBaseUrl(): string {
     // Acceso literal: Expo solo sustituye `process.env.EXPO_PUBLIC_*` escrito as�.
     environmentApiUrl: process.env.EXPO_PUBLIC_API_URL,
     isDevelopmentBuild: __DEV__,
+    devServerHostUri: Constants.expoConfig?.hostUri,
   });
 }

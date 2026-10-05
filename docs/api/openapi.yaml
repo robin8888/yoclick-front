@@ -666,6 +666,322 @@ paths:
       summary: Te une al centro como cliente. Un centro privado exige su código de unión; uno listado, no. Comprueba el límite de clientes del plan.
       tags:
         - join
+  /v1/onboarding/centers:
+    post:
+      operationId: onboarding_create_center
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: UUID por intención del usuario
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCenterRequestDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCenterResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Da de alta un centro en prueba de 14 días; quien lo crea queda como propietario. Repetir la misma Idempotency-Key devuelve el mismo centro.
+      tags:
+        - onboarding
+  /v1/onboarding/centers/{centerId}/logo:
+    put:
+      operationId: onboarding_upload_center_logo
+      parameters:
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadCenterLogoRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadCenterLogoResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: "Sube (o sustituye) el logo del centro: PNG, JPEG o WebP de hasta 700 KB en base64. Solo su propietario; para el resto, 404."
+      tags:
+        - onboarding
+  /v1/centers/{centerId}/team:
+    get:
+      operationId: team_list
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Quienes trabajan en el centro.
+      tags:
+        - team
+  /v1/centers/{centerId}/team/{membershipId}:
+    patch:
+      operationId: team_update_member
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+        - name: membershipId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTeamMemberRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamMemberResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Cambia rol, permisos, cargo o estado de alguien del equipo. La propietaria no se toca; solo ella gestiona administradoras.
+      tags:
+        - team
+  /v1/centers/{centerId}/invitations:
+    get:
+      operationId: invitations_list_pending
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PendingInvitationsResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Invitaciones pendientes.
+      tags:
+        - team
+    post:
+      operationId: invitations_create
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteRequestDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitationResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Invita por correo a un cliente, a alguien del equipo o a otra administradora. El personal solo invita clientes. El código llega por correo, sin enlaces.
+      tags:
+        - team
+  /v1/centers/{centerId}/invitations/{invitationId}:
+    delete:
+      operationId: invitations_revoke
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+        - name: invitationId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      responses:
+        "204":
+          description: ""
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Anula una invitación pendiente.
+      tags:
+        - team
+  /v1/join/invitations/{code}:
+    get:
+      operationId: join_get_invitation
+      parameters:
+        - name: code
+          required: true
+          in: path
+          schema:
+            minLength: 1
+            maxLength: 24
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvitationPreviewResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Centro y rol de una invitación, con el correo ofuscado. Un código inválido, caducado o usado responde 404 INVITATION_INVALID.
+      tags:
+        - join
+  /v1/join/invitations/{code}/accept:
+    post:
+      operationId: join_accept_invitation
+      parameters:
+        - name: code
+          required: true
+          in: path
+          schema:
+            minLength: 1
+            maxLength: 24
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AcceptedInvitationResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Acepta la invitación con la cuenta cuyo correo coincide. Sirve una sola vez; nunca rebaja el rol de quien ya está dentro.
+      tags:
+        - join
   /v1/centers/{centerId}/branding:
     get:
       operationId: centers_get_branding
@@ -691,6 +1007,121 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetailsDto"
       summary: Nombre, sector y color de un centro. Público y cacheable cinco minutos.
+      tags:
+        - centers
+  /v1/centers/{centerId}:
+    get:
+      operationId: centers_get_settings
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CenterSettingsResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: Datos, horario, festivos y política de cancelación del centro. Devuelve ETag.
+      tags:
+        - centers
+    patch:
+      operationId: centers_update_settings
+      parameters:
+        - name: X-Center-Id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+        - name: If-Match
+          in: header
+          description: El ETag que se leyó
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCenterSettingsRequestDto"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CenterSettingsResponseDto"
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      security:
+        - bearer: []
+      summary: "Modifica datos del centro. Exige If-Match: 428 si falta, 412 si otra persona lo cambió antes."
+      tags:
+        - centers
+  /v1/centers/{centerId}/logo:
+    get:
+      operationId: centers_get_logo
+      parameters:
+        - name: centerId
+          required: true
+          in: path
+          schema:
+            format: uuid
+            pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            type: string
+      responses:
+        "200":
+          description: Los bytes de la imagen, con su Content-Type
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+        default:
+          description: Error RFC 9457
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetailsDto"
+      summary: Logo del centro (imagen). Público, con ETag y caché de un día; admite If-None-Match (304).
       tags:
         - centers
   /health:
@@ -1120,9 +1551,8 @@ components:
         fullName:
           type: string
         phone:
-          type: array
-          items:
-            type: string
+          type: string
+          nullable: true
         birthDate:
           type: string
           format: date
@@ -1213,11 +1643,15 @@ components:
                     type: string
                   brandColor:
                     type: string
+                  logoUrl:
+                    type: string
+                    nullable: true
                 required:
                   - name
                   - slug
                   - sectorId
                   - brandColor
+                  - logoUrl
                 additionalProperties: false
             required:
               - membershipId
@@ -1389,11 +1823,15 @@ components:
                     type: string
                   brandColor:
                     type: string
+                  logoUrl:
+                    type: string
+                    nullable: true
                 required:
                   - name
                   - slug
                   - sectorId
                   - brandColor
+                  - logoUrl
                 additionalProperties: false
             required:
               - membershipId
@@ -1468,9 +1906,11 @@ components:
         brandColor:
           type: string
         city:
-          type: array
-          items:
-            type: string
+          type: string
+          nullable: true
+        logoUrl:
+          type: string
+          nullable: true
       required:
         - id
         - name
@@ -1478,6 +1918,7 @@ components:
         - sectorId
         - brandColor
         - city
+        - logoUrl
       additionalProperties: false
     CenterSearchResponseDto:
       type: object
@@ -1502,6 +1943,9 @@ components:
               city:
                 type: string
                 nullable: true
+              logoUrl:
+                type: string
+                nullable: true
               distanceInKilometers:
                 type: number
                 nullable: true
@@ -1512,6 +1956,7 @@ components:
               - sectorId
               - brandColor
               - city
+              - logoUrl
               - distanceInKilometers
             additionalProperties: false
       required:
@@ -1559,6 +2004,428 @@ components:
         - status
         - isNewMembership
       additionalProperties: false
+    CreateCenterRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 80
+        sectorId:
+          type: string
+          enum:
+            - gym
+            - estudio
+            - readap
+            - box
+            - yoga
+            - academia
+            - baile
+            - marciales
+            - musica
+            - cocina
+            - otro
+        brandColor:
+          type: string
+          pattern: ^#[0-9A-Fa-f]{6}$
+        city:
+          type: string
+          minLength: 1
+          maxLength: 80
+      required:
+        - name
+        - sectorId
+      additionalProperties: false
+    CreateCenterResponseDto:
+      type: object
+      properties:
+        centerId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        ownerMembershipId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        slug:
+          type: string
+        name:
+          type: string
+        sectorId:
+          type: string
+          enum:
+            - gym
+            - estudio
+            - readap
+            - box
+            - yoga
+            - academia
+            - baile
+            - marciales
+            - musica
+            - cocina
+            - otro
+        brandColor:
+          type: string
+        joinCode:
+          type: string
+        trialEndsAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        logoUrl:
+          type: string
+          nullable: true
+      required:
+        - centerId
+        - ownerMembershipId
+        - slug
+        - name
+        - sectorId
+        - brandColor
+        - joinCode
+        - trialEndsAt
+        - logoUrl
+      additionalProperties: false
+    UploadCenterLogoRequestDto:
+      type: object
+      properties:
+        contentType:
+          type: string
+          enum:
+            - image/png
+            - image/jpeg
+            - image/webp
+        dataBase64:
+          type: string
+          minLength: 1
+      required:
+        - contentType
+        - dataBase64
+      additionalProperties: false
+    UploadCenterLogoResponseDto:
+      type: object
+      properties:
+        logoUrl:
+          type: string
+      required:
+        - logoUrl
+      additionalProperties: false
+    TeamResponseDto:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              membershipId:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              userId:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              fullName:
+                type: string
+              email:
+                type: string
+              role:
+                type: string
+                enum:
+                  - owner
+                  - admin
+                  - staff
+                  - client
+              status:
+                type: string
+                enum:
+                  - invited
+                  - active
+                  - blocked
+                  - left
+              staffTitle:
+                type: string
+                nullable: true
+              permissions:
+                type: array
+                items:
+                  type: string
+                  enum:
+                    - health:read
+                    - clients:manage
+                    - services:manage
+                    - agenda:manage
+                    - payments:view
+                    - reports:view
+              joinedAt:
+                type: string
+                format: date-time
+                pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+            required:
+              - membershipId
+              - userId
+              - fullName
+              - email
+              - role
+              - status
+              - staffTitle
+              - permissions
+              - joinedAt
+            additionalProperties: false
+      required:
+        - members
+      additionalProperties: false
+    UpdateTeamMemberRequestDto:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - admin
+            - staff
+        status:
+          type: string
+          enum:
+            - active
+            - blocked
+            - left
+        permissions:
+          maxItems: 6
+          type: array
+          items:
+            type: string
+            enum:
+              - health:read
+              - clients:manage
+              - services:manage
+              - agenda:manage
+              - payments:view
+              - reports:view
+        staffTitle:
+          type: string
+          minLength: 1
+          maxLength: 80
+          nullable: true
+      additionalProperties: false
+    TeamMemberResponseDto:
+      type: object
+      properties:
+        membershipId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        userId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        fullName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - owner
+            - admin
+            - staff
+            - client
+        status:
+          type: string
+          enum:
+            - invited
+            - active
+            - blocked
+            - left
+        staffTitle:
+          type: string
+          nullable: true
+        permissions:
+          type: array
+          items:
+            type: string
+            enum:
+              - health:read
+              - clients:manage
+              - services:manage
+              - agenda:manage
+              - payments:view
+              - reports:view
+        joinedAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+      required:
+        - membershipId
+        - userId
+        - fullName
+        - email
+        - role
+        - status
+        - staffTitle
+        - permissions
+        - joinedAt
+      additionalProperties: false
+    PendingInvitationsResponseDto:
+      type: object
+      properties:
+        invitations:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+              email:
+                type: string
+              role:
+                type: string
+                enum:
+                  - owner
+                  - admin
+                  - staff
+                  - client
+              expiresAt:
+                type: string
+                format: date-time
+                pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+              createdAt:
+                type: string
+                format: date-time
+                pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+            required:
+              - id
+              - email
+              - role
+              - expiresAt
+              - createdAt
+            additionalProperties: false
+      required:
+        - invitations
+      additionalProperties: false
+    InviteRequestDto:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          format: email
+          pattern: ^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+        role:
+          type: string
+          enum:
+            - admin
+            - staff
+            - client
+      required:
+        - email
+        - role
+      additionalProperties: false
+    InvitationResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - owner
+            - admin
+            - staff
+            - client
+        expiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+      required:
+        - id
+        - email
+        - role
+        - expiresAt
+      additionalProperties: false
+    InvitationPreviewResponseDto:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - owner
+            - admin
+            - staff
+            - client
+        emailHint:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+        center:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+            name:
+              type: string
+            sectorId:
+              type: string
+            brandColor:
+              type: string
+            logoUrl:
+              type: string
+              nullable: true
+          required:
+            - id
+            - name
+            - sectorId
+            - brandColor
+            - logoUrl
+          additionalProperties: false
+      required:
+        - role
+        - emailHint
+        - expiresAt
+        - center
+      additionalProperties: false
+    AcceptedInvitationResponseDto:
+      type: object
+      properties:
+        membershipId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        centerId:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        role:
+          type: string
+          enum:
+            - owner
+            - admin
+            - staff
+            - client
+        status:
+          type: string
+          enum:
+            - invited
+            - active
+            - blocked
+            - left
+      required:
+        - membershipId
+        - centerId
+        - role
+        - status
+      additionalProperties: false
     CenterBrandingResponseDto:
       type: object
       properties:
@@ -1572,11 +2439,385 @@ components:
           type: string
         brandColor:
           type: string
+        logoUrl:
+          type: string
+          nullable: true
       required:
         - centerId
         - name
         - sectorId
         - brandColor
+        - logoUrl
+      additionalProperties: false
+    CenterSettingsResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$
+        slug:
+          type: string
+        name:
+          type: string
+        sectorId:
+          type: string
+        brandColor:
+          type: string
+        timezone:
+          type: string
+        joinCode:
+          type: string
+        status:
+          type: string
+          enum:
+            - trial
+            - active
+            - past_due
+            - suspended
+        isListed:
+          type: boolean
+        city:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        openingHours:
+          type: object
+          required: [mon, tue, wed, thu, fri, sat, sun]
+          properties:
+            mon:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            tue:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            wed:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            thu:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            fri:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            sat:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            sun:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+          additionalProperties: false
+          nullable: true
+        holidays:
+          maxItems: 100
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+              label:
+                type: string
+                minLength: 1
+                maxLength: 60
+            required:
+              - date
+              - label
+            additionalProperties: false
+          nullable: true
+        cancelPolicy:
+          type: object
+          properties:
+            freeCancellationHours:
+              type: integer
+              minimum: 0
+              maximum: 168
+            lateCancellationConsumesCredit:
+              type: boolean
+          required:
+            - freeCancellationHours
+            - lateCancellationConsumesCredit
+          additionalProperties: false
+          nullable: true
+        trialEndsAt:
+          type: string
+          format: date-time
+          pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+          nullable: true
+      required:
+        - id
+        - slug
+        - name
+        - sectorId
+        - brandColor
+        - timezone
+        - joinCode
+        - status
+        - isListed
+        - city
+        - address
+        - latitude
+        - longitude
+        - openingHours
+        - holidays
+        - cancelPolicy
+        - trialEndsAt
+      additionalProperties: false
+    UpdateCenterSettingsRequestDto:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 80
+        brandColor:
+          type: string
+          pattern: ^#[0-9A-Fa-f]{6}$
+        timezone:
+          type: string
+          maxLength: 64
+        isListed:
+          type: boolean
+        city:
+          type: string
+          minLength: 1
+          maxLength: 200
+          nullable: true
+        address:
+          type: string
+          minLength: 1
+          maxLength: 200
+          nullable: true
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+          nullable: true
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+          nullable: true
+        openingHours:
+          type: object
+          properties:
+            mon:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            tue:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            wed:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            thu:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            fri:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            sat:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+            sun:
+              maxItems: 4
+              type: array
+              items:
+                type: object
+                properties:
+                  opensAt:
+                    type: string
+                  closesAt:
+                    type: string
+                required:
+                  - opensAt
+                  - closesAt
+                additionalProperties: false
+          additionalProperties: false
+        holidays:
+          maxItems: 100
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                pattern: ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))$
+              label:
+                type: string
+                minLength: 1
+                maxLength: 60
+            required:
+              - date
+              - label
+            additionalProperties: false
+        cancelPolicy:
+          type: object
+          properties:
+            freeCancellationHours:
+              type: integer
+              minimum: 0
+              maximum: 168
+            lateCancellationConsumesCredit:
+              type: boolean
+          required:
+            - freeCancellationHours
+            - lateCancellationConsumesCredit
+          additionalProperties: false
       additionalProperties: false
     HealthResponseDto:
       type: object

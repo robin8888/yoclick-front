@@ -11,4 +11,6 @@ export type PersonalDataExportResponseDtoMembershipsItemCenter = {
   slug: string;
   sectorId: string;
   brandColor: string;
+  /** @nullable */
+  logoUrl: string | null;
 };

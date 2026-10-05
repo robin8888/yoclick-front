@@ -11,4 +11,6 @@ export type MyMembershipsResponseDtoMembershipsItemCenter = {
   slug: string;
   sectorId: string;
   brandColor: string;
+  /** @nullable */
+  logoUrl: string | null;
 };

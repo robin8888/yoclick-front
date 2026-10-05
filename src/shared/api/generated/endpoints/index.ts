@@ -4,3 +4,5 @@ export * from './health/health.ts';
 export * from './join/join.ts';
 export * from './me/me.ts';
 export * from './mfa/mfa.ts';
+export * from './onboarding/onboarding.ts';
+export * from './team/team.ts';

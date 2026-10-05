@@ -20,7 +20,7 @@ export const MeGetProfileResponse = zod.object({
   "id": zod.uuid().regex(meGetProfileResponseIdRegExp),
   "email": zod.string(),
   "fullName": zod.string(),
-  "phone": zod.array(zod.string()),
+  "phone": zod.string().nullable(),
   "birthDate": zod.iso.date().regex(meGetProfileResponseBirthDateRegExp).nullable(),
   "locale": zod.string(),
   "isEmailVerified": zod.boolean(),
@@ -53,7 +53,7 @@ export const MeUpdateProfileResponse = zod.object({
   "id": zod.uuid().regex(meUpdateProfileResponseIdRegExp),
   "email": zod.string(),
   "fullName": zod.string(),
-  "phone": zod.array(zod.string()),
+  "phone": zod.string().nullable(),
   "birthDate": zod.iso.date().regex(meUpdateProfileResponseBirthDateRegExp).nullable(),
   "locale": zod.string(),
   "isEmailVerified": zod.boolean(),
@@ -93,7 +93,8 @@ export const MeListMembershipsResponse = zod.object({
   "name": zod.string(),
   "slug": zod.string(),
   "sectorId": zod.string(),
-  "brandColor": zod.string()
+  "brandColor": zod.string(),
+  "logoUrl": zod.string().nullable()
 })
 }))
 })
@@ -194,7 +195,8 @@ export const MeExportDataResponse = zod.object({
   "name": zod.string(),
   "slug": zod.string(),
   "sectorId": zod.string(),
-  "brandColor": zod.string()
+  "brandColor": zod.string(),
+  "logoUrl": zod.string().nullable()
 })
 })),
   "consentHistory": zod.array(zod.object({

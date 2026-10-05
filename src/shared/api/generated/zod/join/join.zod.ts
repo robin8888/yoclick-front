@@ -28,7 +28,8 @@ export const JoinFindCenterByCodeResponse = zod.object({
   "slug": zod.string(),
   "sectorId": zod.string(),
   "brandColor": zod.string(),
-  "city": zod.array(zod.string())
+  "city": zod.string().nullable(),
+  "logoUrl": zod.string().nullable()
 })
 
 /**
@@ -62,6 +63,7 @@ export const JoinSearchCentersResponse = zod.object({
   "sectorId": zod.string(),
   "brandColor": zod.string(),
   "city": zod.string().nullable(),
+  "logoUrl": zod.string().nullable(),
   "distanceInKilometers": zod.number().nullable()
 }))
 })
@@ -94,5 +96,55 @@ export const JoinCenterResponse = zod.object({
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "isNewMembership": zod.boolean()
+})
+
+/**
+ * @summary Centro y rol de una invitación, con el correo ofuscado. Un código inválido, caducado o usado responde 404 INVITATION_INVALID.
+ */
+export const joinGetInvitationPathCodeMax = 24;
+
+
+
+export const JoinGetInvitationParams = zod.object({
+  "code": zod.string().min(1).max(joinGetInvitationPathCodeMax)
+})
+
+export const joinGetInvitationResponseExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const joinGetInvitationResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const JoinGetInvitationResponse = zod.object({
+  "role": zod.enum(['owner', 'admin', 'staff', 'client']),
+  "emailHint": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(joinGetInvitationResponseExpiresAtRegExp),
+  "center": zod.object({
+  "id": zod.uuid().regex(joinGetInvitationResponseCenterIdRegExp),
+  "name": zod.string(),
+  "sectorId": zod.string(),
+  "brandColor": zod.string(),
+  "logoUrl": zod.string().nullable()
+})
+})
+
+/**
+ * @summary Acepta la invitación con la cuenta cuyo correo coincide. Sirve una sola vez; nunca rebaja el rol de quien ya está dentro.
+ */
+export const joinAcceptInvitationPathCodeMax = 24;
+
+
+
+export const JoinAcceptInvitationParams = zod.object({
+  "code": zod.string().min(1).max(joinAcceptInvitationPathCodeMax)
+})
+
+export const joinAcceptInvitationResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const joinAcceptInvitationResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const JoinAcceptInvitationResponse = zod.object({
+  "membershipId": zod.uuid().regex(joinAcceptInvitationResponseMembershipIdRegExp),
+  "centerId": zod.uuid().regex(joinAcceptInvitationResponseCenterIdRegExp),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client']),
+  "status": zod.enum(['invited', 'active', 'blocked', 'left'])
 })
 

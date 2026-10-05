@@ -10,15 +10,21 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  AcceptedInvitationResponseDto,
   CenterSearchResponseDto,
+  InvitationPreviewResponseDto,
   JoinCenterResponseDto,
   PublicCenterResponseDto
 } from '../../model';
 
 
-export const getJoinFindCenterByCodeResponseMock = (overrideResponse: Partial<Extract<PublicCenterResponseDto, object>> = {}): PublicCenterResponseDto => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), slug: faker.string.alpha({length: {min: 10, max: 20}}), sectorId: faker.string.alpha({length: {min: 10, max: 20}}), brandColor: faker.string.alpha({length: {min: 10, max: 20}}), city: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), ...overrideResponse})
+export const getJoinFindCenterByCodeResponseMock = (overrideResponse: Partial<Extract<PublicCenterResponseDto, object>> = {}): PublicCenterResponseDto => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), slug: faker.string.alpha({length: {min: 10, max: 20}}), sectorId: faker.string.alpha({length: {min: 10, max: 20}}), brandColor: faker.string.alpha({length: {min: 10, max: 20}}), city: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), logoUrl: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), ...overrideResponse})
 
-export const getJoinSearchCentersResponseMock = (overrideResponse: Partial<Extract<CenterSearchResponseDto, object>> = {}): CenterSearchResponseDto => ({centers: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), slug: faker.string.alpha({length: {min: 10, max: 20}}), sectorId: faker.string.alpha({length: {min: 10, max: 20}}), brandColor: faker.string.alpha({length: {min: 10, max: 20}}), city: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), distanceInKilometers: faker.helpers.arrayElement([faker.number.float({fractionDigits: 2}), null])})), ...overrideResponse})
+export const getJoinSearchCentersResponseMock = (overrideResponse: Partial<Extract<CenterSearchResponseDto, object>> = {}): CenterSearchResponseDto => ({centers: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), slug: faker.string.alpha({length: {min: 10, max: 20}}), sectorId: faker.string.alpha({length: {min: 10, max: 20}}), brandColor: faker.string.alpha({length: {min: 10, max: 20}}), city: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), logoUrl: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), distanceInKilometers: faker.helpers.arrayElement([faker.number.float({fractionDigits: 2}), null])})), ...overrideResponse})
 
 export const getJoinCenterResponseMock = (overrideResponse: Partial<Extract<JoinCenterResponseDto, object>> = {}): JoinCenterResponseDto => ({membershipId: faker.string.uuid(), centerId: faker.string.uuid(), role: faker.helpers.arrayElement(['owner','admin','staff','client'] as const), status: faker.helpers.arrayElement(['invited','active','blocked','left'] as const), isNewMembership: faker.datatype.boolean(), ...overrideResponse})
+
+export const getJoinGetInvitationResponseMock = (overrideResponse: Partial<Extract<InvitationPreviewResponseDto, object>> = {}): InvitationPreviewResponseDto => ({role: faker.helpers.arrayElement(['owner','admin','staff','client'] as const), emailHint: faker.string.alpha({length: {min: 10, max: 20}}), expiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', center: {id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), sectorId: faker.string.alpha({length: {min: 10, max: 20}}), brandColor: faker.string.alpha({length: {min: 10, max: 20}}), logoUrl: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null])}, ...overrideResponse})
+
+export const getJoinAcceptInvitationResponseMock = (overrideResponse: Partial<Extract<AcceptedInvitationResponseDto, object>> = {}): AcceptedInvitationResponseDto => ({membershipId: faker.string.uuid(), centerId: faker.string.uuid(), role: faker.helpers.arrayElement(['owner','admin','staff','client'] as const), status: faker.helpers.arrayElement(['invited','active','blocked','left'] as const), ...overrideResponse})
 

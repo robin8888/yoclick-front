@@ -16,6 +16,7 @@ export function buildBranding(
     name: 'Studio Norte',
     sectorId: 'estudio',
     brandColor: '#E4572E',
+    logoUrl: null,
     ...overrides,
   };
 }
@@ -34,6 +35,7 @@ export function buildMembership(
       slug: 'studio-norte',
       sectorId: 'estudio',
       brandColor: '#E4572E',
+      logoUrl: null,
     },
     ...overrides,
   };

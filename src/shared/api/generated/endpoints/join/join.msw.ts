@@ -14,18 +14,22 @@ import type {
 } from 'msw';
 
 import type {
+  AcceptedInvitationResponseDto,
   CenterSearchResponseDto,
+  InvitationPreviewResponseDto,
   JoinCenterResponseDto,
   PublicCenterResponseDto
 } from '../../model';
 
 import {
+  getJoinAcceptInvitationResponseMock,
   getJoinCenterResponseMock,
   getJoinFindCenterByCodeResponseMock,
+  getJoinGetInvitationResponseMock,
   getJoinSearchCentersResponseMock
 } from './join.faker.ts';
 
-export { getJoinFindCenterByCodeResponseMock, getJoinSearchCentersResponseMock, getJoinCenterResponseMock } from './join.faker.ts';
+export { getJoinFindCenterByCodeResponseMock, getJoinSearchCentersResponseMock, getJoinCenterResponseMock, getJoinGetInvitationResponseMock, getJoinAcceptInvitationResponseMock } from './join.faker.ts';
 
 
 export const getJoinFindCenterByCodeMockHandler = (overrideResponse?: PublicCenterResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PublicCenterResponseDto> | PublicCenterResponseDto), options?: RequestHandlerOptions) => {
@@ -63,8 +67,34 @@ export const getJoinCenterMockHandler = (overrideResponse?: JoinCenterResponseDt
       })
   }, options)
 }
+
+export const getJoinGetInvitationMockHandler = (overrideResponse?: InvitationPreviewResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<InvitationPreviewResponseDto> | InvitationPreviewResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/join/invitations/:code', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getJoinGetInvitationResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getJoinAcceptInvitationMockHandler = (overrideResponse?: AcceptedInvitationResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<AcceptedInvitationResponseDto> | AcceptedInvitationResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/join/invitations/:code/accept', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getJoinAcceptInvitationResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getJoinMock = () => [
   getJoinFindCenterByCodeMockHandler(),
   getJoinSearchCentersMockHandler(),
-  getJoinCenterMockHandler()
+  getJoinCenterMockHandler(),
+  getJoinGetInvitationMockHandler(),
+  getJoinAcceptInvitationMockHandler()
 ]

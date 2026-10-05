@@ -6,23 +6,29 @@
  * OpenAPI spec version: 0.1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
   CenterBrandingResponseDto,
-  ProblemDetailsDto
+  CenterSettingsResponseDto,
+  ProblemDetailsDto,
+  UpdateCenterSettingsRequestDto
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -137,6 +143,294 @@ export function useCentersGetBranding<TData = Awaited<ReturnType<typeof centersG
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getCentersGetBrandingQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getCentersGetSettingsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}`
+}
+
+/**
+ * @summary Datos, horario, festivos y política de cancelación del centro. Devuelve ETag.
+ */
+export const centersGetSettings = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<CenterSettingsResponseDto> => {
+
+  return apiMutator<CenterSettingsResponseDto>(getCentersGetSettingsUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersGetSettingsQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}`
+    ] as const;
+    }
+
+
+export const getCentersGetSettingsQueryOptions = <TData = Awaited<ReturnType<typeof centersGetSettings>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCentersGetSettingsQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersGetSettings>>> = ({ signal }) => centersGetSettings(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CentersGetSettingsQueryResult = NonNullable<Awaited<ReturnType<typeof centersGetSettings>>>
+export type CentersGetSettingsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useCentersGetSettings<TData = Awaited<ReturnType<typeof centersGetSettings>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetSettings>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetSettings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetSettings<TData = Awaited<ReturnType<typeof centersGetSettings>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetSettings>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetSettings>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetSettings<TData = Awaited<ReturnType<typeof centersGetSettings>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Datos, horario, festivos y política de cancelación del centro. Devuelve ETag.
+ */
+
+export function useCentersGetSettings<TData = Awaited<ReturnType<typeof centersGetSettings>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSettings>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCentersGetSettingsQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getCentersUpdateSettingsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}`
+}
+
+/**
+ * @summary Modifica datos del centro. Exige If-Match: 428 si falta, 412 si otra persona lo cambió antes.
+ */
+export const centersUpdateSettings = async (centerId: string,
+    updateCenterSettingsRequestDto: UpdateCenterSettingsRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<CenterSettingsResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<CenterSettingsResponseDto>(getCentersUpdateSettingsUrl(centerId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(updateCenterSettingsRequestDto)
+  }
+);}
+
+
+
+
+
+export const getCentersUpdateSettingsMutationKey = () => ['centersUpdateSettings'] as const;
+
+export const getCentersUpdateSettingsMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersUpdateSettings>>, TError,CentersUpdateSettingsMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof centersUpdateSettings>>, TError,CentersUpdateSettingsMutationVariables, TContext> => {
+
+const mutationKey = getCentersUpdateSettingsMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersUpdateSettings>>, CentersUpdateSettingsMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  centersUpdateSettings(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CentersUpdateSettingsMutationResult = NonNullable<Awaited<ReturnType<typeof centersUpdateSettings>>>
+    export type CentersUpdateSettingsMutationBody = UpdateCenterSettingsRequestDto
+    export type CentersUpdateSettingsMutationError = ErrorType<ProblemDetailsDto>
+    export type CentersUpdateSettingsMutationVariables = {centerId: string;data: UpdateCenterSettingsRequestDto}
+
+    /**
+ * @summary Modifica datos del centro. Exige If-Match: 428 si falta, 412 si otra persona lo cambió antes.
+ */
+export const useCentersUpdateSettings = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersUpdateSettings>>, TError,CentersUpdateSettingsMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof centersUpdateSettings>>,
+        TError,
+        CentersUpdateSettingsMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCentersUpdateSettingsMutationOptions(options), queryClient);
+    }
+    export const getCentersGetLogoUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/logo`
+}
+
+/**
+ * @summary Logo del centro (imagen). Público, con ETag y caché de un día; admite If-None-Match (304).
+ */
+export const centersGetLogo = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<Blob> => {
+
+  return apiMutator<Blob>(getCentersGetLogoUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersGetLogoQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/logo`
+    ] as const;
+    }
+
+
+export const getCentersGetLogoQueryOptions = <TData = Awaited<ReturnType<typeof centersGetLogo>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCentersGetLogoQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersGetLogo>>> = ({ signal }) => centersGetLogo(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CentersGetLogoQueryResult = NonNullable<Awaited<ReturnType<typeof centersGetLogo>>>
+export type CentersGetLogoQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useCentersGetLogo<TData = Awaited<ReturnType<typeof centersGetLogo>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetLogo>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetLogo>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetLogo<TData = Awaited<ReturnType<typeof centersGetLogo>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetLogo>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetLogo>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetLogo<TData = Awaited<ReturnType<typeof centersGetLogo>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Logo del centro (imagen). Público, con ETag y caché de un día; admite If-None-Match (304).
+ */
+
+export function useCentersGetLogo<TData = Awaited<ReturnType<typeof centersGetLogo>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetLogo>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCentersGetLogoQueryOptions(centerId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

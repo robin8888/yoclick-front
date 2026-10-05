@@ -25,7 +25,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AcceptedInvitationResponseDto,
   CenterSearchResponseDto,
+  InvitationPreviewResponseDto,
   JoinCenterRequestDto,
   JoinCenterResponseDto,
   JoinSearchCentersParams,
@@ -350,4 +352,177 @@ export const useJoinCenter = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getJoinCenterMutationOptions(options), queryClient);
+    }
+    export const getJoinGetInvitationUrl = (code: string,) => {
+
+
+
+
+  return `/v1/join/invitations/${code}`
+}
+
+/**
+ * @summary Centro y rol de una invitación, con el correo ofuscado. Un código inválido, caducado o usado responde 404 INVITATION_INVALID.
+ */
+export const joinGetInvitation = async (code: string, options?: Parameters<typeof apiMutator>[1]): Promise<InvitationPreviewResponseDto> => {
+
+  return apiMutator<InvitationPreviewResponseDto>(getJoinGetInvitationUrl(code),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getJoinGetInvitationQueryKey = (code: string,) => {
+    return [
+    `/v1/join/invitations/${code}`
+    ] as const;
+    }
+
+
+export const getJoinGetInvitationQueryOptions = <TData = Awaited<ReturnType<typeof joinGetInvitation>>, TError = ErrorType<ProblemDetailsDto>>(code: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getJoinGetInvitationQueryKey(code);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof joinGetInvitation>>> = ({ signal }) => joinGetInvitation(code, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: code !== null && code !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type JoinGetInvitationQueryResult = NonNullable<Awaited<ReturnType<typeof joinGetInvitation>>>
+export type JoinGetInvitationQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useJoinGetInvitation<TData = Awaited<ReturnType<typeof joinGetInvitation>>, TError = ErrorType<ProblemDetailsDto>>(
+ code: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof joinGetInvitation>>,
+          TError,
+          Awaited<ReturnType<typeof joinGetInvitation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useJoinGetInvitation<TData = Awaited<ReturnType<typeof joinGetInvitation>>, TError = ErrorType<ProblemDetailsDto>>(
+ code: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof joinGetInvitation>>,
+          TError,
+          Awaited<ReturnType<typeof joinGetInvitation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useJoinGetInvitation<TData = Awaited<ReturnType<typeof joinGetInvitation>>, TError = ErrorType<ProblemDetailsDto>>(
+ code: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Centro y rol de una invitación, con el correo ofuscado. Un código inválido, caducado o usado responde 404 INVITATION_INVALID.
+ */
+
+export function useJoinGetInvitation<TData = Awaited<ReturnType<typeof joinGetInvitation>>, TError = ErrorType<ProblemDetailsDto>>(
+ code: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof joinGetInvitation>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getJoinGetInvitationQueryOptions(code,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getJoinAcceptInvitationUrl = (code: string,) => {
+
+
+
+
+  return `/v1/join/invitations/${code}/accept`
+}
+
+/**
+ * @summary Acepta la invitación con la cuenta cuyo correo coincide. Sirve una sola vez; nunca rebaja el rol de quien ya está dentro.
+ */
+export const joinAcceptInvitation = async (code: string, options?: Parameters<typeof apiMutator>[1]): Promise<AcceptedInvitationResponseDto> => {
+
+  return apiMutator<AcceptedInvitationResponseDto>(getJoinAcceptInvitationUrl(code),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getJoinAcceptInvitationMutationKey = () => ['joinAcceptInvitation'] as const;
+
+export const getJoinAcceptInvitationMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof joinAcceptInvitation>>, TError,JoinAcceptInvitationMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof joinAcceptInvitation>>, TError,JoinAcceptInvitationMutationVariables, TContext> => {
+
+const mutationKey = getJoinAcceptInvitationMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof joinAcceptInvitation>>, JoinAcceptInvitationMutationVariables> = (props) => {
+          const {code} = props ?? {};
+
+          return  joinAcceptInvitation(code,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type JoinAcceptInvitationMutationResult = NonNullable<Awaited<ReturnType<typeof joinAcceptInvitation>>>
+
+    export type JoinAcceptInvitationMutationError = ErrorType<ProblemDetailsDto>
+    export type JoinAcceptInvitationMutationVariables = {code: string}
+
+    /**
+ * @summary Acepta la invitación con la cuenta cuyo correo coincide. Sirve una sola vez; nunca rebaja el rol de quien ya está dentro.
+ */
+export const useJoinAcceptInvitation = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof joinAcceptInvitation>>, TError,JoinAcceptInvitationMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof joinAcceptInvitation>>,
+        TError,
+        JoinAcceptInvitationMutationVariables,
+        TContext
+      > => {
+      return useMutation(getJoinAcceptInvitationMutationOptions(options), queryClient);
     }

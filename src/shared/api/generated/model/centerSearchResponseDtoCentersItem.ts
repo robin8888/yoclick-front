@@ -16,5 +16,7 @@ export type CenterSearchResponseDtoCentersItem = {
   /** @nullable */
   city: string | null;
   /** @nullable */
+  logoUrl: string | null;
+  /** @nullable */
   distanceInKilometers: number | null;
 };

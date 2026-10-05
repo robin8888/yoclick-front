@@ -16,3 +16,11 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 7 | **Inicio de sesión con Apple y Google** (decisión pendiente) y **QR de centro (`jqr`)**. | Fuera de este ticket: ni botones ni rutas. |
 | 8 | **Búsqueda por cercanía** (`lat`/`lng`): la app aún no pide el permiso de ubicación (`expo-location` no está en el proyecto). | La búsqueda es solo por texto. |
 | 9 | **Deep links** `https://yoclick.app/j/{code}` e `/i/{token}`. | Sin implementar en este ticket. |
+
+## APP-9 · Alta de centro desde la app
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Logo del centro**~~ Resuelto (5 oct 2026): `PUT /v1/onboarding/centers/{id}/logo` (propietario, sin MFA) y `GET /v1/centers/{id}/logo` público; `logoUrl` (ruta relativa) en branding, join, búsqueda, mis centros e invitación. Pendiente: extraer el color del logo (`o2`) y cambiarlo desde el panel de administración (ruta con MFA). | El alta sube el logo en la pantalla `/(onboarding)/logo`; el color se sigue eligiendo de una paleta. |
+| 2 | **Servicios, horario, equipo y plan del alta** (`o3`, `osvc`, `o4`, `o5`): los servicios son API-3. | El alta se reduce a datos y marca; la prueba de 14 días empieza al crear el centro. |
+| 3 | **Segundo factor del dueño**: las rutas de administración exigen sesión con MFA (`MFA_REQUIRED`), pero la app aún no tiene pantalla para activar TOTP (`/v1/me/mfa/totp/setup` y `/confirm`). | Se puede crear el centro; el panel de administración queda a la espera de esa pantalla. |

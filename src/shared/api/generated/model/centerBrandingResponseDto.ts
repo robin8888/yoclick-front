@@ -12,4 +12,6 @@ export interface CenterBrandingResponseDto {
   name: string;
   sectorId: string;
   brandColor: string;
+  /** @nullable */
+  logoUrl: string | null;
 }
