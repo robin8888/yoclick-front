@@ -21,4 +21,5 @@ export interface CreateCenterRequestDto {
      * @maxLength 80
      */
   city?: string;
+  isListed?: boolean;
 }

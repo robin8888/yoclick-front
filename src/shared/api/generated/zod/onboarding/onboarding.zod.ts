@@ -21,13 +21,14 @@ export const onboardingCreateCenterBodyNameMax = 80;
 export const onboardingCreateCenterBodyBrandColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
 export const onboardingCreateCenterBodyCityMax = 80;
 
-
+export const onboardingCreateCenterBodyIsListedDefault = false;
 
 export const OnboardingCreateCenterBody = zod.object({
   "name": zod.string().min(onboardingCreateCenterBodyNameMin).max(onboardingCreateCenterBodyNameMax),
   "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']),
   "brandColor": zod.string().regex(onboardingCreateCenterBodyBrandColorRegExp).optional(),
-  "city": zod.string().min(1).max(onboardingCreateCenterBodyCityMax).optional()
+  "city": zod.string().min(1).max(onboardingCreateCenterBodyCityMax).optional(),
+  "isListed": zod.boolean().default(onboardingCreateCenterBodyIsListedDefault)
 })
 
 export const onboardingCreateCenterResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -42,6 +43,7 @@ export const OnboardingCreateCenterResponse = zod.object({
   "name": zod.string(),
   "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']),
   "brandColor": zod.string(),
+  "isListed": zod.boolean(),
   "joinCode": zod.string(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(onboardingCreateCenterResponseTrialEndsAtRegExp),
   "logoUrl": zod.string().nullable()

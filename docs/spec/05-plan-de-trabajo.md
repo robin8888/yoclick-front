@@ -84,6 +84,7 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Basado en el historial de g
 | API-308 | Agenda del staff; mover / reasignar / cancelar con aviso | El cliente recibe notificación |
 | API-309 | Check-in QR (token Ed25519 60 s, un uso) y pasar lista | Token reutilizado → `409`; de otro centro → `404` |
 | API-310 | `.ics` de una reserva | Valida en calendarios iOS y Google |
+| API-312 | Registro de clase con temporizador: el profesional inicia y termina la clase (`start`/`end`), el servidor guarda `startedAt`, `endedAt` y la duración real, y el propietario ve el registro (previsto frente a real, sin cerrar) | Solo el profesional asignado (o admin/owner) puede iniciar o cerrar; cerrar dos veces es idempotente; el listado de registros exige MFA |
 | API-311 | Familias: reservar para un menor | Tutor ve las reservas del menor; otro cliente no |
 
 ### API-4 · Cobros
@@ -151,7 +152,7 @@ Aceptación de cada componente: historia en Storybook, test RNTL (render, accesi
 Tarifas, compra con PaymentSheet (tarjeta, Apple Pay, Google Pay), monedero, cupón, pago al reservar, recibos. Aceptación: E2E en modo test de Stripe; la UI no marca «pagado» hasta confirmación del servidor.
 
 ### APP-5 · Staff
-`iagenda`, `iedit`, escáner QR (`iscan`), pasar lista, disponibilidad y ausencias, ficha de cliente, perfil profesional con subida de vídeo. Aceptación: E2E «escanear QR válido → asistencia marcada; QR caducado → error claro».
+`iagenda`, `iedit`, **iniciar y terminar la clase con temporizador (el tiempo sale de la hora de inicio del servidor)**, escáner QR (`iscan`), pasar lista, disponibilidad y ausencias, ficha de cliente, perfil profesional con subida de vídeo. Aceptación: E2E «escanear QR válido → asistencia marcada; QR caducado → error claro».
 
 ### APP-6 · Admin
 Panel, servicios (editor completo), tarifas, clientes + importación CSV, grupos, equipo y permisos, invitar (QR, enlace, código, cartel), marca (logo y color con vista previa AA), horario y festivos, revisión de perfiles, informes, seguridad (2FA, actividad), legal, suscripción.
