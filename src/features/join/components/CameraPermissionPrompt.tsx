@@ -1,8 +1,11 @@
-import { Linking } from 'react-native';
+import { Linking, View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
+import { IconBadge } from '@/ui/atoms/IconBadge';
 import { Text } from '@/ui/atoms/Text';
+
+const PERMISSION_BADGE_STYLE = { alignItems: 'center' } as const;
 
 interface CameraPermissionPromptProps {
   /** Si el sistema ya no deja volver a preguntar, solo se puede activar desde Ajustes. */
@@ -17,7 +20,12 @@ export function CameraPermissionPrompt({
 }: Readonly<CameraPermissionPromptProps>): React.JSX.Element {
   return (
     <>
-      <Text color="ink2">{i18n.t('join.scan.permissionExplanation')}</Text>
+      <View style={PERMISSION_BADGE_STYLE}>
+        <IconBadge iconName="camera" />
+      </View>
+      <Text color="ink2" align="center">
+        {i18n.t('join.scan.permissionExplanation')}
+      </Text>
       <Button
         label={
           canAskAgain

@@ -10,6 +10,8 @@ export interface PendingCenter {
   readonly name: string;
   readonly sectorId: string;
   readonly brandHexColor: string;
+  /** Ruta relativa del logo en la API (`/v1/centers/{id}/logo?v=…`); `null` si no tiene. */
+  readonly logoUrl: string | null;
   /** Solo si entró con código: un centro privado lo exige al unirse. */
   readonly joinCode?: string | undefined;
 }
@@ -19,6 +21,7 @@ interface CenterWithBrand {
   name: string;
   sectorId: string;
   brandColor: string;
+  logoUrl: string | null;
 }
 
 function mapCenterToPendingCenter(center: CenterWithBrand, joinCode?: string): PendingCenter {
@@ -27,6 +30,7 @@ function mapCenterToPendingCenter(center: CenterWithBrand, joinCode?: string): P
     name: center.name,
     sectorId: center.sectorId,
     brandHexColor: center.brandColor,
+    logoUrl: center.logoUrl,
     joinCode,
   };
 }

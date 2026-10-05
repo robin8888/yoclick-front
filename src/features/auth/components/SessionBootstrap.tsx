@@ -4,7 +4,7 @@ import { LoadErrorScreen } from '@/features/join';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
+import { LoadingScreenTemplate } from '@/ui/templates/LoadingScreenTemplate';
 
 import { useRestoreSessionOnLaunch } from '../hooks/useRestoreSessionOnLaunch';
 
@@ -20,7 +20,8 @@ export function SessionBootstrap({ children }: Readonly<SessionBootstrapProps>):
   const { hasRestoreFailed, retryRestore } = useRestoreSessionOnLaunch();
 
   if (sessionStatus !== 'restoring') return <>{children}</>;
-  if (!hasRestoreFailed) return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
+  if (!hasRestoreFailed)
+    return <LoadingScreenTemplate loadingLabel={getSharedStateCopy().loadingLabel} />;
   return (
     <LoadErrorScreen
       screenTitle={i18n.t('join.start.overline')}

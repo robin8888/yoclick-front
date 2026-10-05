@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
-import { ListItem } from '@/ui/molecules/ListItem';
+import { JoinOptionCard } from './JoinOptionCard';
 
 /** Las tres formas de unirse a un centro: QR, código o búsqueda. */
 export function JoinStartOptions(): React.JSX.Element {
@@ -9,26 +9,26 @@ export function JoinStartOptions(): React.JSX.Element {
 
   return (
     <>
-      <ListItem
-        leadingIconName="qrCode"
+      <JoinOptionCard
+        iconName="qrCode"
         title={i18n.t('join.start.qrOptionTitle')}
-        subtitle={i18n.t('join.start.qrOptionDescription')}
+        description={i18n.t('join.start.qrOptionDescription')}
         onPress={() => {
           router.push('/join/scan');
         }}
       />
-      <ListItem
-        leadingIconName="lock"
+      <JoinOptionCard
+        iconName="lock"
         title={i18n.t('join.start.codeOptionTitle')}
-        subtitle={i18n.t('join.start.codeOptionDescription')}
+        description={i18n.t('join.start.codeOptionDescription')}
         onPress={() => {
           router.push('/join/code');
         }}
       />
-      <ListItem
-        leadingIconName="search"
+      <JoinOptionCard
+        iconName="search"
         title={i18n.t('join.start.searchOptionTitle')}
-        subtitle={i18n.t('join.start.searchOptionDescription')}
+        description={i18n.t('join.start.searchOptionDescription')}
         onPress={() => {
           router.push('/join/search');
         }}

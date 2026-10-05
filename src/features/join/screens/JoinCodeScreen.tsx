@@ -2,13 +2,17 @@ import { useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
+import { Logo } from '@/ui/atoms/Logo';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
-import { FormTextField } from '@/ui/molecules/FormTextField';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { LargeCodeField } from '../components/LargeCodeField';
 import { useJoinCodeForm } from '../hooks/useJoinCodeForm';
 import { MAX_JOIN_CODE_INPUT_LENGTH } from '../model/join-code';
 import { getJoinCodeErrorMessage } from './join-error-messages';
+
+// Logotipo completo en blanco, del mismo tamaño que en el inicio de sesión y el registro.
+const CODE_LOGO_HEIGHT = 110;
 
 /** Prototipo `jcode`. */
 export function JoinCodeScreen(): React.JSX.Element {
@@ -21,6 +25,9 @@ export function JoinCodeScreen(): React.JSX.Element {
       subtitle={i18n.t('join.code.subtitle')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
+      hasPlatformHeroBackground
+      isHeaderCentered
+      headerAccessory={<Logo variant="lockup" height={CODE_LOGO_HEIGHT} />}
       footer={
         <Button
           label={i18n.t('join.code.submitLabel')}
@@ -33,14 +40,13 @@ export function JoinCodeScreen(): React.JSX.Element {
       {searchError === null ? null : (
         <FormErrorBanner message={getJoinCodeErrorMessage(searchError)} />
       )}
-      <FormTextField
+      <LargeCodeField
         control={control}
         name="joinCode"
         label={i18n.t('join.code.fieldLabel')}
+        placeholder={i18n.t('join.code.placeholder')}
         helperText={i18n.t('join.code.fieldHelper')}
-        autoCapitalize="characters"
         maxLength={MAX_JOIN_CODE_INPUT_LENGTH}
-        returnKeyType="search"
         onSubmitEditing={submitJoinCode}
       />
     </ScreenTemplate>

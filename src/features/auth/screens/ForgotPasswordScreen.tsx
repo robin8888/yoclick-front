@@ -15,6 +15,7 @@ export function ForgotPasswordScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate
+      hasPlatformHeroBackground
       title={i18n.t('auth.forgotPassword.title')}
       subtitle={i18n.t('auth.forgotPassword.subtitle')}
       onBackPress={router.back}

@@ -1,8 +1,9 @@
 import { Controller, type Control } from 'react-hook-form';
+import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
-import { ListItem } from '@/ui/molecules/ListItem';
+import { CHOICE_CARD_LIST_STYLE, ChoiceCard } from '@/ui/molecules/ChoiceCard';
 
 import { GOAL_IDS, toggleGoalSelection } from '../model/goal-options';
 import type { RegisterGoalsFormValues } from '../schemas/auth-forms.schema';
@@ -19,16 +20,19 @@ export function GoalsField({ control }: Readonly<GoalsFieldProps>): React.JSX.El
       render={({ field }) => (
         <>
           <Text variant="titleMd">{i18n.t('auth.register.goalsQuestion')}</Text>
-          {GOAL_IDS.map((goalId) => (
-            <ListItem
-              key={goalId}
-              title={i18n.t(`auth.register.goals.${goalId}`)}
-              isSelected={field.value.includes(goalId)}
-              onPress={() => {
-                field.onChange(toggleGoalSelection(field.value, goalId));
-              }}
-            />
-          ))}
+          <View style={CHOICE_CARD_LIST_STYLE}>
+            {GOAL_IDS.map((goalId) => (
+              <ChoiceCard
+                key={goalId}
+                indicator="checkbox"
+                label={i18n.t(`auth.register.goals.${goalId}`)}
+                isSelected={field.value.includes(goalId)}
+                onPress={() => {
+                  field.onChange(toggleGoalSelection(field.value, goalId));
+                }}
+              />
+            ))}
+          </View>
         </>
       )}
     />

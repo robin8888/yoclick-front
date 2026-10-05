@@ -13,7 +13,13 @@ jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 const FORJA_MEMBERSHIP = buildMembership({
   membershipId: 'membership-forja',
   centerId: FORJA_CENTER_ID,
-  center: { name: 'Forja', slug: 'forja', sectorId: 'readap', brandColor: '#2446C7' },
+  center: {
+    name: 'Forja',
+    slug: 'forja',
+    sectorId: 'readap',
+    brandColor: '#2446C7',
+    logoUrl: null,
+  },
 });
 
 describe('MyCentersScreen', () => {

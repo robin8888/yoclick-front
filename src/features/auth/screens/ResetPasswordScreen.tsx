@@ -17,6 +17,7 @@ export function ResetPasswordScreen(): React.JSX.Element {
   if (form.email === null) return <Redirect href="/(auth)/forgot-password" />;
   return (
     <ScreenTemplate
+      hasPlatformHeroBackground
       title={i18n.t('auth.resetPassword.title')}
       subtitle={i18n.t('auth.resetPassword.subtitle', { email: form.email })}
       onBackPress={router.back}

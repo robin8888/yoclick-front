@@ -2,7 +2,8 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
-import { usePendingCenterStore } from '@/features/join';
+import { usePendingCenterStore, usePendingInvitationStore } from '@/features/join';
+import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { getSessionServices } from '@/shared/auth/default-session-services';
 
 import { useAuthFlowStore } from '../model/auth-flow-store';
@@ -27,6 +28,8 @@ export function useSignOut(): SignOut {
       .signOut()
       .then(() => {
         clearPendingCenter();
+        usePendingInvitationStore.getState().clearInvitation();
+        useCenterCreationIntentStore.getState().finishCenterCreation();
         useAuthFlowStore.setState({
           registrationDraft: null,
           pendingEmail: null,
@@ -35,7 +38,7 @@ export function useSignOut(): SignOut {
         });
         void Image.clearMemoryCache();
         void Image.clearDiskCache();
-        router.replace('/join');
+        router.replace('/');
       })
       .finally(() => {
         setIsSigningOut(false);

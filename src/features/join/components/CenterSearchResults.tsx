@@ -1,9 +1,8 @@
 import type { CenterSearchResponseDtoCentersItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { EmptyState } from '@/ui/molecules/EmptyState';
-import { ListItem } from '@/ui/molecules/ListItem';
 
+import { CenterResultCard } from './CenterResultCard';
 import { formatCenterCity } from '../model/pending-center';
 
 interface CenterSearchResultsProps {
@@ -40,11 +39,12 @@ export function CenterSearchResults({
   return (
     <>
       {centers.map((center) => (
-        <ListItem
+        <CenterResultCard
           key={center.id}
-          leading={<Avatar name={center.name} isDecorative />}
-          title={center.name}
-          subtitle={describeCenterLocation(center)}
+          name={center.name}
+          location={describeCenterLocation(center)}
+          brandHexColor={center.brandColor}
+          logoUrl={center.logoUrl}
           onPress={() => {
             onCenterSelect(center);
           }}

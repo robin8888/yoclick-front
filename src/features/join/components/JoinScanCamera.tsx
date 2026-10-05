@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { useTheme } from '@/shared/theme';
 
+import { ScanViewfinder } from './ScanViewfinder';
 import { CAMERA_FILL_STYLE, createCameraFrameStyle } from './JoinScanCamera.styles';
 
 interface JoinScanCameraProps {
@@ -31,6 +32,7 @@ export function JoinScanCamera({
               }
         }
       />
+      <ScanViewfinder />
     </View>
   );
 }

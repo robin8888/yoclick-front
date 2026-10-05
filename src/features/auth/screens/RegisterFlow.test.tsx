@@ -1,6 +1,8 @@
 /* eslint-disable sonarjs/no-hardcoded-passwords -- contraseñas de prueba, no credenciales reales */
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
+import { usePendingInvitationStore } from '@/features/join';
+import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -168,5 +170,76 @@ describe('RegisterGoalsScreen', () => {
       'Esa contraseña aparece en filtraciones públicas. Elige otra',
     );
     expect(useAuthFlowStore.getState().registrationDraft).not.toBeNull();
+  });
+});
+
+describe('RegisterAccountScreen · Soy…', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    act(() => {
+      useAuthFlowStore.setState({ registrationDraft: null, pendingEmail: null });
+      useCenterCreationIntentStore.getState().finishCenterCreation();
+      usePendingInvitationStore.getState().clearInvitation();
+    });
+  });
+
+  function acceptRequiredConsents(): void {
+    fireEvent.press(screen.getByRole('checkbox', { name: 'Acepto la política de privacidad.' }));
+    fireEvent.press(screen.getByRole('checkbox', { name: 'Acepto las condiciones del servicio.' }));
+  }
+
+  it('offers the three roles and starts as a student', () => {
+    renderScreen(<RegisterAccountScreen />);
+
+    expect(screen.getByRole('button', { name: /Soy propietario/ })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Soy instructor o profesor/ })).toBeOnTheScreen();
+    expect(
+      screen.getByRole('button', { name: /Soy alumno o cliente/, selected: true }),
+    ).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeOnTheScreen();
+  });
+
+  it('registers an owner right away and remembers they want to create a center', async () => {
+    mockApi({ 'POST /v1/auth/register': { status: 'verification_sent' } });
+    renderScreen(<RegisterAccountScreen />);
+    fillAccount();
+    acceptRequiredConsents();
+    fireEvent.press(screen.getByRole('button', { name: /Soy propietario/ }));
+
+    fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+    await waitFor(() => {
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/(auth)/verify-email');
+    });
+    expect(findApiCall('POST', '/v1/auth/register')?.body).not.toHaveProperty('accountRole');
+    expect(useCenterCreationIntentStore.getState().isCenterCreationRequested).toBe(true);
+    expect(usePendingInvitationStore.getState().isInvitationExpected).toBe(false);
+  });
+
+  it('registers an instructor right away and remembers they expect an invitation', async () => {
+    mockApi({ 'POST /v1/auth/register': { status: 'verification_sent' } });
+    renderScreen(<RegisterAccountScreen />);
+    fillAccount();
+    acceptRequiredConsents();
+    fireEvent.press(screen.getByRole('button', { name: /Soy instructor o profesor/ }));
+
+    fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+    await waitFor(() => {
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/(auth)/verify-email');
+    });
+    expect(usePendingInvitationStore.getState().isInvitationExpected).toBe(true);
+    expect(useCenterCreationIntentStore.getState().isCenterCreationRequested).toBe(false);
+  });
+
+  it('preselects instructor when an invitation link was opened', () => {
+    act(() => {
+      usePendingInvitationStore.getState().saveInvitationCode('INV123');
+    });
+    renderScreen(<RegisterAccountScreen />);
+
+    expect(
+      screen.getByRole('button', { name: /Soy instructor o profesor/, selected: true }),
+    ).toBeOnTheScreen();
   });
 });

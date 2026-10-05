@@ -37,6 +37,7 @@ describe('JoinConfirmScreen', () => {
       name: 'Studio Norte',
       sectorId: 'estudio',
       brandHexColor: '#E4572E',
+      logoUrl: null,
       joinCode: 'NORTE7',
     });
     renderScreen(<JoinConfirmScreen centerId={NORTE_CENTER_ID} />);

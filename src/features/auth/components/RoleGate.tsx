@@ -5,7 +5,7 @@ import { LoadErrorScreen } from '@/features/join';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
+import { LoadingScreenTemplate } from '@/ui/templates/LoadingScreenTemplate';
 
 import { useHomeDestination } from '../hooks/useHomeDestination';
 import type { HomeDestinationKind } from '../model/resolve-home-destination';
@@ -16,14 +16,14 @@ interface RoleGateProps {
 }
 
 /**
- * Guarda de un grupo de rutas (`(client)`, `(staff)`, `(admin)`): sin sesión va a «Unirse» y con
+ * Guarda de un grupo de rutas (`(client)`, `(staff)`, `(admin)`): sin sesión vuelve a la raíz (iniciar sesión o registrarse) y con
  * otro rol vuelve a la raíz, que lo reencamina. Es solo usabilidad: la API decide los permisos.
  */
 export function RoleGate({ allowedKind, children }: Readonly<RoleGateProps>): React.JSX.Element {
   const isSignedIn = useSessionStore((state) => state.status === 'signedIn');
   const { destination, error, isRefetching, retry } = useHomeDestination();
 
-  if (!isSignedIn) return <Redirect href="/join" />;
+  if (!isSignedIn) return <Redirect href="/" />;
   if (error !== null && destination === null) {
     return (
       <LoadErrorScreen
@@ -36,7 +36,7 @@ export function RoleGate({ allowedKind, children }: Readonly<RoleGateProps>): Re
     );
   }
   if (destination === null) {
-    return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
+    return <LoadingScreenTemplate loadingLabel={getSharedStateCopy().loadingLabel} />;
   }
   if (destination.kind !== allowedKind) return <Redirect href="/" />;
   return <>{children}</>;

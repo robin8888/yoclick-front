@@ -1,12 +1,12 @@
 import { useRouter } from 'expo-router';
 
-import { useMyCenters } from '@/features/join';
-import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { CenterIdentityHeader } from '../components/CenterIdentityHeader';
+import { useActiveCenterSummary } from '../hooks/useActiveCenterSummary';
 import { useSignOut } from '../hooks/useSignOut';
 
 interface SignedInPlaceholderScreenProps {
@@ -22,16 +22,16 @@ export function SignedInPlaceholderScreen({
   canSwitchCenter,
 }: Readonly<SignedInPlaceholderScreenProps>): React.JSX.Element {
   const router = useRouter();
-  const activeCenterId = useSessionStore((state) => state.activeCenterId);
-  const { data: myCenters } = useMyCenters();
   const { signOut, isSigningOut } = useSignOut();
-  const centerName = myCenters?.memberships.find(
-    (membership) => membership.centerId === activeCenterId,
-  )?.center.name;
+  const activeCenter = useActiveCenterSummary();
 
   return (
     <ScreenTemplate
-      title={i18n.t('auth.session.placeholderTitle', { centerName: centerName ?? 'Yoclick' })}
+      title={i18n.t('auth.session.placeholderTitle', { centerName: activeCenter.name })}
+      isHeaderCentered
+      headerAccessory={
+        <CenterIdentityHeader centerName={activeCenter.name} logoUrl={activeCenter.logoUrl} />
+      }
       footer={
         <Button
           variant="outline"

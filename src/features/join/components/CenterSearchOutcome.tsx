@@ -27,7 +27,12 @@ export function CenterSearchOutcome({
   onCenterSelect,
   onJoinCodeRequest,
 }: Readonly<CenterSearchOutcomeProps>): React.JSX.Element | null {
-  if (!hasSearched) return <Text color="ink2">{i18n.t('join.search.idleHint')}</Text>;
+  if (!hasSearched)
+    return (
+      <Text color="ink2" align="center">
+        {i18n.t('join.search.idleHint')}
+      </Text>
+    );
   if (searchResult.isFetching) {
     return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} rowCount={3} />;
   }

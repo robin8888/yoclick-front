@@ -9,6 +9,7 @@ import {
 } from './auth-forms.schema';
 
 const VALID_ACCOUNT = {
+  accountRole: 'client',
   fullName: 'Marta Ruiz',
   email: 'marta@correo.es',
   // Contraseña de prueba, no una credencial real.
@@ -47,6 +48,7 @@ describe('registerAccountFormSchema', () => {
     ['a one letter name', { fullName: 'M' }],
     ['the privacy consent unchecked', { isPrivacyAccepted: false }],
     ['the terms consent unchecked', { isTermsAccepted: false }],
+    ['an unknown role', { accountRole: 'admin' }],
   ])('rejects %s', (_description, overrides) => {
     const result = registerAccountFormSchema.safeParse({ ...VALID_ACCOUNT, ...overrides });
 

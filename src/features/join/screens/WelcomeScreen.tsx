@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
 
+import { resolveApiAssetUrl } from '@/shared/api/asset-url';
 import { i18n } from '@/shared/i18n';
 import { getSectorVocabulary } from '@/shared/i18n/sector-vocabulary';
 import { Avatar } from '@/ui/atoms/Avatar';
@@ -24,7 +25,12 @@ export function WelcomeScreen(): React.JSX.Element {
       })}
       footer={<WelcomeActions />}
     >
-      <Avatar name={pendingCenter.name} size="xl" isDecorative />
+      <Avatar
+        name={pendingCenter.name}
+        photoUrl={resolveApiAssetUrl(pendingCenter.logoUrl)}
+        size="xl"
+        isDecorative
+      />
     </ScreenTemplate>
   );
 }

@@ -1,6 +1,7 @@
 import { act, fireEvent, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
+import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { buildMembership, FORJA_CENTER_ID, NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, mockApi } from '@/test/mock-api';
@@ -26,11 +27,11 @@ describe('SessionGateScreen', () => {
     });
   });
 
-  it('sends people without a session to the join flow', () => {
+  it('sends people without a session to the start screen', () => {
     mockApi({});
     renderScreen(<SessionGateScreen />);
 
-    expect(screen.getByText('redirect:/join')).toBeOnTheScreen();
+    expect(screen.getByText('redirect:/(auth)/start')).toBeOnTheScreen();
   });
 
   it.each([
@@ -49,6 +50,20 @@ describe('SessionGateScreen', () => {
       expect(useSessionStore.getState().activeCenterId).toBe(NORTE_CENTER_ID);
     },
   );
+
+  it('sends people who asked to create a center to the center creation screen', async () => {
+    mockApi({ 'GET /v1/me/memberships': { memberships: [] } });
+    signIn();
+    act(() => {
+      useCenterCreationIntentStore.getState().startCenterCreation();
+    });
+    renderScreen(<SessionGateScreen />);
+
+    expect(await screen.findByText('redirect:/(onboarding)/center')).toBeOnTheScreen();
+    act(() => {
+      useCenterCreationIntentStore.getState().finishCenterCreation();
+    });
+  });
 
   it('sends people without centers to join one', async () => {
     mockApi({ 'GET /v1/me/memberships': { memberships: [] } });
@@ -89,7 +104,7 @@ describe('RoleGate', () => {
       </RoleGate>,
     );
 
-    expect(screen.getByText('redirect:/join')).toBeOnTheScreen();
+    expect(screen.getByText('redirect:/')).toBeOnTheScreen();
   });
 
   it('shows the area to the allowed role', async () => {

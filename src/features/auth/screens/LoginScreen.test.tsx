@@ -42,6 +42,7 @@ describe('LoginScreen', () => {
       name: 'Studio Norte',
       sectorId: 'estudio',
       brandHexColor: '#E4572E',
+      logoUrl: null,
     });
     renderScreen(<LoginScreen />);
 

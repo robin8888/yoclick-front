@@ -11,17 +11,19 @@ const NORTE_CENTER = {
   slug: 'studio-norte',
   sectorId: 'estudio',
   brandColor: '#E4572E',
+  logoUrl: null,
 };
 
 describe('pending center mappers', () => {
   it('keeps the join code when the center was found by code', () => {
-    const pendingCenter = mapPublicCenterToPendingCenter({ ...NORTE_CENTER, city: [] }, 'NORTE7');
+    const pendingCenter = mapPublicCenterToPendingCenter({ ...NORTE_CENTER, city: null }, 'NORTE7');
 
     expect(pendingCenter).toEqual({
       id: NORTE_CENTER.id,
       name: 'Studio Norte',
       sectorId: 'estudio',
       brandHexColor: '#E4572E',
+      logoUrl: null,
       joinCode: 'NORTE7',
     });
   });
@@ -43,6 +45,7 @@ describe('pending center mappers', () => {
         name: 'Studio Norte',
         sectorId: 'estudio',
         brandColor: '#E4572E',
+        logoUrl: null,
       },
       'NORTE7',
     );

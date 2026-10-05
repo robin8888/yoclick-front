@@ -4,6 +4,8 @@ import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
+import { AuthLinkButton } from './AuthLinkButton';
+
 interface LoginFooterProps {
   isSubmitting: boolean;
   onSubmit: () => void;
@@ -23,13 +25,12 @@ export function LoginFooter({
         isLoading={isSubmitting}
         onPress={onSubmit}
       />
-      <Text variant="caption" color="ink2">
+      <Text variant="caption" color="ink2" align="center">
         {i18n.t('auth.login.registerPrompt')}
       </Text>
-      <Button
-        variant="outline"
+      <AuthLinkButton
         label={i18n.t('auth.login.registerAction')}
-        isFullWidth
+        alignment="center"
         onPress={() => {
           router.push('/(auth)/register');
         }}

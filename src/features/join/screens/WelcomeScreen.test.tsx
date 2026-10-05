@@ -25,6 +25,7 @@ describe('WelcomeScreen', () => {
       name: 'Studio Norte',
       sectorId: 'baile',
       brandHexColor: '#E4572E',
+      logoUrl: null,
     });
     renderScreen(<WelcomeScreen />);
 
@@ -40,6 +41,7 @@ describe('WelcomeScreen', () => {
       name: 'Studio Norte',
       sectorId: 'estudio',
       brandHexColor: '#E4572E',
+      logoUrl: null,
     });
     renderScreen(<WelcomeScreen />);
 

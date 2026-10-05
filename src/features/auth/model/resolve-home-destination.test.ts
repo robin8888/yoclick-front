@@ -16,6 +16,7 @@ function buildMembership(
       slug: 'studio-norte',
       sectorId: 'estudio',
       brandColor: '#E4572E',
+      logoUrl: null,
     },
     ...overrides,
   };

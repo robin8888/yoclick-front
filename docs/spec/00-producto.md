@@ -80,6 +80,26 @@ Cada plantilla incluye además: necesidades, objetivos del registro, grupos suge
 
 IVA no incluido. Prueba de 14 días sin tarjeta. En el código, los precios **nunca se escriben a mano**: vienen de la tabla `plans` y de los *Price* de Stripe.
 
+## Modelo de negocio y ciclo de vida
+
+**Dos flujos de dinero independientes.** (1) Centro → Yoclick: la suscripción del plan, con Stripe Billing. (2) Alumno → centro: bonos, cuotas y clases, con Stripe Connect (cuenta Express por centro); Yoclick no custodia fondos.
+
+**Decisión (5 oct 2026): la suscripción de Yoclick se cobra en la web (Stripe Billing), no dentro de la app.** Motivo: las tiendas exigen su sistema de compras (15–30 %) para servicios digitales vendidos dentro de la app, y el cliente es un negocio que necesita factura con IVA (VeriFactu en 2027). La app solo muestra el estado del plan; los avisos de fin de prueba y de impago van por correo, sin enlazar al pago desde la app. Los cobros de alumnos a su centro (servicios del mundo real) sí van por Stripe dentro de la app. Revisar las guías de App Review vigentes antes de publicar.
+
+**Roles.** La cuenta es de la persona; el rol es de cada centro. Propietario: se es al crear el centro. Instructor: solo por invitación (enlace o código). Alumno: se une con QR, código, búsqueda o enlace. El «Soy…» del registro solo decide la primera pantalla tras entrar; nunca da permisos.
+
+**Ciclo de vida del centro** (propuesta pendiente de validar):
+
+| Estado | Qué pasa |
+|---|---|
+| Prueba (14 días, sin tarjeta) | Todo funciona salvo cobrar online hasta completar Stripe Connect (SEC-57). Avisos a los 7, 3 y 1 días. |
+| Activo | Suscripción pagada. |
+| Impago | Se reintenta el cobro unos días; el panel avisa y la clientela sigue reservando. |
+| Suspendido | Sin reservas ni altas nuevas; los datos se conservan; el propietario puede reactivar. |
+| Cancelado | Datos conservados un periodo definido y luego anonimizados. |
+
+La clientela nunca pierde el acceso a sus propias reservas y datos aunque el centro esté suspendido (acceso y exportación, RGPD). El límite de clientes activos del plan bloquea las altas nuevas (`CLIENT_LIMIT_REACHED`), nunca expulsa a quien ya está.
+
 ## Datos demo
 
 Cuatro centros ficticios (`seed`), marcados como demo:

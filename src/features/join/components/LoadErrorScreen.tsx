@@ -20,7 +20,7 @@ export function LoadErrorScreen({
   isRetrying = false,
 }: Readonly<LoadErrorScreenProps>): React.JSX.Element {
   return (
-    <ScreenTemplate title={screenTitle}>
+    <ScreenTemplate hasPlatformHeroBackground title={screenTitle}>
       <LoadErrorState title={title} error={error} onRetry={onRetry} isRetrying={isRetrying} />
     </ScreenTemplate>
   );

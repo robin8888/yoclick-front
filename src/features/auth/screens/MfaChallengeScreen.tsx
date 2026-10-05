@@ -1,6 +1,7 @@
 import { Redirect, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
+import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -17,6 +18,9 @@ export function MfaChallengeScreen(): React.JSX.Element {
   if (!form.hasChallenge && !form.isSubmitting) return <Redirect href="/(auth)/login" />;
   return (
     <ScreenTemplate
+      hasPlatformHeroBackground
+      isLoading={form.isSubmitting}
+      loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('auth.mfa.title')}
       subtitle={i18n.t(isAppCode ? 'auth.mfa.appCodeSubtitle' : 'auth.mfa.recoveryCodeSubtitle')}
       onBackPress={router.back}

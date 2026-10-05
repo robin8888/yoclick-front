@@ -1,15 +1,15 @@
 import type { ViewStyle } from 'react-native';
 
-import type { Theme } from '@/shared/theme';
+import { platformCardColors, type Theme } from '@/shared/theme';
 
 export function createInviteLinkNoticeStyle(theme: Theme): ViewStyle {
   return {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.space[3],
+    gap: theme.space[4],
     padding: theme.space[4],
     borderRadius: theme.radius.lg,
-    backgroundColor: theme.colors.surface2,
+    backgroundColor: platformCardColors.surface,
   };
 }
 

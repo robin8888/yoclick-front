@@ -9,5 +9,6 @@ export { RegisterAccountScreen } from './screens/RegisterAccountScreen';
 export { RegisterGoalsScreen } from './screens/RegisterGoalsScreen';
 export { ResetPasswordScreen } from './screens/ResetPasswordScreen';
 export { SessionGateScreen } from './screens/SessionGateScreen';
+export { StartScreen } from './screens/StartScreen';
 export { SignedInPlaceholderScreen } from './screens/SignedInPlaceholderScreen';
 export { VerifyEmailScreen } from './screens/VerifyEmailScreen';

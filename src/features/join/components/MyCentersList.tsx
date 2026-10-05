@@ -1,8 +1,8 @@
 import type { MyMembershipsResponseDtoMembershipsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { EmptyState } from '@/ui/molecules/EmptyState';
-import { ListItem } from '@/ui/molecules/ListItem';
+
+import { MyCenterRow } from './MyCenterRow';
 
 interface MyCentersListProps {
   memberships: readonly MyMembershipsResponseDtoMembershipsItem[];
@@ -30,21 +30,16 @@ export function MyCentersList({
   }
   return (
     <>
-      {memberships.map((membership) => {
-        const isActiveCenter = membership.centerId === activeCenterId;
-        return (
-          <ListItem
-            key={membership.membershipId}
-            leading={<Avatar name={membership.center.name} isDecorative />}
-            title={membership.center.name}
-            subtitle={isActiveCenter ? i18n.t('join.centers.currentCenter') : undefined}
-            isSelected={isActiveCenter}
-            onPress={() => {
-              onCenterSelect(membership.centerId);
-            }}
-          />
-        );
-      })}
+      {memberships.map((membership) => (
+        <MyCenterRow
+          key={membership.membershipId}
+          membership={membership}
+          isActiveCenter={membership.centerId === activeCenterId}
+          onPress={() => {
+            onCenterSelect(membership.centerId);
+          }}
+        />
+      ))}
     </>
   );
 }

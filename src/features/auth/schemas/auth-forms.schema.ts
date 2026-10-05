@@ -19,7 +19,11 @@ export const loginFormSchema = z.object({
 });
 export type LoginFormValues = z.infer<typeof loginFormSchema>;
 
+export const ACCOUNT_ROLES = ['owner', 'instructor', 'client'] as const;
+export type AccountRole = (typeof ACCOUNT_ROLES)[number];
+
 export const registerAccountFormSchema = z.object({
+  accountRole: z.enum(ACCOUNT_ROLES, { error: () => i18n.t('auth.register.roleRequired') }),
   fullName: fullNameFieldSchema,
   email: emailFieldSchema,
   password: newPasswordFieldSchema,
