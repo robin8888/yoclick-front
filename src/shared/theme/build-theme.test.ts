@@ -3,7 +3,7 @@ import { colorTokens, radiusTokens, spaceTokens } from './tokens';
 
 describe('buildTheme', () => {
   it('uses the documented neutrals for each mode', () => {
-    expect(buildTheme({ mode: 'light' }).colors.bg).toBe('#F5F5F2');
+    expect(buildTheme({ mode: 'light' }).colors.bg).toBe('#FFFFFF');
     expect(buildTheme({ mode: 'dark' }).colors.bg).toBe('#0D0E10');
   });
 
@@ -35,7 +35,7 @@ describe('buildTheme', () => {
 
     expect(theme.space).toBe(spaceTokens);
     expect(theme.radius).toBe(radiusTokens);
-    expect(theme.type.body).toMatchObject({ fontSize: 15, lineHeight: 22, fontFamily: 'sans' });
+    expect(theme.type.body).toMatchObject({ fontSize: 17, lineHeight: 24, fontFamily: 'sans' });
     expect(theme.motion.durationPressMs).toBe(120);
   });
 });

@@ -29,7 +29,7 @@ Sistema visual de una app de gestión que se vende en marca blanca para cualquie
 
 ## Tipografía
 
-- Dos familias de Google Fonts: **Archivo** (`display`, con eje de anchura; usar `font-stretch: 112%` en titulares) y **Figtree** (`sans`, todo lo demás).
+- Una sola familia de Google Fonts, **Outfit** (`display` y `sans`), la más cercana al rotulado del logo.
 - `display` 34/36 800 solo para el saludo de Inicio y la bienvenida. `title-lg` 24/28 para el título de cada pantalla. `metric` 28/30 800 con cifras tabulares para progreso y KPIs.
 - `title-md` 18/24 para secciones; `body` 15/22; `body-strong` para nombres de servicio y botones; `caption` 13/18 para metadatos; `overline` 11/14 con 0,08 em para rótulos.
 

@@ -76,8 +76,8 @@ function renderConstant(constantName, value) {
 
 function renderTokensModule(tokensJson) {
   const fontFamilies = {
-    display: 'Archivo',
-    sans: 'Figtree',
+    display: 'Outfit',
+    sans: 'Outfit',
   };
   return [
     '// GENERADO por scripts/generate-tokens.mjs a partir de docs/design/tokens.json.',

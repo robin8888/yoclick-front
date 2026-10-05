@@ -3,7 +3,7 @@
 
 export const colorTokens = {
   "light": {
-    "bg": "#F5F5F2",
+    "bg": "#FFFFFF",
     "surface": "#FFFFFF",
     "surface2": "#EDEDE9",
     "line": "#E3E3DE",
@@ -72,66 +72,66 @@ export const radiusTokens = {
 } as const;
 
 export const typeFamilyTokens = {
-  "display": "Archivo",
-  "sans": "Figtree"
+  "display": "Outfit",
+  "sans": "Outfit"
 } as const;
 
 export const typeStyleTokens = {
   "display": {
     "fontFamily": "display",
-    "fontSize": 34,
-    "lineHeight": 36,
+    "fontSize": 36,
+    "lineHeight": 38,
     "fontWeight": "800",
-    "letterSpacing": -0.34
+    "letterSpacing": -0.36
   },
   "metric": {
     "fontFamily": "display",
-    "fontSize": 28,
-    "lineHeight": 30,
+    "fontSize": 30,
+    "lineHeight": 32,
     "fontWeight": "800",
     "letterSpacing": 0
   },
   "titleLg": {
     "fontFamily": "display",
-    "fontSize": 24,
-    "lineHeight": 28,
+    "fontSize": 26,
+    "lineHeight": 30,
     "fontWeight": "700",
     "letterSpacing": 0
   },
   "titleMd": {
     "fontFamily": "sans",
-    "fontSize": 18,
-    "lineHeight": 24,
+    "fontSize": 20,
+    "lineHeight": 26,
     "fontWeight": "700",
     "letterSpacing": 0
   },
   "body": {
     "fontFamily": "sans",
-    "fontSize": 15,
-    "lineHeight": 22,
+    "fontSize": 17,
+    "lineHeight": 24,
     "fontWeight": "400",
     "letterSpacing": 0
   },
   "bodyStrong": {
     "fontFamily": "sans",
-    "fontSize": 15,
-    "lineHeight": 22,
+    "fontSize": 17,
+    "lineHeight": 24,
     "fontWeight": "600",
     "letterSpacing": 0
   },
   "caption": {
     "fontFamily": "sans",
-    "fontSize": 13,
-    "lineHeight": 18,
+    "fontSize": 15,
+    "lineHeight": 20,
     "fontWeight": "500",
     "letterSpacing": 0
   },
   "overline": {
     "fontFamily": "sans",
-    "fontSize": 11,
-    "lineHeight": 14,
+    "fontSize": 13,
+    "lineHeight": 16,
     "fontWeight": "700",
-    "letterSpacing": 0.88
+    "letterSpacing": 1.04
   }
 } as const;
 

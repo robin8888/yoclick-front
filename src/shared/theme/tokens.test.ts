@@ -21,8 +21,8 @@ describe('generated tokens', () => {
   });
 
   it('convert letter spacing from em to points', () => {
-    expect(typeStyleTokens.overline.letterSpacing).toBeCloseTo(0.88, 2);
-    expect(typeStyleTokens.display.letterSpacing).toBeCloseTo(-0.34, 2);
+    expect(typeStyleTokens.overline.letterSpacing).toBeCloseTo(1.04, 2);
+    expect(typeStyleTokens.display.letterSpacing).toBeCloseTo(-0.36, 2);
     expect(typeStyleTokens.body.letterSpacing).toBe(0);
   });
 

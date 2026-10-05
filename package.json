@@ -21,8 +21,7 @@
     "api:gen": "orval --config orval.config.mjs"
   },
   "dependencies": {
-    "@expo-google-fonts/archivo": "0.4.2",
-    "@expo-google-fonts/figtree": "0.4.1",
+    "@expo-google-fonts/outfit": "0.4.3",
     "@hookform/resolvers": "5.9.1",
     "@react-native-community/netinfo": "12.0.1",
     "@tanstack/react-query": "5.104.1",
@@ -34,6 +33,8 @@
     "expo-dev-client": "57.0.19",
     "expo-font": "57.0.4",
     "expo-image": "57.0.5",
+    "expo-image-manipulator": "~57.0.20",
+    "expo-image-picker": "~57.0.20",
     "expo-linking": "57.0.11",
     "expo-router": "57.0.24",
     "expo-secure-store": "57.0.4",

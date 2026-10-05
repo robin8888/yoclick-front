@@ -12,17 +12,18 @@ const SHARED_UPDATES_URL = `https://u.expo.dev/${SHARED_EAS_PROJECT_ID}`;
 const UNIVERSAL_LINK_HOST = 'yoclick.app';
 const UNIVERSAL_LINK_PATH_PREFIXES = ['/j/', '/i/'] as const;
 const SPLASH_IMAGE_WIDTH = 200;
-// Azul noche del logotipo de Yoclick: el símbolo tiene un resplandor pensado para fondo oscuro, así
-// que la pantalla de carga y el fondo del icono adaptativo de Android usan el mismo color en claro y
-// oscuro. La configuración nativa se evalúa antes de que exista el tema, por eso no se lee de él.
-const BRAND_NIGHT_BLUE = '#020A1A';
-const SPLASH_BACKGROUND_LIGHT = BRAND_NIGHT_BLUE;
-const SPLASH_BACKGROUND_DARK = BRAND_NIGHT_BLUE;
-const ADAPTIVE_ICON_BACKGROUND = BRAND_NIGHT_BLUE;
+// Burdeos del logotipo de Yoclick (zona media del degradado del icono): la pantalla de carga y el
+// fondo del icono adaptativo de Android usan el mismo color en claro y oscuro. La configuración
+// nativa se evalúa antes de que exista el tema, por eso no se lee de él.
+const BRAND_BURGUNDY = '#5A0008';
+const SPLASH_BACKGROUND_LIGHT = BRAND_BURGUNDY;
+const SPLASH_BACKGROUND_DARK = BRAND_BURGUNDY;
+const ADAPTIVE_ICON_BACKGROUND = BRAND_BURGUNDY;
 
 const CAMERA_USAGE_DESCRIPTION =
   'Usamos la cámara para escanear el código QR de tu centro y, si tú quieres, para hacerte una foto de perfil.';
-const PHOTO_LIBRARY_USAGE_DESCRIPTION = 'Para que puedas elegir una foto de perfil de tu galería.';
+const PHOTO_LIBRARY_USAGE_DESCRIPTION =
+  'Para que puedas elegir de tu galería el logo de tu centro o tu foto de perfil.';
 const LOCATION_USAGE_DESCRIPTION =
   'Usamos tu ubicación solo mientras usas la app, para encontrar centros cerca de ti.';
 
@@ -88,6 +89,15 @@ function buildPlugins(
         cameraPermission: CAMERA_USAGE_DESCRIPTION,
         microphonePermission: false,
         recordAudioAndroid: false,
+      },
+    ],
+    // Solo se elige de la galería (logo del centro y foto de perfil): sin cámara ni micrófono aquí.
+    [
+      'expo-image-picker',
+      {
+        photosPermission: PHOTO_LIBRARY_USAGE_DESCRIPTION,
+        cameraPermission: false,
+        microphonePermission: false,
       },
     ],
   ];

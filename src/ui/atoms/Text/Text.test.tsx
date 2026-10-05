@@ -24,21 +24,21 @@ describe('Text', () => {
     renderInTheme(<Text>Tu instructor ha cambiado la hora de tu cita.</Text>);
 
     expect(screen.getByText('Tu instructor ha cambiado la hora de tu cita.')).toHaveStyle({
-      fontFamily: 'Figtree_400Regular',
-      fontSize: 15,
-      lineHeight: 22,
+      fontFamily: 'Outfit_400Regular',
+      fontSize: 17,
+      lineHeight: 24,
       color: colorTokens.light.ink,
     });
   });
 
   it.each([
-    { variant: 'display', fontFamily: 'Archivo_800ExtraBold', fontSize: 34, lineHeight: 36 },
-    { variant: 'metric', fontFamily: 'Archivo_800ExtraBold', fontSize: 28, lineHeight: 30 },
-    { variant: 'titleLg', fontFamily: 'Archivo_700Bold', fontSize: 24, lineHeight: 28 },
-    { variant: 'titleMd', fontFamily: 'Figtree_700Bold', fontSize: 18, lineHeight: 24 },
-    { variant: 'bodyStrong', fontFamily: 'Figtree_600SemiBold', fontSize: 15, lineHeight: 22 },
-    { variant: 'caption', fontFamily: 'Figtree_500Medium', fontSize: 13, lineHeight: 18 },
-    { variant: 'overline', fontFamily: 'Figtree_700Bold', fontSize: 11, lineHeight: 14 },
+    { variant: 'display', fontFamily: 'Outfit_800ExtraBold', fontSize: 36, lineHeight: 38 },
+    { variant: 'metric', fontFamily: 'Outfit_800ExtraBold', fontSize: 30, lineHeight: 32 },
+    { variant: 'titleLg', fontFamily: 'Outfit_700Bold', fontSize: 26, lineHeight: 30 },
+    { variant: 'titleMd', fontFamily: 'Outfit_700Bold', fontSize: 20, lineHeight: 26 },
+    { variant: 'bodyStrong', fontFamily: 'Outfit_600SemiBold', fontSize: 17, lineHeight: 24 },
+    { variant: 'caption', fontFamily: 'Outfit_500Medium', fontSize: 15, lineHeight: 20 },
+    { variant: 'overline', fontFamily: 'Outfit_700Bold', fontSize: 13, lineHeight: 16 },
   ] as const)('applies the $variant type scale entry', ({ variant, ...expectedStyle }) => {
     renderInTheme(<Text variant={variant}>Texto</Text>);
 
@@ -78,7 +78,7 @@ describe('Text', () => {
 
     expect(screen.getByText('esta semana')).toHaveStyle({
       textTransform: 'uppercase',
-      letterSpacing: 0.88,
+      letterSpacing: 1.04,
     });
   });
 
