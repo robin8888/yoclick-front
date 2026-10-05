@@ -10,7 +10,7 @@ export default function AdminTabsLayout(): React.JSX.Element {
     >
       <Tabs.Screen name="agenda" />
       <Tabs.Screen name="records" />
-      <Tabs.Screen name="account" />
+      <Tabs.Screen name="more" />
     </Tabs>
   );
 }

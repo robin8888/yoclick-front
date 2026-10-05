@@ -24,3 +24,14 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 1 | ~~**Logo del centro**~~ Resuelto (5 oct 2026): `PUT /v1/onboarding/centers/{id}/logo` (propietario, sin MFA) y `GET /v1/centers/{id}/logo` público; `logoUrl` (ruta relativa) en branding, join, búsqueda, mis centros e invitación. Pendiente: extraer el color del logo (`o2`) y cambiarlo desde el panel de administración (ruta con MFA). | El alta sube el logo en la pantalla `/(onboarding)/logo`; el color se sigue eligiendo de una paleta. |
 | 2 | **Servicios, horario, equipo y plan del alta** (`o3`, `osvc`, `o4`, `o5`): los servicios son API-3. | El alta se reduce a datos y marca; la prueba de 14 días empieza al crear el centro. |
 | 3 | **Segundo factor del dueño**: las rutas de administración exigen sesión con MFA (`MFA_REQUIRED`), pero la app aún no tiene pantalla para activar TOTP (`/v1/me/mfa/totp/setup` y `/confirm`). | Se puede crear el centro; el panel de administración queda a la espera de esa pantalla. |
+
+## Inicio del alumno (`home`) y administración
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | **Bonos del alumno** («Bono 10 clases · te quedan 6», caducidad). | La tarjeta de bono muestra «Sin bono activo». |
+| 2 | ~~**QR de acceso del alumno**~~ Resuelto (5 oct 2026): `POST /v1/centers/{id}/me/checkin-code` (JWT firmado de 5 min en `yoclick:checkin:<jwt>`) y `POST /v1/centers/{id}/attendance/check-in`. Pendiente: mostrar la llegada en la agenda (`checkedInAt` no está en la reserva) y la vista de privacidad en el app switcher (SEC-M6). | «Mi QR de acceso» muestra el QR firmado y se renueva solo; instructores y administración escanean desde la agenda. |
+| 3 | **Objetivo semanal por alumno o centro**. | Objetivo fijo de 4 sesiones; el progreso cuenta las citas con asistencia de la semana. |
+| 4 | **Zona horaria del centro en reservas** y **horas ocupadas** en la disponibilidad (el prototipo las tacha). | Se usa `Europe/Madrid` y solo se listan huecos libres. |
+| 5 | **Datos fiscales y contacto del centro** (teléfono, correo, razón social, CIF) para `acenter`. | Pantalla «Datos del centro» no construida. |
+| 6 | **Pasar una clase sin cerrar a cerrada** desde administración. | El registro la muestra como «Sin cerrar». |

@@ -16,6 +16,8 @@ export interface ScreenTemplateProps {
   footer?: ReactNode;
   /** Centra en vertical la cabecera y el contenido (pantallas de bienvenida). */
   isContentCentered?: boolean;
+  /** La pantalla dibuja su propia cabecera (p. ej. el inicio del alumno); `title` queda como nombre. */
+  isHeaderHidden?: boolean;
   /** Mientras es `true` un velo con el logotipo animado cubre la pantalla (envío en curso). */
   isLoading?: boolean;
   /** Texto del estado de carga para el lector de pantalla («Cargando»). */

@@ -5,7 +5,7 @@ import { useTheme } from '@/shared/theme';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
-import { createTabBarStyle, createTabItemStyle } from './TabBar.styles';
+import { createTabBarStyle, createTabItemStyle, createTabPillStyle } from './TabBar.styles';
 import type { TabBarProps } from './TabBar.types';
 
 /**
@@ -25,12 +25,18 @@ export function TabBar({ tabs }: Readonly<TabBarProps>): React.JSX.Element {
           accessibilityLabel={tab.label}
           accessibilityState={{ selected: tab.isActive }}
           onPress={tab.onPress}
-          style={createTabItemStyle(theme, tab.isActive)}
+          style={createTabItemStyle()}
         >
-          <Icon name={tab.iconName} size="navigation" color={tab.isActive ? 'brandInk' : 'ink2'} />
-          <Text variant="caption" color={tab.isActive ? 'brandInk' : 'ink2'}>
-            {tab.label}
-          </Text>
+          <View style={createTabPillStyle(theme, tab.isActive)}>
+            <Icon
+              name={tab.iconName}
+              size="navigation"
+              color={tab.isActive ? 'brandInk' : 'ink2'}
+            />
+            <Text variant="caption" color={tab.isActive ? 'brandInk' : 'ink2'} numberOfLines={1}>
+              {tab.label}
+            </Text>
+          </View>
         </Pressable>
       ))}
     </View>

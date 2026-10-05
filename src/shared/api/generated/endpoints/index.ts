@@ -1,3 +1,4 @@
+export * from './attendance/attendance.ts';
 export * from './auth/auth.ts';
 export * from './bookings/bookings.ts';
 export * from './centers/centers.ts';

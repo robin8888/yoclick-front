@@ -11,6 +11,8 @@ export default function ClientTabsLayout(): React.JSX.Element {
       <Tabs.Screen name="home" />
       <Tabs.Screen name="book" />
       <Tabs.Screen name="bookings" />
+      <Tabs.Screen name="practice" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 }

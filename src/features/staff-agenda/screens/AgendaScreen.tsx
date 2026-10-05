@@ -11,6 +11,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { AgendaEntryCard } from '../components/AgendaEntryCard';
 import { DateNavigator } from '../components/DateNavigator';
+import { ScanAttendanceButton } from '../components/ScanAttendanceButton';
 import { useAgendaDay } from '../hooks/useAgendaDay';
 import { useDayAgenda } from '../hooks/useDayAgenda';
 
@@ -75,6 +76,7 @@ export function AgendaScreen({ isCenterWide }: Readonly<AgendaScreenProps>): Rea
         isCenterWide ? 'staffAgenda.agenda.adminTitle' : 'staffAgenda.agenda.staffTitle',
       )}
     >
+      <ScanAttendanceButton isCenterWide={isCenterWide} />
       <DateNavigator
         dateLabel={day.isToday ? `${i18n.t('staffAgenda.agenda.today')} · ${dayLabel}` : dayLabel}
         onPreviousDay={day.goToPreviousDay}

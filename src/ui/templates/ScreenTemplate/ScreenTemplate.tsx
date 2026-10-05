@@ -32,6 +32,7 @@ function ScreenTemplateContent({
   hasPlatformHeroBackground = false,
   isLoading = false,
   isContentCentered = false,
+  isHeaderHidden = false,
   loadingLabel,
   ...headerProps
 }: Readonly<ScreenTemplateProps>): React.JSX.Element {
@@ -49,7 +50,7 @@ function ScreenTemplateContent({
             contentContainerStyle={createContentStyle(theme, isContentCentered)}
             keyboardShouldPersistTaps="handled"
           >
-            <ScreenTemplateHeader {...headerProps} />
+            {isHeaderHidden ? null : <ScreenTemplateHeader {...headerProps} />}
             {children}
           </ScrollView>
           {footer === undefined ? null : (

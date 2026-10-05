@@ -1,5 +1,7 @@
 // API pública de la feature: lo único que otras features y `app/` pueden importar.
 export { AppThemeProvider } from './components/AppThemeProvider';
+export { CameraPermissionPrompt } from './components/CameraPermissionPrompt';
+export { JoinScanCamera } from './components/JoinScanCamera';
 export { LoadErrorScreen } from './components/LoadErrorScreen';
 export { LoadErrorState } from './components/LoadErrorState';
 export { useJoinPendingCenter } from './hooks/useJoinPendingCenter';

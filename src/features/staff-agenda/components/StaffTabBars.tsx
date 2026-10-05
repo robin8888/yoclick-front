@@ -16,7 +16,7 @@ function listAdminTabs(): readonly RouteTab[] {
   return [
     { routeName: 'agenda', iconName: 'calendar', label: i18n.t('staffAgenda.tabs.agenda') },
     { routeName: 'records', iconName: 'clock', label: i18n.t('staffAgenda.tabs.records') },
-    { routeName: 'account', iconName: 'user', label: i18n.t('staffAgenda.tabs.account') },
+    { routeName: 'more', iconName: 'settings', label: i18n.t('centerAdmin.tabs.more') },
   ];
 }
 

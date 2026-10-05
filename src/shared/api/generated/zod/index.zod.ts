@@ -1,3 +1,4 @@
+export * from './attendance/attendance.zod.ts';
 export * from './auth/auth.zod.ts';
 export * from './bookings/bookings.zod.ts';
 export * from './centers/centers.zod.ts';

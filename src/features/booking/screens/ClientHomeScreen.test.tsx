@@ -25,7 +25,7 @@ describe('ClientHomeScreen', () => {
     });
   });
 
-  it('greets the person by first name and shows the center', async () => {
+  it('greets the person by first name', async () => {
     mockApi({
       [LIST_PATH]: { bookings: [] },
       'GET /v1/me/memberships': { memberships: [buildMembership()] },
@@ -33,10 +33,10 @@ describe('ClientHomeScreen', () => {
     renderScreen(<ClientHomeScreen />);
 
     expect(screen.getByRole('heading', { name: 'Hola, Leticia' })).toBeOnTheScreen();
-    expect(await screen.findByText('Cliente')).toBeOnTheScreen();
+    expect(await screen.findByText('Esta semana')).toBeOnTheScreen();
   });
 
-  it('shows the next appointment', async () => {
+  it('shows the next appointment with its date, time and duration', async () => {
     mockApi({
       [LIST_PATH]: { bookings: [buildBooking()] },
       'GET /v1/me/memberships': { memberships: [buildMembership()] },
@@ -44,8 +44,18 @@ describe('ClientHomeScreen', () => {
     renderScreen(<ClientHomeScreen />);
 
     expect(await screen.findByText('Entrenamiento personal')).toBeOnTheScreen();
-    expect(screen.getByText('jue 8 oct · 18:00')).toBeOnTheScreen();
-    expect(await screen.findByText('Cliente')).toBeOnTheScreen();
+    expect(screen.getByText('jue 8 oct')).toBeOnTheScreen();
+    expect(screen.getByText('18:00 · 1 h')).toBeOnTheScreen();
+  });
+
+  it('counts the sessions attended this week against the weekly goal', async () => {
+    mockApi({
+      [LIST_PATH]: { bookings: [] },
+      'GET /v1/me/memberships': { memberships: [buildMembership()] },
+    });
+    renderScreen(<ClientHomeScreen />);
+
+    expect(await screen.findByText('Te queda 4 para tu objetivo.')).toBeOnTheScreen();
   });
 
   it('says there is no next appointment and offers to book', async () => {
@@ -55,9 +65,8 @@ describe('ClientHomeScreen', () => {
     });
     renderScreen(<ClientHomeScreen />);
 
-    expect(await screen.findByText('No tienes ninguna cita próxima.')).toBeOnTheScreen();
-    expect(await screen.findByText('Cliente')).toBeOnTheScreen();
-    fireEvent.press(screen.getByRole('button', { name: 'Agendar cita' }));
+    expect(await screen.findByText('Aún no tienes ninguna cita próxima.')).toBeOnTheScreen();
+    fireEvent.press(screen.getAllByRole('button', { name: 'Reservar cita' })[0] as never);
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(client)/(tabs)/book');
   });

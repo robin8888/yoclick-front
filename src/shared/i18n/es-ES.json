@@ -46,7 +46,12 @@
     "NETWORK_OFFLINE": "No hay conexión. Comprueba tu internet e inténtalo de nuevo",
     "NETWORK_TIMEOUT": "La conexión es lenta y no hemos podido terminar. Inténtalo de nuevo",
     "LOGO_INVALID": "Ese archivo no es un logo válido. Usa una imagen PNG, JPG o WebP",
-    "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera"
+    "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera",
+    "CHECKIN_CODE_INVALID": "Este código QR no es válido o ha caducado. Pide que lo actualicen",
+    "CHECKIN_NO_BOOKING": "Esta persona no tiene una cita confirmada para registrar ahora",
+    "BOOKING_NOT_STARTABLE": "Esta clase no se puede iniciar ahora: solo desde 15 minutos antes hasta que termina",
+    "SESSION_ALREADY_OPEN": "Ya tienes otra clase en marcha. Termínala antes de iniciar esta",
+    "SESSION_NOT_STARTED": "Esta clase todavía no se ha iniciado"
   },
   "fieldErrors": {
     "invalid": "Revisa este campo",
@@ -398,8 +403,10 @@
   "booking": {
     "tabs": {
       "home": "Inicio",
-      "book": "Agendar",
-      "bookings": "Citas"
+      "book": "Reservar",
+      "bookings": "Mis citas",
+      "profile": "Perfil",
+      "practice": "Practicar"
     },
     "book": {
       "title": "Agendar cita",
@@ -465,10 +472,21 @@
     },
     "home": {
       "greeting": "Hola, {{firstName}}",
-      "nextAppointment": "Tu próxima cita",
-      "noNextAppointment": "No tienes ninguna cita próxima.",
-      "bookAction": "Agendar cita",
-      "viewAllAction": "Ver mis citas"
+      "nextAppointment": "Próxima cita",
+      "noNextAppointment": "Aún no tienes ninguna cita próxima.",
+      "bookAction": "Reservar cita",
+      "viewAllAction": "Ver mis citas",
+      "title": "Inicio de {{centerName}}",
+      "quickAccess": "Accesos rápidos",
+      "myBookingsAction": "Mis citas",
+      "weekTitle": "Esta semana",
+      "weekCount": "{{completedCount}} de {{goalCount}} sesiones",
+      "weekOfGoal": "de {{goalCount}} sesiones",
+      "weekRemaining": "Te queda {{remainingCount}} para tu objetivo.",
+      "weekGoalReached": "¡Objetivo semanal cumplido!",
+      "accessQrAction": "Mi QR de acceso",
+      "passTitle": "Bono",
+      "passEmpty": "Sin bono activo. Pregunta en tu centro."
     }
   },
   "staffAgenda": {
@@ -537,6 +555,104 @@
       "statusMissing": "No registrada",
       "realVersusPlanned": "Real {{actual}} · previsto {{planned}}",
       "plannedOnly": "Previsto {{planned}}"
+    }
+  },
+  "centerAdmin": {
+    "tabs": {
+      "more": "Más"
+    },
+    "weekDays": {
+      "mon": "Lunes",
+      "tue": "Martes",
+      "wed": "Miércoles",
+      "thu": "Jueves",
+      "fri": "Viernes",
+      "sat": "Sábado",
+      "sun": "Domingo"
+    },
+    "more": {
+      "title": "Más",
+      "centerSection": "Tu centro",
+      "servicesTitle": "Servicios y horario",
+      "servicesSubtitle": "Lo que se puede reservar y cuándo abres",
+      "inviteClientsTitle": "Invita a tus clientes",
+      "inviteClientsSubtitle": "QR, enlace y código",
+      "inviteTeamTitle": "Invita a tu equipo",
+      "inviteTeamSubtitle": "Instructores por correo"
+    },
+    "services": {
+      "title": "Servicios y horario",
+      "listTitle": "Servicios",
+      "newAction": "Nuevo servicio",
+      "emptyTitle": "Aún no tienes servicios",
+      "emptyDescription": "Crea el primero para que tus clientes puedan reservar.",
+      "errorTitle": "No hemos podido cargar los servicios",
+      "editHint": "Toca un servicio para editarlo. Es lo que tus clientes ven al agendar cita.",
+      "hiddenLabel": "Oculto para los clientes",
+      "noPrice": "Gratis",
+      "hoursTitle": "Horario de apertura",
+      "closed": "Cerrado"
+    },
+    "serviceEditor": {
+      "newTitle": "Nuevo servicio",
+      "editTitle": "Editar servicio",
+      "publishedOnSave": "Se publica al guardar",
+      "nameLabel": "Nombre del servicio",
+      "descriptionLabel": "Descripción (opcional)",
+      "descriptionPlaceholder": "Qué incluye, qué traer, para quién es",
+      "durationLabel": "Duración",
+      "durationMinutesLabel": "Duración en minutos",
+      "priceLabel": "Precio en euros (opcional)",
+      "priceHelper": "Déjalo vacío si el servicio es gratuito.",
+      "visibleLabel": "Visible para tus clientes",
+      "saveAction": "Guardar cambios",
+      "archiveAction": "Archivar servicio",
+      "nameRequired": "Escribe el nombre del servicio",
+      "nameTooLong": "Usa como máximo 80 caracteres",
+      "descriptionTooLong": "Usa como máximo 500 caracteres",
+      "durationInvalid": "Indica una duración entre 5 y 600 minutos",
+      "priceInvalid": "Escribe un importe válido, por ejemplo 35 o 35,50"
+    },
+    "team": {
+      "title": "Invita a tu equipo",
+      "subtitle": "Instructores",
+      "emailLabel": "Correo del instructor",
+      "emailHelper": "Recibirán un enlace para descargar la app y crear su acceso.",
+      "addAction": "Añadir",
+      "pendingBadge": "Invitación lista",
+      "laterHint": "Puedes hacerlo más tarde desde Más › Invita a tu equipo."
+    },
+    "inviteClients": {
+      "title": "Invita a tus clientes",
+      "subtitle": "Así se unen a la app de {{centerName}}",
+      "errorTitle": "No hemos podido cargar el código",
+      "qrLabel": "Código QR para unirse a {{centerName}}",
+      "codeLabel": "Código del centro",
+      "shareAction": "Compartir enlace",
+      "shareMessage": "Únete a {{centerName}} en la app. Código: {{joinCode}}. Enlace: {{joinLink}}"
+    }
+  },
+  "practice": {
+    "title": "Practicar",
+    "emptyTitle": "Vídeos y guías muy pronto",
+    "emptyDescription": "Aquí verás las rutinas y los vídeos que tu centro prepare para ti."
+  },
+  "attendance": {
+    "accessQr": {
+      "title": "Mi QR de acceso",
+      "subtitle": "Enséñalo al llegar a tu cita",
+      "qrLabel": "Código QR de asistencia",
+      "renewsHint": "Se actualiza solo. No lo compartas: es personal.",
+      "errorTitle": "No hemos podido generar tu QR"
+    },
+    "scan": {
+      "title": "Escanear QR de asistencia",
+      "subtitle": "Apunta al QR que te enseña la persona",
+      "registeredBadge": "Asistencia registrada",
+      "alreadyRegisteredBadge": "Ya estaba registrada",
+      "appointmentSummary": "{{serviceName}} · {{time}}",
+      "scanAnotherAction": "Escanear otro",
+      "openAction": "Escanear QR"
     }
   }
 }

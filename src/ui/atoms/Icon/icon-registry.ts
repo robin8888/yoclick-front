@@ -23,6 +23,7 @@ import {
   MapPin,
   Minus,
   Pencil,
+  Play,
   Plus,
   QrCode,
   RefreshCw,
@@ -76,4 +77,5 @@ export const ICON_REGISTRY: Readonly<Record<IconName, LucideIcon>> = {
   mapPin: MapPin,
   creditCard: CreditCard,
   download: Download,
+  play: Play,
 };
