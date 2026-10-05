@@ -7,6 +7,7 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 import type { CenterDetailsFormValues } from '../schemas/center-details.schema';
 import { BrandColorPicker } from './BrandColorPicker';
 import { CenterBrandPreview } from './CenterBrandPreview';
+import { ListedInSearchField } from './ListedInSearchField';
 import { SectorPicker } from './SectorPicker';
 
 const FALLBACK_PREVIEW_NAME = 'Tu centro';
@@ -42,6 +43,7 @@ export function CenterDetailsFields({
         label={i18n.t('onboarding.center.cityLabel')}
         autoCapitalize="words"
       />
+      <ListedInSearchField control={control} />
       <BrandColorPicker
         selectedColor={brandColor}
         onColorSelect={(hexColor) => {

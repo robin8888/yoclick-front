@@ -1,6 +1,5 @@
-import { SignedInPlaceholderScreen } from '@/features/auth';
+import { AgendaScreen } from '@/features/staff-agenda';
 
-// Provisional hasta APP-6 (pantalla `aagenda`).
 export default function AdminAgendaRoute(): React.JSX.Element {
-  return <SignedInPlaceholderScreen canSwitchCenter={false} />;
+  return <AgendaScreen isCenterWide />;
 }

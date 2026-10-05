@@ -291,7 +291,8 @@
         "payments": "Pagos",
         "notices": "Avisos"
       }
-    }
+    },
+    "mfaEnabledNotice": "Verificación en dos pasos activada. Entra de nuevo con el código de tu app."
   },
   "states": {
     "loading": {
@@ -329,7 +330,9 @@
       "previewButton": "Reservar cita",
       "submitLabel": "Crear mi centro",
       "trialNotice": "14 días de prueba gratis, sin tarjeta.",
-      "colorOptionLabel": "Color {{hex}}"
+      "colorOptionLabel": "Color {{hex}}",
+      "listedLabel": "Aparecer en el buscador",
+      "listedHelper": "Si lo activas, tus clientes podrán encontrarte por nombre o ciudad. Si no, solo entrarán con tu código."
     },
     "sectorGroups": {
       "sport": "Deporte y salud",
@@ -368,6 +371,172 @@
       "skipAction": "Ahora no",
       "tooLarge": "Esa imagen es demasiado grande. Prueba con otra más ligera.",
       "unreadable": "No hemos podido leer esa imagen. Prueba con otra."
+    }
+  },
+  "security": {
+    "mfaSetup": {
+      "passwordTitle": "Protege tu cuenta",
+      "passwordSubtitle": "Como propietario necesitas la verificación en dos pasos. Primero confirma tu contraseña.",
+      "passwordLabel": "Contraseña",
+      "continueLabel": "Continuar",
+      "scanTitle": "Conecta tu app de autenticación",
+      "scanSubtitle": "Escanea el código con Google Authenticator, Microsoft Authenticator, Authy o similar.",
+      "qrLabel": "Código QR para configurar la app de autenticación",
+      "orEnterKeyLabel": "O escribe esta clave a mano",
+      "secretLabel": "Clave de configuración",
+      "openAuthenticatorAction": "Abrir en mi app de autenticación",
+      "codePrompt": "Escribe el código de 6 dígitos que muestra la app",
+      "activateLabel": "Activar verificación",
+      "recoveryTitle": "Guarda tus códigos de recuperación",
+      "recoverySubtitle": "Sirven si pierdes el móvil. Cada uno vale una sola vez y no volverás a verlos.",
+      "shareCodesAction": "Compartir códigos",
+      "shareCodesMessage": "Códigos de recuperación de Yoclick (cada uno vale una vez):\n{{codes}}",
+      "savedLabel": "Ya los he guardado",
+      "gateErrorTitle": "No hemos podido comprobar tu seguridad"
+    }
+  },
+  "booking": {
+    "tabs": {
+      "home": "Inicio",
+      "book": "Agendar",
+      "bookings": "Citas"
+    },
+    "book": {
+      "title": "Agendar cita",
+      "subtitle": "¿Qué quieres reservar?",
+      "emptyTitle": "Aún no hay servicios",
+      "emptyDescription": "Tu centro todavía no tiene servicios reservables. Vuelve más tarde.",
+      "errorTitle": "No hemos podido cargar los servicios",
+      "priceOnRequest": "Precio a consultar"
+    },
+    "slot": {
+      "title": "Elige día y hora",
+      "daysLabel": "Día",
+      "timesLabel": "Hora",
+      "noSlotsAtAll": "No hay horas libres en los próximos días. Prueba con otro servicio o vuelve más tarde.",
+      "noSlotsThisDay": "Sin horas libres este día.",
+      "continueLabel": "Continuar",
+      "errorTitle": "No hemos podido cargar las horas libres"
+    },
+    "confirm": {
+      "title": "Confirma tu cita",
+      "serviceLabel": "Servicio",
+      "whenLabel": "Cuándo",
+      "staffLabel": "Con",
+      "priceLabel": "Precio",
+      "confirmLabel": "Confirmar reserva",
+      "chooseAnotherTimeAction": "Elegir otra hora",
+      "invalidLink": "No hemos podido abrir esta reserva. Vuelve a elegir el servicio.",
+      "backToServicesAction": "Volver a los servicios"
+    },
+    "done": {
+      "title": "Cita confirmada",
+      "summary": "{{serviceName}} · {{whenLabel}}",
+      "announcement": "Cita confirmada para {{whenLabel}}",
+      "viewBookingsAction": "Ver mis citas",
+      "doneAction": "Listo"
+    },
+    "list": {
+      "title": "Mis citas",
+      "upcoming": "Próximas",
+      "past": "Historial",
+      "emptyUpcomingTitle": "No tienes citas próximas",
+      "emptyUpcomingDescription": "Reserva tu próxima cita en un momento.",
+      "emptyPastTitle": "Aún no tienes historial",
+      "emptyPastDescription": "Aquí verás tus citas pasadas y las canceladas.",
+      "bookAction": "Agendar cita",
+      "errorTitle": "No hemos podido cargar tus citas",
+      "withStaff": "Con {{staffName}}",
+      "cancelAction": "Cancelar cita",
+      "status": {
+        "confirmed": "Confirmada",
+        "cancelled": "Cancelada",
+        "attended": "Realizada",
+        "no_show": "No asististe"
+      }
+    },
+    "cancel": {
+      "title": "¿Cancelar esta cita?",
+      "message": "{{serviceName}} · {{whenLabel}}. Si cancelas fuera del plazo del centro, puede que no se te devuelva la sesión.",
+      "keepAction": "Mantener cita",
+      "confirmAction": "Sí, cancelar",
+      "resultOnTime": "Cita cancelada.",
+      "resultLate": "Cita cancelada fuera de plazo."
+    },
+    "home": {
+      "greeting": "Hola, {{firstName}}",
+      "nextAppointment": "Tu próxima cita",
+      "noNextAppointment": "No tienes ninguna cita próxima.",
+      "bookAction": "Agendar cita",
+      "viewAllAction": "Ver mis citas"
+    }
+  },
+  "staffAgenda": {
+    "tabs": {
+      "agenda": "Agenda",
+      "records": "Clases",
+      "account": "Cuenta"
+    },
+    "agenda": {
+      "staffTitle": "Mi agenda",
+      "adminTitle": "Agenda del centro",
+      "today": "Hoy",
+      "previousDayLabel": "Día anterior",
+      "nextDayLabel": "Día siguiente",
+      "emptyTitle": "Sin citas este día",
+      "emptyDescription": "Cuando alguien reserve, aparecerá aquí.",
+      "errorTitle": "No hemos podido cargar la agenda",
+      "timeRange": "{{startTime}}–{{endTime}}",
+      "withClient": "Con {{clientName}}",
+      "professional": "Profesional: {{staffName}}",
+      "retryTodayAction": "Ir a hoy",
+      "phase": {
+        "not-started": "Pendiente",
+        "in-progress": "En curso",
+        "finished": "Terminada",
+        "cancelled": "Cancelada"
+      }
+    },
+    "session": {
+      "title": "Clase",
+      "notFoundTitle": "No encontramos esta cita",
+      "notFoundDescription": "Puede que se haya movido o cancelado. Vuelve a la agenda.",
+      "backToAgendaAction": "Volver a la agenda",
+      "plannedLabel": "Previsto",
+      "startedLabel": "Inicio",
+      "endedLabel": "Fin",
+      "realDurationLabel": "Duración real",
+      "startAction": "Iniciar clase",
+      "endAction": "Terminar clase",
+      "startTooEarlyHint": "Podrás iniciarla 15 minutos antes de la hora.",
+      "startTooLateHint": "Esta cita ya terminó y no se registró. Pide a administración que la revise.",
+      "cancelledHint": "Esta cita está cancelada.",
+      "remainingCaption": "Restante",
+      "overtimeCaption": "Tiempo extra",
+      "timerDetail": "Transcurrido {{elapsed}} de {{planned}}",
+      "endConfirmTitle": "¿Terminar la clase?",
+      "endConfirmMessage": "Se guardará la hora de fin y la duración real para el centro.",
+      "endConfirmAction": "Sí, terminar",
+      "keepGoingAction": "Seguir",
+      "finishedSummary": "Clase registrada: {{actual}} de {{planned}} previstos."
+    },
+    "records": {
+      "title": "Registro de clases",
+      "last7Days": "7 días",
+      "last30Days": "30 días",
+      "totalsTitle": "Por profesional",
+      "recordsTitle": "Clases",
+      "emptyTitle": "Sin clases registradas",
+      "emptyDescription": "Las clases que tu equipo inicie y termine aparecerán aquí.",
+      "errorTitle": "No hemos podido cargar el registro",
+      "classCount": "{{count}} clases",
+      "totalTime": "{{actual}} de {{planned}} previstos",
+      "openCount": "{{count}} sin cerrar",
+      "statusOpen": "Sin cerrar",
+      "statusClosed": "Registrada",
+      "statusMissing": "No registrada",
+      "realVersusPlanned": "Real {{actual}} · previsto {{planned}}",
+      "plannedOnly": "Previsto {{planned}}"
     }
   }
 }

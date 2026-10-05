@@ -1,6 +1,5 @@
-import { SignedInPlaceholderScreen } from '@/features/auth';
+import { ClientHomeScreen } from '@/features/booking';
 
-// Provisional hasta APP-3 (pantalla `home`).
 export default function ClientHomeRoute(): React.JSX.Element {
-  return <SignedInPlaceholderScreen canSwitchCenter />;
+  return <ClientHomeScreen />;
 }

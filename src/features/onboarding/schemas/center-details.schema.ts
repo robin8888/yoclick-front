@@ -21,5 +21,6 @@ export const centerDetailsFormSchema = z.object({
     .trim()
     .max(MAX_CITY_LENGTH, { error: () => i18n.t('validation.cityTooLong') }),
   brandColor: z.string().regex(HEX_COLOR_PATTERN),
+  isListed: z.boolean(),
 });
 export type CenterDetailsFormValues = z.infer<typeof centerDetailsFormSchema>;

@@ -74,6 +74,7 @@ describe('CreateCenterScreen', () => {
       name: 'Vértice Training',
       sectorId: 'baile',
       brandColor: '#7A3FE0',
+      isListed: false,
     });
     expect(useCreatedCenterStore.getState().createdCenter).toEqual({
       centerId: CREATED_CENTER.centerId,
@@ -83,6 +84,22 @@ describe('CreateCenterScreen', () => {
     });
     expect(useSessionStore.getState().activeCenterId).toBe(CREATED_CENTER.centerId);
     expect(useCenterCreationIntentStore.getState().isCenterCreationRequested).toBe(false);
+  });
+
+  it('lists the center in the search when the owner turns the switch on', async () => {
+    mockApi({
+      'POST /v1/onboarding/centers': CREATED_CENTER,
+      'GET /v1/me/memberships': { memberships: [] },
+    });
+    renderScreen(<CreateCenterScreen />);
+    fireEvent.changeText(screen.getByLabelText('Nombre del centro'), 'Vértice Training');
+    fireEvent(screen.getByRole('switch', { name: 'Aparecer en el buscador' }), 'valueChange', true);
+
+    fireEvent.press(screen.getByRole('button', { name: 'Crear mi centro' }));
+
+    await waitFor(() => {
+      expect(findApiCall('POST', '/v1/onboarding/centers')?.body).toMatchObject({ isListed: true });
+    });
   });
 
   it('shows the server error and stays on the form', async () => {

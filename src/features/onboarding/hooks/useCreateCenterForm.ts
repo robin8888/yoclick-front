@@ -35,8 +35,8 @@ interface SubmittedCenter {
 }
 
 function mapFormValuesToRequest(details: CenterDetailsFormValues): CreateCenterRequestDto {
-  const { name, sectorId, brandColor, city } = details;
-  return { name, sectorId, brandColor, ...(city === '' ? {} : { city }) };
+  const { name, sectorId, brandColor, city, isListed } = details;
+  return { name, sectorId, brandColor, isListed, ...(city === '' ? {} : { city }) };
 }
 
 /**
@@ -78,7 +78,13 @@ export function useCreateCenterForm(): CreateCenterForm {
   const enterCreatedCenter = useEnterCreatedCenter();
   const { control, setValue, handleSubmit } = useForm<CenterDetailsFormValues>({
     resolver: zodResolver(centerDetailsFormSchema),
-    defaultValues: { name: '', sectorId: 'gym', city: '', brandColor: DEFAULT_BRAND_COLOR },
+    defaultValues: {
+      name: '',
+      sectorId: 'gym',
+      city: '',
+      brandColor: DEFAULT_BRAND_COLOR,
+      isListed: false,
+    },
   });
   const createCenterMutation = useMutation({
     mutationFn: ({ intention, requestBody }: SubmittedCenter) =>

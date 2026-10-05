@@ -5,6 +5,7 @@ const VALID_DETAILS = {
   sectorId: 'gym',
   city: 'Zaragoza',
   brandColor: '#2446C7',
+  isListed: false,
 };
 
 describe('centerDetailsFormSchema', () => {
