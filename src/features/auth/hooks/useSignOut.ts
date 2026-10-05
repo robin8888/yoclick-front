@@ -6,7 +6,7 @@ import { usePendingCenterStore, usePendingInvitationStore } from '@/features/joi
 import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { getSessionServices } from '@/shared/auth/default-session-services';
 
-import { useAuthFlowStore } from '../model/auth-flow-store';
+import { useAuthFlowStore, type AuthNotice } from '../model/auth-flow-store';
 
 interface SignOut {
   signOut: () => void;
@@ -17,7 +17,12 @@ interface SignOut {
  * Cierre de sesión completo (CLAUDE.md › Seguridad): token, caché de Query, stores y caché de
  * imágenes. El push token se desregistrará cuando exista el registro de notificaciones.
  */
-export function useSignOut(): SignOut {
+interface SignOutOptions {
+  /** Aviso que se enseña en el login tras salir (p. ej. «entra con tu código»). */
+  noticeAfterSignOut?: AuthNotice;
+}
+
+export function useSignOut({ noticeAfterSignOut }: SignOutOptions = {}): SignOut {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const clearPendingCenter = usePendingCenterStore((state) => state.clearPendingCenter);
@@ -34,7 +39,7 @@ export function useSignOut(): SignOut {
           registrationDraft: null,
           pendingEmail: null,
           mfaChallengeToken: null,
-          notice: null,
+          notice: noticeAfterSignOut ?? null,
         });
         void Image.clearMemoryCache();
         void Image.clearDiskCache();

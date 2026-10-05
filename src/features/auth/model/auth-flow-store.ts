@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import type { ExperienceDuration } from './starting-level';
 
-export type AuthNotice = 'passwordChanged' | 'emailVerified';
+export type AuthNotice = 'passwordChanged' | 'emailVerified' | 'mfaEnabled';
 
 /** Datos del alta que se reúnen en dos pantallas y se envían juntos al final. */
 export interface RegistrationDraft {

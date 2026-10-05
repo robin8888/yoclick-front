@@ -1,4 +1,9 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
+export { CenterIdentityHeader } from './components/CenterIdentityHeader';
+export { PasswordTextField } from './components/PasswordTextField';
+export { VerificationCodeTextField } from './components/VerificationCodeTextField';
+export { useActiveCenterSummary } from './hooks/useActiveCenterSummary';
+export { useSignOut } from './hooks/useSignOut';
 export { RoleGate } from './components/RoleGate';
 export { SessionBootstrap } from './components/SessionBootstrap';
 export { SignedOutOnlyGate } from './components/SignedOutOnlyGate';
