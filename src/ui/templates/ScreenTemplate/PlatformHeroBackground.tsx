@@ -1,37 +1,41 @@
 import { StyleSheet } from 'react-native';
-import Svg, { Defs, LinearGradient, RadialGradient, Rect, Stop } from 'react-native-svg';
+import Svg, { Defs, Path, Pattern, RadialGradient, Rect, Stop } from 'react-native-svg';
 
-import { platformHeroDarkGradient } from '@/shared/theme';
+import { buildHoneycombTile, platformHeroGradient, platformHeroHoneycomb } from '@/shared/theme';
 
 const GRADIENT_ID = 'platformHeroGradient';
-const GLOW_ID = 'platformHeroGlow';
+const HONEYCOMB_ID = 'platformHeroHoneycomb';
+const HONEYCOMB_TILE = buildHoneycombTile(platformHeroHoneycomb.cellRadius);
 
-/** Degradado del modo oscuro de las pantallas con marca Yoclick; en claro no se dibuja nada. */
+/** Degradado burdeos de las pantallas con marca Yoclick: luz en el centro, bordes oscuros y una colmena dorada muy sutil. */
 export function PlatformHeroBackground(): React.JSX.Element {
-  const { stops, glowColor, glowOpacity, glowCenterX, glowCenterY, glowRadius } =
-    platformHeroDarkGradient;
+  const { stops, centerX, centerY, radiusX, radiusY } = platformHeroGradient;
 
   return (
     <Svg style={StyleSheet.absoluteFill} width="100%" height="100%" aria-hidden>
       <Defs>
-        <LinearGradient id={GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
+        <RadialGradient id={GRADIENT_ID} cx={centerX} cy={centerY} rx={radiusX} ry={radiusY}>
           {stops.map((stop) => (
             <Stop key={stop.offset} offset={stop.offset} stopColor={stop.color} />
           ))}
-        </LinearGradient>
-        <RadialGradient
-          id={GLOW_ID}
-          cx={glowCenterX}
-          cy={glowCenterY}
-          rx={glowRadius}
-          ry={glowRadius}
-        >
-          <Stop offset="0" stopColor={glowColor} stopOpacity={glowOpacity} />
-          <Stop offset="1" stopColor={glowColor} stopOpacity={0} />
         </RadialGradient>
+        <Pattern
+          id={HONEYCOMB_ID}
+          width={HONEYCOMB_TILE.width}
+          height={HONEYCOMB_TILE.height}
+          patternUnits="userSpaceOnUse"
+        >
+          <Path
+            d={HONEYCOMB_TILE.pathData}
+            fill="none"
+            stroke={platformHeroHoneycomb.color}
+            strokeOpacity={platformHeroHoneycomb.lineOpacity}
+            strokeWidth={platformHeroHoneycomb.lineWidth}
+          />
+        </Pattern>
       </Defs>
       <Rect width="100%" height="100%" fill={`url(#${GRADIENT_ID})`} />
-      <Rect width="100%" height="100%" fill={`url(#${GLOW_ID})`} />
+      <Rect width="100%" height="100%" fill={`url(#${HONEYCOMB_ID})`} />
     </Svg>
   );
 }

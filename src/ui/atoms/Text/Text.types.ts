@@ -26,6 +26,8 @@ interface BaseTextProps extends Omit<
   'style' | 'allowFontScaling' | 'maxFontSizeMultiplier'
 > {
   color?: TextColor;
+  /** Color literal que sustituye a `color`; solo para la marca de plataforma (logo). */
+  tintColor?: string;
   /** `center` para titulares y mensajes de pantallas con cabecera centrada. */
   align?: 'left' | 'center';
 }

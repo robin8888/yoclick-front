@@ -36,6 +36,7 @@
     "PAYMENT_FAILED": "No hemos podido procesar el pago. Revisa tu método de pago e inténtalo de nuevo",
     "CLIENT_LIMIT_REACHED": "Este centro no admite más altas por ahora. Avisa al centro",
     "JOIN_CODE_INVALID": "Ese código no es válido. Compruébalo e inténtalo de nuevo",
+    "INVITATION_INVALID": "Esa invitación no es válida, ha caducado o es para otro correo. Pide una nueva al centro",
     "MEMBERSHIP_BLOCKED": "Tu acceso a este centro está bloqueado. Contacta con el centro",
     "MFA_REQUIRED": "Necesitas verificar tu identidad con el segundo factor",
     "CHECKIN_TOKEN_EXPIRED": "El código QR ha caducado. Genera uno nuevo",
@@ -43,7 +44,9 @@
     "APP_VERSION_UNSUPPORTED": "Esta versión de la app ya no es compatible. Actualízala para continuar",
     "UNKNOWN_ERROR": "Algo ha salido mal. Inténtalo de nuevo",
     "NETWORK_OFFLINE": "No hay conexión. Comprueba tu internet e inténtalo de nuevo",
-    "NETWORK_TIMEOUT": "La conexión es lenta y no hemos podido terminar. Inténtalo de nuevo"
+    "NETWORK_TIMEOUT": "La conexión es lenta y no hemos podido terminar. Inténtalo de nuevo",
+    "LOGO_INVALID": "Ese archivo no es un logo válido. Usa una imagen PNG, JPG o WebP",
+    "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera"
   },
   "fieldErrors": {
     "invalid": "Revisa este campo",
@@ -73,7 +76,12 @@
     "privacyConsentRequired": "Tienes que aceptar la política de privacidad",
     "termsConsentRequired": "Tienes que aceptar las condiciones del servicio",
     "searchQueryTooShort": "Escribe al menos 2 letras",
-    "experienceRequired": "Elige una opción"
+    "experienceRequired": "Elige una opción",
+    "centerNameRequired": "Escribe el nombre de tu centro",
+    "centerNameTooLong": "El nombre admite hasta 80 caracteres",
+    "cityTooLong": "La ciudad admite hasta 80 caracteres",
+    "sectorRequired": "Elige el tipo de centro",
+    "invitationCodeRequired": "Escribe el código de invitación"
   },
   "join": {
     "start": {
@@ -99,7 +107,8 @@
       "fieldLabel": "Código del centro",
       "fieldHelper": "Letras y números, sin espacios.",
       "submitLabel": "Buscar mi centro",
-      "notFound": "No encontramos ningún centro con ese código. Revísalo o pídelo en recepción."
+      "notFound": "No encontramos ningún centro con ese código. Revísalo o pídelo en recepción.",
+      "placeholder": "CÓDIGO"
     },
     "search": {
       "title": "Buscar centro",
@@ -110,7 +119,10 @@
       "emptyTitle": "Sin resultados",
       "emptyDescription": "Si tu centro no aparece, pídele su código.",
       "emptyActionLabel": "Tengo un código",
-      "errorTitle": "No hemos podido buscar centros"
+      "errorTitle": "No hemos podido buscar centros",
+      "subtitle": "Busca tu gimnasio, academia o escuela por su nombre o su ciudad.",
+      "placeholder": "Nombre o ciudad",
+      "submitLabel": "Buscar"
     },
     "confirm": {
       "title": "¿Es este tu centro?",
@@ -145,6 +157,25 @@
       "allowCameraAction": "Permitir la cámara",
       "openSettingsAction": "Abrir ajustes",
       "useCodeInsteadAction": "Tengo un código"
+    },
+    "invitation": {
+      "title": "Tengo una invitación",
+      "subtitle": "Escribe el código que te ha enviado tu centro.",
+      "fieldLabel": "Código de invitación",
+      "submitLabel": "Continuar",
+      "previewTitle": "Te han invitado a {{centerName}}",
+      "previewRole": "Entrarás como {{roleName}}.",
+      "previewEmailHint": "La invitación es para {{emailHint}}.",
+      "acceptLabel": "Aceptar invitación",
+      "changeCodeAction": "Usar otro código",
+      "skipAction": "Ahora no",
+      "roles": {
+        "owner": "propietario",
+        "admin": "administrador",
+        "staff": "{{staffSingular}}",
+        "client": "{{clientSingular}}"
+      },
+      "placeholder": "CÓDIGO"
     }
   },
   "auth": {
@@ -167,7 +198,7 @@
     },
     "register": {
       "title": "Crea tu cuenta",
-      "accountSubtitle": "Paso 1 de 2 · Tus datos",
+      "accountSubtitle": "Cuéntanos quién eres y tus datos",
       "fullNameLabel": "Nombre y apellidos",
       "privacyConsent": "Acepto la política de privacidad.",
       "termsConsent": "Acepto las condiciones del servicio.",
@@ -192,14 +223,35 @@
         "prepareForEvent": "Prepararme para algo concreto",
         "recoverFromInjury": "Recuperarme de una lesión",
         "learnSomethingNew": "Aprender algo nuevo"
-      }
+      },
+      "roleQuestion": "¿Cómo vas a usar Yoclick?",
+      "roles": {
+        "owner": {
+          "title": "Soy propietario",
+          "description": "Voy a crear la app de mi gimnasio, academia o centro."
+        },
+        "instructor": {
+          "title": "Soy instructor o profesor",
+          "description": "Mi centro me ha invitado a su equipo."
+        },
+        "client": {
+          "title": "Soy alumno o cliente",
+          "description": "Quiero reservar y apuntarme en mi centro."
+        }
+      },
+      "roleRequired": "Elige cómo vas a usar Yoclick",
+      "loginPrompt": "¿Ya tienes cuenta?",
+      "loginAction": "Iniciar sesión"
     },
     "verifyEmail": {
       "title": "Verifica tu correo",
       "subtitle": "Escribe el código de 6 dígitos que hemos enviado a {{email}}.",
       "submitLabel": "Verificar correo",
       "resendAction": "Reenviar código",
-      "resentNotice": "Si el correo existe, te hemos enviado un código nuevo."
+      "resentNotice": "Si el correo existe, te hemos enviado un código nuevo.",
+      "resendPrompt": "¿No te ha llegado?",
+      "resendCooldown": "Reenviar en {{seconds}} s",
+      "expiryNote": "El código caduca en 15 minutos."
     },
     "forgotPassword": {
       "title": "Recuperar contraseña",
@@ -228,6 +280,17 @@
       "placeholderDescription": "Tu sesión está abierta. Esta pantalla llega en la siguiente entrega.",
       "noCenterTitle": "Aún no estás en ningún centro",
       "noCenterDescription": "Únete con el código de tu centro para empezar."
+    },
+    "start": {
+      "tagline": "Reservas y gestión para tu centro",
+      "registerAction": "Crear cuenta",
+      "loginAction": "Iniciar sesión",
+      "subtitle": "Reserva, paga y gestiona tu gimnasio, academia o escuela desde el móvil.",
+      "features": {
+        "booking": "Reservas",
+        "payments": "Pagos",
+        "notices": "Avisos"
+      }
     }
   },
   "states": {
@@ -246,6 +309,65 @@
       "title": "Actualiza la app",
       "message": "Hay una versión nueva con mejoras de seguridad. Tus datos y tus citas no cambian.",
       "buttonLabel": "Actualizar ahora"
+    }
+  },
+  "onboarding": {
+    "account": {
+      "title": "Crea tu cuenta de dueño",
+      "subtitle": "Con ella administrarás tu centro. Después podrás invitar a tu equipo.",
+      "submitLabel": "Crear cuenta"
+    },
+    "center": {
+      "title": "Crea la app de tu centro",
+      "subtitle": "Datos del centro",
+      "nameLabel": "Nombre del centro",
+      "cityLabel": "Ciudad (opcional)",
+      "sectorLabel": "Tipo de centro",
+      "colorLabel": "Color de tu marca",
+      "colorHelper": "Así verán tus clientes los botones y los acentos de la app.",
+      "previewLabel": "Así se verá tu app",
+      "previewButton": "Reservar cita",
+      "submitLabel": "Crear mi centro",
+      "trialNotice": "14 días de prueba gratis, sin tarjeta.",
+      "colorOptionLabel": "Color {{hex}}"
+    },
+    "sectorGroups": {
+      "sport": "Deporte y salud",
+      "school": "Academias y escuelas",
+      "other": "Otros"
+    },
+    "sectors": {
+      "gym": "Gimnasio",
+      "estudio": "Estudio de entrenamiento",
+      "readap": "Centro de readaptación",
+      "box": "Box / funcional",
+      "yoga": "Yoga y pilates",
+      "academia": "Academia",
+      "baile": "Academia de baile",
+      "marciales": "Artes marciales",
+      "musica": "Escuela de música",
+      "cocina": "Escuela de cocina",
+      "otro": "Otro centro con clases o citas"
+    },
+    "ready": {
+      "title": "¡{{centerName}} ya tiene app!",
+      "subtitle": "Tu prueba de 14 días ha empezado.",
+      "joinCodeLabel": "Código para tus clientes",
+      "joinLinkLabel": "Enlace de invitación",
+      "shareAction": "Compartir el código",
+      "shareMessage": "Únete a {{centerName}} en Yoclick con el código {{joinCode}}: {{joinLink}}",
+      "enterAction": "Ir a mi panel"
+    },
+    "logo": {
+      "title": "Sube el logo de tu centro",
+      "subtitle": "Así lo verán tus clientes. Podrás cambiarlo más tarde.",
+      "previewLabel": "Vista previa del logo de {{centerName}}",
+      "chooseAction": "Elegir logo de la galería",
+      "chooseAnotherAction": "Elegir otro",
+      "uploadAction": "Usar este logo",
+      "skipAction": "Ahora no",
+      "tooLarge": "Esa imagen es demasiado grande. Prueba con otra más ligera.",
+      "unreadable": "No hemos podido leer esa imagen. Prueba con otra."
     }
   }
 }

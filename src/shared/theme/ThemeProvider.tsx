@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 import { useColorScheme } from 'react-native';
 
 import { buildTheme } from './build-theme';
-import type { Theme, ThemeMode, ThemePreference } from './theme.types';
+import type { Theme, ThemeColors, ThemeMode, ThemePreference } from './theme.types';
 
 interface ThemeContextValue {
   theme: Theme;
@@ -14,6 +14,7 @@ export interface ThemeProviderProps {
   children: ReactNode;
   /** Color del centro activo; sin él se usa la marca neutra. */
   brandHexColor?: string | undefined;
+  colorOverrides?: Partial<ThemeColors> | undefined;
   initialPreference?: ThemePreference;
 }
 
@@ -30,6 +31,7 @@ function resolveThemeMode(
 export function ThemeProvider({
   children,
   brandHexColor,
+  colorOverrides,
   initialPreference = 'system',
 }: Readonly<ThemeProviderProps>): React.JSX.Element {
   const [themePreference, setThemePreference] = useState<ThemePreference>(initialPreference);
@@ -39,8 +41,12 @@ export function ThemeProvider({
   // El valor del contexto se memoiza porque lo consume toda la app: un objeto nuevo en cada
   // render repintaría todos los componentes aunque el tema no haya cambiado.
   const contextValue = useMemo<ThemeContextValue>(
-    () => ({ theme: buildTheme({ mode, brandHexColor }), themePreference, setThemePreference }),
-    [mode, brandHexColor, themePreference],
+    () => ({
+      theme: buildTheme({ mode, brandHexColor, colorOverrides }),
+      themePreference,
+      setThemePreference,
+    }),
+    [mode, brandHexColor, colorOverrides, themePreference],
   );
 
   return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;

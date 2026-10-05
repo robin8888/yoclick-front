@@ -1,3 +1,4 @@
+export { buildHoneycombTile } from './honeycomb-tile';
 export { buildTheme } from './build-theme';
 export { calculateContrastRatio, deriveBrandTokens } from './brand-engine';
 export type { BrandTokens } from './brand-engine';
@@ -20,4 +21,11 @@ export { motionTokens } from './motion';
 export type { MotionTokens } from './motion';
 export { usePressableStyle } from './usePressableStyle';
 export { YOCLICK_LOGO_ASPECT_RATIO, YOCLICK_LOGO_MARKUP } from './brand-logo-markup';
-export { platformHeroDarkGradient } from './platform-hero';
+export {
+  platformAccentColors,
+  platformCardColors,
+  platformHeroGradient,
+  platformHeroColorOverrides,
+  platformHeroHoneycomb,
+} from './platform-hero';
+export { BRAND_COLOR_PRESETS, DEFAULT_BRAND_COLOR } from './brand-color-presets';

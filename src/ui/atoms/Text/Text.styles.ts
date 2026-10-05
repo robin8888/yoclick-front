@@ -10,12 +10,19 @@ interface TextStyleRequest {
   variant: TextVariant;
   color: TextColor;
   align?: 'left' | 'center' | undefined;
+  tintColor?: string | undefined;
 }
 
-export function createTextStyle({ theme, variant, color, align }: TextStyleRequest): TextStyle {
+export function createTextStyle({
+  theme,
+  variant,
+  color,
+  align,
+  tintColor,
+}: TextStyleRequest): TextStyle {
   const { fontFamily, fontSize, lineHeight, fontWeight, letterSpacing } = theme.type[variant];
   return {
-    color: theme.colors[color],
+    color: tintColor ?? theme.colors[color],
     // El peso va dentro del nombre de la fuente cargada; `fontWeight` aparte rompe Android.
     fontFamily: resolveFontFaceName({ fontFamily, fontWeight }),
     fontSize,
@@ -28,14 +35,11 @@ export function createTextStyle({ theme, variant, color, align }: TextStyleReque
   };
 }
 
-export function useTextStyle(
-  variant: TextVariant,
-  color: TextColor,
-  align?: 'left' | 'center',
-): TextStyle {
+export function useTextStyle(request: Omit<TextStyleRequest, 'theme'>): TextStyle {
   const theme = useTheme();
+  const { variant, color, align, tintColor } = request;
   return useMemo(
-    () => createTextStyle({ theme, variant, color, align }),
-    [theme, variant, color, align],
+    () => createTextStyle({ theme, variant, color, align, tintColor }),
+    [theme, variant, color, align, tintColor],
   );
 }

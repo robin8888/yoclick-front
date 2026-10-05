@@ -10,6 +10,7 @@ export function Icon({
   name,
   size = 'inline',
   color = 'ink',
+  tintColor,
   accessibilityLabel,
 }: Readonly<IconProps>): React.JSX.Element {
   const theme = useTheme();
@@ -26,7 +27,7 @@ export function Icon({
     >
       <LucideGlyph
         size={ICON_PIXEL_SIZES[size]}
-        color={theme.colors[color]}
+        color={tintColor ?? theme.colors[color]}
         strokeWidth={ICON_STROKE_WIDTH}
       />
     </View>

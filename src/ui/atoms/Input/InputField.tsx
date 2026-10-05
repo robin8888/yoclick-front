@@ -21,7 +21,7 @@ interface InputFieldProps extends SharedInputProps {
 export function InputField(props: Readonly<InputFieldProps>): React.JSX.Element {
   const { isDisabled = false, isSecureTextHidden, onFocusChange, inputRef } = props;
   const theme = useTheme();
-  const textStyle = useTextStyle('body', isDisabled ? 'ink2' : 'ink');
+  const textStyle = useTextStyle({ variant: 'body', color: isDisabled ? 'ink2' : 'ink' });
 
   return (
     <TextInput

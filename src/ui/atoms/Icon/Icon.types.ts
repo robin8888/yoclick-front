@@ -61,6 +61,8 @@ export type IconColor = Extract<
 export interface IconProps {
   name: IconName;
   size?: IconSize;
+  /** Color literal que sustituye a `color`; solo para la marca de plataforma (logo). */
+  tintColor?: string | undefined;
   color?: IconColor;
   /** Con etiqueta el icono se anuncia como imagen; sin ella es decorativo y se oculta. */
   accessibilityLabel?: string | undefined;

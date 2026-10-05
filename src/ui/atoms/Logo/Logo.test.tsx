@@ -21,4 +21,10 @@ describe('Logo', () => {
 
     expect(screen.getByRole('img', { name: 'YoClick' })).toBeOnTheScreen();
   });
+
+  it('renders the white lockup as an image named YoClick', () => {
+    renderInTheme(<Logo variant="lockup" height={160} />);
+
+    expect(screen.getByRole('img', { name: 'YoClick' })).toBeOnTheScreen();
+  });
 });

@@ -11,11 +11,12 @@ export function Text({
   variant = 'body',
   color = 'ink',
   align,
+  tintColor,
   role,
   maxFontSizeMultiplier,
   ...nativeTextProps
 }: Readonly<TextProps>): React.JSX.Element {
-  const textStyle = useTextStyle(variant, color, align);
+  const textStyle = useTextStyle({ variant, color, align, tintColor });
   const defaultRole = HEADING_VARIANTS.includes(variant) ? 'heading' : undefined;
 
   return (
