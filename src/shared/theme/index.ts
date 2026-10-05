@@ -25,6 +25,7 @@ export {
   platformAccentColors,
   platformCardColors,
   platformHeroGradient,
+  qrCodeColors,
   platformHeroColorOverrides,
   platformHeroHoneycomb,
 } from './platform-hero';

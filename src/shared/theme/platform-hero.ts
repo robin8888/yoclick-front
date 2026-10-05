@@ -55,3 +55,6 @@ export const platformHeroHoneycomb = {
   /** Distancia del centro de cada celda a sus vértices, en puntos. */
   cellRadius: 28,
 } as const;
+
+// Los QR van siempre en negro sobre blanco, también en modo oscuro: es lo que leen todas las cámaras.
+export const qrCodeColors = { foreground: '#000000', background: '#FFFFFF' } as const;
