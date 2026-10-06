@@ -35,3 +35,5 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 4 | **Zona horaria del centro en reservas** y **horas ocupadas** en la disponibilidad (el prototipo las tacha). | Se usa `Europe/Madrid` y solo se listan huecos libres. |
 | 5 | **Datos fiscales y contacto del centro** (teléfono, correo, razón social, CIF) para `acenter`. | Pantalla «Datos del centro» no construida. |
 | 6 | **Pasar una clase sin cerrar a cerrada** desde administración. | El registro la muestra como «Sin cerrar». |
+| 7 | **Reprogramar una cita** (`appts`, botón «Reprogramar»): no hay endpoint para mover una reserva a otro hueco de forma atómica (cancelar y crear dos veces dejaría al alumno sin cita si falla el segundo paso). Tampoco se guarda la hora anterior («Antes: 10:00»). | La tarjeta de cita no muestra «Reprogramar» ni «Antes». |
+| 8 | **Añadir la cita al calendario** (`appts`, enlace «Al calendario»): hace falta `expo-calendar` o `expo-sharing` con un `.ics` (dependencia nueva, pendiente de aprobar). | La tarjeta de cita no muestra «Al calendario». |
