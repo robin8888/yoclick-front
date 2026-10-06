@@ -13,7 +13,7 @@ const BUTTON_MIN_HEIGHTS: Readonly<Record<ButtonSize, number>> = {
 const OUTLINE_BORDER_WIDTH = 1.5;
 
 // Colores de contenido que aceptan a la vez Text, Icon y Spinner.
-type ButtonContentColor = 'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'onDanger';
+type ButtonContentColor = 'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'onDanger' | 'surface';
 
 interface ButtonColors {
   backgroundColor: string;
@@ -45,6 +45,8 @@ function resolveVariantColors(theme: Theme, variant: ButtonVariant): ButtonColor
       return { backgroundColor: transparent, borderColor: colors.lineStrong, contentColor: 'ink' };
     case 'ghost':
       return { backgroundColor: transparent, borderColor: transparent, contentColor: 'brandInk' };
+    case 'dark':
+      return { backgroundColor: colors.ink, borderColor: colors.ink, contentColor: 'surface' };
     case 'danger':
       return {
         backgroundColor: colors.danger,
@@ -57,7 +59,8 @@ function resolveVariantColors(theme: Theme, variant: ButtonVariant): ButtonColor
 // Un botón desactivado se apaga con superficie y tinta secundaria (sin bajar la opacidad del
 // texto): así sigue legible para quien lo necesite y no depende solo del color de marca.
 function resolveDisabledColors(theme: Theme, variant: ButtonVariant): ButtonColors {
-  const isFilled = variant === 'primary' || variant === 'danger' || variant === 'secondary';
+  const isFilled =
+    variant === 'primary' || variant === 'danger' || variant === 'secondary' || variant === 'dark';
   return {
     backgroundColor: isFilled ? theme.colors.surface2 : 'transparent',
     borderColor: variant === 'outline' ? theme.colors.line : 'transparent',

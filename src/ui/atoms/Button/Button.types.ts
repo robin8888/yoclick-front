@@ -1,6 +1,6 @@
 import type { IconName } from '../Icon';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'dark';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
 

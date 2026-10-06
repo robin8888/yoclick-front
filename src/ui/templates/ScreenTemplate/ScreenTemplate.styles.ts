@@ -21,8 +21,10 @@ export function createContentStyle(theme: Theme, isContentCentered: boolean): Vi
 }
 
 export function createCenterBrandBarStyle(theme: Theme): ViewStyle {
-  return { flexDirection: 'row', alignItems: 'center', gap: theme.space[2] };
+  return { flexDirection: 'row', alignItems: 'center', gap: theme.space[3] };
 }
+
+export const CENTER_BRAND_TEXT_STYLE: ViewStyle = { flex: 1 };
 
 export function createHeaderStyle(theme: Theme): ViewStyle {
   return { gap: theme.space[2] };
@@ -43,4 +45,9 @@ export function createFooterStyle(theme: Theme, hasPlatformHeroBackground: boole
   };
 }
 
-export const KEYBOARD_AVOIDING_STYLE: ViewStyle = { flex: 1 };
+/** Sobre el contenido, abajo a la derecha, por encima de la acción fija si la hay. */
+export const FLOATING_ACTION_STYLE: ViewStyle = {
+  position: 'absolute',
+  right: 16,
+  bottom: 16,
+};

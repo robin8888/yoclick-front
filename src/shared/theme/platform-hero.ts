@@ -45,6 +45,10 @@ export const platformCardColors = {
   shadow: '#2E0003',
   // Dorado de la colmena: marca la tarjeta elegida.
   selectedBorder: '#D4AF37',
+  // Crema dorada de fondo y mitad de opacidad de la marca de elegir: la tarjeta elegida destaca del resto.
+  selectedSurface: '#FFF3C4',
+  selectedTile: 'rgba(212,175,55,0.35)',
+  unselectedRing: 'rgba(148,0,15,0.35)',
 } as const;
 
 // Colmena dorada muy sutil sobre el degradado: solo líneas finas y casi transparentes.

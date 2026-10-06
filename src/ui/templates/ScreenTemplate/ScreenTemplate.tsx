@@ -1,15 +1,17 @@
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import type { ComponentProps, ReactNode } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { platformHeroColorOverrides, ThemeProvider, useTheme } from '@/shared/theme';
 
 import {
   createFooterStyle,
+  FLOATING_ACTION_STYLE,
   createScreenStyle,
   TRANSPARENT_SAFE_AREA_STYLE,
-  KEYBOARD_AVOIDING_STYLE,
 } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
+import { useIsKeyboardVisible } from '@/ui/hooks/useIsKeyboardVisible';
 import { BusyOverlay } from '@/ui/molecules/BusyOverlay';
 import { KeyboardAwareScroll } from './KeyboardAwareScroll';
 import { CenterHoneycombBackground } from './CenterHoneycombBackground';
@@ -27,41 +29,146 @@ export function ScreenTemplate(props: Readonly<ScreenTemplateProps>): React.JSX.
   );
 }
 
-function ScreenTemplateContent({
+interface ScreenFooterProps {
+  footer: ReactNode;
+  hasPlatformHeroBackground: boolean;
+}
+
+/** La acción principal fija abajo; sin ella no se dibuja nada. */
+function ScreenFooter({
   footer,
-  children,
-  hasPlatformHeroBackground = false,
-  isLoading = false,
-  isContentCentered = false,
-  isHeaderHidden = false,
+  hasPlatformHeroBackground,
+}: Readonly<ScreenFooterProps>): React.JSX.Element | null {
+  const theme = useTheme();
+  if (footer === undefined) return null;
+  return <View style={createFooterStyle(theme, hasPlatformHeroBackground)}>{footer}</View>;
+}
+
+type HeaderProps = Omit<ComponentProps<typeof ScreenTemplateTop>, 'hasPlatformHeroBackground'>;
+
+interface ScreenHeaderSlotProps {
+  isHidden: boolean;
+  hasPlatformHeroBackground: boolean;
+  headerProps: HeaderProps;
+}
+
+/** La cabecera estándar (marca, título y volver); las pantallas con título propio solo conservan la marca. */
+function ScreenHeaderSlot({
+  isHidden,
+  hasPlatformHeroBackground,
+  headerProps,
+}: Readonly<ScreenHeaderSlotProps>): React.JSX.Element {
+  return (
+    <ScreenTemplateTop
+      hasPlatformHeroBackground={hasPlatformHeroBackground}
+      isTitleHidden={isHidden}
+      {...headerProps}
+    />
+  );
+}
+
+interface FixedActionsProps {
+  footer: ReactNode;
+  floatingAction: ReactNode;
+  hasPlatformHeroBackground: boolean;
+}
+
+/** Lo que queda fijo sobre el scroll: la acción principal abajo y el botón flotante (con el teclado cerrado). */
+function FixedActions({
+  footer,
+  floatingAction,
+  hasPlatformHeroBackground,
+}: Readonly<FixedActionsProps>): React.JSX.Element {
+  return (
+    <>
+      <ScreenFooter footer={footer} hasPlatformHeroBackground={hasPlatformHeroBackground} />
+      {floatingAction === undefined ? null : (
+        <View style={FLOATING_ACTION_STYLE} pointerEvents="box-none">
+          {floatingAction}
+        </View>
+      )}
+    </>
+  );
+}
+
+interface ScreenFrameProps {
+  hasPlatformHeroBackground: boolean;
+  isLoading: boolean;
+  loadingLabel: string | undefined;
+  children: ReactNode;
+}
+
+/** El fondo (degradado de Yoclick o panal del centro) y, encima de todo, el velo de «cargando». */
+function ScreenFrame({
+  hasPlatformHeroBackground,
+  isLoading,
   loadingLabel,
-  ...headerProps
-}: Readonly<ScreenTemplateProps>): React.JSX.Element {
+  children,
+}: Readonly<ScreenFrameProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
     <View style={createScreenStyle(theme, hasPlatformHeroBackground)}>
       {hasPlatformHeroBackground ? <PlatformHeroBackground /> : <CenterHoneycombBackground />}
-      <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
-        <KeyboardAvoidingView
-          style={KEYBOARD_AVOIDING_STYLE}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
-          <KeyboardAwareScroll isContentCentered={isContentCentered}>
-            {isHeaderHidden ? null : (
-              <ScreenTemplateTop
-                hasPlatformHeroBackground={hasPlatformHeroBackground}
-                {...headerProps}
-              />
-            )}
-            {children}
-          </KeyboardAwareScroll>
-          {footer === undefined ? null : (
-            <View style={createFooterStyle(theme, hasPlatformHeroBackground)}>{footer}</View>
-          )}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+      {children}
       {isLoading ? <BusyOverlay loadingLabel={loadingLabel} /> : null}
     </View>
+  );
+}
+
+type ScreenBodyProps = Omit<ScreenTemplateProps, 'isLoading' | 'loadingLabel'>;
+
+/** Zona segura con el contenido que hace scroll y, encima, las acciones fijas. */
+function ScreenBody({
+  footer,
+  floatingAction,
+  children,
+  hasPlatformHeroBackground = false,
+  isContentCentered = false,
+  isHeaderHidden = false,
+  ...headerProps
+}: Readonly<ScreenBodyProps>): React.JSX.Element {
+  const isKeyboardVisible = useIsKeyboardVisible();
+  const footerView = (
+    <ScreenFooter footer={footer} hasPlatformHeroBackground={hasPlatformHeroBackground} />
+  );
+
+  return (
+    <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
+      <KeyboardAwareScroll
+        isContentCentered={isContentCentered}
+        trailingContent={isKeyboardVisible ? footerView : null}
+      >
+        <ScreenHeaderSlot
+          isHidden={isHeaderHidden}
+          hasPlatformHeroBackground={hasPlatformHeroBackground}
+          headerProps={headerProps}
+        />
+        {children}
+      </KeyboardAwareScroll>
+      {isKeyboardVisible ? null : (
+        <FixedActions
+          footer={footer}
+          floatingAction={floatingAction}
+          hasPlatformHeroBackground={hasPlatformHeroBackground}
+        />
+      )}
+    </SafeAreaView>
+  );
+}
+
+function ScreenTemplateContent({
+  isLoading = false,
+  loadingLabel,
+  ...bodyProps
+}: Readonly<ScreenTemplateProps>): React.JSX.Element {
+  return (
+    <ScreenFrame
+      hasPlatformHeroBackground={bodyProps.hasPlatformHeroBackground ?? false}
+      isLoading={isLoading}
+      loadingLabel={loadingLabel}
+    >
+      <ScreenBody {...bodyProps} />
+    </ScreenFrame>
   );
 }

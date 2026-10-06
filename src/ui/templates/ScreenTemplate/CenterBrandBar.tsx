@@ -4,9 +4,12 @@ import { useCenterIdentity, useTheme } from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Text } from '@/ui/atoms/Text';
 
-import { createCenterBrandBarStyle } from './ScreenTemplate.styles';
+import { CENTER_BRAND_TEXT_STYLE, createCenterBrandBarStyle } from './ScreenTemplate.styles';
 
-/** Logo y nombre del centro arriba de cada pantalla de un centro; nada fuera de uno. */
+/**
+ * Arriba de cada pantalla de un centro: su logo y nombre en grande y, debajo, quién ha entrado
+ * y con qué papel (propietario, instructor, alumno). Nada fuera de un centro.
+ */
 export function CenterBrandBar(): React.JSX.Element | null {
   const theme = useTheme();
   const centerIdentity = useCenterIdentity();
@@ -17,12 +20,24 @@ export function CenterBrandBar(): React.JSX.Element | null {
       <Avatar
         name={centerIdentity.name}
         photoUrl={centerIdentity.logoImageUrl}
-        size="sm"
+        size="xl"
         isDecorative
       />
-      <Text variant="bodyStrong" color="ink2">
-        {centerIdentity.name}
-      </Text>
+      <View style={CENTER_BRAND_TEXT_STYLE}>
+        <Text variant="titleMd" numberOfLines={1}>
+          {centerIdentity.name}
+        </Text>
+        {centerIdentity.personName === null ? null : (
+          <Text color="ink2" numberOfLines={1}>
+            {centerIdentity.personName}
+          </Text>
+        )}
+        {centerIdentity.roleLabel === null ? null : (
+          <Text variant="caption" color="brandInk" numberOfLines={1}>
+            {centerIdentity.roleLabel}
+          </Text>
+        )}
+      </View>
     </View>
   );
 }

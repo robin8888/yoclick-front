@@ -1,4 +1,4 @@
-export type SpinnerColor = 'ink' | 'ink2' | 'brandInk' | 'onBrand' | 'onDanger';
+export type SpinnerColor = 'ink' | 'ink2' | 'brandInk' | 'onBrand' | 'onDanger' | 'surface';
 
 export type SpinnerSize = 'small' | 'large';
 

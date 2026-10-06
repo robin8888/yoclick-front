@@ -12,12 +12,14 @@ export function DayPill({
   dayLabel,
   accessibilityLabel,
   isSelected,
+  selectedTone = 'brand',
   hasSlots,
   onPress,
 }: Readonly<DayPillProps>): React.JSX.Element {
   const theme = useTheme();
   const idleColor = hasSlots ? 'ink' : 'ink2';
-  const contentColor = isSelected ? 'onBrand' : idleColor;
+  const selectedColor = selectedTone === 'ink' ? 'surface' : 'onBrand';
+  const contentColor = isSelected ? selectedColor : idleColor;
 
   return (
     <Pressable
@@ -26,7 +28,7 @@ export function DayPill({
       accessibilityState={{ selected: isSelected, disabled: !hasSlots }}
       disabled={!hasSlots}
       onPress={onPress}
-      style={createDayPillStyle(theme, isSelected)}
+      style={createDayPillStyle(theme, isSelected, selectedTone)}
     >
       <Text variant="caption" color={contentColor}>
         {weekdayLabel}

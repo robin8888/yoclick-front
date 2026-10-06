@@ -2,6 +2,7 @@ import { Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/shared/theme';
+import { CountBadge } from '@/ui/atoms/CountBadge';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
@@ -25,12 +26,17 @@ export function TabBar({ tabs }: Readonly<TabBarProps>): React.JSX.Element {
           <Pressable
             key={tab.id}
             role="tab"
-            accessibilityLabel={tab.label}
+            accessibilityLabel={
+              (tab.badgeCount ?? 0) > 0 ? `${tab.label}, ${String(tab.badgeCount)}` : tab.label
+            }
             accessibilityState={{ selected: tab.isActive }}
             onPress={tab.onPress}
             style={createTabItemStyle(theme)}
           >
-            <Icon name={tab.iconName} size="navigation" color={contentColor} />
+            <View>
+              <Icon name={tab.iconName} size="navigation" color={contentColor} />
+              <CountBadge count={tab.badgeCount ?? 0} />
+            </View>
             <Text variant="caption" color={contentColor} numberOfLines={1}>
               {tab.label}
             </Text>

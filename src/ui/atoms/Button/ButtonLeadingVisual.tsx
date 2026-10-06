@@ -5,7 +5,7 @@ import { Spinner } from '../Spinner';
 interface ButtonLeadingVisualProps {
   isLoading: boolean;
   iconName: IconName | undefined;
-  contentColor: 'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'onDanger';
+  contentColor: 'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'onDanger' | 'surface';
 }
 
 /** Spinner mientras carga, si no el icono opcional; ambos decorativos (el botón ya anuncia «ocupado»). */

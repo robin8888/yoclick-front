@@ -5,6 +5,8 @@ export interface TabBarItem {
   label: string;
   iconName: IconName;
   isActive: boolean;
+  /** Avisos sin leer sobre el icono; con 0 no se dibuja. */
+  badgeCount?: number;
   onPress: () => void;
 }
 
@@ -24,6 +26,8 @@ export interface PathTab {
    * cuelgan de ella, por ejemplo `/book` y `/book/staff`.
    */
   activePaths: readonly string[];
+  /** Avisos sin leer sobre el icono (la pestaña «Avisos»). */
+  badgeCount?: number;
 }
 
 export interface PathTabBarProps {

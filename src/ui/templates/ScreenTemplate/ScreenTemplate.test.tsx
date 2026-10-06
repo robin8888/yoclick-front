@@ -77,7 +77,14 @@ describe('ScreenTemplate', () => {
 
   it('shows the center name above the title on screens inside a center', () => {
     renderInTheme(
-      <CenterIdentityProvider centerIdentity={{ name: 'Gimnasio Norte', logoImageUrl: null }}>
+      <CenterIdentityProvider
+        centerIdentity={{
+          name: 'Gimnasio Norte',
+          logoImageUrl: null,
+          personName: 'Lucía Torres',
+          roleLabel: 'Alumno',
+        }}
+      >
         <ScreenTemplate title="Mis citas">
           <Text>Contenido</Text>
         </ScreenTemplate>
@@ -90,7 +97,14 @@ describe('ScreenTemplate', () => {
 
   it('shows no center name outside a center or on platform screens', () => {
     renderInTheme(
-      <CenterIdentityProvider centerIdentity={{ name: 'Gimnasio Norte', logoImageUrl: null }}>
+      <CenterIdentityProvider
+        centerIdentity={{
+          name: 'Gimnasio Norte',
+          logoImageUrl: null,
+          personName: 'Lucía Torres',
+          roleLabel: 'Alumno',
+        }}
+      >
         <ScreenTemplate title="Encuentra tu centro" hasPlatformHeroBackground>
           <Text>Contenido</Text>
         </ScreenTemplate>

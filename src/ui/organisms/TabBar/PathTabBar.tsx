@@ -15,6 +15,7 @@ export function PathTabBar({
         label: tab.label,
         iconName: tab.iconName,
         isActive: isAnyPathInside(currentPath, tab.activePaths),
+        badgeCount: tab.badgeCount ?? 0,
         onPress: () => {
           onTabPress(tab.href);
         },
