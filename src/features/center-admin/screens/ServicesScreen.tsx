@@ -4,7 +4,9 @@ import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { OpeningHoursSection } from '../components/OpeningHoursSection';
+import { RoomsSection } from '../components/RoomsSection';
 import { ServiceCatalogSection } from '../components/ServiceCatalogSection';
+import { TeamSection } from '../components/TeamSection';
 import { useCenterSettings } from '../hooks/useCenterSettings';
 import { useServiceCatalog } from '../hooks/useServiceCatalog';
 
@@ -33,9 +35,11 @@ export function ServicesScreen(): React.JSX.Element {
           openEditor(NEW_SERVICE_ROUTE_ID);
         }}
       />
+      <RoomsSection />
       {settings.data === undefined ? null : (
         <OpeningHoursSection openingHours={settings.data.openingHours} />
       )}
+      <TeamSection />
     </ScreenTemplate>
   );
 }

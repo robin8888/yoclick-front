@@ -66,6 +66,8 @@ export const serviceFormSchema = z.object({
   isVisible: z.boolean(),
   /** Quién da el servicio; vacío en un alta = quien lo crea (lo decide el servidor). */
   staffMembershipIds: z.array(z.string()),
+  /** Sala o recurso donde se da; vacío = sin sala fija. */
+  roomId: z.string(),
 });
 export type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
@@ -93,6 +95,7 @@ export function buildEmptyServiceForm(): ServiceFormValues {
     priceInEuros: '',
     isVisible: true,
     staffMembershipIds: [],
+    roomId: '',
   };
 }
 
@@ -104,6 +107,7 @@ export function mapServiceToForm(service: ServiceListResponseDtoServicesItem): S
     priceInEuros: formatPriceForInput(service.priceCents),
     isVisible: service.isVisible,
     staffMembershipIds: service.staff.map((staffMember) => staffMember.membershipId),
+    roomId: service.room?.id ?? '',
   };
 }
 
@@ -114,6 +118,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
   durationMinutes: number;
   priceCents: number | null;
   isVisible: boolean;
+  roomId: string | null;
   staffMembershipIds?: string[];
 } {
   return {
@@ -122,6 +127,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
     durationMinutes: Number(formValues.durationMinutes),
     priceCents: formValues.priceInEuros === '' ? null : parsePriceInCents(formValues.priceInEuros),
     isVisible: formValues.isVisible,
+    roomId: formValues.roomId === '' ? null : formValues.roomId,
     ...(formValues.staffMembershipIds.length === 0
       ? {}
       : { staffMembershipIds: formValues.staffMembershipIds }),
@@ -129,10 +135,12 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
 }
 
 export function mapFormToCreateRequest(formValues: ServiceFormValues): CreateServiceRequestDto {
-  const { description, priceCents, ...requiredChanges } = mapFormToServiceChanges(formValues);
+  const { description, priceCents, roomId, ...requiredChanges } =
+    mapFormToServiceChanges(formValues);
   return {
     ...requiredChanges,
     ...(description === null ? {} : { description }),
     ...(priceCents === null ? {} : { priceCents }),
+    ...(roomId === null ? {} : { roomId }),
   };
 }

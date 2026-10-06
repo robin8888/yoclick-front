@@ -14,7 +14,7 @@ const SECTION_STYLE = { gap: 12 } as const;
 
 interface AdminLink {
   route: Href;
-  iconName: 'calendar' | 'qrCode' | 'users';
+  iconName: 'calendar' | 'clock' | 'qrCode' | 'users';
   title: () => string;
   subtitle: () => string;
 }
@@ -25,6 +25,12 @@ const CENTER_LINKS: readonly AdminLink[] = [
     iconName: 'calendar',
     title: () => i18n.t('centerAdmin.more.servicesTitle'),
     subtitle: () => i18n.t('centerAdmin.more.servicesSubtitle'),
+  },
+  {
+    route: '/(admin)/(tabs)/records',
+    iconName: 'clock',
+    title: () => i18n.t('centerAdmin.more.recordsTitle'),
+    subtitle: () => i18n.t('centerAdmin.more.recordsSubtitle'),
   },
   {
     route: '/(admin)/invite-clients',

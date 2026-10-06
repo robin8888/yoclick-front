@@ -9,7 +9,10 @@ export default function AdminTabsLayout(): React.JSX.Element {
       tabBar={(tabBarProps) => <AdminTabBar {...tabBarProps} />}
     >
       <Tabs.Screen name="agenda" />
-      <Tabs.Screen name="records" />
+      <Tabs.Screen name="clients" />
+      <Tabs.Screen name="content" />
+      <Tabs.Screen name="brand" />
+      <Tabs.Screen name="records" options={{ href: null }} />
       <Tabs.Screen name="more" />
     </Tabs>
   );

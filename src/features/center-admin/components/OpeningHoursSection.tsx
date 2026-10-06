@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import type { CenterSettingsResponseDto } from '@/shared/api/generated/model';
@@ -18,10 +19,18 @@ export function OpeningHoursSection({
   openingHours,
 }: Readonly<OpeningHoursSectionProps>): React.JSX.Element {
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <View style={{ gap: theme.space[3] }}>
-      <SectionHeader title={i18n.t('centerAdmin.services.hoursTitle')} />
+      <SectionHeader
+        title={i18n.t('centerAdmin.services.hoursTitle')}
+        actionLabel={i18n.t('centerAdmin.services.hoursEditAction')}
+        actionIconName="edit"
+        onActionPress={() => {
+          router.push('/(admin)/hours');
+        }}
+      />
       <View style={createHoursCardStyle(theme)}>
         {summarizeOpeningHours(openingHours).map(({ day, rangesLabel }) => (
           <View key={day} style={HOURS_ROW_STYLE}>

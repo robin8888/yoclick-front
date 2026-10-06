@@ -37,3 +37,32 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 6 | **Pasar una clase sin cerrar a cerrada** desde administración. | El registro la muestra como «Sin cerrar». |
 | 7 | **Reprogramar una cita** (`appts`, botón «Reprogramar»): no hay endpoint para mover una reserva a otro hueco de forma atómica (cancelar y crear dos veces dejaría al alumno sin cita si falla el segundo paso). Tampoco se guarda la hora anterior («Antes: 10:00»). | La tarjeta de cita no muestra «Reprogramar» ni «Antes». |
 | 8 | **Añadir la cita al calendario** (`appts`, enlace «Al calendario»): hace falta `expo-calendar` o `expo-sharing` con un `.ics` (dependencia nueva, pendiente de aprobar). | La tarjeta de cita no muestra «Al calendario». |
+
+## Agenda del centro (`aagenda`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Ocupación del día**~~ Resuelto (6 oct 2026): `GET /v1/centers/{id}/agenda/summary?date=` (propietario y administración, con MFA) devuelve `occupancyPercent` (tiempo reservado sobre el tiempo abierto del equipo que atiende servicios; `null` si el centro cierra). | La tarjeta «Ocupación» muestra la cifra y la barra; un guion si es `null` o falla. |
+| 2 | ~~**Altas de la semana y clientes activos**~~ Resuelto (6 oct 2026) en el mismo endpoint (`newClientsThisWeek`, `activeClientCount`). Sigue pendiente un listado de clientes (`aclients`). | La tarjeta «Altas semana» muestra las altas y los clientes activos. |
+| 3 | **Citas reubicadas** («1 reubicada» bajo Cancelaciones): depende de Reprogramar (ver «Inicio del alumno» fila 7). | «Cancelaciones» solo muestra el recuento. |
+| 4 | **Huecos libres por profesional** (las casillas «Libre» de cada columna): la agenda solo devuelve citas. | Las columnas muestran solo las citas reservadas. |
+| 5 | **Avisos del centro** (campana con contador). | Sin campana hasta que exista la pantalla de avisos. |
+| 6 | **Selector de fecha** («Hoy ▾»): lo resuelve la app. | Flechas de día anterior y siguiente junto al título. |
+
+## Tu marca (`abrand`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Versión para `If-Match`**~~ Resuelto (6 oct 2026): `GET`/`PATCH /v1/centers/{id}` devuelven `version` (el mismo valor que `ETag`) porque el cliente solo lee el cuerpo. | «Publicar cambios» envía `If-Match: <version>`; un 412 muestra el error y se puede recargar. |
+| 2 | **Extraer el color del logo** («Extraer color del logo», `o2` y `abrand`): hace falta leer los píxeles de la imagen, en el móvil (dependencia nueva para decodificar PNG) o en el servidor. | El botón no se muestra; el color se elige de la paleta, el selector o escribiendo el hexadecimal. |
+| 3 | **Cambiar el logo con 2FA**: la subida usa la ruta del alta (`PUT /v1/onboarding/centers/{id}/logo`, solo propietario, sin MFA). | «Subir» sustituye el logo al pulsar «Publicar cambios». Administradores que no son propietarios no pueden subirlo. |
+
+## Servicios y horario (`asvc`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Salas y recursos**~~ Resuelto (6 oct 2026): `GET/POST /v1/centers/{id}/rooms`, `DELETE /v1/centers/{id}/rooms/{roomId}` (se archiva) y `roomId`/`room` en los servicios. Migración `20261008090000_add_rooms`. | «Salas y recursos» lista, añade (nombre y aforo) y quita; el editor de servicio elige sala. |
+| 2 | **Aviso de conflicto de sala** («Conflicto de sala» del prototipo): los servicios no tienen horario fijo ni periodo, las citas se reservan por huecos, así que no hay solapes de sala que detectar todavía. | La sala se guarda pero no bloquea ni avisa. |
+| 3 | **Cierres y festivos** del horario (`acenter`): el servidor ya los guarda (`holidays`) pero la app aún no tiene pantalla. | «Editar» horario cambia solo los tramos semanales. |
+| 4 | **Disponibilidad y ausencias del equipo** (`iavail`, `ateam`): no hay horario propio por persona ni vacaciones. | La disponibilidad sale del horario del centro. |
+| 5 | **Permisos finos por rol** (`ateam`: qué ve cada rol): la app solo cambia el rol (administración / equipo) y el cargo. | «Quitar del equipo» marca a la persona como «ya no está». |

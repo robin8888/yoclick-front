@@ -1,12 +1,14 @@
 import { View } from 'react-native';
 
 import { Button } from '@/ui/atoms/Button';
+import type { IconName } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
 interface SectionHeaderProps {
   title: string;
   actionLabel?: string;
   onActionPress?: () => void;
+  actionIconName?: IconName;
 }
 
 const SECTION_HEADER_STYLE = {
@@ -20,6 +22,7 @@ export function SectionHeader({
   title,
   actionLabel,
   onActionPress,
+  actionIconName = 'plus',
 }: Readonly<SectionHeaderProps>): React.JSX.Element {
   return (
     <View style={SECTION_HEADER_STYLE}>
@@ -30,7 +33,7 @@ export function SectionHeader({
         <Button
           variant="ghost"
           size="sm"
-          leadingIconName="plus"
+          leadingIconName={actionIconName}
           label={actionLabel}
           onPress={onActionPress}
         />

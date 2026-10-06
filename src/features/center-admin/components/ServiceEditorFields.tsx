@@ -8,6 +8,7 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { useServiceEditorForm } from '../hooks/useServiceEditorForm';
 import { DurationPresets } from './DurationPresets';
+import { ServiceRoomField } from './ServiceRoomField';
 import { ServiceStaffField } from './ServiceStaffField';
 
 type ServiceEditorForm = ReturnType<typeof useServiceEditorForm>;
@@ -40,6 +41,15 @@ function VisibilityField({ form }: Readonly<ServiceEditorFieldsProps>): React.JS
         </View>
       )}
     />
+  );
+}
+
+function ServiceAssignmentFields({ form }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
+  return (
+    <>
+      <ServiceStaffField form={form} />
+      <ServiceRoomField form={form} />
+    </>
   );
 }
 
@@ -79,7 +89,7 @@ export function ServiceEditorFields({
         helperText={i18n.t('centerAdmin.serviceEditor.priceHelper')}
         keyboardType="decimal-pad"
       />
-      <ServiceStaffField form={form} />
+      <ServiceAssignmentFields form={form} />
       <VisibilityField form={form} />
     </View>
   );

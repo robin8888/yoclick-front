@@ -60,6 +60,7 @@ describe('service form mapping', () => {
       durationMinutes: 60,
       priceCents: null,
       isVisible: true,
+      roomId: null,
     });
   });
 
@@ -80,6 +81,7 @@ describe('service form mapping', () => {
         priceInEuros: '25',
         isVisible: false,
         staffMembershipIds: [],
+        roomId: '',
       }),
     ).toEqual({
       name: 'Valoración',
@@ -88,6 +90,14 @@ describe('service form mapping', () => {
       priceCents: 2500,
       isVisible: false,
     });
+  });
+
+  it('sends the room when one is chosen and null to take it off when editing', () => {
+    const formWithRoom = { ...buildEmptyServiceForm(), name: 'Valoración', roomId: 'room-1' };
+
+    expect(mapFormToCreateRequest(formWithRoom).roomId).toBe('room-1');
+    expect(mapFormToServiceChanges(formWithRoom).roomId).toBe('room-1');
+    expect(mapFormToServiceChanges({ ...formWithRoom, roomId: '' }).roomId).toBeNull();
   });
 
   it('sends who gives the service when someone is chosen, when creating and when editing', () => {
