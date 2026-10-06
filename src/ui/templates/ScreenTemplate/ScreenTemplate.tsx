@@ -1,10 +1,9 @@
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { platformHeroColorOverrides, ThemeProvider, useTheme } from '@/shared/theme';
 
 import {
-  createContentStyle,
   createFooterStyle,
   createScreenStyle,
   TRANSPARENT_SAFE_AREA_STYLE,
@@ -12,6 +11,7 @@ import {
 } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
 import { BusyOverlay } from './BusyOverlay';
+import { KeyboardAwareScroll } from './KeyboardAwareScroll';
 import { CenterHoneycombBackground } from './CenterHoneycombBackground';
 import { PlatformHeroBackground } from './PlatformHeroBackground';
 import { ScreenTemplateTop } from './ScreenTemplateTop';
@@ -47,10 +47,7 @@ function ScreenTemplateContent({
           style={KEYBOARD_AVOIDING_STYLE}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <ScrollView
-            contentContainerStyle={createContentStyle(theme, isContentCentered)}
-            keyboardShouldPersistTaps="handled"
-          >
+          <KeyboardAwareScroll isContentCentered={isContentCentered}>
             {isHeaderHidden ? null : (
               <ScreenTemplateTop
                 hasPlatformHeroBackground={hasPlatformHeroBackground}
@@ -58,7 +55,7 @@ function ScreenTemplateContent({
               />
             )}
             {children}
-          </ScrollView>
+          </KeyboardAwareScroll>
           {footer === undefined ? null : (
             <View style={createFooterStyle(theme, hasPlatformHeroBackground)}>{footer}</View>
           )}
