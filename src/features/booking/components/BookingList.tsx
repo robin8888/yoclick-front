@@ -1,11 +1,10 @@
 import type { MyBookingsResponseDtoBookingsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { EmptyState } from '@/ui/molecules/EmptyState';
-import { AppointmentCard } from '@/ui/organisms/AppointmentCard';
 
 import type { BookingScope } from '../hooks/useMyBookings';
-import { DEFAULT_CENTER_TIME_ZONE, formatBookingDayAndTime } from '../model/booking-labels';
-import { presentBookingStatus } from '../model/booking-status';
+import { BookingCard } from './BookingCard';
+import { BookingHistoryEmptyState } from './BookingHistoryEmptyState';
 
 interface EmptyBookingsProps {
   scope: BookingScope;
@@ -13,48 +12,15 @@ interface EmptyBookingsProps {
 }
 
 function EmptyBookings({ scope, onBookAction }: Readonly<EmptyBookingsProps>): React.JSX.Element {
-  const isUpcoming = scope === 'upcoming';
-  const titleKey = isUpcoming ? 'booking.list.emptyUpcomingTitle' : 'booking.list.emptyPastTitle';
-  const descriptionKey = isUpcoming
-    ? 'booking.list.emptyUpcomingDescription'
-    : 'booking.list.emptyPastDescription';
+  if (scope === 'past') return <BookingHistoryEmptyState onBookAction={onBookAction} />;
 
   return (
     <EmptyState
       iconName="calendar"
-      title={i18n.t(titleKey)}
-      description={i18n.t(descriptionKey)}
+      title={i18n.t('booking.list.emptyUpcomingTitle')}
+      description={i18n.t('booking.list.emptyUpcomingDescription')}
       actionLabel={i18n.t('booking.list.bookAction')}
       onActionPress={onBookAction}
-    />
-  );
-}
-
-interface BookingCardProps {
-  booking: MyBookingsResponseDtoBookingsItem;
-  /** Solo las próximas y confirmadas se pueden cancelar. */
-  onCancelRequest: ((booking: MyBookingsResponseDtoBookingsItem) => void) | undefined;
-}
-
-function BookingCard({ booking, onCancelRequest }: Readonly<BookingCardProps>): React.JSX.Element {
-  const presentation = presentBookingStatus(booking.status);
-  const canCancel = presentation.canBeCancelled && onCancelRequest !== undefined;
-
-  return (
-    <AppointmentCard
-      serviceName={booking.service.name}
-      whenLabel={formatBookingDayAndTime(booking.startsAt, DEFAULT_CENTER_TIME_ZONE)}
-      staffLabel={i18n.t('booking.list.withStaff', { staffName: booking.staff.fullName })}
-      statusLabel={i18n.t(`booking.list.status.${booking.status}`)}
-      statusTone={presentation.tone}
-      actionLabel={canCancel ? i18n.t('booking.list.cancelAction') : undefined}
-      onActionPress={
-        canCancel
-          ? () => {
-              onCancelRequest(booking);
-            }
-          : undefined
-      }
     />
   );
 }

@@ -30,8 +30,8 @@ describe('MyBookingsScreen', () => {
     renderScreen(<MyBookingsScreen />);
 
     expect(await screen.findByText('Entrenamiento personal')).toBeOnTheScreen();
-    expect(screen.getByText('jue 8 oct · 18:00')).toBeOnTheScreen();
-    expect(screen.getByText('Con Álex Moreno')).toBeOnTheScreen();
+    expect(screen.getByLabelText('jue 8 oct')).toBeOnTheScreen();
+    expect(screen.getByText('18:00 · 60 min · Álex Moreno')).toBeOnTheScreen();
     expect(screen.getByText('Confirmada')).toBeOnTheScreen();
   });
 
@@ -55,7 +55,9 @@ describe('MyBookingsScreen', () => {
     });
     renderScreen(<MyBookingsScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Cancelar cita' }));
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Cancelar cita de Entrenamiento personal' }),
+    );
     expect(await screen.findByText('¿Cancelar esta cita?')).toBeOnTheScreen();
     fireEvent.press(screen.getByRole('button', { name: 'Sí, cancelar' }));
 
@@ -75,7 +77,9 @@ describe('MyBookingsScreen', () => {
     });
     renderScreen(<MyBookingsScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Cancelar cita' }));
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Cancelar cita de Entrenamiento personal' }),
+    );
     fireEvent.press(await screen.findByRole('button', { name: 'Sí, cancelar' }));
 
     expect(await screen.findByText('Cita cancelada fuera de plazo.')).toBeOnTheScreen();
@@ -85,7 +89,9 @@ describe('MyBookingsScreen', () => {
     mockApi({ [LIST_PATH]: { bookings: [buildBooking()] } });
     renderScreen(<MyBookingsScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Cancelar cita' }));
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Cancelar cita de Entrenamiento personal' }),
+    );
     fireEvent.press(await screen.findByRole('button', { name: 'Mantener cita' }));
 
     await waitFor(() => {
@@ -103,7 +109,23 @@ describe('MyBookingsScreen', () => {
     fireEvent.press(await screen.findByRole('tab', { name: 'Historial' }));
 
     expect(await screen.findByText('Cancelada')).toBeOnTheScreen();
-    expect(screen.queryByRole('button', { name: 'Cancelar cita' })).not.toBeOnTheScreen();
+    expect(
+      screen.queryByRole('button', { name: 'Cancelar cita de Entrenamiento personal' }),
+    ).not.toBeOnTheScreen();
+  });
+
+  it('explains what the empty history will show and offers to book the first appointment', async () => {
+    mockApi({ [LIST_PATH]: { bookings: [] } });
+    renderScreen(<MyBookingsScreen />);
+
+    fireEvent.press(await screen.findByRole('tab', { name: 'Historial' }));
+
+    expect(await screen.findByText('Aún no tienes historial')).toBeOnTheScreen();
+    expect(screen.getByText('Realizada')).toBeOnTheScreen();
+    expect(screen.getByText('Cancelada')).toBeOnTheScreen();
+    expect(screen.getByText('No asististe')).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: 'Agendar cita' }));
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(client)/(tabs)/book');
   });
 
   it('shows an error with retry when the appointments cannot be loaded', async () => {

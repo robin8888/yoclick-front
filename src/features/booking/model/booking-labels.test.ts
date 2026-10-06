@@ -1,4 +1,6 @@
 import {
+  buildBookingDateTileLabels,
+  buildServiceMetaLabel,
   formatBookingDayAndTime,
   formatServiceDuration,
   formatServicePrice,
@@ -34,5 +36,49 @@ describe('formatServicePrice', () => {
     [null, null],
   ])('formats %s cents as %s', (priceCents, expectedText) => {
     expect(formatServicePrice(priceCents)).toBe(expectedText);
+  });
+});
+
+describe('buildBookingDateTileLabels', () => {
+  it.each([
+    {
+      startsAtIso: '2026-10-01T16:00:00.000Z',
+      weekdayLabel: 'JUE',
+      dayLabel: '1',
+      monthLabel: 'OCT',
+    },
+    {
+      startsAtIso: '2026-10-05T07:00:00.000Z',
+      weekdayLabel: 'LUN',
+      dayLabel: '5',
+      monthLabel: 'OCT',
+    },
+    {
+      startsAtIso: '2026-10-08T22:30:00.000Z',
+      weekdayLabel: 'VIE',
+      dayLabel: '9',
+      monthLabel: 'OCT',
+    },
+  ])('splits $startsAtIso into the date block', ({ startsAtIso, ...expectedLabels }) => {
+    const labels = buildBookingDateTileLabels(startsAtIso, 'Europe/Madrid');
+
+    expect(labels).toMatchObject(expectedLabels);
+    expect(labels.accessibleLabel).toBe(
+      `${expectedLabels.weekdayLabel} ${expectedLabels.dayLabel} ${expectedLabels.monthLabel}`.toLowerCase(),
+    );
+  });
+});
+
+describe('buildServiceMetaLabel', () => {
+  it.each([
+    { durationMinutes: 60, priceCents: 3500, expectedLabel: '60 min · Individual · 35 €' },
+    { durationMinutes: 30, priceCents: 0, expectedLabel: '30 min · Individual · Gratis' },
+    {
+      durationMinutes: 45,
+      priceCents: null,
+      expectedLabel: '45 min · Individual · Precio a consultar',
+    },
+  ])('describes $durationMinutes min at $priceCents cents', ({ expectedLabel, ...service }) => {
+    expect(buildServiceMetaLabel({ ...service, kind: 'individual' })).toBe(expectedLabel);
   });
 });
