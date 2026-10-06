@@ -2,12 +2,10 @@ import type { ViewStyle } from 'react-native';
 
 import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
-const SLOT_MIN_WIDTH = 76;
 const SLOT_BORDER_WIDTH = 1.5;
 
 export function createSlotButtonStyle(theme: Theme, isSelected: boolean): ViewStyle {
   return {
-    minWidth: SLOT_MIN_WIDTH,
     minHeight: MIN_TOUCH_TARGET_SIZE,
     alignItems: 'center',
     justifyContent: 'center',

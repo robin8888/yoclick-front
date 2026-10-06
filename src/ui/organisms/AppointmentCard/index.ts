@@ -1,2 +1,7 @@
 export { AppointmentCard } from './AppointmentCard';
-export type { AppointmentCardProps } from './AppointmentCard.types';
+export type {
+  AppointmentButtonAction,
+  AppointmentCardProps,
+  AppointmentDateTile,
+  AppointmentLinkAction,
+} from './AppointmentCard.types';
