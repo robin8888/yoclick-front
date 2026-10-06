@@ -8,3 +8,4 @@ export { BookSlotScreen } from './screens/BookSlotScreen';
 export { ClientHomeScreen } from './screens/ClientHomeScreen';
 export { MyBookingsScreen } from './screens/MyBookingsScreen';
 export { DEFAULT_CENTER_TIME_ZONE } from './model/booking-labels';
+export { formatLongDate } from './model/home-labels';

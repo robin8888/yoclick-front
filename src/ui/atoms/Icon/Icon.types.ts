@@ -38,6 +38,9 @@ export const ICON_NAMES = [
   'mail',
   'lock',
   'play',
+  'file',
+  'palette',
+  'more',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

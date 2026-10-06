@@ -74,6 +74,7 @@
   },
   "actions": {
     "back": "Volver",
+    "cancel": "Cancelar",
     "continue": "Continuar",
     "signOut": "Cerrar sesión"
   },
@@ -544,6 +545,19 @@
         "cancelled": "Cancelada"
       }
     },
+    "center": {
+      "scheduledLabel": "Citas hoy",
+      "cancelledLabel": "Cancelaciones",
+      "occupancyLabel": "Ocupación",
+      "newClientsLabel": "Altas semana",
+      "activeClients_one": "{{count}} cliente activo",
+      "activeClients_other": "{{count}} clientes activos",
+      "sinceLastWeek": "{{difference}} respecto al {{weekdayName}} pasado",
+      "byStaffTitle": "Por {{staffWord}}",
+      "noAppointments": "Sin citas este día",
+      "appointmentCount_one": "{{count}} cita",
+      "appointmentCount_other": "{{count}} citas"
+    },
     "session": {
       "title": "Clase",
       "notFoundTitle": "No encontramos esta cita",
@@ -586,9 +600,81 @@
       "plannedOnly": "Previsto {{planned}}"
     }
   },
+  "branding": {
+    "title": "Tu marca",
+    "subtitle": "Así ven la app tus {{clientWord}}",
+    "errorTitle": "No hemos podido cargar tu marca",
+    "publishAction": "Publicar cambios",
+    "publishedMessage": "Publicado. Tus clientes ya ven la nueva marca.",
+    "preview": {
+      "title": "Vista previa en vivo",
+      "helper": "Cambia el color o el nombre y la app se actualiza al momento.",
+      "greeting": "Hola, Marta",
+      "heroOverline": "Próxima cita",
+      "heroTitle": "Entrenamiento personal",
+      "heroTime": "jue 1 oct · 18:00",
+      "weeklyProgress": "3 de 4 sesiones",
+      "bookShortcut": "+ Reservar",
+      "appointmentsShortcut": "Mis citas",
+      "bookButton": "Reservar cita"
+    },
+    "logo": {
+      "title": "Logo",
+      "helper": "PNG, JPEG o WebP; mejor con fondo transparente",
+      "pendingHelper": "Nuevo logo: se publicará con los cambios",
+      "uploadAction": "Subir",
+      "newLogoLabel": "Nuevo logo elegido"
+    },
+    "color": {
+      "title": "Color principal",
+      "optionLabel": "Color {{hex}}",
+      "customLabel": "Selector de color y color personalizado",
+      "showCustomAction": "Selector de color",
+      "selectorHelper": "Elige cualquier tono o escribe un hexadecimal",
+      "gridHelper": "Toca un tono de la cuadrícula, de más oscuro (arriba) a más claro (abajo).",
+      "groups": {
+        "vivid": "Vivos",
+        "pastel": "Pastel",
+        "metallic": "Metalizados"
+      },
+      "customFieldLabel": "Color en hexadecimal",
+      "customFieldHelper": "Por ejemplo, #E4572E",
+      "invalid": "Escribe un color válido, como #E4572E"
+    },
+    "contrast": {
+      "title": "Contraste accesible",
+      "badgePass": "WCAG AA",
+      "badgeReview": "Revisar",
+      "levelAa": "AA",
+      "levelLarge": "solo texto grande",
+      "levelFail": "insuficiente",
+      "adjustedNote": "Ajustamos automáticamente el tono del color cuando se usa como texto para que siempre se lea bien. Tus botones mantienen el color exacto.",
+      "rows": {
+        "on-button": "Texto sobre botones",
+        "ink-light": "Texto de marca · claro",
+        "ink-dark": "Texto de marca · oscuro"
+      }
+    },
+    "name": {
+      "label": "Nombre visible",
+      "invalid": "El nombre debe tener entre 2 y 80 caracteres"
+    },
+    "services": {
+      "title": "Servicios, horario y {{staffWord}}",
+      "subtitle": "{{serviceCount}} servicios · {{staffCount}} {{staffWord}}"
+    }
+  },
   "centerAdmin": {
     "tabs": {
+      "content": "Contenido",
+      "brand": "Marca",
       "more": "Más"
+    },
+    "comingSoon": {
+      "clientsTitle": "Clientes y grupos",
+      "contentTitle": "Contenidos",
+      "brandTitle": "Personalización de marca",
+      "description": "Esta sección llegará pronto."
     },
     "weekDays": {
       "mon": "Lunes",
@@ -607,7 +693,9 @@
       "inviteClientsTitle": "Invita a tus clientes",
       "inviteClientsSubtitle": "QR, enlace y código",
       "inviteTeamTitle": "Invita a tu equipo",
-      "inviteTeamSubtitle": "Instructores por correo"
+      "inviteTeamSubtitle": "Instructores por correo",
+      "recordsTitle": "Registro de clases",
+      "recordsSubtitle": "Cuánto duró cada clase y quién la dio"
     },
     "services": {
       "title": "Servicios y horario",
@@ -620,6 +708,7 @@
       "hiddenLabel": "Oculto para los clientes",
       "noPrice": "Gratis",
       "hoursTitle": "Horario de apertura",
+      "hoursEditAction": "Editar",
       "closed": "Cerrado"
     },
     "serviceEditor": {
@@ -638,6 +727,9 @@
       "staffLoading": "Cargando tu equipo…",
       "staffLoadError": "No hemos podido cargar tu equipo",
       "staffRequired": "Elige al menos una persona",
+      "roomLabel": "Sala o recurso",
+      "noRoom": "Sin sala fija",
+      "roomHelper": "Evita que dos sesiones coincidan en el mismo sitio.",
       "visibleLabel": "Visible para tus clientes",
       "saveAction": "Guardar cambios",
       "archiveAction": "Archivar servicio",
@@ -647,7 +739,68 @@
       "durationInvalid": "Indica una duración entre 5 y 600 minutos",
       "priceInvalid": "Escribe un importe válido, por ejemplo 35 o 35,50"
     },
+    "rooms": {
+      "title": "Salas y recursos",
+      "addAction": "Añadir",
+      "empty": "Aún no has añadido salas. Sirven para decir dónde se da cada servicio.",
+      "loadError": "No hemos podido cargar las salas",
+      "capacityShort": "aforo {{capacity}}",
+      "removeChipLabel": "{{name}}, aforo {{capacity}}. Quitar sala",
+      "removeTitle": "¿Quitar la sala?",
+      "removeMessage": "{{name}} dejará de ofrecerse y los servicios que la usaban quedarán sin sala fija.",
+      "removeConfirm": "Quitar sala",
+      "newTitle": "Nueva sala o recurso",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Sala 3",
+      "capacityLabel": "Aforo máximo",
+      "capacityHelper": "Cuántas personas caben a la vez.",
+      "saveAction": "Añadir",
+      "nameRequired": "Escribe un nombre",
+      "nameTooLong": "El nombre no puede pasar de 80 caracteres",
+      "capacityInvalid": "Escribe un número entre 1 y 500",
+      "duplicateName": "Ya hay una sala con ese nombre"
+    },
+    "hoursEditor": {
+      "title": "Horario de apertura",
+      "subtitle": "Los clientes solo pueden reservar cuando el centro está abierto",
+      "errorTitle": "No hemos podido cargar el horario",
+      "saveAction": "Guardar horario",
+      "openSwitch": "{{day}} abierto",
+      "from": "{{day}}, desde",
+      "until": "{{day}}, hasta",
+      "earlier": "{{name}}: {{minutes}} minutos antes",
+      "later": "{{name}}: {{minutes}} minutos después",
+      "addRange": "Añadir tramo",
+      "removeRange": "Quitar tramo del {{day}}",
+      "problem": "La hora de cierre debe ser posterior a la de apertura y los tramos no pueden solaparse."
+    },
     "team": {
+      "inviteAction": "Invitar",
+      "loadError": "No hemos podido cargar el equipo",
+      "memberTitle": "Equipo",
+      "roleLabel": "Qué hace en el centro",
+      "adminHelper": "Administración ve y cambia todo el centro: agenda, servicios, equipo y marca.",
+      "staffHelper": "Ve su agenda y la de sus clientes, y puede dar sesiones.",
+      "titleLabel": "Cargo",
+      "titleHelper": "Es lo que ven los clientes, por ejemplo «Entrenadora personal».",
+      "saveAction": "Guardar cambios",
+      "removeAction": "Quitar del equipo",
+      "removeTitle": "¿Quitar del equipo?",
+      "removeMessage": "{{name}} dejará de ver el centro y de aparecer al reservar. Sus citas anteriores se conservan.",
+      "removeConfirm": "Quitar del equipo",
+      "ownerNote": "La propietaria del centro no se puede editar desde aquí.",
+      "status": {
+        "active": "Activo",
+        "invited": "Invitación enviada",
+        "blocked": "Bloqueado",
+        "left": "Ya no está"
+      },
+      "roles": {
+        "owner": "Propietaria",
+        "admin": "Administración",
+        "staff": "Equipo",
+        "client": "Cliente"
+      },
       "title": "Invita a tu equipo",
       "subtitle": "Instructores",
       "emailLabel": "Correo del instructor",

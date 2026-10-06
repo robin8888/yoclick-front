@@ -4,7 +4,7 @@ import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
 
 import { getTodayIsoDate, shiftIsoDate } from '../model/agenda-date';
 
-interface AgendaDay {
+export interface AgendaDay {
   isoDate: string;
   isToday: boolean;
   goToPreviousDay: () => void;

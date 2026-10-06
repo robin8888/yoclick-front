@@ -1,4 +1,5 @@
-import { i18n } from '@/shared/i18n';
+import { useActiveCenterSectorId } from '@/features/join';
+import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { RouteTabBar, type RouteTab, type RouteTabBarProps } from '@/ui/organisms/TabBar';
 
 type TabBarOwnProps = Readonly<Omit<RouteTabBarProps, 'tabs'>>;
@@ -11,12 +12,14 @@ function listStaffTabs(): readonly RouteTab[] {
   ];
 }
 
-/** Pestañas de administración: la agenda del centro, el registro de clases y la cuenta. */
-function listAdminTabs(): readonly RouteTab[] {
+/** Prototipo `aagenda`: Agenda, Clientes, Contenido, Marca y Más. */
+function listAdminTabs(clientsLabel: string): readonly RouteTab[] {
   return [
     { routeName: 'agenda', iconName: 'calendar', label: i18n.t('staffAgenda.tabs.agenda') },
-    { routeName: 'records', iconName: 'clock', label: i18n.t('staffAgenda.tabs.records') },
-    { routeName: 'more', iconName: 'settings', label: i18n.t('centerAdmin.tabs.more') },
+    { routeName: 'clients', iconName: 'users', label: clientsLabel },
+    { routeName: 'content', iconName: 'file', label: i18n.t('centerAdmin.tabs.content') },
+    { routeName: 'brand', iconName: 'palette', label: i18n.t('centerAdmin.tabs.brand') },
+    { routeName: 'more', iconName: 'more', label: i18n.t('centerAdmin.tabs.more') },
   ];
 }
 
@@ -25,5 +28,7 @@ export function StaffTabBar(props: TabBarOwnProps): React.JSX.Element {
 }
 
 export function AdminTabBar(props: TabBarOwnProps): React.JSX.Element {
-  return <RouteTabBar {...props} tabs={listAdminTabs()} />;
+  const { plural } = getSectorVocabulary(useActiveCenterSectorId()).client;
+  const clientsLabel = `${plural.charAt(0).toUpperCase()}${plural.slice(1)}`;
+  return <RouteTabBar {...props} tabs={listAdminTabs(clientsLabel)} />;
 }

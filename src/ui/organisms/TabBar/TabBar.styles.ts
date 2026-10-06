@@ -28,7 +28,7 @@ export function createTabPillStyle(theme: Theme, isActive: boolean): ViewStyle {
     alignItems: 'center',
     gap: theme.space[1],
     paddingVertical: theme.space[1],
-    paddingHorizontal: theme.space[2],
+    paddingHorizontal: theme.space[1],
     maxWidth: '100%',
     borderRadius: theme.radius.pill,
     backgroundColor: isActive ? theme.colors.brandSoft : 'transparent',
