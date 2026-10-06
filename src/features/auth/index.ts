@@ -1,5 +1,6 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { CenterIdentityHeader } from './components/CenterIdentityHeader';
+export { MfaScreenLogo } from './components/MfaScreenLogo';
 export { PasswordTextField } from './components/PasswordTextField';
 export { VerificationCodeTextField } from './components/VerificationCodeTextField';
 export { useActiveCenterSummary } from './hooks/useActiveCenterSummary';

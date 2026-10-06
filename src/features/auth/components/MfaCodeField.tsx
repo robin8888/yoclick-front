@@ -1,9 +1,9 @@
 import type { Control } from 'react-hook-form';
 
 import { i18n } from '@/shared/i18n';
-import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { MfaAppCodeFormValues, MfaRecoveryCodeFormValues } from '../schemas/auth-forms.schema';
+import { CenteredCodeField } from './CenteredCodeField';
 import { VerificationCodeTextField } from './VerificationCodeTextField';
 
 interface MfaCodeFieldProps {
@@ -30,11 +30,11 @@ export function MfaCodeField({
     );
   }
   return (
-    <FormTextField
+    <CenteredCodeField
       control={recoveryCodeControl}
       name="recoveryCode"
       label={i18n.t('auth.mfa.recoveryCodeLabel')}
-      autoCapitalize="none"
+      placeholder={i18n.t('auth.mfa.recoveryCodePlaceholder')}
       onSubmitEditing={onSubmitEditing}
     />
   );

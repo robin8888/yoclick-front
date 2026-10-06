@@ -1,9 +1,8 @@
-import { PasswordTextField } from '@/features/auth';
+import { MfaScreenLogo, PasswordTextField } from '@/features/auth';
 import type { MfaSetupResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { IconBadge } from '@/ui/atoms/IconBadge';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -25,7 +24,7 @@ export function MfaPasswordStep({
       isHeaderCentered
       isLoading={step.isSubmitting}
       loadingLabel={getSharedStateCopy().loadingLabel}
-      headerAccessory={<IconBadge iconName="lock" />}
+      headerAccessory={<MfaScreenLogo />}
       title={i18n.t('security.mfaSetup.passwordTitle')}
       subtitle={i18n.t('security.mfaSetup.passwordSubtitle')}
       footer={

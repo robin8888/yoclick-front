@@ -7,6 +7,7 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { MfaCodeField } from '../components/MfaCodeField';
+import { MfaScreenLogo } from '../components/MfaScreenLogo';
 import { useMfaChallengeForm } from '../hooks/useMfaChallengeForm';
 
 /** Segundo factor del login (obligatorio para administración, SEC-47). */
@@ -19,6 +20,8 @@ export function MfaChallengeScreen(): React.JSX.Element {
   return (
     <ScreenTemplate
       hasPlatformHeroBackground
+      isHeaderCentered
+      headerAccessory={<MfaScreenLogo />}
       isLoading={form.isSubmitting}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('auth.mfa.title')}

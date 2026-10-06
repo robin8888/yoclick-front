@@ -1,4 +1,4 @@
-import { VerificationCodeTextField } from '@/features/auth';
+import { MfaScreenLogo, VerificationCodeTextField } from '@/features/auth';
 import type { MfaSetupResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
@@ -23,6 +23,7 @@ export function MfaScanStep({ setup, onActivated }: Readonly<MfaScanStepProps>):
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
+      headerAccessory={<MfaScreenLogo />}
       isLoading={step.isSubmitting}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('security.mfaSetup.scanTitle')}
