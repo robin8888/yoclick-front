@@ -2,7 +2,12 @@ import { resolveSignedInRoleLabel } from './signed-in-role-label';
 
 describe('resolveSignedInRoleLabel', () => {
   it.each([
-    { caseName: 'no center yet', role: null, sectorId: undefined, expectedLabel: 'Alumno' },
+    {
+      caseName: 'no center yet',
+      role: null,
+      sectorId: undefined,
+      expectedLabel: 'Sin centro todavía',
+    },
     { caseName: 'an owner', role: 'owner', sectorId: 'marciales', expectedLabel: 'Propietario' },
     { caseName: 'an admin', role: 'admin', sectorId: 'gym', expectedLabel: 'Administrador' },
     { caseName: 'staff of a gym', role: 'staff', sectorId: 'gym', expectedLabel: 'Instructor' },

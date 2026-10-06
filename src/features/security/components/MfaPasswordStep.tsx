@@ -5,6 +5,8 @@ import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { useMfaPasswordStep } from '../hooks/useMfaPasswordStep';
 
@@ -17,12 +19,13 @@ export function MfaPasswordStep({
   onSetupStarted,
 }: Readonly<MfaPasswordStepProps>): React.JSX.Element {
   const step = useMfaPasswordStep(onSetupStarted);
+  const signOut = useSignOutFlow();
 
   return (
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
-      isLoading={step.isSubmitting}
+      isLoading={step.isSubmitting || signOut.isSigningOut}
       loadingLabel={getSharedStateCopy().loadingLabel}
       headerAccessory={<MfaScreenLogo />}
       title={i18n.t('security.mfaSetup.passwordTitle')}
@@ -43,6 +46,7 @@ export function MfaPasswordStep({
         label={i18n.t('security.mfaSetup.passwordLabel')}
         purpose="current"
       />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

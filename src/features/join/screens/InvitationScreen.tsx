@@ -4,6 +4,8 @@ import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Logo } from '@/ui/atoms/Logo';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { LargeCodeField } from '../components/LargeCodeField';
 import { InvitationFooter } from '../components/InvitationFooter';
@@ -17,11 +19,12 @@ const INVITATION_LOGO_HEIGHT = 110;
 
 /** Quien es instructor o profesor entra a su centro con el código (o enlace) que le dieron. */
 export function InvitationScreen(): React.JSX.Element {
+  const signOut = useSignOutFlow();
   const { form, acceptance, invitation, failure, handleSecondaryPress } = useInvitationFlow();
 
   return (
     <ScreenTemplate
-      isLoading={acceptance.isLoadingPreview || acceptance.isAccepting}
+      isLoading={acceptance.isLoadingPreview || acceptance.isAccepting || signOut.isSigningOut}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('join.invitation.title')}
       subtitle={i18n.t('join.invitation.subtitle')}
@@ -52,6 +55,7 @@ export function InvitationScreen(): React.JSX.Element {
       ) : (
         <InvitationPreview invitation={invitation} />
       )}
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

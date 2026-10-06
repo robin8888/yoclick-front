@@ -3,7 +3,7 @@ import { capitalizeFirstLetter, getSectorVocabulary } from '@/shared/i18n/sector
 export type MembershipRoleName = 'owner' | 'admin' | 'staff' | 'client';
 
 interface RoleLabelInput {
-  /** `null` = la persona aún no pertenece a ningún centro (alumno que va a unirse). */
+  /** `null` = la persona aún no pertenece a ningún centro. */
   role: MembershipRoleName | null;
   /** Sector del centro: da la palabra del sector (profesor, instructor, alumno, cliente…). */
   sectorId: string | undefined;
@@ -11,7 +11,8 @@ interface RoleLabelInput {
 
 const OWNER_LABEL = 'Propietario';
 const ADMIN_LABEL = 'Administrador';
-const NO_CENTER_LABEL = 'Alumno';
+// Sin centro no se sabe si es alumno, instructor o propietario: no se le pone un papel.
+const NO_CENTER_LABEL = 'Sin centro todavía';
 
 /** «Propietario», «Administrador», «Instructor»… tal como se lo llama dentro de su centro. */
 export function resolveSignedInRoleLabel({ role, sectorId }: RoleLabelInput): string {

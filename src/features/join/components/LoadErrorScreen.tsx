@@ -1,3 +1,5 @@
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { LoadErrorState } from './LoadErrorState';
@@ -19,9 +21,12 @@ export function LoadErrorScreen({
   onRetry,
   isRetrying = false,
 }: Readonly<LoadErrorScreenProps>): React.JSX.Element {
+  const signOut = useSignOutFlow();
+
   return (
-    <ScreenTemplate hasPlatformHeroBackground title={screenTitle}>
+    <ScreenTemplate hasPlatformHeroBackground title={screenTitle} isLoading={signOut.isSigningOut}>
       <LoadErrorState title={title} error={error} onRetry={onRetry} isRetrying={isRetrying} />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

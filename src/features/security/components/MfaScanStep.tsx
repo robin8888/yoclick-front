@@ -6,6 +6,8 @@ import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { useMfaCodeStep } from '../hooks/useMfaCodeStep';
 import { AuthenticatorSetupInfo } from './AuthenticatorSetupInfo';
@@ -18,13 +20,14 @@ interface MfaScanStepProps {
 /** Paso 2: escanear el QR (o escribir la clave) y confirmar con el primer código de la app. */
 export function MfaScanStep({ setup, onActivated }: Readonly<MfaScanStepProps>): React.JSX.Element {
   const step = useMfaCodeStep(onActivated);
+  const signOut = useSignOutFlow();
 
   return (
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
       headerAccessory={<MfaScreenLogo />}
-      isLoading={step.isSubmitting}
+      isLoading={step.isSubmitting || signOut.isSigningOut}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('security.mfaSetup.scanTitle')}
       subtitle={i18n.t('security.mfaSetup.scanSubtitle')}
@@ -47,6 +50,7 @@ export function MfaScanStep({ setup, onActivated }: Readonly<MfaScanStepProps>):
         name="code"
         onSubmitEditing={step.submitCode}
       />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

@@ -5,6 +5,8 @@ import { Button } from '@/ui/atoms/Button';
 import { Logo } from '@/ui/atoms/Logo';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { LargeCodeField } from '../components/LargeCodeField';
 import { useJoinCodeForm } from '../hooks/useJoinCodeForm';
@@ -16,6 +18,7 @@ const CODE_LOGO_HEIGHT = 110;
 
 /** Prototipo `jcode`. */
 export function JoinCodeScreen(): React.JSX.Element {
+  const signOut = useSignOutFlow();
   const router = useRouter();
   const { control, submitJoinCode, isSearching, searchError } = useJoinCodeForm();
 
@@ -27,7 +30,7 @@ export function JoinCodeScreen(): React.JSX.Element {
       backLabel={i18n.t('actions.back')}
       hasPlatformHeroBackground
       isHeaderCentered
-      isLoading={isSearching}
+      isLoading={isSearching || signOut.isSigningOut}
       headerAccessory={<Logo variant="lockup" height={CODE_LOGO_HEIGHT} />}
       footer={
         <Button
@@ -50,6 +53,7 @@ export function JoinCodeScreen(): React.JSX.Element {
         maxLength={MAX_JOIN_CODE_INPUT_LENGTH}
         onSubmitEditing={submitJoinCode}
       />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

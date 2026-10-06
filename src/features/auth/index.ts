@@ -1,3 +1,4 @@
+import './model/register-sign-out-cleanup';
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { CenterIdentityHeader } from './components/CenterIdentityHeader';
 export { MfaScreenLogo } from './components/MfaScreenLogo';

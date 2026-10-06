@@ -1,3 +1,4 @@
+import './model/register-sign-out-cleanup';
 // API pública de la feature: lo único que otras features y `app/` pueden importar.
 export { AppThemeProvider } from './components/AppThemeProvider';
 export { CameraPermissionPrompt } from './components/CameraPermissionPrompt';

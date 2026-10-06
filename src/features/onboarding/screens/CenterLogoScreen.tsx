@@ -4,6 +4,8 @@ import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { CenterLogoActions } from '../components/CenterLogoActions';
 import { CenterLogoPreview } from '../components/CenterLogoPreview';
@@ -15,6 +17,7 @@ interface CenterLogoContentProps {
 }
 
 function CenterLogoContent({ createdCenter }: Readonly<CenterLogoContentProps>): React.JSX.Element {
+  const signOut = useSignOutFlow();
   const router = useRouter();
   const flow = useCenterLogoFlow(createdCenter);
 
@@ -22,7 +25,7 @@ function CenterLogoContent({ createdCenter }: Readonly<CenterLogoContentProps>):
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
-      isLoading={flow.isBusy}
+      isLoading={flow.isBusy || signOut.isSigningOut}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('onboarding.logo.title')}
       subtitle={i18n.t('onboarding.logo.subtitle')}
@@ -47,6 +50,7 @@ function CenterLogoContent({ createdCenter }: Readonly<CenterLogoContentProps>):
           centerName: createdCenter.name,
         })}
       />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

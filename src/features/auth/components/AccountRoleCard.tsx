@@ -6,6 +6,7 @@ import { Text } from '@/ui/atoms/Text';
 
 import {
   createAccountRoleCardStyle,
+  createChoiceMarkStyle,
   createRoleIconTileStyle,
   ROLE_TEXT_STYLE,
 } from './AccountRoleCard.styles';
@@ -18,7 +19,8 @@ interface AccountRoleCardProps {
   onPress: () => void;
 }
 
-/** Una opción del «Soy…»: tarjeta blanca con la elegida marcada con borde dorado y una marca. */
+/** Una opción del «Soy…»: tarjeta blanca con la elegida con borde dorado grueso, fondo crema y un círculo dorado con una marca;
+ * las demás, algo más apagadas y con el aro vacío. */
 export function AccountRoleCard({
   iconName,
   title,
@@ -36,7 +38,7 @@ export function AccountRoleCard({
       onPress={onPress}
       style={createAccountRoleCardStyle(theme, isSelected)}
     >
-      <View style={createRoleIconTileStyle(theme)}>
+      <View style={createRoleIconTileStyle(theme, isSelected)}>
         <Icon name={iconName} size="navigation" tintColor={platformCardColors.icon} />
       </View>
       <View style={ROLE_TEXT_STYLE}>
@@ -47,9 +49,11 @@ export function AccountRoleCard({
           {description}
         </Text>
       </View>
-      {isSelected ? (
-        <Icon name="checkCircle" size="navigation" tintColor={platformCardColors.icon} />
-      ) : null}
+      <View style={createChoiceMarkStyle(isSelected)}>
+        {isSelected ? (
+          <Icon name="check" size="inline" tintColor={platformCardColors.title} />
+        ) : null}
+      </View>
     </Pressable>
   );
 }

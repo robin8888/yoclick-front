@@ -1,3 +1,4 @@
+import './model/register-sign-out-cleanup';
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { useStartCenterCreation } from './hooks/useStartCenterCreation';
 export { buildCenterJoinLink } from './model/center-join-link';

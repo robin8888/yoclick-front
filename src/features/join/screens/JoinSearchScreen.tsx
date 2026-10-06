@@ -4,6 +4,8 @@ import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Logo } from '@/ui/atoms/Logo';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { CenterSearchBar } from '../components/CenterSearchBar';
 import { CenterSearchOutcome } from '../components/CenterSearchOutcome';
@@ -16,6 +18,7 @@ const SEARCH_LOGO_HEIGHT = 110;
 
 /** Prototipo `jsearch`. Sin ordenar por cercanía: falta el permiso de ubicación (APP-2 pendiente). */
 export function JoinSearchScreen(): React.JSX.Element {
+  const signOut = useSignOutFlow();
   const router = useRouter();
   const { control, submittedQuery, submitSearch } = useCenterSearchForm();
   const searchResult = useCenterDirectorySearch(submittedQuery);
@@ -23,6 +26,7 @@ export function JoinSearchScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate
+      isLoading={signOut.isSigningOut}
       title={i18n.t('join.search.title')}
       subtitle={i18n.t('join.search.subtitle')}
       onBackPress={router.back}
@@ -48,6 +52,7 @@ export function JoinSearchScreen(): React.JSX.Element {
           router.push('/join/code');
         }}
       />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }

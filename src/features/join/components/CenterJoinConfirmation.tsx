@@ -4,6 +4,8 @@ import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
+import { SignOutAction } from '@/features/session';
+import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
 import { CenterJoinCard } from './CenterJoinCard';
 import { useCenterJoinConfirmation } from '../hooks/useCenterJoinConfirmation';
@@ -17,6 +19,7 @@ interface CenterJoinConfirmationProps {
 export function CenterJoinConfirmation({
   centerToJoin,
 }: Readonly<CenterJoinConfirmationProps>): React.JSX.Element {
+  const signOut = useSignOutFlow();
   const router = useRouter();
   const { confirmJoin, isJoining, joinError } = useCenterJoinConfirmation(centerToJoin);
 
@@ -25,7 +28,7 @@ export function CenterJoinConfirmation({
       title={i18n.t('join.confirm.title')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
-      isLoading={isJoining}
+      isLoading={isJoining || signOut.isSigningOut}
       footer={
         <>
           <Button
@@ -47,6 +50,7 @@ export function CenterJoinConfirmation({
         <FormErrorBanner message={getJoinCenterErrorMessage(joinError)} />
       )}
       <CenterJoinCard centerToJoin={centerToJoin} />
+      <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );
 }
