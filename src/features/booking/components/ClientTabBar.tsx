@@ -1,17 +1,60 @@
-import { i18n } from '@/shared/i18n';
-import { RouteTabBar, type RouteTab, type RouteTabBarProps } from '@/ui/organisms/TabBar';
+import { useRouter, usePathname, type Href } from 'expo-router';
 
-/** Las pestañas del alumno, en este orden: Inicio, Reservar, Mis citas, Practicar y Perfil. */
-function listClientTabs(): readonly RouteTab[] {
+import { i18n } from '@/shared/i18n';
+import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
+
+/** Las pestañas del alumno: Inicio, Reservar, Mis citas, Practicar y Perfil, con sus pantallas hijas. */
+function listClientTabs(): readonly PathTab[] {
   return [
-    { routeName: 'home', iconName: 'home', label: i18n.t('booking.tabs.home') },
-    { routeName: 'book', iconName: 'plus', label: i18n.t('booking.tabs.book') },
-    { routeName: 'bookings', iconName: 'calendar', label: i18n.t('booking.tabs.bookings') },
-    { routeName: 'practice', iconName: 'play', label: i18n.t('booking.tabs.practice') },
-    { routeName: 'profile', iconName: 'user', label: i18n.t('booking.tabs.profile') },
+    {
+      id: 'home',
+      label: i18n.t('booking.tabs.home'),
+      iconName: 'home',
+      href: '/(client)/(tabs)/home',
+      activePaths: ['/home', '/access-qr'],
+    },
+    {
+      id: 'book',
+      label: i18n.t('booking.tabs.book'),
+      iconName: 'plus',
+      href: '/(client)/(tabs)/book',
+      activePaths: ['/book'],
+    },
+    {
+      id: 'bookings',
+      label: i18n.t('booking.tabs.bookings'),
+      iconName: 'calendar',
+      href: '/(client)/(tabs)/bookings',
+      activePaths: ['/bookings'],
+    },
+    {
+      id: 'practice',
+      label: i18n.t('booking.tabs.practice'),
+      iconName: 'play',
+      href: '/(client)/(tabs)/practice',
+      activePaths: ['/practice'],
+    },
+    {
+      id: 'profile',
+      label: i18n.t('booking.tabs.profile'),
+      iconName: 'user',
+      href: '/(client)/(tabs)/profile',
+      activePaths: ['/profile', '/centers'],
+    },
   ];
 }
 
-export function ClientTabBar(props: Readonly<Omit<RouteTabBarProps, 'tabs'>>): React.JSX.Element {
-  return <RouteTabBar {...props} tabs={listClientTabs()} />;
+/** La barra del alumno, visible en todas sus pantallas. */
+export function ClientTabBar(): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <PathTabBar
+      tabs={listClientTabs()}
+      currentPath={usePathname()}
+      onTabPress={(href) => {
+        router.navigate(href as Href);
+      }}
+    />
+  );
 }

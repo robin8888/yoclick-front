@@ -1,34 +1,102 @@
+import { usePathname, useRouter, type Href } from 'expo-router';
+
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
-import { RouteTabBar, type RouteTab, type RouteTabBarProps } from '@/ui/organisms/TabBar';
+import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
 
-type TabBarOwnProps = Readonly<Omit<RouteTabBarProps, 'tabs'>>;
-
-/** Pestañas del instructor: su agenda y su cuenta. */
-function listStaffTabs(): readonly RouteTab[] {
+/** Pestañas del profesional: su agenda y su cuenta, con las pantallas que cuelgan de cada una. */
+function listStaffTabs(): readonly PathTab[] {
   return [
-    { routeName: 'agenda', iconName: 'calendar', label: i18n.t('staffAgenda.tabs.agenda') },
-    { routeName: 'account', iconName: 'user', label: i18n.t('staffAgenda.tabs.account') },
+    {
+      id: 'agenda',
+      label: i18n.t('staffAgenda.tabs.agenda'),
+      iconName: 'calendar',
+      href: '/(staff)/(tabs)/agenda',
+      activePaths: ['/agenda', '/sessions', '/scan'],
+    },
+    {
+      id: 'account',
+      label: i18n.t('staffAgenda.tabs.account'),
+      iconName: 'user',
+      href: '/(staff)/(tabs)/account',
+      activePaths: ['/account'],
+    },
   ];
 }
 
-/** Prototipo `aagenda`: Agenda, Clientes, Contenido, Marca y Más. */
-function listAdminTabs(clientsLabel: string): readonly RouteTab[] {
+/** Prototipo `aagenda`: Agenda, Clientes, Contenido, Marca y Más, con las pantallas de cada una. */
+function listAdminTabs(clientsLabel: string): readonly PathTab[] {
   return [
-    { routeName: 'agenda', iconName: 'calendar', label: i18n.t('staffAgenda.tabs.agenda') },
-    { routeName: 'clients', iconName: 'users', label: clientsLabel },
-    { routeName: 'content', iconName: 'file', label: i18n.t('centerAdmin.tabs.content') },
-    { routeName: 'brand', iconName: 'palette', label: i18n.t('centerAdmin.tabs.brand') },
-    { routeName: 'more', iconName: 'more', label: i18n.t('centerAdmin.tabs.more') },
+    {
+      id: 'agenda',
+      label: i18n.t('staffAgenda.tabs.agenda'),
+      iconName: 'calendar',
+      href: '/(admin)/(tabs)/agenda',
+      activePaths: ['/agenda', '/scan'],
+    },
+    {
+      id: 'clients',
+      label: clientsLabel,
+      iconName: 'users',
+      href: '/(admin)/(tabs)/clients',
+      activePaths: ['/clients'],
+    },
+    {
+      id: 'content',
+      label: i18n.t('centerAdmin.tabs.content'),
+      iconName: 'file',
+      href: '/(admin)/(tabs)/content',
+      activePaths: ['/content'],
+    },
+    {
+      id: 'brand',
+      label: i18n.t('centerAdmin.tabs.brand'),
+      iconName: 'palette',
+      href: '/(admin)/(tabs)/brand',
+      // En el prototipo «Servicios y horario» cuelga de «Marca».
+      activePaths: ['/brand', '/services', '/hours', '/rooms', '/team'],
+    },
+    {
+      id: 'more',
+      label: i18n.t('centerAdmin.tabs.more'),
+      iconName: 'more',
+      href: '/(admin)/(tabs)/more',
+      activePaths: ['/more', '/records', '/invite-clients', '/invite-team'],
+    },
   ];
 }
 
-export function StaffTabBar(props: TabBarOwnProps): React.JSX.Element {
-  return <RouteTabBar {...props} tabs={listStaffTabs()} />;
+function capitalize(word: string): string {
+  return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
 }
 
-export function AdminTabBar(props: TabBarOwnProps): React.JSX.Element {
-  const { plural } = getSectorVocabulary(useActiveCenterSectorId()).client;
-  const clientsLabel = `${plural.charAt(0).toUpperCase()}${plural.slice(1)}`;
-  return <RouteTabBar {...props} tabs={listAdminTabs(clientsLabel)} />;
+/** La barra del profesional, visible en todas sus pantallas. */
+export function StaffTabBar(): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <PathTabBar
+      tabs={listStaffTabs()}
+      currentPath={usePathname()}
+      onTabPress={(href) => {
+        router.navigate(href as Href);
+      }}
+    />
+  );
+}
+
+/** La barra de administración, visible en todas sus pantallas. */
+export function AdminTabBar(): React.JSX.Element {
+  const router = useRouter();
+  const clientsLabel = capitalize(getSectorVocabulary(useActiveCenterSectorId()).client.plural);
+
+  return (
+    <PathTabBar
+      tabs={listAdminTabs(clientsLabel)}
+      currentPath={usePathname()}
+      onTabPress={(href) => {
+        router.navigate(href as Href);
+      }}
+    />
+  );
 }

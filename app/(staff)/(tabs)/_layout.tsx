@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 
-import { StaffTabBar } from '@/features/staff-agenda';
+// La barra de navegación vive en el layout del grupo para que salga también fuera de las pestañas.
+function renderNoTabBar(): null {
+  return null;
+}
 
 export default function StaffTabsLayout(): React.JSX.Element {
   return (
-    <Tabs
-      screenOptions={{ headerShown: false }}
-      tabBar={(tabBarProps) => <StaffTabBar {...tabBarProps} />}
-    >
+    <Tabs screenOptions={{ headerShown: false }} tabBar={renderNoTabBar}>
       <Tabs.Screen name="agenda" />
       <Tabs.Screen name="account" />
     </Tabs>

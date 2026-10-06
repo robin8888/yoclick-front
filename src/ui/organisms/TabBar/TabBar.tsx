@@ -5,12 +5,13 @@ import { useTheme } from '@/shared/theme';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
-import { createTabBarStyle, createTabItemStyle, createTabPillStyle } from './TabBar.styles';
+import { createTabBarStyle, createTabItemStyle } from './TabBar.styles';
 import type { TabBarProps } from './TabBar.types';
 
 /**
- * Barra inferior de pestañas. La pestaña activa se marca con el color de marca en el icono y el
- * texto (`brandInk`) y con el estado accesible, no solo con el color.
+ * Barra inferior de pestañas, plana y sin relleno de color. La pestaña activa solo cambia el color
+ * del icono y de su texto (`brandInk`); el resto va en `ink2`. Además se marca como seleccionada
+ * para el lector de pantalla, así que el estado no depende solo del color.
  */
 export function TabBar({ tabs }: Readonly<TabBarProps>): React.JSX.Element {
   const theme = useTheme();
@@ -18,27 +19,24 @@ export function TabBar({ tabs }: Readonly<TabBarProps>): React.JSX.Element {
 
   return (
     <View role="tablist" style={createTabBarStyle(theme, bottomInset)}>
-      {tabs.map((tab) => (
-        <Pressable
-          key={tab.id}
-          role="tab"
-          accessibilityLabel={tab.label}
-          accessibilityState={{ selected: tab.isActive }}
-          onPress={tab.onPress}
-          style={createTabItemStyle()}
-        >
-          <View style={createTabPillStyle(theme, tab.isActive)}>
-            <Icon
-              name={tab.iconName}
-              size="navigation"
-              color={tab.isActive ? 'brandInk' : 'ink2'}
-            />
-            <Text variant="caption" color={tab.isActive ? 'brandInk' : 'ink2'} numberOfLines={1}>
+      {tabs.map((tab) => {
+        const contentColor = tab.isActive ? 'brandInk' : 'ink2';
+        return (
+          <Pressable
+            key={tab.id}
+            role="tab"
+            accessibilityLabel={tab.label}
+            accessibilityState={{ selected: tab.isActive }}
+            onPress={tab.onPress}
+            style={createTabItemStyle(theme)}
+          >
+            <Icon name={tab.iconName} size="navigation" color={contentColor} />
+            <Text variant="caption" color={contentColor} numberOfLines={1}>
               {tab.label}
             </Text>
-          </View>
-        </Pressable>
-      ))}
+          </Pressable>
+        );
+      })}
     </View>
   );
 }

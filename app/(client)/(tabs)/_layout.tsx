@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 
-import { ClientTabBar } from '@/features/booking';
+// La barra de navegación vive en el layout del grupo para que salga también fuera de las pestañas.
+function renderNoTabBar(): null {
+  return null;
+}
 
 export default function ClientTabsLayout(): React.JSX.Element {
   return (
-    <Tabs
-      screenOptions={{ headerShown: false }}
-      tabBar={(tabBarProps) => <ClientTabBar {...tabBarProps} />}
-    >
+    <Tabs screenOptions={{ headerShown: false }} tabBar={renderNoTabBar}>
       <Tabs.Screen name="home" />
       <Tabs.Screen name="book" />
       <Tabs.Screen name="bookings" />
