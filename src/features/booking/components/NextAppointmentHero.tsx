@@ -1,4 +1,5 @@
 import { View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
@@ -10,6 +11,8 @@ import {
   createHeroDetailsStyle,
   createHeroDetailStyle,
   createHeroStyle,
+  HERO_DECORATION_SIZE,
+  HERO_DECORATION_STYLE,
 } from './NextAppointmentHero.styles';
 
 interface HeroDetailProps {
@@ -26,6 +29,36 @@ function HeroDetail({ iconName, label }: Readonly<HeroDetailProps>): React.JSX.E
       <Text variant="bodyStrong" color="onBrand">
         {label}
       </Text>
+    </View>
+  );
+}
+
+const RING_VIEW_BOX = '0 0 100 100';
+const RING_CENTER = 50;
+const RING_RADIUS = 46;
+const RING_STROKE_WIDTH = 14;
+
+/** Anillo del prototipo, tenue y cortado por la esquina superior derecha. */
+function HeroDecoration(): React.JSX.Element {
+  const theme = useTheme();
+
+  return (
+    <View
+      style={HERO_DECORATION_STYLE}
+      pointerEvents="none"
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Svg width={HERO_DECORATION_SIZE} height={HERO_DECORATION_SIZE} viewBox={RING_VIEW_BOX}>
+        <Circle
+          cx={RING_CENTER}
+          cy={RING_CENTER}
+          r={RING_RADIUS}
+          fill="none"
+          stroke={theme.colors.onBrand}
+          strokeWidth={RING_STROKE_WIDTH}
+        />
+      </Svg>
     </View>
   );
 }
@@ -48,6 +81,7 @@ export function NextAppointmentHero({
 
   return (
     <View style={createHeroStyle(theme)}>
+      <HeroDecoration />
       <Text variant="overline" color="onBrand">
         {i18n.t('booking.home.nextAppointment')}
       </Text>

@@ -61,11 +61,12 @@ describe('AccessQrScreen', () => {
         qrContent: QR_CONTENT,
         expiresAt: new Date(Date.now() + 300_000).toISOString(),
       },
+      [`GET /v1/centers/${NORTE_CENTER_ID}/bookings/mine`]: { bookings: [buildBooking()] },
     });
     renderScreen(<AccessQrScreen />);
 
     expect(await screen.findByRole('img', { name: 'Código QR de asistencia' })).toBeOnTheScreen();
-    expect(screen.getByText('Se actualiza solo. No lo compartas: es personal.')).toBeOnTheScreen();
+    expect(screen.getByText(/El código se renueva solo cada pocos minutos/)).toBeOnTheScreen();
   });
 
   it('shows an error with retry when the code cannot be generated', async () => {
