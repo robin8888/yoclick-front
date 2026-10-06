@@ -1,10 +1,11 @@
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import type { AgendaResponseDtoEntriesItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 import { useTheme } from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
+import { Badge } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
 import type { StaffAgendaColumn } from '../model/center-agenda-summary';
@@ -12,10 +13,11 @@ import {
   createColumnEntryStyle,
   createColumnHeaderStyle,
   createColumnStyle,
-  createColumnsRowStyle,
+  createColumnsStackStyle,
   createEmptyColumnStyle,
   COLUMN_HEADER_TEXT_STYLE,
-  MAX_COLUMNS_WITHOUT_SCROLL,
+  ENTRY_TEXT_STYLE,
+  ENTRY_TIME_STYLE,
 } from './StaffAgendaColumns.styles';
 
 interface StaffAgendaColumnsProps {
@@ -43,43 +45,49 @@ function ColumnEntry({ entry, timeZone, onPress }: Readonly<ColumnEntryProps>): 
       }}
       style={createColumnEntryStyle(theme)}
     >
-      <Text variant="bodyStrong">{startTime}</Text>
-      <Text>{entry.client.fullName}</Text>
-      <Text variant="caption" color="ink2">
-        {entry.booking.service.name}
-      </Text>
+      <View style={ENTRY_TIME_STYLE}>
+        <Text variant="bodyStrong" color="brandInk">
+          {startTime}
+        </Text>
+      </View>
+      <View style={ENTRY_TEXT_STYLE}>
+        <Text variant="bodyStrong" numberOfLines={1}>
+          {entry.client.fullName}
+        </Text>
+        <Text variant="caption" color="ink2" numberOfLines={1}>
+          {entry.booking.service.name}
+        </Text>
+      </View>
     </Pressable>
   );
 }
 
 interface StaffColumnProps {
   column: StaffAgendaColumn;
-  /** Con pocas columnas se reparten el ancho; con más, cada una mide lo mismo y se desplaza. */
-  isFilled: boolean;
   timeZone: string;
   onEntryPress: (bookingId: string) => void;
 }
 
 function StaffColumn({
   column,
-  isFilled,
   timeZone,
   onEntryPress,
 }: Readonly<StaffColumnProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
-    <View style={createColumnStyle(theme, isFilled)}>
+    <View style={createColumnStyle(theme)}>
       <View style={createColumnHeaderStyle(theme)}>
-        <Avatar name={column.fullName} size="sm" isDecorative />
+        <Avatar name={column.fullName} size="md" isDecorative />
         <View style={COLUMN_HEADER_TEXT_STYLE}>
-          <Text variant="bodyStrong" numberOfLines={2}>
+          <Text variant="titleMd" numberOfLines={2}>
             {column.fullName}
           </Text>
-          <Text variant="caption" color="ink2">
-            {i18n.t('staffAgenda.center.appointmentCount', { count: column.entries.length })}
-          </Text>
         </View>
+        <Badge
+          label={i18n.t('staffAgenda.center.appointmentCount', { count: column.entries.length })}
+          tone={column.entries.length === 0 ? 'neutral' : 'brand'}
+        />
       </View>
       {column.entries.length === 0 ? (
         <View style={createEmptyColumnStyle(theme)}>
@@ -100,35 +108,24 @@ function StaffColumn({
   );
 }
 
-/**
- * Prototipo `aagenda`, «Por instructor»: una columna por profesional con sus citas del día. Hasta
- * dos columnas se reparten el ancho sin desplazamiento; con más, se desplazan a los lados.
- */
+/** Prototipo `aagenda`, «Por instructor»: una tarjeta por profesional, una debajo de otra. */
 export function StaffAgendaColumns({
   columns,
   timeZone,
   onEntryPress,
 }: Readonly<StaffAgendaColumnsProps>): React.JSX.Element {
   const theme = useTheme();
-  const isFilled = columns.length <= MAX_COLUMNS_WITHOUT_SCROLL;
-  const columnViews = columns.map((column) => (
-    <StaffColumn
-      key={column.membershipId}
-      column={column}
-      isFilled={isFilled}
-      timeZone={timeZone}
-      onEntryPress={onEntryPress}
-    />
-  ));
 
-  if (isFilled) return <View style={createColumnsRowStyle(theme)}>{columnViews}</View>;
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={createColumnsRowStyle(theme)}
-    >
-      {columnViews}
-    </ScrollView>
+    <View style={createColumnsStackStyle(theme)}>
+      {columns.map((column) => (
+        <StaffColumn
+          key={column.membershipId}
+          column={column}
+          timeZone={timeZone}
+          onEntryPress={onEntryPress}
+        />
+      ))}
+    </View>
   );
 }

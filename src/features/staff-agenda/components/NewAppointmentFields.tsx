@@ -1,9 +1,10 @@
-import { ServiceOptionList, SlotGrid } from '@/features/booking';
+import { ServiceOptionList } from '@/features/booking';
 import { ClientPicker } from '@/features/clients';
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 
+import { AppointmentTimePicker } from './AppointmentTimePicker';
 import type { NewAppointmentForm } from '../hooks/useNewAppointmentForm';
 
 /** Los tres pasos de «Nueva cita» en una sola pantalla: cliente, servicio y hora libre. */
@@ -33,7 +34,7 @@ export function NewAppointmentFields({
       {form.serviceId === null ? null : (
         <>
           <Text variant="titleMd">{i18n.t('staffAgenda.newAppointment.timeLabel')}</Text>
-          <SlotGrid
+          <AppointmentTimePicker
             slots={form.slots}
             timeZone={form.timeZone}
             selectedStartsAt={form.selectedStartsAt}

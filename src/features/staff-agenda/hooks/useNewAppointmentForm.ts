@@ -10,6 +10,9 @@ import { useMyCenters } from '@/features/join';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 
+/** Las citas de la agenda empiezan en cualquier cuarto de hora, no solo a la hora en punto. */
+const APPOINTMENT_STEP_MINUTES = 15;
+
 export interface ChosenClient {
   membershipId: string;
   fullName: string;
@@ -54,6 +57,7 @@ function useOwnDaySlots(serviceId: string | null, isoDate: string): OwnDaySlots 
     fromDate: isoDate,
     toDate: isoDate,
     staffMembershipId: ownMembershipId,
+    stepMinutes: APPOINTMENT_STEP_MINUTES,
   });
   const canListSlots = serviceId !== null && ownMembershipId !== undefined;
 

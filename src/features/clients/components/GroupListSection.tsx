@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { View } from 'react-native';
 
 import { LoadErrorState } from '@/features/join';
 import type { GroupListResponseDtoGroupsItem } from '@/shared/api/generated/model';
@@ -10,6 +11,7 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 
 import type { useGroupList } from '../hooks/useGroupList';
 import { GroupCard } from './GroupCard';
+import { CREATE_GROUP_ROW_STYLE } from './GroupListSection.styles';
 
 interface GroupListSectionProps {
   groups: ReturnType<typeof useGroupList>;
@@ -37,12 +39,14 @@ function GroupRows({ groups, levelWords, onCreate }: Readonly<GroupRowsProps>): 
           }}
         />
       ))}
-      <Button
-        variant="outline"
-        leadingIconName="plus"
-        label={i18n.t('clients.groups.createAction')}
-        onPress={onCreate}
-      />
+      <View style={CREATE_GROUP_ROW_STYLE}>
+        <Button
+          size="lg"
+          leadingIconName="plus"
+          label={i18n.t('clients.groups.createAction')}
+          onPress={onCreate}
+        />
+      </View>
     </>
   );
 }

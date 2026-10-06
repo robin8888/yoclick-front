@@ -23,6 +23,8 @@ interface ClientListRequest {
   statusFilter: ClientStatusFilterId;
   /** Solo las personas de este grupo. */
   groupId?: string;
+  /** El personal ve por defecto solo a quienes han reservado con él; `center` los trae a todos. */
+  scope?: 'mine' | 'center';
 }
 
 export interface ClientListPages {
@@ -40,6 +42,7 @@ function buildParams(request: ClientListRequest, search: string): ClientsListPar
     ...(search === '' ? {} : { search }),
     ...(status === undefined ? {} : { status }),
     ...(request.groupId === undefined ? {} : { groupId: request.groupId }),
+    ...(request.scope === undefined ? {} : { scope: request.scope }),
   };
 }
 

@@ -1,6 +1,10 @@
+import { useRouter } from 'expo-router';
+import { View } from 'react-native';
+
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { ClientListResponseDtoClientsItem } from '@/shared/api/generated/model';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useTheme } from '@/shared/theme';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { Input } from '@/ui/atoms/Input';
@@ -9,6 +13,8 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { StaffClientRow } from '../components/StaffClientRow';
+import { createStaffClientCardStyle } from '../components/StaffClientRow.styles';
+import { useActiveClientCount } from '../hooks/useActiveClientCount';
 import { useClientFilters } from '../hooks/useClientFilters';
 import { useClientList } from '../hooks/useClientList';
 import { describeClientLevel } from '../model/client-display';
@@ -17,13 +23,20 @@ interface StaffClientListProps {
   list: ReturnType<typeof useClientList>;
   sectorId: string | undefined;
   isFiltered: boolean;
+  onClearSearch: () => void;
 }
 
 function NoStaffClients({
   isFiltered,
   clientWord,
-  onRetry,
-}: Readonly<{ isFiltered: boolean; clientWord: string; onRetry: () => void }>): React.JSX.Element {
+  onClearSearch,
+}: Readonly<{
+  isFiltered: boolean;
+  clientWord: string;
+  onClearSearch: () => void;
+}>): React.JSX.Element {
+  const router = useRouter();
+
   return (
     <EmptyState
       iconName="users"
@@ -37,8 +50,16 @@ function NoStaffClients({
           ? i18n.t('clients.noResultsDescription')
           : i18n.t('clients.staffEmptyDescription')
       }
-      actionLabel={getSharedStateCopy().retryLabel}
-      onActionPress={onRetry}
+      actionLabel={
+        isFiltered ? i18n.t('clients.clearSearchAction') : i18n.t('clients.staffEmptyAction')
+      }
+      onActionPress={
+        isFiltered
+          ? onClearSearch
+          : () => {
+              router.navigate('/(staff)/(tabs)/agenda');
+            }
+      }
     />
   );
 }
@@ -54,15 +75,20 @@ function StaffClientRows({
   clients,
   vocabulary,
 }: Readonly<StaffClientRowsProps>): React.JSX.Element {
+  const theme = useTheme();
+
   return (
     <>
-      {clients.map((client) => (
-        <StaffClientRow
-          key={client.membershipId}
-          client={client}
-          levelLabel={describeClientLevel(client.level, vocabulary.levels)}
-        />
-      ))}
+      <View style={createStaffClientCardStyle(theme)}>
+        {clients.map((client, index) => (
+          <StaffClientRow
+            key={client.membershipId}
+            client={client}
+            levelLabel={describeClientLevel(client.level, vocabulary.levels)}
+            isLast={index === clients.length - 1}
+          />
+        ))}
+      </View>
       {list.hasNextPage ? (
         <Button
           variant="outline"
@@ -79,6 +105,7 @@ function StaffClientList({
   list,
   sectorId,
   isFiltered,
+  onClearSearch,
 }: Readonly<StaffClientListProps>): React.JSX.Element {
   const vocabulary = getSectorVocabulary(sectorId);
   const clients = list.data?.pages.flatMap((page) => page.clients) ?? [];
@@ -99,7 +126,7 @@ function StaffClientList({
       <NoStaffClients
         isFiltered={isFiltered}
         clientWord={vocabulary.client.plural}
-        onRetry={() => void list.refetch()}
+        onClearSearch={onClearSearch}
       />
     );
   }
@@ -111,23 +138,40 @@ export function StaffClientsScreen(): React.JSX.Element {
   const sectorId = useActiveCenterSectorId();
   const filters = useClientFilters();
   const list = useClientList({ searchText: filters.searchText, statusFilter: 'all' });
+  const activeCount = useActiveClientCount();
+  const vocabulary = getSectorVocabulary(sectorId);
 
   return (
     <ScreenTemplate
-      title={i18n.t('clients.staffTitle', {
-        clientWord: getSectorVocabulary(sectorId).client.plural,
-      })}
+      title={i18n.t('clients.staffTitle', { clientWord: vocabulary.client.plural })}
+      subtitle={
+        activeCount === undefined
+          ? undefined
+          : i18n.t('clients.staffSubtitle', {
+              count: activeCount,
+              clientWord: activeCount === 1 ? vocabulary.client.singular : vocabulary.client.plural,
+            })
+      }
     >
       <Input
         value={filters.searchText}
         onChangeText={filters.changeSearchText}
-        accessibilityLabel={i18n.t('clients.search.label')}
-        placeholder={i18n.t('clients.search.placeholder')}
+        accessibilityLabel={i18n.t('clients.staffSearch', {
+          clientWord: vocabulary.client.singular,
+        })}
+        placeholder={i18n.t('clients.staffSearch', { clientWord: vocabulary.client.singular })}
         leadingIconName="search"
         autoCapitalize="none"
         returnKeyType="search"
       />
-      <StaffClientList list={list} sectorId={sectorId} isFiltered={filters.isFiltered} />
+      <StaffClientList
+        list={list}
+        sectorId={sectorId}
+        isFiltered={filters.isFiltered}
+        onClearSearch={() => {
+          filters.changeSearchText('');
+        }}
+      />
     </ScreenTemplate>
   );
 }

@@ -87,7 +87,11 @@ function PickerList({
 /** Buscador y lista corta para elegir a la persona a la que se le pone una cita. */
 export function ClientPicker({ onClientSelect }: Readonly<ClientPickerProps>): React.JSX.Element {
   const filters = useClientFilters();
-  const list = useClientList({ searchText: filters.searchText, statusFilter: 'all' });
+  const list = useClientList({
+    searchText: filters.searchText,
+    statusFilter: 'all',
+    scope: 'center',
+  });
 
   return (
     <View style={CLIENT_PICKER_STYLE}>
