@@ -66,3 +66,13 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 3 | **Cierres y festivos** del horario (`acenter`): el servidor ya los guarda (`holidays`) pero la app aún no tiene pantalla. | «Editar» horario cambia solo los tramos semanales. |
 | 4 | **Disponibilidad y ausencias del equipo** (`iavail`, `ateam`): no hay horario propio por persona ni vacaciones. | La disponibilidad sale del horario del centro. |
 | 5 | **Permisos finos por rol** (`ateam`: qué ve cada rol): la app solo cambia el rol (administración / equipo) y el cargo. | «Quitar del equipo» marca a la persona como «ya no está». |
+
+## Alumnos y grupos (`aclients`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Listado de clientes**~~ Resuelto (6 oct 2026): `GET /v1/centers/{id}/clients` (búsqueda por nombre o correo, filtro por estado `active`, `new`, `inactive` o `blocked`, `groupId`, paginación), `GET` y `PATCH /v1/centers/{id}/clients/{membershipId}`. El estado se calcula: nuevo (primera semana), activo (cita en 30 días o futura), inactivo. | «Alumnos (n)» con buscador, filtros y «Ver más». |
+| 2 | ~~**Niveles y grupos**~~ Resuelto: nivel por cliente (`beginner`, `intermediate`, `advanced`, con el vocabulario del sector) y grupos (`GET`, `POST`, `DELETE /v1/centers/{id}/groups`; un cliente en un solo grupo). Migración `20261009090000_add_client_groups`. | «Grupos (n)», «Crear grupo», ficha del grupo y ficha del cliente para cambiar nivel y grupo. |
+| 3 | **Bono agotado** (estado del prototipo): no hay bonos del alumno todavía (ver «Inicio del alumno» fila 1). | El estado «Bono agotado» no se muestra. |
+| 4 | **Ficha completa del cliente** (`acfile`): asistencia, historial, notas privadas, pagos y acciones RGPD. | La ficha solo edita nivel y grupo. |
+| 5 | **Añadir varias personas a un grupo a la vez** y **quién da cada grupo al reservar**. | Se asigna desde la ficha de cada persona. |

@@ -30,6 +30,7 @@ import type {
   BookingResponseDto,
   BookingsListMineParams,
   CancelBookingResponseDto,
+  CreateAgendaBookingRequestDto,
   CreateBookingRequestDto,
   EndSessionRequestDto,
   MyBookingsResponseDto,
@@ -619,7 +620,95 @@ export function useAgendaGetDay<TData = Awaited<ReturnType<typeof agendaGetDay>>
 
 
 
-export const getSessionRecordsListUrl = (centerId: string,
+export const getAgendaCreateBookingUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/agenda/bookings`
+}
+
+/**
+ * @summary Crea una cita para un cliente desde la agenda. Mismas reglas de hueco que la reserva del cliente. El personal solo puede ponerla en su propia agenda.
+ */
+export const agendaCreateBooking = async (centerId: string,
+    createAgendaBookingRequestDto: CreateAgendaBookingRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getAgendaCreateBookingUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(createAgendaBookingRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAgendaCreateBookingMutationKey = () => ['agendaCreateBooking'] as const;
+
+export const getAgendaCreateBookingMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaCreateBooking>>, TError,AgendaCreateBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof agendaCreateBooking>>, TError,AgendaCreateBookingMutationVariables, TContext> => {
+
+const mutationKey = getAgendaCreateBookingMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof agendaCreateBooking>>, AgendaCreateBookingMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  agendaCreateBooking(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AgendaCreateBookingMutationResult = NonNullable<Awaited<ReturnType<typeof agendaCreateBooking>>>
+    export type AgendaCreateBookingMutationBody = CreateAgendaBookingRequestDto
+    export type AgendaCreateBookingMutationError = ErrorType<ProblemDetailsDto>
+    export type AgendaCreateBookingMutationVariables = {centerId: string;data: CreateAgendaBookingRequestDto}
+
+    /**
+ * @summary Crea una cita para un cliente desde la agenda. Mismas reglas de hueco que la reserva del cliente. El personal solo puede ponerla en su propia agenda.
+ */
+export const useAgendaCreateBooking = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaCreateBooking>>, TError,AgendaCreateBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof agendaCreateBooking>>,
+        TError,
+        AgendaCreateBookingMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAgendaCreateBookingMutationOptions(options), queryClient);
+    }
+    export const getSessionRecordsListUrl = (centerId: string,
     params: SessionRecordsListParams,) => {
   const normalizedParams = new URLSearchParams();
 

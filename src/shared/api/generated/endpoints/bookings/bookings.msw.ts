@@ -22,6 +22,7 @@ import type {
 } from '../../model';
 
 import {
+  getAgendaCreateBookingResponseMock,
   getAgendaGetDayResponseMock,
   getBookingsCancelResponseMock,
   getBookingsCreateResponseMock,
@@ -31,7 +32,7 @@ import {
   getSessionRecordsListResponseMock
 } from './bookings.faker.ts';
 
-export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
+export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getAgendaCreateBookingResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
 
 
 export const getBookingsCreateMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
@@ -106,6 +107,18 @@ export const getAgendaGetDayMockHandler = (overrideResponse?: AgendaResponseDto 
   }, options)
 }
 
+export const getAgendaCreateBookingMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/agenda/bookings', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAgendaCreateBookingResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
 export const getSessionRecordsListMockHandler = (overrideResponse?: SessionRecordsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SessionRecordsResponseDto> | SessionRecordsResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/session-records', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -124,5 +137,6 @@ export const getBookingsMock = () => [
   getBookingsStartMockHandler(),
   getBookingsEndMockHandler(),
   getAgendaGetDayMockHandler(),
+  getAgendaCreateBookingMockHandler(),
   getSessionRecordsListMockHandler()
 ]
