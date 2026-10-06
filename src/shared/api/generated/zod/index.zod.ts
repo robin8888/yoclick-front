@@ -1,3 +1,4 @@
+export * from './activity/activity.zod.ts';
 export * from './attendance/attendance.zod.ts';
 export * from './auth/auth.zod.ts';
 export * from './bookings/bookings.zod.ts';
@@ -9,6 +10,7 @@ export * from './me/me.zod.ts';
 export * from './mfa/mfa.zod.ts';
 export * from './notifications/notifications.zod.ts';
 export * from './onboarding/onboarding.zod.ts';
+export * from './privacy/privacy.zod.ts';
 export * from './reports/reports.zod.ts';
 export * from './rooms/rooms.zod.ts';
 export * from './scheduling/scheduling.zod.ts';

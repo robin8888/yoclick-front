@@ -8,6 +8,7 @@
 import type { UpdateCenterSettingsRequestDtoCancelPolicy } from './updateCenterSettingsRequestDtoCancelPolicy.ts';
 import type { UpdateCenterSettingsRequestDtoHolidaysItem } from './updateCenterSettingsRequestDtoHolidaysItem.ts';
 import type { UpdateCenterSettingsRequestDtoOpeningHours } from './updateCenterSettingsRequestDtoOpeningHours.ts';
+import type { UpdateCenterSettingsRequestDtoSectorId } from './updateCenterSettingsRequestDtoSectorId.ts';
 
 export interface UpdateCenterSettingsRequestDto {
   /**
@@ -15,6 +16,7 @@ export interface UpdateCenterSettingsRequestDto {
      * @maxLength 80
      */
   name?: string;
+  sectorId?: UpdateCenterSettingsRequestDtoSectorId;
   /** @pattern ^#[0-9A-Fa-f]{6}$ */
   brandColor?: string;
   /** @maxLength 64 */
@@ -32,6 +34,34 @@ export interface UpdateCenterSettingsRequestDto {
      * @nullable
      */
   address?: string | null;
+  /**
+     * @nullable
+     * @pattern ^\+?\d[\d -]{5,19}$
+     */
+  phone?: string | null;
+  /**
+     * @maxLength 200
+     * @nullable
+     * @pattern ^(?:[A-Za-z0-9_'+\-]+\.)*[A-Za-z0-9_'+\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$
+     */
+  contactEmail?: string | null;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     * @nullable
+     */
+  legalName?: string | null;
+  /**
+     * @nullable
+     * @pattern ^[A-Za-z0-9]{9}$
+     */
+  taxId?: string | null;
+  /**
+     * @minLength 1
+     * @maxLength 200
+     * @nullable
+     */
+  taxAddress?: string | null;
   /**
      * @minimum -90
      * @maximum 90

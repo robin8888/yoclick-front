@@ -26,6 +26,16 @@ export interface CenterSettingsResponseDto {
   /** @nullable */
   address: string | null;
   /** @nullable */
+  phone: string | null;
+  /** @nullable */
+  contactEmail: string | null;
+  /** @nullable */
+  legalName: string | null;
+  /** @nullable */
+  taxId: string | null;
+  /** @nullable */
+  taxAddress: string | null;
+  /** @nullable */
   latitude: number | null;
   /** @nullable */
   longitude: number | null;

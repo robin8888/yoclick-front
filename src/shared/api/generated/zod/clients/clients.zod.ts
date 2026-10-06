@@ -21,6 +21,7 @@ export const ClientsListParams = zod.object({
 export const clientsListQuerySearchMax = 80;
 
 export const clientsListQueryGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const clientsListQueryScopeDefault = `mine`;
 export const clientsListQueryLimitDefault = 50;
 export const clientsListQueryLimitMax = 100;
 
@@ -34,6 +35,7 @@ export const ClientsListQueryParams = zod.object({
   "search": zod.string().max(clientsListQuerySearchMax).optional(),
   "status": zod.enum(['active', 'new', 'inactive', 'blocked']).optional(),
   "groupId": zod.uuid().regex(clientsListQueryGroupIdRegExp).optional(),
+  "scope": zod.enum(['mine', 'center']).default(clientsListQueryScopeDefault),
   "limit": zod.int().min(1).max(clientsListQueryLimitMax).default(clientsListQueryLimitDefault),
   "offset": zod.int().min(clientsListQueryOffsetMin).max(clientsListQueryOffsetMax).default(clientsListQueryOffsetDefault)
 })

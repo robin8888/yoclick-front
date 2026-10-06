@@ -1,3 +1,4 @@
+export * from './activity/activity.ts';
 export * from './attendance/attendance.ts';
 export * from './auth/auth.ts';
 export * from './bookings/bookings.ts';
@@ -9,6 +10,7 @@ export * from './me/me.ts';
 export * from './mfa/mfa.ts';
 export * from './notifications/notifications.ts';
 export * from './onboarding/onboarding.ts';
+export * from './privacy/privacy.ts';
 export * from './reports/reports.ts';
 export * from './rooms/rooms.ts';
 export * from './scheduling/scheduling.ts';

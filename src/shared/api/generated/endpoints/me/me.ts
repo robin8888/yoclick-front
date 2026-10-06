@@ -28,8 +28,10 @@ import type {
   ChangePasswordRequestDto,
   DeleteAccountRequestDto,
   ExportDataRequestDto,
+  ListOpenSessionsRequestDto,
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
+  OpenSessionsResponseDto,
   PasswordChangedResponseDto,
   PersonalDataExportResponseDto,
   ProblemDetailsDto,
@@ -61,7 +63,167 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getMeGetProfileUrl = () => {
+export const getMeListSessionsUrl = () => {
+
+
+
+
+  return `/v1/me/sessions/list`
+}
+
+/**
+ * @summary Dispositivos con sesión abierta. Se envía el refresh token de este dispositivo (nunca en la URL) para marcar cuál es esta sesión.
+ */
+export const meListSessions = async (listOpenSessionsRequestDto: ListOpenSessionsRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<OpenSessionsResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<OpenSessionsResponseDto>(getMeListSessionsUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(listOpenSessionsRequestDto)
+  }
+);}
+
+
+
+
+
+export const getMeListSessionsMutationKey = () => ['meListSessions'] as const;
+
+export const getMeListSessionsMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meListSessions>>, TError,MeListSessionsMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meListSessions>>, TError,MeListSessionsMutationVariables, TContext> => {
+
+const mutationKey = getMeListSessionsMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meListSessions>>, MeListSessionsMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meListSessions(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeListSessionsMutationResult = NonNullable<Awaited<ReturnType<typeof meListSessions>>>
+    export type MeListSessionsMutationBody = ListOpenSessionsRequestDto
+    export type MeListSessionsMutationError = ErrorType<ProblemDetailsDto>
+    export type MeListSessionsMutationVariables = {data: ListOpenSessionsRequestDto}
+
+    /**
+ * @summary Dispositivos con sesión abierta. Se envía el refresh token de este dispositivo (nunca en la URL) para marcar cuál es esta sesión.
+ */
+export const useMeListSessions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meListSessions>>, TError,MeListSessionsMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meListSessions>>,
+        TError,
+        MeListSessionsMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeListSessionsMutationOptions(options), queryClient);
+    }
+    export const getMeRevokeSessionUrl = (sessionId: string,) => {
+
+
+
+
+  return `/v1/me/sessions/${sessionId}/revoke`
+}
+
+/**
+ * @summary Cierra la sesión de un dispositivo propio. Una sesión ajena o desconocida responde 404.
+ */
+export const meRevokeSession = async (sessionId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getMeRevokeSessionUrl(sessionId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getMeRevokeSessionMutationKey = () => ['meRevokeSession'] as const;
+
+export const getMeRevokeSessionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRevokeSession>>, TError,MeRevokeSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meRevokeSession>>, TError,MeRevokeSessionMutationVariables, TContext> => {
+
+const mutationKey = getMeRevokeSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meRevokeSession>>, MeRevokeSessionMutationVariables> = (props) => {
+          const {sessionId} = props ?? {};
+
+          return  meRevokeSession(sessionId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeRevokeSessionMutationResult = NonNullable<Awaited<ReturnType<typeof meRevokeSession>>>
+
+    export type MeRevokeSessionMutationError = ErrorType<ProblemDetailsDto>
+    export type MeRevokeSessionMutationVariables = {sessionId: string}
+
+    /**
+ * @summary Cierra la sesión de un dispositivo propio. Una sesión ajena o desconocida responde 404.
+ */
+export const useMeRevokeSession = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRevokeSession>>, TError,MeRevokeSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meRevokeSession>>,
+        TError,
+        MeRevokeSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeRevokeSessionMutationOptions(options), queryClient);
+    }
+    export const getMeGetProfileUrl = () => {
 
 
 

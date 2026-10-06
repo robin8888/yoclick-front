@@ -15,17 +15,21 @@ import type {
 
 import type {
   CenterBrandingResponseDto,
-  CenterSettingsResponseDto
+  CenterSettingsResponseDto,
+  JoinCodeResponseDto,
+  JoinStatsResponseDto
 } from '../../model';
 
 import {
   getCentersGetBrandingResponseMock,
+  getCentersGetJoinStatsResponseMock,
   getCentersGetLogoResponseMock,
   getCentersGetSettingsResponseMock,
+  getCentersRegenerateJoinCodeResponseMock,
   getCentersUpdateSettingsResponseMock
 } from './centers.faker.ts';
 
-export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
+export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetJoinStatsResponseMock, getCentersRegenerateJoinCodeResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
 
 
 export const getCentersGetBrandingMockHandler = (overrideResponse?: CenterBrandingResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterBrandingResponseDto> | CenterBrandingResponseDto), options?: RequestHandlerOptions) => {
@@ -64,6 +68,30 @@ export const getCentersUpdateSettingsMockHandler = (overrideResponse?: CenterSet
   }, options)
 }
 
+export const getCentersGetJoinStatsMockHandler = (overrideResponse?: JoinStatsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<JoinStatsResponseDto> | JoinStatsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/join-stats', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersGetJoinStatsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCentersRegenerateJoinCodeMockHandler = (overrideResponse?: JoinCodeResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<JoinCodeResponseDto> | JoinCodeResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/join-code/regenerate', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersRegenerateJoinCodeResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getCentersGetLogoMockHandler = (overrideResponse?: Blob | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<Blob> | Blob), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/logo', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -80,5 +108,7 @@ export const getCentersMock = () => [
   getCentersGetBrandingMockHandler(),
   getCentersGetSettingsMockHandler(),
   getCentersUpdateSettingsMockHandler(),
+  getCentersGetJoinStatsMockHandler(),
+  getCentersRegenerateJoinCodeMockHandler(),
   getCentersGetLogoMockHandler()
 ]

@@ -12,11 +12,14 @@ import {
 import type {
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
+  OpenSessionsResponseDto,
   PasswordChangedResponseDto,
   PersonalDataExportResponseDto,
   ProfileResponseDto
 } from '../../model';
 
+
+export const getMeListSessionsResponseMock = (overrideResponse: Partial<Extract<OpenSessionsResponseDto, object>> = {}): OpenSessionsResponseDto => ({sessions: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), deviceName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), startedAt: faker.date.past().toISOString().slice(0, 19) + 'Z', lastActiveAt: faker.date.past().toISOString().slice(0, 19) + 'Z', isCurrent: faker.datatype.boolean()})), ...overrideResponse})
 
 export const getMeGetProfileResponseMock = (overrideResponse: Partial<Extract<ProfileResponseDto, object>> = {}): ProfileResponseDto => ({id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}}), phone: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), birthDate: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 10), null]), locale: faker.string.alpha({length: {min: 10, max: 20}}), isEmailVerified: faker.datatype.boolean(), createdAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
 

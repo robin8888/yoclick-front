@@ -9,6 +9,44 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Dispositivos con sesión abierta. Se envía el refresh token de este dispositivo (nunca en la URL) para marcar cuál es esta sesión.
+ */
+export const meListSessionsBodyRefreshTokenMax = 512;
+
+
+
+export const MeListSessionsBody = zod.object({
+  "refreshToken": zod.string().min(1).max(meListSessionsBodyRefreshTokenMax)
+})
+
+export const meListSessionsResponseSessionsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meListSessionsResponseSessionsItemStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meListSessionsResponseSessionsItemLastActiveAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const MeListSessionsResponse = zod.object({
+  "sessions": zod.array(zod.object({
+  "id": zod.uuid().regex(meListSessionsResponseSessionsItemIdRegExp),
+  "deviceName": zod.string().nullable(),
+  "startedAt": zod.iso.datetime({"offset":true}).regex(meListSessionsResponseSessionsItemStartedAtRegExp),
+  "lastActiveAt": zod.iso.datetime({"offset":true}).regex(meListSessionsResponseSessionsItemLastActiveAtRegExp),
+  "isCurrent": zod.boolean()
+}))
+})
+
+/**
+ * @summary Cierra la sesión de un dispositivo propio. Una sesión ajena o desconocida responde 404.
+ */
+export const meRevokeSessionPathSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const MeRevokeSessionParams = zod.object({
+  "sessionId": zod.uuid().regex(meRevokeSessionPathSessionIdRegExp)
+})
+
+export const MeRevokeSessionResponse = zod.void()
+
+/**
  * @summary Mi perfil.
  */
 export const meGetProfileResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

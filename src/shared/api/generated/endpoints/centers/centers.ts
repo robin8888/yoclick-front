@@ -27,6 +27,8 @@ import type {
 import type {
   CenterBrandingResponseDto,
   CenterSettingsResponseDto,
+  JoinCodeResponseDto,
+  JoinStatsResponseDto,
   ProblemDetailsDto,
   UpdateCenterSettingsRequestDto
 } from '../../model';
@@ -341,6 +343,179 @@ export const useCentersUpdateSettings = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getCentersUpdateSettingsMutationOptions(options), queryClient);
+    }
+    export const getCentersGetJoinStatsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/join-stats`
+}
+
+/**
+ * @summary Cuántos clientes se han unido este mes (en la zona horaria del centro), por QR, enlace, código o buscador.
+ */
+export const centersGetJoinStats = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<JoinStatsResponseDto> => {
+
+  return apiMutator<JoinStatsResponseDto>(getCentersGetJoinStatsUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersGetJoinStatsQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/join-stats`
+    ] as const;
+    }
+
+
+export const getCentersGetJoinStatsQueryOptions = <TData = Awaited<ReturnType<typeof centersGetJoinStats>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCentersGetJoinStatsQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersGetJoinStats>>> = ({ signal }) => centersGetJoinStats(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CentersGetJoinStatsQueryResult = NonNullable<Awaited<ReturnType<typeof centersGetJoinStats>>>
+export type CentersGetJoinStatsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useCentersGetJoinStats<TData = Awaited<ReturnType<typeof centersGetJoinStats>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetJoinStats>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetJoinStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetJoinStats<TData = Awaited<ReturnType<typeof centersGetJoinStats>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetJoinStats>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetJoinStats>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetJoinStats<TData = Awaited<ReturnType<typeof centersGetJoinStats>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Cuántos clientes se han unido este mes (en la zona horaria del centro), por QR, enlace, código o buscador.
+ */
+
+export function useCentersGetJoinStats<TData = Awaited<ReturnType<typeof centersGetJoinStats>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetJoinStats>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCentersGetJoinStatsQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getCentersRegenerateJoinCodeUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/join-code/regenerate`
+}
+
+/**
+ * @summary Cambia el código de unión del centro. El QR y el enlace anteriores dejan de funcionar; quien ya se unió no se ve afectado.
+ */
+export const centersRegenerateJoinCode = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<JoinCodeResponseDto> => {
+
+  return apiMutator<JoinCodeResponseDto>(getCentersRegenerateJoinCodeUrl(centerId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersRegenerateJoinCodeMutationKey = () => ['centersRegenerateJoinCode'] as const;
+
+export const getCentersRegenerateJoinCodeMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersRegenerateJoinCode>>, TError,CentersRegenerateJoinCodeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof centersRegenerateJoinCode>>, TError,CentersRegenerateJoinCodeMutationVariables, TContext> => {
+
+const mutationKey = getCentersRegenerateJoinCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersRegenerateJoinCode>>, CentersRegenerateJoinCodeMutationVariables> = (props) => {
+          const {centerId} = props ?? {};
+
+          return  centersRegenerateJoinCode(centerId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CentersRegenerateJoinCodeMutationResult = NonNullable<Awaited<ReturnType<typeof centersRegenerateJoinCode>>>
+
+    export type CentersRegenerateJoinCodeMutationError = ErrorType<ProblemDetailsDto>
+    export type CentersRegenerateJoinCodeMutationVariables = {centerId: string}
+
+    /**
+ * @summary Cambia el código de unión del centro. El QR y el enlace anteriores dejan de funcionar; quien ya se unió no se ve afectado.
+ */
+export const useCentersRegenerateJoinCode = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersRegenerateJoinCode>>, TError,CentersRegenerateJoinCodeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof centersRegenerateJoinCode>>,
+        TError,
+        CentersRegenerateJoinCodeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCentersRegenerateJoinCodeMutationOptions(options), queryClient);
     }
     export const getCentersGetLogoUrl = (centerId: string,) => {
 

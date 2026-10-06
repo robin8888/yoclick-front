@@ -81,6 +81,11 @@ export const CentersGetSettingsResponse = zod.object({
   "isListed": zod.boolean(),
   "city": zod.string().nullable(),
   "address": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "contactEmail": zod.string().nullable(),
+  "legalName": zod.string().nullable(),
+  "taxId": zod.string().nullable(),
+  "taxAddress": zod.string().nullable(),
   "latitude": zod.number().nullable(),
   "longitude": zod.number().nullable(),
   "openingHours": zod.object({
@@ -150,6 +155,16 @@ export const centersUpdateSettingsBodyCityMax = 200;
 
 export const centersUpdateSettingsBodyAddressMax = 200;
 
+export const centersUpdateSettingsBodyPhoneRegExp = new RegExp('^\\+?\\d[\\d -]{5,19}$');
+export const centersUpdateSettingsBodyContactEmailMax = 200;
+
+
+export const centersUpdateSettingsBodyContactEmailRegExp = new RegExp('^(?:[A-Za-z0-9_\'+\\-]+\\.)*[A-Za-z0-9_\'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$');
+export const centersUpdateSettingsBodyLegalNameMax = 200;
+
+export const centersUpdateSettingsBodyTaxIdRegExp = new RegExp('^[A-Za-z0-9]{9}$');
+export const centersUpdateSettingsBodyTaxAddressMax = 200;
+
 export const centersUpdateSettingsBodyLatitudeMin = -90;
 export const centersUpdateSettingsBodyLatitudeMax = 90;
 
@@ -182,11 +197,17 @@ export const centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax = 168
 
 export const CentersUpdateSettingsBody = zod.object({
   "name": zod.string().min(centersUpdateSettingsBodyNameMin).max(centersUpdateSettingsBodyNameMax).optional(),
+  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']).optional(),
   "brandColor": zod.string().regex(centersUpdateSettingsBodyBrandColorRegExp).optional(),
   "timezone": zod.string().max(centersUpdateSettingsBodyTimezoneMax).optional(),
   "isListed": zod.boolean().optional(),
   "city": zod.string().min(1).max(centersUpdateSettingsBodyCityMax).nullish(),
   "address": zod.string().min(1).max(centersUpdateSettingsBodyAddressMax).nullish(),
+  "phone": zod.string().regex(centersUpdateSettingsBodyPhoneRegExp).nullish(),
+  "contactEmail": zod.email().max(centersUpdateSettingsBodyContactEmailMax).regex(centersUpdateSettingsBodyContactEmailRegExp).nullish(),
+  "legalName": zod.string().min(1).max(centersUpdateSettingsBodyLegalNameMax).nullish(),
+  "taxId": zod.string().regex(centersUpdateSettingsBodyTaxIdRegExp).nullish(),
+  "taxAddress": zod.string().min(1).max(centersUpdateSettingsBodyTaxAddressMax).nullish(),
   "latitude": zod.number().min(centersUpdateSettingsBodyLatitudeMin).max(centersUpdateSettingsBodyLatitudeMax).nullish(),
   "longitude": zod.number().min(centersUpdateSettingsBodyLongitudeMin).max(centersUpdateSettingsBodyLongitudeMax).nullish(),
   "openingHours": zod.object({
@@ -267,6 +288,11 @@ export const CentersUpdateSettingsResponse = zod.object({
   "isListed": zod.boolean(),
   "city": zod.string().nullable(),
   "address": zod.string().nullable(),
+  "phone": zod.string().nullable(),
+  "contactEmail": zod.string().nullable(),
+  "legalName": zod.string().nullable(),
+  "taxId": zod.string().nullable(),
+  "taxAddress": zod.string().nullable(),
   "latitude": zod.number().nullable(),
   "longitude": zod.number().nullable(),
   "openingHours": zod.object({
@@ -309,6 +335,64 @@ export const CentersUpdateSettingsResponse = zod.object({
 }).nullable(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable(),
   "version": zod.string()
+})
+
+/**
+ * @summary Cuántos clientes se han unido este mes (en la zona horaria del centro), por QR, enlace, código o buscador.
+ */
+export const centersGetJoinStatsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersGetJoinStatsParams = zod.object({
+  "centerId": zod.uuid().regex(centersGetJoinStatsPathCenterIdRegExp)
+})
+
+export const CentersGetJoinStatsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const centersGetJoinStatsResponseQrMin = -9007199254740991;
+export const centersGetJoinStatsResponseQrMax = 9007199254740991;
+
+export const centersGetJoinStatsResponseLinkMin = -9007199254740991;
+export const centersGetJoinStatsResponseLinkMax = 9007199254740991;
+
+export const centersGetJoinStatsResponseCodeMin = -9007199254740991;
+export const centersGetJoinStatsResponseCodeMax = 9007199254740991;
+
+export const centersGetJoinStatsResponseSearchMin = -9007199254740991;
+export const centersGetJoinStatsResponseSearchMax = 9007199254740991;
+
+export const centersGetJoinStatsResponseTotalMin = -9007199254740991;
+export const centersGetJoinStatsResponseTotalMax = 9007199254740991;
+
+
+
+export const CentersGetJoinStatsResponse = zod.object({
+  "month": zod.string(),
+  "qr": zod.int().min(centersGetJoinStatsResponseQrMin).max(centersGetJoinStatsResponseQrMax),
+  "link": zod.int().min(centersGetJoinStatsResponseLinkMin).max(centersGetJoinStatsResponseLinkMax),
+  "code": zod.int().min(centersGetJoinStatsResponseCodeMin).max(centersGetJoinStatsResponseCodeMax),
+  "search": zod.int().min(centersGetJoinStatsResponseSearchMin).max(centersGetJoinStatsResponseSearchMax),
+  "total": zod.int().min(centersGetJoinStatsResponseTotalMin).max(centersGetJoinStatsResponseTotalMax)
+})
+
+/**
+ * @summary Cambia el código de unión del centro. El QR y el enlace anteriores dejan de funcionar; quien ya se unió no se ve afectado.
+ */
+export const centersRegenerateJoinCodePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersRegenerateJoinCodeParams = zod.object({
+  "centerId": zod.uuid().regex(centersRegenerateJoinCodePathCenterIdRegExp)
+})
+
+export const CentersRegenerateJoinCodeHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const CentersRegenerateJoinCodeResponse = zod.object({
+  "joinCode": zod.string()
 })
 
 /**

@@ -5,13 +5,11 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
-import type { JoinCenterRequestDtoSource } from './joinCenterRequestDtoSource.ts';
 
-export interface JoinCenterRequestDto {
+export interface ListOpenSessionsRequestDto {
   /**
      * @minLength 1
-     * @maxLength 16
+     * @maxLength 512
      */
-  joinCode?: string;
-  source?: JoinCenterRequestDtoSource;
+  refreshToken: string;
 }

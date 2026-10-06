@@ -16,6 +16,7 @@ import type {
 import type {
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
+  OpenSessionsResponseDto,
   PasswordChangedResponseDto,
   PersonalDataExportResponseDto,
   ProfileResponseDto
@@ -27,12 +28,35 @@ import {
   getMeGetConsentsResponseMock,
   getMeGetProfileResponseMock,
   getMeListMembershipsResponseMock,
+  getMeListSessionsResponseMock,
   getMeSetConsentResponseMock,
   getMeUpdateProfileResponseMock
 } from './me.faker.ts';
 
-export { getMeGetProfileResponseMock, getMeUpdateProfileResponseMock, getMeListMembershipsResponseMock, getMeGetConsentsResponseMock, getMeSetConsentResponseMock, getMeChangePasswordResponseMock, getMeExportDataResponseMock } from './me.faker.ts';
+export { getMeListSessionsResponseMock, getMeGetProfileResponseMock, getMeUpdateProfileResponseMock, getMeListMembershipsResponseMock, getMeGetConsentsResponseMock, getMeSetConsentResponseMock, getMeChangePasswordResponseMock, getMeExportDataResponseMock } from './me.faker.ts';
 
+
+export const getMeListSessionsMockHandler = (overrideResponse?: OpenSessionsResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<OpenSessionsResponseDto> | OpenSessionsResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/sessions/list', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getMeListSessionsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getMeRevokeSessionMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/sessions/:sessionId/revoke', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 
 export const getMeGetProfileMockHandler = (overrideResponse?: ProfileResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ProfileResponseDto> | ProfileResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/me', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
@@ -128,6 +152,8 @@ export const getMeExportDataMockHandler = (overrideResponse?: PersonalDataExport
   }, options)
 }
 export const getMeMock = () => [
+  getMeListSessionsMockHandler(),
+  getMeRevokeSessionMockHandler(),
   getMeGetProfileMockHandler(),
   getMeUpdateProfileMockHandler(),
   getMeDeleteAccountMockHandler(),
