@@ -23,7 +23,7 @@ export function VerifyEmailScreen(): React.JSX.Element {
       hasPlatformHeroBackground
       isHeaderCentered
       headerAccessory={<IconBadge iconName="mail" />}
-      isLoading={form.isSubmitting}
+      isLoading={form.isSubmitting || form.isResending}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('auth.verifyEmail.title')}
       subtitle={i18n.t('auth.verifyEmail.subtitle', { email: form.email })}

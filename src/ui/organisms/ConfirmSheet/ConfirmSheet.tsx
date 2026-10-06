@@ -3,6 +3,7 @@ import { Modal, Pressable, View } from 'react-native';
 import { useTheme } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
+import { BusyOverlay } from '@/ui/molecules/BusyOverlay';
 
 import { createBackdropStyle, createSheetStyle, SHEET_ANCHOR_STYLE } from './ConfirmSheet.styles';
 import type { ConfirmSheetProps } from './ConfirmSheet.types';
@@ -73,6 +74,7 @@ export function ConfirmSheet({
           onPress={isConfirming ? undefined : onDismiss}
         />
         <SheetContent {...contentProps} />
+        {isConfirming ? <BusyOverlay loadingLabel={contentProps.loadingLabel} /> : null}
       </View>
     </Modal>
   );

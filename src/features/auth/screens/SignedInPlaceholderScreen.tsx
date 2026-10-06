@@ -29,6 +29,7 @@ export function SignedInPlaceholderScreen({
     <ScreenTemplate
       title={i18n.t('auth.session.placeholderTitle', { centerName: activeCenter.name })}
       isHeaderCentered
+      isLoading={isSigningOut}
       headerAccessory={
         <CenterIdentityHeader centerName={activeCenter.name} logoUrl={activeCenter.logoUrl} />
       }

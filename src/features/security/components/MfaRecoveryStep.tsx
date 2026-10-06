@@ -1,10 +1,9 @@
 import { Share, View } from 'react-native';
 
-import { useSignOut } from '@/features/auth';
+import { MfaScreenLogo, useSignOut } from '@/features/auth';
 import { i18n } from '@/shared/i18n';
 import { platformCardColors } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
-import { IconBadge } from '@/ui/atoms/IconBadge';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -47,7 +46,8 @@ export function MfaRecoveryStep({
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
-      headerAccessory={<IconBadge iconName="checkCircle" />}
+      isLoading={isSigningOut}
+      headerAccessory={<MfaScreenLogo />}
       title={i18n.t('security.mfaSetup.recoveryTitle')}
       subtitle={i18n.t('security.mfaSetup.recoverySubtitle')}
       footer={

@@ -10,7 +10,7 @@ import {
   KEYBOARD_AVOIDING_STYLE,
 } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
-import { BusyOverlay } from './BusyOverlay';
+import { BusyOverlay } from '@/ui/molecules/BusyOverlay';
 import { KeyboardAwareScroll } from './KeyboardAwareScroll';
 import { CenterHoneycombBackground } from './CenterHoneycombBackground';
 import { PlatformHeroBackground } from './PlatformHeroBackground';

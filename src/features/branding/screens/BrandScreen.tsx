@@ -24,7 +24,7 @@ export function BrandScreen(): React.JSX.Element {
     <ScreenTemplate
       title={i18n.t('branding.title')}
       subtitle={i18n.t('branding.subtitle', { clientWord })}
-      isLoading={publication.isPublishing}
+      isLoading={publication.isPublishing || logoPicker.isPreparing}
       footer={
         <PublishBrandButton
           brand={brand}

@@ -25,6 +25,7 @@ export function CenterJoinConfirmation({
       title={i18n.t('join.confirm.title')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
+      isLoading={isJoining}
       footer={
         <>
           <Button

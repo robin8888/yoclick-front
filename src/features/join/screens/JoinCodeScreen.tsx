@@ -27,6 +27,7 @@ export function JoinCodeScreen(): React.JSX.Element {
       backLabel={i18n.t('actions.back')}
       hasPlatformHeroBackground
       isHeaderCentered
+      isLoading={isSearching}
       headerAccessory={<Logo variant="lockup" height={CODE_LOGO_HEIGHT} />}
       footer={
         <Button

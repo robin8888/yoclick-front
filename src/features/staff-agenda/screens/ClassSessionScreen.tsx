@@ -35,6 +35,7 @@ function ClassSessionDetail({
       subtitle={client.fullName}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
+      isLoading={actions.isStarting || actions.isEnding}
       footer={
         <ClassSessionFooter
           booking={booking}

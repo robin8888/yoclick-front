@@ -283,6 +283,7 @@
       "appCodeSubtitle": "Escribe el código de 6 dígitos de tu app de autenticación.",
       "recoveryCodeSubtitle": "Escribe uno de tus códigos de recuperación. Cada uno sirve una sola vez.",
       "recoveryCodeLabel": "Código de recuperación",
+      "recoveryCodePlaceholder": "Tu código de recuperación",
       "submitLabel": "Verificar",
       "useRecoveryCodeAction": "Usar un código de recuperación",
       "useAppCodeAction": "Usar el código de la app",

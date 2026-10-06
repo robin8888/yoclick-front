@@ -53,7 +53,7 @@ export function AdminMoreScreen(): React.JSX.Element {
   const activeCenter = useActiveCenterSummary();
 
   return (
-    <ScreenTemplate title={i18n.t('centerAdmin.more.title')}>
+    <ScreenTemplate title={i18n.t('centerAdmin.more.title')} isLoading={isSigningOut}>
       <View style={IDENTITY_STYLE}>
         <Avatar name={activeCenter.name} photoUrl={activeCenter.logoUrl} size="xl" isDecorative />
         <Text variant="titleMd">{activeCenter.name}</Text>
