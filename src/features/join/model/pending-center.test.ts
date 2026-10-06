@@ -25,7 +25,18 @@ describe('pending center mappers', () => {
       brandHexColor: '#E4572E',
       logoUrl: null,
       joinCode: 'NORTE7',
+      joinSource: 'code',
     });
+  });
+
+  it('remembers that a center found by scanning came from a QR', () => {
+    const pendingCenter = mapPublicCenterToPendingCenter(
+      { ...NORTE_CENTER, city: null },
+      'NORTE7',
+      'qr',
+    );
+
+    expect(pendingCenter.joinSource).toBe('qr');
   });
 
   it('has no join code when the center came from the directory search', () => {
@@ -36,6 +47,7 @@ describe('pending center mappers', () => {
     });
 
     expect(pendingCenter.joinCode).toBeUndefined();
+    expect(pendingCenter.joinSource).toBe('search');
   });
 
   it('reads the center id from the branding response', () => {

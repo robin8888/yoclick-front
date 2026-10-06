@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { useForm, type Control } from 'react-hook-form';
 
+import { getDeviceName } from '@/shared/auth/device-name';
 import { useAuthLogin } from '@/shared/api/generated/endpoints/auth/auth';
 import { i18n } from '@/shared/i18n';
 import { getApiErrorMessage } from '@/shared/api/errors';
@@ -30,7 +31,7 @@ export function useLoginForm(): LoginForm {
 
   const submitLogin = handleSubmit((credentials) => {
     loginMutation.mutate(
-      { data: credentials },
+      { data: { ...credentials, deviceName: getDeviceName() } },
       {
         onSuccess: (response) => {
           if (!isMfaChallenge(response)) {

@@ -35,8 +35,12 @@ export function JoinConfirmScreen({
   }
 
   // El código solo se conserva si la persona lo escribió para este mismo centro.
-  const joinCode = pendingCenter?.id === centerId ? pendingCenter.joinCode : undefined;
+  const isSameCenter = pendingCenter?.id === centerId;
+  const joinCode = isSameCenter ? pendingCenter.joinCode : undefined;
+  const joinSource = isSameCenter ? pendingCenter.joinSource : undefined;
   return (
-    <CenterJoinConfirmation centerToJoin={mapBrandingToPendingCenter(branding.data, joinCode)} />
+    <CenterJoinConfirmation
+      centerToJoin={mapBrandingToPendingCenter(branding.data, joinCode, joinSource)}
+    />
   );
 }

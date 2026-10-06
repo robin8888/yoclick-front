@@ -66,6 +66,7 @@ describe('LoginScreen', () => {
     expect(findApiCall('POST', '/v1/auth/login')?.body).toEqual({
       email: 'marta@correo.es',
       password: 'una-clave-larga-1',
+      deviceName: 'iPhone · app',
     });
   });
 

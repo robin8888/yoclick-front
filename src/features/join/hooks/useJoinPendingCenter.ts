@@ -27,9 +27,15 @@ export function useJoinPendingCenter(): JoinPendingCenterResult {
   const clearPendingCenter = usePendingCenterStore((state) => state.clearPendingCenter);
 
   function joinPendingCenter(center: PendingCenter, callbacks: JoinCallbacks): void {
-    const joinCode = center.joinCode;
+    const { joinCode, joinSource } = center;
     joinMutation.mutate(
-      { centerId: center.id, data: joinCode === undefined ? {} : { joinCode } },
+      {
+        centerId: center.id,
+        data: {
+          ...(joinCode === undefined ? {} : { joinCode }),
+          ...(joinSource === undefined ? {} : { source: joinSource }),
+        },
+      },
       {
         onSuccess: () => {
           void queryClient

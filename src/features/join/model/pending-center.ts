@@ -14,7 +14,11 @@ export interface PendingCenter {
   readonly logoUrl: string | null;
   /** Solo si entró con código: un centro privado lo exige al unirse. */
   readonly joinCode?: string | undefined;
+  /** Por dónde llegó (QR, enlace, código o buscador): el centro cuenta «este mes se han unido». */
+  readonly joinSource?: JoinSource | undefined;
 }
+
+export type JoinSource = 'qr' | 'link' | 'code' | 'search';
 
 interface CenterWithBrand {
   id: string;
@@ -24,7 +28,11 @@ interface CenterWithBrand {
   logoUrl: string | null;
 }
 
-function mapCenterToPendingCenter(center: CenterWithBrand, joinCode?: string): PendingCenter {
+function mapCenterToPendingCenter(
+  center: CenterWithBrand,
+  joinCode?: string,
+  joinSource?: JoinSource,
+): PendingCenter {
   return {
     id: center.id,
     name: center.name,
@@ -32,27 +40,30 @@ function mapCenterToPendingCenter(center: CenterWithBrand, joinCode?: string): P
     brandHexColor: center.brandColor,
     logoUrl: center.logoUrl,
     joinCode,
+    joinSource,
   };
 }
 
 export function mapPublicCenterToPendingCenter(
   center: PublicCenterResponseDto,
   joinCode: string,
+  joinSource: JoinSource = 'code',
 ): PendingCenter {
-  return mapCenterToPendingCenter(center, joinCode);
+  return mapCenterToPendingCenter(center, joinCode, joinSource);
 }
 
 export function mapSearchResultToPendingCenter(
   center: CenterSearchResponseDtoCentersItem,
 ): PendingCenter {
-  return mapCenterToPendingCenter(center);
+  return mapCenterToPendingCenter(center, undefined, 'search');
 }
 
 export function mapBrandingToPendingCenter(
   branding: CenterBrandingResponseDto,
   joinCode?: string,
+  joinSource?: JoinSource,
 ): PendingCenter {
-  return mapCenterToPendingCenter({ ...branding, id: branding.centerId }, joinCode);
+  return mapCenterToPendingCenter({ ...branding, id: branding.centerId }, joinCode, joinSource);
 }
 
 /**

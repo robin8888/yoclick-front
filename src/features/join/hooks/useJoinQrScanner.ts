@@ -15,7 +15,7 @@ interface JoinQrScanner {
 /** Del QR al centro: valida el contenido, busca el centro y pasa a confirmarlo. */
 export function useJoinQrScanner(): JoinQrScanner {
   const router = useRouter();
-  const findCenter = useFindCenterByJoinCode();
+  const findCenter = useFindCenterByJoinCode('qr');
   const [scanProblem, setScanProblem] = useState<JoinQrScanProblem | null>(null);
   // La cámara dispara el evento muchas veces por segundo con el mismo QR: se procesa una vez.
   const lastHandledQrContent = useRef<string | null>(null);

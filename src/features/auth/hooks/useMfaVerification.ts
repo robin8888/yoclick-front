@@ -1,3 +1,4 @@
+import { getDeviceName } from '@/shared/auth/device-name';
 import { useAuthVerifyMfa } from '@/shared/api/generated/endpoints/auth/auth';
 import { getApiErrorMessage } from '@/shared/api/errors';
 import { i18n } from '@/shared/i18n';
@@ -24,7 +25,7 @@ export function useMfaVerification(): MfaVerification {
   function verifyWith(codeFields: MfaCodeFields): void {
     if (mfaToken === null) return;
     verifyMutation.mutate(
-      { data: { mfaToken, ...codeFields } },
+      { data: { mfaToken, ...codeFields, deviceName: getDeviceName() } },
       {
         onSuccess: (response) => {
           clearMfaChallengeToken();

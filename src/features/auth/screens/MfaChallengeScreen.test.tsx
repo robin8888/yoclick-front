@@ -46,6 +46,7 @@ describe('MfaChallengeScreen', () => {
     expect(findApiCall('POST', '/v1/auth/mfa/verify')?.body).toEqual({
       mfaToken: 'mfa-challenge-token',
       code: '123456',
+      deviceName: 'iPhone · app',
     });
     expect(useAuthFlowStore.getState().mfaChallengeToken).toBeNull();
   });
@@ -62,6 +63,7 @@ describe('MfaChallengeScreen', () => {
       expect(findApiCall('POST', '/v1/auth/mfa/verify')?.body).toEqual({
         mfaToken: 'mfa-challenge-token',
         recoveryCode: 'abcd-efgh-ijkl',
+        deviceName: 'iPhone · app',
       });
     });
   });
