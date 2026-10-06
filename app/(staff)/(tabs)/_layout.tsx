@@ -9,7 +9,9 @@ export default function StaffTabsLayout(): React.JSX.Element {
   return (
     <Tabs screenOptions={{ headerShown: false }} tabBar={renderNoTabBar}>
       <Tabs.Screen name="agenda" />
-      <Tabs.Screen name="account" />
+      <Tabs.Screen name="clients" />
+      <Tabs.Screen name="notifications" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 }

@@ -1,25 +1,46 @@
 import { usePathname, useRouter, type Href } from 'expo-router';
 
 import { useActiveCenterSectorId } from '@/features/join';
+import { useUnreadNotificationCount } from '@/features/notifications';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
 
-/** Pestañas del profesional: su agenda y su cuenta, con las pantallas que cuelgan de cada una. */
-function listStaffTabs(): readonly PathTab[] {
+interface StaffTabsRequest {
+  clientsLabel: string;
+  unreadNoticeCount: number;
+}
+
+/** Prototipo `iagenda`: Agenda, Clientes, Avisos (con su contador) y Perfil. */
+function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): readonly PathTab[] {
   return [
     {
       id: 'agenda',
       label: i18n.t('staffAgenda.tabs.agenda'),
       iconName: 'calendar',
       href: '/(staff)/(tabs)/agenda',
-      activePaths: ['/agenda', '/sessions', '/scan'],
+      activePaths: ['/agenda', '/sessions', '/scan', '/new-appointment'],
     },
     {
-      id: 'account',
-      label: i18n.t('staffAgenda.tabs.account'),
+      id: 'clients',
+      label: clientsLabel,
+      iconName: 'users',
+      href: '/(staff)/(tabs)/clients',
+      activePaths: ['/clients'],
+    },
+    {
+      id: 'notifications',
+      label: i18n.t('staffAgenda.tabs.notifications'),
+      iconName: 'bell',
+      href: '/(staff)/(tabs)/notifications',
+      activePaths: ['/notifications'],
+      badgeCount: unreadNoticeCount,
+    },
+    {
+      id: 'profile',
+      label: i18n.t('staffAgenda.tabs.profile'),
       iconName: 'user',
-      href: '/(staff)/(tabs)/account',
-      activePaths: ['/account'],
+      href: '/(staff)/(tabs)/profile',
+      activePaths: ['/profile'],
     },
   ];
 }
@@ -73,10 +94,12 @@ function capitalize(word: string): string {
 /** La barra del profesional, visible en todas sus pantallas. */
 export function StaffTabBar(): React.JSX.Element {
   const router = useRouter();
+  const clientsLabel = capitalize(getSectorVocabulary(useActiveCenterSectorId()).client.plural);
+  const unreadNoticeCount = useUnreadNotificationCount();
 
   return (
     <PathTabBar
-      tabs={listStaffTabs()}
+      tabs={listStaffTabs({ clientsLabel, unreadNoticeCount })}
       currentPath={usePathname()}
       onTabPress={(href) => {
         router.navigate(href as Href);

@@ -10,6 +10,7 @@ import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { AgendaScreen } from './AgendaScreen';
+import { InstructorAgendaScreen } from './InstructorAgendaScreen';
 import { ClassSessionScreen } from './ClassSessionScreen';
 import { SessionRecordsScreen } from './SessionRecordsScreen';
 
@@ -90,6 +91,40 @@ describe('AgendaScreen', () => {
     renderScreen(<AgendaScreen isCenterWide={false} />);
 
     expect(await screen.findByText('No hemos podido cargar la agenda')).toBeOnTheScreen();
+  });
+});
+
+describe('InstructorAgendaScreen', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signInToCenter();
+  });
+
+  it('shows the availability, the day totals and the appointment block', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([buildAgendaEntry(60)]),
+      [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
+    });
+    renderScreen(<InstructorAgendaScreen />);
+
+    expect(await screen.findByText('Disponible 08:00–20:00')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Entrenamiento personal/ })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Nueva cita' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Escanear QR de asistencia' })).toBeOnTheScreen();
+  });
+
+  it('opens the new appointment screen from the floating button', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([]),
+      [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
+    });
+    renderScreen(<InstructorAgendaScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Nueva cita' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: '/(staff)/new-appointment' }),
+    );
   });
 });
 

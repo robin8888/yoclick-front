@@ -1,7 +1,6 @@
 import { useRouter } from 'expo-router';
 
 import { useActiveCenterSummary } from '@/features/auth';
-import { resolveApiAssetUrl } from '@/shared/api/asset-url';
 import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -34,8 +33,6 @@ export function ClientHomeScreen(): React.JSX.Element {
       title={i18n.t('booking.home.title', { centerName: center.name })}
     >
       <HomeHeader
-        centerName={center.name}
-        centerLogoUrl={resolveApiAssetUrl(center.logoUrl)}
         dateLabel={formatLongDate(new Date(), DEFAULT_CENTER_TIME_ZONE)}
         greeting={i18n.t('booking.home.greeting', { firstName: extractFirstName(fullName) })}
         fullName={fullName}

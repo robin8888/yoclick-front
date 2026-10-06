@@ -7,8 +7,6 @@ import { Text } from '@/ui/atoms/Text';
 import { createHomeHeaderStyle, HOME_HEADER_TEXT_STYLE } from './HomeHeader.styles';
 
 interface HomeHeaderProps {
-  centerName: string;
-  centerLogoUrl: string | null;
   dateLabel: string;
   greeting: string;
   fullName: string;
@@ -16,8 +14,6 @@ interface HomeHeaderProps {
 
 /** Prototipo `home`: logo del centro, fecha y saludo a la izquierda; las iniciales a la derecha. */
 export function HomeHeader({
-  centerName,
-  centerLogoUrl,
   dateLabel,
   greeting,
   fullName,
@@ -26,7 +22,6 @@ export function HomeHeader({
 
   return (
     <View style={createHomeHeaderStyle(theme)}>
-      <Avatar name={centerName} photoUrl={centerLogoUrl} size="lg" isDecorative />
       <View style={HOME_HEADER_TEXT_STYLE}>
         <Text variant="caption" color="ink2">
           {dateLabel}

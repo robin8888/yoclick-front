@@ -7,6 +7,9 @@ import { getTodayIsoDate, shiftIsoDate } from '../model/agenda-date';
 export interface AgendaDay {
   isoDate: string;
   isToday: boolean;
+  /** Hoy en la zona del centro: el primer día de la franja. */
+  todayIsoDate: string;
+  selectDate: (isoDate: string) => void;
   goToPreviousDay: () => void;
   goToNextDay: () => void;
 }
@@ -23,6 +26,8 @@ export function useAgendaDay(): AgendaDay {
   return {
     isoDate,
     isToday: isoDate === todayIsoDate,
+    todayIsoDate,
+    selectDate: setIsoDate,
     goToPreviousDay: () => {
       move(-1);
     },

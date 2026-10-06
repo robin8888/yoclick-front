@@ -9,3 +9,7 @@ export { ClientHomeScreen } from './screens/ClientHomeScreen';
 export { MyBookingsScreen } from './screens/MyBookingsScreen';
 export { DEFAULT_CENTER_TIME_ZONE } from './model/booking-labels';
 export { formatLongDate } from './model/home-labels';
+export { ServiceOptionList } from './components/ServiceOptionList';
+export { SlotGrid, type SlotOption } from './components/SlotGrid';
+export { useAvailableSlots } from './hooks/useAvailableSlots';
+export { useCenterServices } from './hooks/useCenterServices';

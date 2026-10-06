@@ -1,10 +1,8 @@
 import { useRouter } from 'expo-router';
 
-import { useActiveCenterSummary } from '@/features/auth';
 import { formatLongDate } from '@/features/booking';
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { AgendaResponseDto } from '@/shared/api/generated/model';
-import { resolveApiAssetUrl } from '@/shared/api/asset-url';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { formatShortDate } from '@/shared/lib/format/format-short-date';
@@ -61,7 +59,6 @@ function CenterAgendaContent({
 
 /** Prototipo `aagenda`: resumen del día y una columna de citas por profesional. */
 export function CenterAgendaScreen(): React.JSX.Element {
-  const center = useActiveCenterSummary();
   const day = useAgendaDay();
   const agenda = useDayAgenda(day.isoDate);
   const dayDate = `${day.isoDate}T12:00:00.000Z`;
@@ -69,12 +66,7 @@ export function CenterAgendaScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate isHeaderHidden title={title}>
-      <CenterAgendaHeader
-        centerName={center.name}
-        centerLogoUrl={resolveApiAssetUrl(center.logoUrl)}
-        dateLabel={formatLongDate(dayDate, 'UTC')}
-        title={title}
-      />
+      <CenterAgendaHeader dateLabel={formatLongDate(dayDate, 'UTC')} title={title} />
       <ScanAttendanceButton isCenterWide />
       {agenda.isError ? (
         <LoadErrorState

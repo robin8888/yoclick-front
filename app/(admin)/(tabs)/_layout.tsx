@@ -13,6 +13,7 @@ export default function AdminTabsLayout(): React.JSX.Element {
       <Tabs.Screen name="content" />
       <Tabs.Screen name="brand" />
       <Tabs.Screen name="records" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="more" />
     </Tabs>
   );

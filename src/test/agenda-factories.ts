@@ -32,7 +32,12 @@ export function buildAgendaEntry(
 }
 
 export function buildAgenda(entries: AgendaResponseDtoEntriesItem[]): AgendaResponseDto {
-  return { date: '2026-10-08', timezone: 'Europe/Madrid', entries };
+  return {
+    date: '2026-10-08',
+    timezone: 'Europe/Madrid',
+    openingRanges: [{ opensAt: '08:00', closesAt: '20:00' }],
+    entries,
+  };
 }
 
 export function buildSessionRecords(): SessionRecordsResponseDto {

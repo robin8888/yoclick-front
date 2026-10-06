@@ -107,6 +107,8 @@
       "searchOptionTitle": "Buscar por nombre o ciudad",
       "searchOptionDescription": "Encuentra tu centro en el directorio",
       "haveAccountAction": "Ya tengo cuenta",
+      "staffOptionTitle": "Soy instructor o profesor",
+      "staffOptionDescription": "Tengo un código de invitación de mi centro",
       "qrOptionTitle": "Escanear el QR del centro",
       "qrOptionDescription": "Lo tienes en recepción",
       "inviteNoticeLead": "¿Te ha llegado un ",
@@ -520,11 +522,43 @@
       "passEmpty": "Sin bono activo. Pregunta en tu centro."
     }
   },
+  "session": {
+    "profile": {
+      "title": "Perfil",
+      "roleAtCenter": "{{role}} en {{centerName}}"
+    }
+  },
   "staffAgenda": {
     "tabs": {
       "agenda": "Agenda",
       "records": "Clases",
-      "account": "Cuenta"
+      "clients": "Clientes",
+      "notifications": "Avisos",
+      "profile": "Perfil"
+    },
+    "newAppointment": {
+      "title": "Nueva cita",
+      "saveAction": "Guardar cita",
+      "clientLabel": "Cliente",
+      "changeClient": "Cambiar",
+      "serviceLabel": "Servicio",
+      "timeLabel": "Hora"
+    },
+    "instructor": {
+      "profileLabel": "Abrir mi perfil",
+      "available": "Disponible {{hours}}",
+      "unavailable": "No disponible este día",
+      "availabilityCaption": "Horario del centro",
+      "appointments_one": "cita",
+      "appointments_other": "citas",
+      "occupied": "ocupadas",
+      "freeSlots_one": "hueco",
+      "freeSlots_other": "huecos",
+      "freeSlotLabel": "Hueco libre",
+      "closedLabel": "Cerrado",
+      "newAppointmentAction": "Nueva cita",
+      "scanAttendanceAction": "Escanear QR de asistencia",
+      "emptyDay": "Sin citas este día"
     },
     "agenda": {
       "staffTitle": "Mi agenda",
@@ -599,6 +633,113 @@
       "statusMissing": "No registrada",
       "realVersusPlanned": "Real {{actual}} · previsto {{planned}}",
       "plannedOnly": "Previsto {{planned}}"
+    }
+  },
+  "notifications": {
+    "title": "Avisos",
+    "markAllRead": "Marcar leídos",
+    "loadError": "No hemos podido cargar los avisos",
+    "emptyTitle": "Sin avisos",
+    "emptyDescription": "Aquí verás las nuevas reservas y las citas que se cancelen.",
+    "bellLabel_zero": "Avisos, ninguno sin leer",
+    "bellLabel_one": "Avisos, {{count}} sin leer",
+    "bellLabel_other": "Avisos, {{count}} sin leer",
+    "bookingCreatedTitle": "Nueva reserva",
+    "bookingCancelledTitle": "Cita cancelada",
+    "bookingDescription": "{{clientName}} · {{serviceName}} · {{when}}",
+    "justNow": "Ahora",
+    "minutesAgo_one": "Hace {{count}} min",
+    "minutesAgo_other": "Hace {{count}} min",
+    "hoursAgo_one": "Hace {{count}} h",
+    "hoursAgo_other": "Hace {{count}} h"
+  },
+  "clients": {
+    "title": "{{clientWord}}",
+    "staffTitle": "Mis {{clientWord}}",
+    "staffEmptyTitle": "Aún no tienes {{clientWord}}",
+    "staffEmptyDescription": "Aquí aparecerán quienes reserven contigo.",
+    "staffRow": {
+      "sessions_one": "{{count}} sesión",
+      "sessions_other": "{{count}} sesiones",
+      "next": "Próxima: {{day}} {{time}}"
+    },
+    "tabs": {
+      "clients": "{{clientWord}} ({{count}})",
+      "groups": "Grupos ({{count}})"
+    },
+    "inviteAction": "Invitar {{clientWord}}",
+    "search": {
+      "label": "Buscar por nombre o correo",
+      "placeholder": "Buscar por nombre o correo"
+    },
+    "statusFilterLabel": "Filtrar por estado",
+    "statusFilters": {
+      "all": "Todos",
+      "active": "Activos",
+      "new": "Nuevos",
+      "inactive": "Inactivos",
+      "blocked": "Bloqueados"
+    },
+    "badges": {
+      "active": "Activo",
+      "new": "Nuevo",
+      "inactive": "Inactivo 30 d",
+      "blocked": "Bloqueado"
+    },
+    "rowSubtitle": "{{level}} · Grupo: {{group}}",
+    "noLevel": "Sin nivel",
+    "noGroup": "—",
+    "loadError": "No hemos podido cargar la lista",
+    "emptyTitle": "Aún no tienes {{clientWord}}",
+    "emptyDescription": "Invítalos con el QR, el enlace o el código de tu centro.",
+    "noResultsTitle": "Nadie coincide con la búsqueda",
+    "noResultsDescription": "Prueba con otro nombre o cambia el estado.",
+    "loadMore": "Ver más",
+    "groups": {
+      "emptyTitle": "Aún no tienes grupos",
+      "emptyDescription": "Un grupo reúne a {{clientWord}} del mismo nivel con quien lo da.",
+      "loadError": "No hemos podido cargar los grupos",
+      "createAction": "Crear grupo",
+      "memberCount_one": "{{count}} persona",
+      "memberCount_other": "{{count}} personas",
+      "cardSummary": "{{members}} · {{instructor}} · {{level}}",
+      "noInstructor": "Sin responsable",
+      "noLevel": "Sin nivel"
+    },
+    "groupForm": {
+      "title": "Nuevo grupo",
+      "nameLabel": "Nombre del grupo",
+      "namePlaceholder": "Grupo mañanas",
+      "levelLabel": "Nivel",
+      "noLevel": "Sin nivel",
+      "instructorLabel": "Quién lo da",
+      "noInstructor": "Sin responsable",
+      "saveAction": "Crear grupo",
+      "nameRequired": "Escribe un nombre",
+      "nameTooLong": "El nombre no puede pasar de 80 caracteres",
+      "duplicateName": "Ya hay un grupo con ese nombre"
+    },
+    "clientEditor": {
+      "title": "Ficha",
+      "summary": "{{since}} · {{bookings}}",
+      "since": "Se unió el {{date}}",
+      "bookings_one": "{{count}} cita",
+      "bookings_other": "{{count}} citas",
+      "levelLabel": "Nivel",
+      "noLevel": "Sin nivel",
+      "groupLabel": "Grupo",
+      "noGroup": "Sin grupo",
+      "saveAction": "Guardar cambios",
+      "notFound": "No encontramos a esta persona"
+    },
+    "groupDetail": {
+      "title": "Grupo",
+      "membersTitle": "Miembros",
+      "noMembers": "Aún no hay nadie. Añade personas desde su ficha.",
+      "removeAction": "Quitar grupo",
+      "removeTitle": "¿Quitar el grupo?",
+      "removeMessage": "{{name}} desaparece y sus miembros se quedan sin grupo.",
+      "removeConfirm": "Quitar grupo"
     }
   },
   "branding": {
