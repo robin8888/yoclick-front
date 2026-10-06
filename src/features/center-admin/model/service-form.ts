@@ -64,6 +64,8 @@ export const serviceFormSchema = z.object({
       error: () => i18n.t('centerAdmin.serviceEditor.priceInvalid'),
     }),
   isVisible: z.boolean(),
+  /** Quién da el servicio; vacío en un alta = quien lo crea (lo decide el servidor). */
+  staffMembershipIds: z.array(z.string()),
 });
 export type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
@@ -90,6 +92,7 @@ export function buildEmptyServiceForm(): ServiceFormValues {
     durationMinutes: String(DEFAULT_SERVICE_DURATION_MINUTES),
     priceInEuros: '',
     isVisible: true,
+    staffMembershipIds: [],
   };
 }
 
@@ -100,6 +103,7 @@ export function mapServiceToForm(service: ServiceListResponseDtoServicesItem): S
     durationMinutes: String(service.durationMinutes),
     priceInEuros: formatPriceForInput(service.priceCents),
     isVisible: service.isVisible,
+    staffMembershipIds: service.staff.map((staffMember) => staffMember.membershipId),
   };
 }
 
@@ -110,6 +114,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
   durationMinutes: number;
   priceCents: number | null;
   isVisible: boolean;
+  staffMembershipIds?: string[];
 } {
   return {
     name: formValues.name,
@@ -117,6 +122,9 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
     durationMinutes: Number(formValues.durationMinutes),
     priceCents: formValues.priceInEuros === '' ? null : parsePriceInCents(formValues.priceInEuros),
     isVisible: formValues.isVisible,
+    ...(formValues.staffMembershipIds.length === 0
+      ? {}
+      : { staffMembershipIds: formValues.staffMembershipIds }),
   };
 }
 

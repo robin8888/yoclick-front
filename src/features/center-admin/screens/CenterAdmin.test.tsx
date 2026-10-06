@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 import { useSessionStore } from '@/shared/auth/session-store';
-import { buildService, SERVICE_ID } from '@/test/booking-factories';
+import { buildService, SERVICE_ID, STAFF_MEMBERSHIP_ID } from '@/test/booking-factories';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
@@ -16,6 +16,7 @@ jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 
 const SERVICES_PATH = `/v1/centers/${NORTE_CENTER_ID}/services`;
 const SETTINGS_PATH = `/v1/centers/${NORTE_CENTER_ID}`;
+const TEAM_PATH = `/v1/centers/${NORTE_CENTER_ID}/team`;
 const INVITATIONS_PATH = `/v1/centers/${NORTE_CENTER_ID}/invitations`;
 const OPENING_HOURS = {
   mon: [{ opensAt: '07:00', closesAt: '21:00' }],
@@ -26,6 +27,31 @@ const OPENING_HOURS = {
   sat: [],
   sun: [],
 };
+
+const TEAM_MEMBERS = [
+  {
+    membershipId: STAFF_MEMBERSHIP_ID,
+    userId: 'user-alex',
+    fullName: 'Álex Moreno',
+    email: 'alex@example.com',
+    role: 'staff',
+    status: 'active',
+    staffTitle: 'Entrenador',
+    permissions: [],
+    joinedAt: '2026-01-01T09:00:00.000Z',
+  },
+  {
+    membershipId: '0191d6a0-0000-7000-8000-0000000000b2',
+    userId: 'user-lucia',
+    fullName: 'Lucía Ferrer',
+    email: 'lucia@example.com',
+    role: 'staff',
+    status: 'active',
+    staffTitle: null,
+    permissions: [],
+    joinedAt: '2026-02-01T09:00:00.000Z',
+  },
+];
 
 function signInAsOwner(): void {
   act(() => {
@@ -133,6 +159,45 @@ describe('ServiceEditorScreen', () => {
       priceCents: 2550,
       isVisible: true,
     });
+  });
+
+  it('lets the owner choose who gives the service and sends it', async () => {
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [] },
+      [`GET ${TEAM_PATH}`]: { members: TEAM_MEMBERS },
+      [`POST ${SERVICES_PATH}`]: buildService(),
+    });
+    renderScreen(<ServiceEditorScreen />);
+    fireEvent.changeText(screen.getByLabelText('Nombre del servicio'), 'Valoración inicial');
+
+    fireEvent.press(await screen.findByRole('checkbox', { name: 'Lucía Ferrer' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(getMockRouter().back).toHaveBeenCalled();
+    });
+    expect(findApiCall('POST', SERVICES_PATH)?.body).toMatchObject({
+      staffMembershipIds: ['0191d6a0-0000-7000-8000-0000000000b2'],
+    });
+  });
+
+  it('shows who already gives an existing service and will not leave it with nobody', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ serviceId: SERVICE_ID });
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [buildService()] },
+      [`GET ${TEAM_PATH}`]: { members: TEAM_MEMBERS },
+    });
+    renderScreen(<ServiceEditorScreen />);
+
+    const currentStaffCheckbox = await screen.findByRole('checkbox', {
+      name: 'Álex Moreno. Entrenador',
+    });
+    expect(currentStaffCheckbox).toBeChecked();
+    fireEvent.press(currentStaffCheckbox);
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    expect(await screen.findByText('Elige al menos una persona')).toBeOnTheScreen();
+    expect(findApiCall('PATCH', `${SERVICES_PATH}/${SERVICE_ID}`)).toBeUndefined();
   });
 
   it('archives an existing service', async () => {

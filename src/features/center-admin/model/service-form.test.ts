@@ -79,6 +79,7 @@ describe('service form mapping', () => {
         durationMinutes: '30',
         priceInEuros: '25',
         isVisible: false,
+        staffMembershipIds: [],
       }),
     ).toEqual({
       name: 'Valoración',
@@ -87,5 +88,22 @@ describe('service form mapping', () => {
       priceCents: 2500,
       isVisible: false,
     });
+  });
+
+  it('sends who gives the service when someone is chosen, when creating and when editing', () => {
+    const formWithStaff = {
+      ...buildEmptyServiceForm(),
+      name: 'Valoración',
+      staffMembershipIds: ['member-1', 'member-2'],
+    };
+
+    expect(mapFormToCreateRequest(formWithStaff).staffMembershipIds).toEqual([
+      'member-1',
+      'member-2',
+    ]);
+    expect(mapFormToServiceChanges(formWithStaff).staffMembershipIds).toEqual([
+      'member-1',
+      'member-2',
+    ]);
   });
 });

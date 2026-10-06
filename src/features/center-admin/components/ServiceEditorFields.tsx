@@ -8,6 +8,7 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { useServiceEditorForm } from '../hooks/useServiceEditorForm';
 import { DurationPresets } from './DurationPresets';
+import { ServiceStaffField } from './ServiceStaffField';
 
 type ServiceEditorForm = ReturnType<typeof useServiceEditorForm>;
 
@@ -42,7 +43,7 @@ function VisibilityField({ form }: Readonly<ServiceEditorFieldsProps>): React.JS
   );
 }
 
-/** Los campos de un servicio: nombre, descripción, duración, precio y visibilidad. */
+/** Los campos de un servicio: nombre, descripción, duración, precio, quién lo da y visibilidad. */
 export function ServiceEditorFields({
   form,
 }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
@@ -78,6 +79,7 @@ export function ServiceEditorFields({
         helperText={i18n.t('centerAdmin.serviceEditor.priceHelper')}
         keyboardType="decimal-pad"
       />
+      <ServiceStaffField form={form} />
       <VisibilityField form={form} />
     </View>
   );
