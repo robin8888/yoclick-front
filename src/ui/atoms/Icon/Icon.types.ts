@@ -27,6 +27,7 @@ export const ICON_NAMES = [
   'xCircle',
   'refresh',
   'qrCode',
+  'copy',
   'logOut',
   'camera',
   'trash',

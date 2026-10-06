@@ -26,3 +26,9 @@ jest.mock('expo-router', () => {
     __mockRouter: mockRouter,
   };
 });
+
+// El portapapeles es un módulo nativo: en los tests se sustituye por funciones espía.
+jest.mock('expo-clipboard', () => ({
+  setStringAsync: jest.fn(() => Promise.resolve(true)),
+  getStringAsync: jest.fn(() => Promise.resolve('')),
+}));
