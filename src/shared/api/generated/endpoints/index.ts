@@ -7,6 +7,8 @@ export * from './join/join.ts';
 export * from './me/me.ts';
 export * from './mfa/mfa.ts';
 export * from './onboarding/onboarding.ts';
+export * from './reports/reports.ts';
+export * from './rooms/rooms.ts';
 export * from './scheduling/scheduling.ts';
 export * from './services/services.ts';
 export * from './team/team.ts';

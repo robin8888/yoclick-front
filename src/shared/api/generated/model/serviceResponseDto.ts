@@ -7,6 +7,7 @@
  */
 import type { ServiceResponseDtoCurrency } from './serviceResponseDtoCurrency.ts';
 import type { ServiceResponseDtoKind } from './serviceResponseDtoKind.ts';
+import type { ServiceResponseDtoRoom } from './serviceResponseDtoRoom.ts';
 import type { ServiceResponseDtoStaffItem } from './serviceResponseDtoStaffItem.ts';
 
 export interface ServiceResponseDto {
@@ -41,5 +42,7 @@ export interface ServiceResponseDto {
      */
   minNoticeMinutes: number;
   isVisible: boolean;
+  /** @nullable */
+  room: ServiceResponseDtoRoom;
   staff: ServiceResponseDtoStaffItem[];
 }

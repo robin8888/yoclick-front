@@ -23,6 +23,7 @@ export function buildService(
     bookingWindowDays: 30,
     minNoticeMinutes: 120,
     isVisible: true,
+    room: null,
     staff: [{ membershipId: STAFF_MEMBERSHIP_ID, fullName: 'Álex Moreno' }],
     ...overrides,
   };

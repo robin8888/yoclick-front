@@ -7,6 +7,7 @@
  */
 import type { ServiceListResponseDtoServicesItemCurrency } from './serviceListResponseDtoServicesItemCurrency.ts';
 import type { ServiceListResponseDtoServicesItemKind } from './serviceListResponseDtoServicesItemKind.ts';
+import type { ServiceListResponseDtoServicesItemRoom } from './serviceListResponseDtoServicesItemRoom.ts';
 import type { ServiceListResponseDtoServicesItemStaffItem } from './serviceListResponseDtoServicesItemStaffItem.ts';
 
 export type ServiceListResponseDtoServicesItem = {
@@ -41,5 +42,7 @@ export type ServiceListResponseDtoServicesItem = {
      */
   minNoticeMinutes: number;
   isVisible: boolean;
+  /** @nullable */
+  room: ServiceListResponseDtoServicesItemRoom;
   staff: ServiceListResponseDtoServicesItemStaffItem[];
 };

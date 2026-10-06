@@ -7,6 +7,8 @@ export * from './join/join.zod.ts';
 export * from './me/me.zod.ts';
 export * from './mfa/mfa.zod.ts';
 export * from './onboarding/onboarding.zod.ts';
+export * from './reports/reports.zod.ts';
+export * from './rooms/rooms.zod.ts';
 export * from './scheduling/scheduling.zod.ts';
 export * from './services/services.zod.ts';
 export * from './team/team.zod.ts';

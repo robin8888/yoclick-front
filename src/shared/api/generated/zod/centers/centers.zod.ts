@@ -121,7 +121,8 @@ export const CentersGetSettingsResponse = zod.object({
   "freeCancellationHours": zod.int().min(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
-  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable()
+  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable(),
+  "version": zod.string()
 })
 
 /**
@@ -306,7 +307,8 @@ export const CentersUpdateSettingsResponse = zod.object({
   "freeCancellationHours": zod.int().min(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
-  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable()
+  "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable(),
+  "version": zod.string()
 })
 
 /**
