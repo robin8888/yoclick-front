@@ -1,81 +1,71 @@
-import { useRouter, type Href } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { useActiveCenterSummary, useSignOut } from '@/features/auth';
-import { i18n } from '@/shared/i18n';
-import { Avatar } from '@/ui/atoms/Avatar';
+import { useSignOut } from '@/features/auth';
+import { useActiveCenterSectorId } from '@/features/join';
+import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useTheme, useThemePreference } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
+import { Icon } from '@/ui/atoms/Icon';
+import { Switch } from '@/ui/atoms/Switch';
 import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-const IDENTITY_STYLE = { flexDirection: 'row', alignItems: 'center', gap: 16 } as const;
-const SECTION_STYLE = { gap: 12 } as const;
+import { MORE_MENU_GROUPS } from '../model/more-menu';
+import { createThemeRowStyle, SECTION_STYLE, THEME_ROW_TEXT_STYLE } from './AdminMoreScreen.styles';
 
-interface AdminLink {
-  route: Href;
-  iconName: 'calendar' | 'clock' | 'qrCode' | 'users';
-  title: () => string;
-  subtitle: () => string;
+function DarkThemeRow(): React.JSX.Element {
+  const theme = useTheme();
+  const { setThemePreference } = useThemePreference();
+
+  return (
+    <View style={createThemeRowStyle(theme)}>
+      <Icon name="moon" color="ink2" />
+      <View style={THEME_ROW_TEXT_STYLE}>
+        <Text variant="bodyStrong">{i18n.t('centerAdmin.more.darkThemeTitle')}</Text>
+      </View>
+      <Switch
+        isOn={theme.mode === 'dark'}
+        accessibilityLabel={i18n.t('centerAdmin.more.darkThemeTitle')}
+        onToggle={(isOn) => {
+          setThemePreference(isOn ? 'dark' : 'light');
+        }}
+      />
+    </View>
+  );
 }
 
-const CENTER_LINKS: readonly AdminLink[] = [
-  {
-    route: '/(admin)/services',
-    iconName: 'calendar',
-    title: () => i18n.t('centerAdmin.more.servicesTitle'),
-    subtitle: () => i18n.t('centerAdmin.more.servicesSubtitle'),
-  },
-  {
-    route: '/(admin)/(tabs)/records',
-    iconName: 'clock',
-    title: () => i18n.t('centerAdmin.more.recordsTitle'),
-    subtitle: () => i18n.t('centerAdmin.more.recordsSubtitle'),
-  },
-  {
-    route: '/(admin)/invite-clients',
-    iconName: 'qrCode',
-    title: () => i18n.t('centerAdmin.more.inviteClientsTitle'),
-    subtitle: () => i18n.t('centerAdmin.more.inviteClientsSubtitle'),
-  },
-  {
-    route: '/(admin)/invite-team',
-    iconName: 'users',
-    title: () => i18n.t('centerAdmin.more.inviteTeamTitle'),
-    subtitle: () => i18n.t('centerAdmin.more.inviteTeamSubtitle'),
-  },
-];
-
-/** Prototipo `amore`: accesos de administración del centro. */
+/** Prototipo `amore`: los accesos de administración agrupados, el tema y cerrar sesión. */
 export function AdminMoreScreen(): React.JSX.Element {
   const router = useRouter();
   const { signOut, isSigningOut } = useSignOut();
-  const activeCenter = useActiveCenterSummary();
+  const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
 
   return (
     <ScreenTemplate title={i18n.t('centerAdmin.more.title')} isLoading={isSigningOut}>
-      <View style={IDENTITY_STYLE}>
-        <Avatar name={activeCenter.name} photoUrl={activeCenter.logoUrl} size="xl" isDecorative />
-        <Text variant="titleMd">{activeCenter.name}</Text>
-      </View>
-      <View style={SECTION_STYLE}>
-        <Text variant="overline" color="ink2">
-          {i18n.t('centerAdmin.more.centerSection')}
-        </Text>
-        {CENTER_LINKS.map((link) => (
-          <ListItem
-            key={link.iconName}
-            leadingIconName={link.iconName}
-            title={link.title()}
-            subtitle={link.subtitle()}
-            onPress={() => {
-              router.push(link.route);
-            }}
-          />
-        ))}
-      </View>
+      {MORE_MENU_GROUPS.map((group) => (
+        <View key={group.id} style={SECTION_STYLE}>
+          <Text variant="overline" color="ink2">
+            {i18n.t(`centerAdmin.more.${group.id}Section`)}
+          </Text>
+          {group.entries.map((entry) => (
+            <ListItem
+              key={entry.textKey}
+              leadingIconName={entry.iconName}
+              title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, { clientWord })}
+              subtitle={i18n.t(`centerAdmin.more.${entry.textKey}Subtitle`)}
+              onPress={() => {
+                router.push(entry.route);
+              }}
+            />
+          ))}
+        </View>
+      ))}
+      <DarkThemeRow />
       <Button
         variant="outline"
+        isFullWidth
         leadingIconName="logOut"
         label={i18n.t('actions.signOut')}
         isLoading={isSigningOut}

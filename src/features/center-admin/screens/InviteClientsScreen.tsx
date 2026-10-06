@@ -1,23 +1,27 @@
 import { useRouter } from 'expo-router';
 
-import { LoadErrorState } from '@/features/join';
-import { i18n } from '@/shared/i18n';
+import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
+import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { JoinCodeShare } from '../components/JoinCodeShare';
+import { JoinStatsSection } from '../components/JoinStatsSection';
+import { RegenerateJoinCodeAction } from '../components/RegenerateJoinCodeAction';
+import { ShareToolsList } from '../components/ShareToolsList';
 import { useCenterSettings } from '../hooks/useCenterSettings';
 
-/** Prototipo `ashare`: QR, código y enlace con los que la clientela se une al centro. */
+/** Prototipo `ashare`: QR y código, herramientas para compartir, altas del mes y cambio de código. */
 export function InviteClientsScreen(): React.JSX.Element {
   const router = useRouter();
   const settings = useCenterSettings();
   const center = settings.data;
+  const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
 
   return (
     <ScreenTemplate
-      title={i18n.t('centerAdmin.inviteClients.title')}
+      title={i18n.t('centerAdmin.inviteClients.title', { clientWord: vocabulary.client.plural })}
       subtitle={
         center === undefined
           ? undefined
@@ -38,7 +42,12 @@ export function InviteClientsScreen(): React.JSX.Element {
         />
       ) : null}
       {center === undefined ? null : (
-        <JoinCodeShare centerName={center.name} joinCode={center.joinCode} />
+        <>
+          <JoinCodeShare centerName={center.name} joinCode={center.joinCode} />
+          <ShareToolsList centerName={center.name} joinCode={center.joinCode} />
+          <JoinStatsSection clientWord={vocabulary.client.plural} />
+          <RegenerateJoinCodeAction />
+        </>
       )}
     </ScreenTemplate>
   );
