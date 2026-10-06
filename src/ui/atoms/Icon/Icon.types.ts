@@ -41,6 +41,7 @@ export const ICON_NAMES = [
   'file',
   'palette',
   'more',
+  'moon',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

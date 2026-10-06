@@ -24,6 +24,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  Moon,
   Minus,
   Palette,
   Pencil,
@@ -86,4 +87,5 @@ export const ICON_REGISTRY: Readonly<Record<IconName, LucideIcon>> = {
   file: FileText,
   palette: Palette,
   more: Ellipsis,
+  moon: Moon,
 };

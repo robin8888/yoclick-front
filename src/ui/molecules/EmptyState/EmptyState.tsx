@@ -5,7 +5,7 @@ import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
-import { createEmptyStateStyle, createIconTileStyle } from './EmptyState.styles';
+import { ACTION_ROW_STYLE, createEmptyStateStyle, createIconTileStyle } from './EmptyState.styles';
 import type { EmptyStateProps } from './EmptyState.types';
 
 export function EmptyState({
@@ -20,15 +20,19 @@ export function EmptyState({
   return (
     <View style={createEmptyStateStyle(theme)}>
       <View style={createIconTileStyle(theme)}>
-        <Icon name={iconName} size="navigation" color="ink2" />
+        <Icon name={iconName} size="navigation" color="brandInk" />
       </View>
-      <Text variant="titleMd">{title}</Text>
+      <Text variant="titleMd" align="center">
+        {title}
+      </Text>
       {description === undefined ? null : (
-        <Text variant="caption" color="ink2">
+        <Text color="ink2" align="center">
           {description}
         </Text>
       )}
-      <Button label={actionLabel} size="sm" onPress={onActionPress} />
+      <View style={ACTION_ROW_STYLE}>
+        <Button label={actionLabel} size="sm" onPress={onActionPress} />
+      </View>
     </View>
   );
 }

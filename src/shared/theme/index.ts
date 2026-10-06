@@ -1,3 +1,4 @@
+export { BackActionProvider, useBackAction } from './back-action';
 export { CenterIdentityProvider, useCenterIdentity } from './center-identity';
 export type { CenterIdentity } from './center-identity';
 export { centerHoneycomb } from './center-honeycomb';

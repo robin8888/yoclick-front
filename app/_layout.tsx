@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { SessionBootstrap } from '@/features/auth';
 import { AppThemeProvider } from '@/features/join';
 import { queryClient } from '@/shared/api/query-client';
-import { useAppFonts } from '@/shared/theme';
+import { BackActionProvider, useAppFonts } from '@/shared/theme';
 
 // El splash nativo se mantiene hasta tener las fuentes para evitar un parpadeo de tipografía.
 void SplashScreen.preventAutoHideAsync();
@@ -24,7 +24,9 @@ export default function RootLayout(): React.JSX.Element | null {
     <QueryClientProvider client={queryClient}>
       <AppThemeProvider>
         <SessionBootstrap>
-          <Stack screenOptions={{ headerShown: false }} />
+          <BackActionProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+          </BackActionProvider>
         </SessionBootstrap>
       </AppThemeProvider>
     </QueryClientProvider>
