@@ -5,3 +5,5 @@ export { useCenterCreationIntentStore } from './model/center-creation-intent-sto
 export { CenterLogoScreen } from './screens/CenterLogoScreen';
 export { CenterReadyScreen } from './screens/CenterReadyScreen';
 export { CreateCenterScreen } from './screens/CreateCenterScreen';
+export { usePickCenterLogo } from './hooks/usePickCenterLogo';
+export type { LogoPickProblem, PickCenterLogo, PickedLogo } from './hooks/usePickCenterLogo';

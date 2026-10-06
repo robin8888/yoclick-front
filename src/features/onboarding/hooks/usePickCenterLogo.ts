@@ -13,7 +13,7 @@ export interface PickedLogo {
 
 export type LogoPickProblem = 'too-large' | 'unreadable';
 
-interface PickCenterLogo {
+export interface PickCenterLogo {
   pickedLogo: PickedLogo | null;
   problem: LogoPickProblem | null;
   isPreparing: boolean;

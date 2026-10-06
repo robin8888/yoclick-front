@@ -32,4 +32,9 @@ export {
   platformHeroColorOverrides,
   platformHeroHoneycomb,
 } from './platform-hero';
-export { BRAND_COLOR_PRESETS, DEFAULT_BRAND_COLOR } from './brand-color-presets';
+export {
+  BRAND_COLOR_PRESETS,
+  BRAND_SWATCH_GROUPS,
+  DEFAULT_BRAND_COLOR,
+} from './brand-color-presets';
+export type { BrandSwatchGroup, BrandSwatchGroupId } from './brand-color-presets';
