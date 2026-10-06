@@ -1,65 +1,34 @@
-import { useRouter } from 'expo-router';
+import { useState } from 'react';
 
 import { LoadErrorState } from '@/features/join';
-import type { ServiceListResponseDtoServicesItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { EmptyState } from '@/ui/molecules/EmptyState';
-import { ListItem } from '@/ui/molecules/ListItem';
+import { StepProgress } from '@/ui/molecules/StepProgress';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ContinueToStaffButton } from '../components/ContinueToStaffButton';
+import { ServiceOptionList } from '../components/ServiceOptionList';
 import { useCenterServices } from '../hooks/useCenterServices';
-import { formatServiceDuration, formatServicePrice } from '../model/booking-labels';
 
-interface ServiceListProps {
-  services: readonly ServiceListResponseDtoServicesItem[];
-  onServiceSelect: (serviceId: string) => void;
-  onRetry: () => void;
-}
+const BOOKING_STEP_COUNT = 3;
 
-function ServiceList({
-  services,
-  onServiceSelect,
-  onRetry,
-}: Readonly<ServiceListProps>): React.JSX.Element {
-  if (services.length === 0) {
-    return (
-      <EmptyState
-        iconName="calendar"
-        title={i18n.t('booking.book.emptyTitle')}
-        description={i18n.t('booking.book.emptyDescription')}
-        actionLabel={getSharedStateCopy().retryLabel}
-        onActionPress={onRetry}
-      />
-    );
-  }
-  return (
-    <>
-      {services.map((service) => (
-        <ListItem
-          key={service.id}
-          title={service.name}
-          subtitle={[
-            formatServiceDuration(service.durationMinutes),
-            formatServicePrice(service.priceCents) ?? i18n.t('booking.book.priceOnRequest'),
-          ].join(' · ')}
-          onPress={() => {
-            onServiceSelect(service.id);
-          }}
-        />
-      ))}
-    </>
-  );
-}
-
-/** Prototipo `book1`: el servicio que se quiere reservar, con su duración y su precio. */
+/** Prototipo `book1`: paso 1 de 3, el servicio que se quiere reservar con su duración y precio. */
 export function BookServiceScreen(): React.JSX.Element {
-  const router = useRouter();
   const services = useCenterServices();
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
 
   return (
-    <ScreenTemplate title={i18n.t('booking.book.title')} subtitle={i18n.t('booking.book.subtitle')}>
+    <ScreenTemplate
+      title={i18n.t('booking.book.title')}
+      subtitle={i18n.t('booking.book.subtitle')}
+      footer={<ContinueToStaffButton selectedServiceId={selectedServiceId} />}
+    >
+      <StepProgress
+        currentStep={1}
+        stepCount={BOOKING_STEP_COUNT}
+        accessibilityLabel={i18n.t('booking.book.stepLabel')}
+      />
       {services.isError ? (
         <LoadErrorState
           title={i18n.t('booking.book.errorTitle')}
@@ -72,11 +41,10 @@ export function BookServiceScreen(): React.JSX.Element {
         <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />
       ) : null}
       {services.data === undefined ? null : (
-        <ServiceList
+        <ServiceOptionList
           services={services.data.services}
-          onServiceSelect={(serviceId) => {
-            router.push({ pathname: '/(client)/book/slot', params: { serviceId } });
-          }}
+          selectedServiceId={selectedServiceId}
+          onServiceSelect={setSelectedServiceId}
           onRetry={() => void services.refetch()}
         />
       )}

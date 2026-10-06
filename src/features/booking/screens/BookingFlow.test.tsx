@@ -19,6 +19,7 @@ import { renderScreen } from '@/test/render-screen';
 import { BookConfirmScreen } from './BookConfirmScreen';
 import { BookServiceScreen } from './BookServiceScreen';
 import { BookSlotScreen } from './BookSlotScreen';
+import { BookStaffScreen } from './BookStaffScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 // El módulo nativo de expo-crypto no existe en Jest.
@@ -56,20 +57,31 @@ describe('booking flow', () => {
       renderScreen(<BookServiceScreen />);
 
       expect(
-        await screen.findByRole('button', { name: /Entrenamiento personal/ }),
+        await screen.findByRole('radio', { name: /Entrenamiento personal/ }),
       ).toBeOnTheScreen();
-      expect(screen.getByText('1 h · 35 €')).toBeOnTheScreen();
-      expect(screen.getByText('30 min · Precio a consultar')).toBeOnTheScreen();
+      expect(screen.getByText('60 min · Individual · 35 €')).toBeOnTheScreen();
+      expect(screen.getByText('30 min · Individual · Precio a consultar')).toBeOnTheScreen();
+      expect(screen.getByRole('progressbar', { name: 'Paso 1 de 3' })).toBeOnTheScreen();
     });
 
-    it('goes to the day and time step with the chosen service', async () => {
+    it('says free when the service has no price', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService({ priceCents: 0 })] } });
+      renderScreen(<BookServiceScreen />);
+
+      expect(await screen.findByText('60 min · Individual · Gratis')).toBeOnTheScreen();
+    });
+
+    it('goes to the instructor step with the chosen service', async () => {
       mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
       renderScreen(<BookServiceScreen />);
 
-      fireEvent.press(await screen.findByRole('button', { name: /Entrenamiento personal/ }));
+      expect(await screen.findByRole('button', { name: 'Continuar' })).toBeDisabled();
+      fireEvent.press(await screen.findByRole('radio', { name: /Entrenamiento personal/ }));
+      expect(screen.getByRole('radio', { name: /Entrenamiento personal/ })).toBeChecked();
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
 
       expect(getMockRouter().push).toHaveBeenCalledWith({
-        pathname: '/(client)/book/slot',
+        pathname: '/(client)/book/staff',
         params: { serviceId: SERVICE_ID },
       });
     });
@@ -91,6 +103,55 @@ describe('booking flow', () => {
       renderScreen(<BookServiceScreen />);
 
       expect(await screen.findByText('No hemos podido cargar los servicios')).toBeOnTheScreen();
+    });
+  });
+
+  describe('BookStaffScreen', () => {
+    beforeEach(() => {
+      setRouteParams({ serviceId: SERVICE_ID });
+    });
+
+    it('offers anyone available (chosen by default) and each professional of the service', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookStaffScreen />);
+
+      expect(await screen.findByRole('radio', { name: /Cualquiera disponible/ })).toBeChecked();
+      expect(screen.getByRole('radio', { name: 'Álex Moreno' })).not.toBeChecked();
+      expect(screen.getByText('Paso 2 de 3 · Entrenamiento personal')).toBeOnTheScreen();
+      expect(screen.getByRole('progressbar', { name: 'Paso 2 de 3' })).toBeOnTheScreen();
+    });
+
+    it('continues to the day and time step for anyone when nobody is picked', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookStaffScreen />);
+
+      fireEvent.press(await screen.findByRole('button', { name: 'Continuar' }));
+
+      expect(getMockRouter().push).toHaveBeenCalledWith({
+        pathname: '/(client)/book/slot',
+        params: { serviceId: SERVICE_ID },
+      });
+    });
+
+    it('continues with the chosen professional', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookStaffScreen />);
+
+      fireEvent.press(await screen.findByRole('radio', { name: 'Álex Moreno' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+
+      expect(getMockRouter().push).toHaveBeenCalledWith({
+        pathname: '/(client)/book/slot',
+        params: { serviceId: SERVICE_ID, staffMembershipId: STAFF_MEMBERSHIP_ID },
+      });
+    });
+
+    it('goes back to the services when the route has no valid service', () => {
+      setRouteParams({ serviceId: 'no-es-un-uuid' });
+      mockApi({});
+      renderScreen(<BookStaffScreen />);
+
+      expect(screen.getByText('redirect:/(client)/(tabs)/book')).toBeOnTheScreen();
     });
   });
 
@@ -122,9 +183,9 @@ describe('booking flow', () => {
       renderScreen(<BookSlotScreen />);
       await screen.findByRole('button', { name: '18:00' });
 
-      expect(screen.getByRole('button', { name: 'Continuar' })).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Revisar reserva' })).toBeDisabled();
       fireEvent.press(screen.getByRole('button', { name: '18:00' }));
-      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+      fireEvent.press(screen.getByRole('button', { name: 'Revisar reserva' }));
 
       expect(getMockRouter().push).toHaveBeenCalledWith({
         pathname: '/(client)/book/confirm',
@@ -135,6 +196,20 @@ describe('booking flow', () => {
           staffName: 'Álex Moreno',
         },
       });
+    });
+
+    it('asks only for the hours of the chosen instructor and names them in the header', async () => {
+      setRouteParams({ serviceId: SERVICE_ID, staffMembershipId: STAFF_MEMBERSHIP_ID });
+      mockApi({
+        [SERVICES_PATH]: { services: [buildService()] },
+        [AVAILABILITY_PATH]: buildAvailability(),
+      });
+      renderScreen(<BookSlotScreen />);
+
+      expect(await screen.findByText('Paso 3 de 3 · Álex Moreno')).toBeOnTheScreen();
+      expect(findApiCall('GET', AVAILABILITY_PATH.replace('GET ', ''))?.path).toContain(
+        `staffMembershipId=${STAFF_MEMBERSHIP_ID}`,
+      );
     });
 
     it('says there are no free hours when every day is empty', async () => {

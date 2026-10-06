@@ -3,6 +3,7 @@ export { ClientTabBar } from './components/ClientTabBar';
 export { BookConfirmScreen } from './screens/BookConfirmScreen';
 export { BookedScreen } from './screens/BookedScreen';
 export { BookServiceScreen } from './screens/BookServiceScreen';
+export { BookStaffScreen } from './screens/BookStaffScreen';
 export { BookSlotScreen } from './screens/BookSlotScreen';
 export { ClientHomeScreen } from './screens/ClientHomeScreen';
 export { MyBookingsScreen } from './screens/MyBookingsScreen';

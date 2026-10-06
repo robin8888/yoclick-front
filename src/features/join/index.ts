@@ -6,6 +6,7 @@ export { LoadErrorScreen } from './components/LoadErrorScreen';
 export { LoadErrorState } from './components/LoadErrorState';
 export { useJoinPendingCenter } from './hooks/useJoinPendingCenter';
 export { SignedInIdentity } from './components/SignedInIdentity';
+export { useActiveCenterSectorId } from './hooks/useActiveCenterSectorId';
 export { useMyCenters } from './hooks/useMyCenters';
 export { usePendingInvitationStore } from './model/pending-invitation-store';
 export { usePendingCenterStore } from './model/pending-center-store';

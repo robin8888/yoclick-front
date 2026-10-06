@@ -11,6 +11,8 @@ interface AvailableSlotsRequest {
   /** `YYYY-MM-DD` en la zona del centro. */
   fromDate: string;
   toDate: string;
+  /** Solo las horas de esta persona; sin él, las de cualquiera con hueco. */
+  staffMembershipId?: string | undefined;
 }
 
 /** Huecos libres de un servicio entre dos fechas; los calcula el servidor (nunca el móvil). */
@@ -18,12 +20,18 @@ export function useAvailableSlots({
   serviceId,
   fromDate,
   toDate,
+  staffMembershipId,
 }: AvailableSlotsRequest): UseQueryResult<AvailabilityResponseDto, ErrorType> {
   const centerId = useActiveCenterId();
   return useQuery(
     getAvailabilityGetQueryOptions(
       centerId ?? '',
-      { serviceId, from: fromDate, to: toDate },
+      {
+        serviceId,
+        from: fromDate,
+        to: toDate,
+        ...(staffMembershipId === undefined ? {} : { staffMembershipId }),
+      },
       { query: { enabled: centerId !== null } },
     ),
   );

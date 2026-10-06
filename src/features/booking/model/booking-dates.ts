@@ -81,3 +81,11 @@ export function listBookableDates({ now, dayCount, timeZone }: DateListRequest):
     describeCalendarDay(new Date(todayAtNoonUtc + dayOffset * MILLISECONDS_PER_DAY)),
   );
 }
+
+/** «Octubre 2026» para un día `YYYY-MM-DD`; vacío si la fecha no se puede leer. */
+export function formatMonthAndYear(isoDate: string): string {
+  const match = ISO_DATE_PATTERN.exec(isoDate);
+  if (match === null) return '';
+  const monthName = MONTH_NAMES[Number(match[2]) - 1] ?? '';
+  return `${monthName.charAt(0).toUpperCase()}${monthName.slice(1)} ${match[1] ?? ''}`;
+}

@@ -9,27 +9,38 @@ import { EmptyState } from '@/ui/molecules/EmptyState';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 
 import type { useBookSlotChoice } from '../hooks/useBookSlotChoice';
+import { formatMonthAndYear } from '../model/booking-dates';
 import { DayPillRow } from './DayPillRow';
 import { SlotGrid } from './SlotGrid';
 
 type SlotChoice = ReturnType<typeof useBookSlotChoice>;
 
-function SlotPicker({ choice }: Readonly<{ choice: SlotChoice }>): React.JSX.Element {
+interface SlotPickerProps {
+  choice: SlotChoice;
+  minNoticeLabel: string | null;
+}
+
+function SlotPicker({ choice, minNoticeLabel }: Readonly<SlotPickerProps>): React.JSX.Element {
   return (
     <>
-      <Text variant="bodyStrong">{i18n.t('booking.slot.daysLabel')}</Text>
+      <Text variant="titleMd">{formatMonthAndYear(choice.selectedIsoDate ?? '')}</Text>
       <DayPillRow
         days={choice.days}
         selectedIsoDate={choice.selectedIsoDate}
         onDaySelect={choice.selectDay}
       />
-      <Text variant="bodyStrong">{i18n.t('booking.slot.timesLabel')}</Text>
+      <Text variant="titleMd">{i18n.t('booking.slot.timesLabel')}</Text>
       <SlotGrid
         slots={choice.slotsOfSelectedDay}
         timeZone={choice.timeZone}
         selectedStartsAt={choice.selectedSlot?.startsAt ?? null}
         onSlotSelect={choice.selectSlot}
       />
+      {minNoticeLabel === null ? null : (
+        <Text variant="caption" color="ink2">
+          {i18n.t('booking.slot.minNoticeHint', { notice: minNoticeLabel })}
+        </Text>
+      )}
     </>
   );
 }
@@ -40,7 +51,16 @@ interface FailureProps {
 }
 
 /** Los cuatro estados de la elección: cargando, error con reintento, sin horas y elegir. */
-export function SlotChoiceBody({ choice }: Readonly<{ choice: SlotChoice }>): React.JSX.Element {
+interface SlotChoiceBodyProps {
+  choice: SlotChoice;
+  /** «2 h»: antelación mínima del servicio; `null` mientras no se conoce. */
+  minNoticeLabel: string | null;
+}
+
+export function SlotChoiceBody({
+  choice,
+  minNoticeLabel,
+}: Readonly<SlotChoiceBodyProps>): React.JSX.Element {
   const router = useRouter();
 
   if (choice.isLoading) return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
@@ -56,7 +76,7 @@ export function SlotChoiceBody({ choice }: Readonly<{ choice: SlotChoice }>): Re
       />
     );
   }
-  return <SlotPicker choice={choice} />;
+  return <SlotPicker choice={choice} minNoticeLabel={minNoticeLabel} />;
 }
 
 function SlotLoadFailure({ error, onRetry }: Readonly<FailureProps>): React.JSX.Element {

@@ -60,9 +60,9 @@ function useChosenSlotState(): ChosenSlotState {
 }
 
 /** Días y huecos salen de la respuesta del servidor; aquí solo se combinan con la elección. */
-export function useBookSlotChoice(serviceId: string): BookSlotChoice {
+export function useBookSlotChoice(serviceId: string, staffMembershipId?: string): BookSlotChoice {
   const chosen = useChosenSlotState();
-  const availability = useAvailableSlots({ serviceId, ...requestRange() });
+  const availability = useAvailableSlots({ serviceId, staffMembershipId, ...requestRange() });
   const serverDays = availability.data?.days ?? [];
   const days = buildDayOptions(serverDays);
   const selectedIsoDate = resolveSelectedDate(chosen.chosenIsoDate, days);

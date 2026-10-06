@@ -1,4 +1,4 @@
-import { describeIsoDate, listBookableDates } from './booking-dates';
+import { describeIsoDate, formatMonthAndYear, listBookableDates } from './booking-dates';
 
 const OCTOBER_FIFTH_LABELS = {
   isoDate: '2026-10-05',
@@ -85,5 +85,16 @@ describe('describeIsoDate', () => {
 
   it.each(['', '2026-1-5', 'lunes', '2026/10/05'])('returns null for %j', (invalidDate) => {
     expect(describeIsoDate(invalidDate)).toBeNull();
+  });
+});
+
+describe('formatMonthAndYear', () => {
+  it.each([
+    { isoDate: '2026-10-05', expectedHeading: 'Octubre 2026' },
+    { isoDate: '2027-01-31', expectedHeading: 'Enero 2027' },
+    { isoDate: '2026-12-01', expectedHeading: 'Diciembre 2026' },
+    { isoDate: 'no-es-fecha', expectedHeading: '' },
+  ])('turns $isoDate into «$expectedHeading»', ({ isoDate, expectedHeading }) => {
+    expect(formatMonthAndYear(isoDate)).toBe(expectedHeading);
   });
 });
