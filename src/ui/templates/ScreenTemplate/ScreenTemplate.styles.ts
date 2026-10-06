@@ -20,6 +20,10 @@ export function createContentStyle(theme: Theme, isContentCentered: boolean): Vi
   };
 }
 
+export function createCenterBrandBarStyle(theme: Theme): ViewStyle {
+  return { flexDirection: 'row', alignItems: 'center', gap: theme.space[2] };
+}
+
 export function createHeaderStyle(theme: Theme): ViewStyle {
   return { gap: theme.space[2] };
 }

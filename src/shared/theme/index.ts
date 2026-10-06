@@ -1,3 +1,6 @@
+export { CenterIdentityProvider, useCenterIdentity } from './center-identity';
+export type { CenterIdentity } from './center-identity';
+export { centerHoneycomb } from './center-honeycomb';
 export { buildHoneycombTile } from './honeycomb-tile';
 export { buildTheme } from './build-theme';
 export { calculateContrastRatio, deriveBrandTokens } from './brand-engine';

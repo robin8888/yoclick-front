@@ -12,8 +12,9 @@ import {
 } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
 import { BusyOverlay } from './BusyOverlay';
+import { CenterHoneycombBackground } from './CenterHoneycombBackground';
 import { PlatformHeroBackground } from './PlatformHeroBackground';
-import { ScreenTemplateHeader } from './ScreenTemplateHeader';
+import { ScreenTemplateTop } from './ScreenTemplateTop';
 
 /** Esqueleto de pantalla: zona segura, cabecera, contenido con scroll y acción fija abajo. */
 export function ScreenTemplate(props: Readonly<ScreenTemplateProps>): React.JSX.Element {
@@ -40,7 +41,7 @@ function ScreenTemplateContent({
 
   return (
     <View style={createScreenStyle(theme, hasPlatformHeroBackground)}>
-      {hasPlatformHeroBackground ? <PlatformHeroBackground /> : null}
+      {hasPlatformHeroBackground ? <PlatformHeroBackground /> : <CenterHoneycombBackground />}
       <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
         <KeyboardAvoidingView
           style={KEYBOARD_AVOIDING_STYLE}
@@ -50,7 +51,12 @@ function ScreenTemplateContent({
             contentContainerStyle={createContentStyle(theme, isContentCentered)}
             keyboardShouldPersistTaps="handled"
           >
-            {isHeaderHidden ? null : <ScreenTemplateHeader {...headerProps} />}
+            {isHeaderHidden ? null : (
+              <ScreenTemplateTop
+                hasPlatformHeroBackground={hasPlatformHeroBackground}
+                {...headerProps}
+              />
+            )}
             {children}
           </ScrollView>
           {footer === undefined ? null : (

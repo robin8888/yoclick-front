@@ -1,6 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
+import { CenterIdentityProvider } from '@/shared/theme';
 import { renderInTheme } from '@/test/render-in-theme';
 
 import { ScreenTemplate } from './ScreenTemplate';
@@ -72,5 +73,30 @@ describe('ScreenTemplate', () => {
     );
 
     expect(screen.getByText('Contenido')).toBeOnTheScreen();
+  });
+
+  it('shows the center name above the title on screens inside a center', () => {
+    renderInTheme(
+      <CenterIdentityProvider centerIdentity={{ name: 'Gimnasio Norte', logoImageUrl: null }}>
+        <ScreenTemplate title="Mis citas">
+          <Text>Contenido</Text>
+        </ScreenTemplate>
+      </CenterIdentityProvider>,
+    );
+
+    expect(screen.getByText('Gimnasio Norte')).toBeOnTheScreen();
+    expect(screen.getByRole('heading', { name: 'Mis citas' })).toBeOnTheScreen();
+  });
+
+  it('shows no center name outside a center or on platform screens', () => {
+    renderInTheme(
+      <CenterIdentityProvider centerIdentity={{ name: 'Gimnasio Norte', logoImageUrl: null }}>
+        <ScreenTemplate title="Encuentra tu centro" hasPlatformHeroBackground>
+          <Text>Contenido</Text>
+        </ScreenTemplate>
+      </CenterIdentityProvider>,
+    );
+
+    expect(screen.queryByText('Gimnasio Norte')).not.toBeOnTheScreen();
   });
 });
