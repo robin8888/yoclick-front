@@ -32,3 +32,18 @@ jest.mock('expo-clipboard', () => ({
   setStringAsync: jest.fn(() => Promise.resolve(true)),
   getStringAsync: jest.fn(() => Promise.resolve('')),
 }));
+
+// El reproductor es nativo: en los tests se sustituye por una vista con la misma etiqueta accesible.
+jest.mock('expo-video', () => {
+  const react = jest.requireActual<typeof import('react')>('react');
+  const reactNative = jest.requireActual<typeof import('react-native')>('react-native');
+  return {
+    useVideoPlayer: jest.fn((_source: unknown, setup?: (player: unknown) => void) => {
+      const player = { play: jest.fn(), pause: jest.fn() };
+      setup?.(player);
+      return player;
+    }),
+    VideoView: ({ accessibilityLabel }: { accessibilityLabel?: string }) =>
+      react.createElement(reactNative.View, { accessible: true, accessibilityLabel }),
+  };
+});

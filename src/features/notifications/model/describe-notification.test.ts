@@ -60,6 +60,33 @@ describe('describeNotification', () => {
     expect(text.description).toContain('Carlos Núñez ha cancelado tu cita');
   });
 
+  it.each([
+    {
+      kind: 'routine_assigned',
+      noticeData: { routineName: 'Fuerza base', actorName: 'Marta Gil' },
+      title: 'Tienes algo nuevo que practicar',
+      description: 'Marta Gil te ha asignado «Fuerza base».',
+    },
+    {
+      kind: 'staff_video_submitted',
+      noticeData: { uploaderName: 'Marta Gil', actorName: 'Marta Gil' },
+      title: 'Hay un vídeo por revisar',
+      description: 'Marta Gil ha subido su vídeo de presentación y espera tu revisión.',
+    },
+    {
+      kind: 'staff_video_reviewed',
+      noticeData: { uploaderName: 'Marta Gil', actorName: 'Carlos Núñez' },
+      title: 'Han revisado tu vídeo',
+      description:
+        'Carlos Núñez ha revisado tu vídeo de presentación. Ábrelo para ver qué ha decidido.',
+    },
+  ] as const)('writes the notice of $kind', ({ kind, noticeData, title, description }) => {
+    expect(describeNotification(buildNotification(kind, noticeData), TIME_ZONE)).toEqual({
+      title,
+      description,
+    });
+  });
+
   it('tells the client that the appointment may change because the instructor is away', () => {
     const text = describeNotification(
       buildNotification('booking_affected_by_absence', BOOKING_DATA),

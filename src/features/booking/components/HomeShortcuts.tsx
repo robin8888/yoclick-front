@@ -26,6 +26,9 @@ export function HomeShortcuts({ nextBooking }: Readonly<HomeShortcutsProps>): Re
         onBookingsPress={() => {
           router.push('/(client)/(tabs)/bookings');
         }}
+        onTeamPress={() => {
+          router.push('/(client)/team');
+        }}
       />
     </>
   );

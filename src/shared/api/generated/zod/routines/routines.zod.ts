@@ -90,6 +90,8 @@ export const routinesCreateBodyItemsItemCategoryMax = 60;
 export const routinesCreateBodyItemsItemPrescriptionDefault = null;
 export const routinesCreateBodyItemsItemPrescriptionMax = 120;
 
+export const routinesCreateBodyItemsItemVideoIdDefault = null;
+export const routinesCreateBodyItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const routinesCreateBodyItemsMax = 30;
 
 export const routinesCreateBodyAssignToClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -102,7 +104,8 @@ export const RoutinesCreateBody = zod.object({
   "items": zod.array(zod.object({
   "name": zod.string().min(1).max(routinesCreateBodyItemsItemNameMax),
   "category": zod.string().max(routinesCreateBodyItemsItemCategoryMax).nullish().default(routinesCreateBodyItemsItemCategoryDefault),
-  "prescription": zod.string().max(routinesCreateBodyItemsItemPrescriptionMax).nullish().default(routinesCreateBodyItemsItemPrescriptionDefault)
+  "prescription": zod.string().max(routinesCreateBodyItemsItemPrescriptionMax).nullish().default(routinesCreateBodyItemsItemPrescriptionDefault),
+  "videoId": zod.uuid().regex(routinesCreateBodyItemsItemVideoIdRegExp).nullish().default(routinesCreateBodyItemsItemVideoIdDefault)
 })).min(1).max(routinesCreateBodyItemsMax),
   "assignTo": zod.object({
   "clientMembershipId": zod.uuid().regex(routinesCreateBodyAssignToClientMembershipIdRegExp).optional(),
@@ -111,6 +114,11 @@ export const RoutinesCreateBody = zod.object({
 })
 
 export const routinesCreateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesCreateResponseItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesCreateResponseItemsItemVideoDurationSecondsMin = -9007199254740991;
+export const routinesCreateResponseItemsItemVideoDurationSecondsMax = 9007199254740991;
+
+export const routinesCreateResponseItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesCreateResponseAssignmentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const routinesCreateResponseAssignmentsItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesCreateResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -123,7 +131,20 @@ export const RoutinesCreateResponse = zod.object({
   "items": zod.array(zod.object({
   "name": zod.string(),
   "category": zod.string().nullable(),
-  "prescription": zod.string().nullable()
+  "prescription": zod.string().nullable(),
+  "video": zod.object({
+  "id": zod.uuid().regex(routinesCreateResponseItemsItemVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(routinesCreateResponseItemsItemVideoDurationSecondsMin).max(routinesCreateResponseItemsItemVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(routinesCreateResponseItemsItemVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable()
 })),
   "assignments": zod.array(zod.object({
   "id": zod.uuid().regex(routinesCreateResponseAssignmentsItemIdRegExp),
@@ -151,6 +172,11 @@ export const RoutinesGetHeader = zod.object({
 })
 
 export const routinesGetResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesGetResponseItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesGetResponseItemsItemVideoDurationSecondsMin = -9007199254740991;
+export const routinesGetResponseItemsItemVideoDurationSecondsMax = 9007199254740991;
+
+export const routinesGetResponseItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesGetResponseAssignmentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const routinesGetResponseAssignmentsItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesGetResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -163,7 +189,20 @@ export const RoutinesGetResponse = zod.object({
   "items": zod.array(zod.object({
   "name": zod.string(),
   "category": zod.string().nullable(),
-  "prescription": zod.string().nullable()
+  "prescription": zod.string().nullable(),
+  "video": zod.object({
+  "id": zod.uuid().regex(routinesGetResponseItemsItemVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(routinesGetResponseItemsItemVideoDurationSecondsMin).max(routinesGetResponseItemsItemVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(routinesGetResponseItemsItemVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable()
 })),
   "assignments": zod.array(zod.object({
   "id": zod.uuid().regex(routinesGetResponseAssignmentsItemIdRegExp),
@@ -207,6 +246,11 @@ export const RoutinesListMineHeader = zod.object({
 })
 
 export const routinesListMineResponseRoutinesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesListMineResponseRoutinesItemItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesListMineResponseRoutinesItemItemsItemVideoDurationSecondsMin = -9007199254740991;
+export const routinesListMineResponseRoutinesItemItemsItemVideoDurationSecondsMax = 9007199254740991;
+
+export const routinesListMineResponseRoutinesItemItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesListMineResponseRoutinesItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
@@ -218,7 +262,20 @@ export const RoutinesListMineResponse = zod.object({
   "items": zod.array(zod.object({
   "name": zod.string(),
   "category": zod.string().nullable(),
-  "prescription": zod.string().nullable()
+  "prescription": zod.string().nullable(),
+  "video": zod.object({
+  "id": zod.uuid().regex(routinesListMineResponseRoutinesItemItemsItemVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(routinesListMineResponseRoutinesItemItemsItemVideoDurationSecondsMin).max(routinesListMineResponseRoutinesItemItemsItemVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(routinesListMineResponseRoutinesItemItemsItemVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable()
 })),
   "assignedAt": zod.iso.datetime({"offset":true}).regex(routinesListMineResponseRoutinesItemAssignedAtRegExp)
 }))
@@ -250,6 +307,11 @@ export const RoutinesAssignBody = zod.object({
 })
 
 export const routinesAssignResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesAssignResponseItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesAssignResponseItemsItemVideoDurationSecondsMin = -9007199254740991;
+export const routinesAssignResponseItemsItemVideoDurationSecondsMax = 9007199254740991;
+
+export const routinesAssignResponseItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesAssignResponseAssignmentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const routinesAssignResponseAssignmentsItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesAssignResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -262,7 +324,20 @@ export const RoutinesAssignResponse = zod.object({
   "items": zod.array(zod.object({
   "name": zod.string(),
   "category": zod.string().nullable(),
-  "prescription": zod.string().nullable()
+  "prescription": zod.string().nullable(),
+  "video": zod.object({
+  "id": zod.uuid().regex(routinesAssignResponseItemsItemVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(routinesAssignResponseItemsItemVideoDurationSecondsMin).max(routinesAssignResponseItemsItemVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(routinesAssignResponseItemsItemVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable()
 })),
   "assignments": zod.array(zod.object({
   "id": zod.uuid().regex(routinesAssignResponseAssignmentsItemIdRegExp),

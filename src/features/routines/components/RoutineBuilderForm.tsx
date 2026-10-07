@@ -32,6 +32,9 @@ function DraftExercises({ builder }: Readonly<{ builder: Builder }>): React.JSX.
           onPrescriptionChange={(prescription) => {
             builder.changePrescription(exercise.key, prescription);
           }}
+          onVideoChange={(video) => {
+            builder.changeVideo(exercise.key, video);
+          }}
           onRemove={() => {
             builder.removeExerciseByKey(exercise.key);
           }}

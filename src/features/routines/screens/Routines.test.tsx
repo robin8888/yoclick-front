@@ -38,12 +38,27 @@ const DETAIL = {
   id: ROUTINE_ID,
   name: 'Fuerza base',
   note: 'Descansa 90 s entre series.',
-  items: [{ name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10' }],
+  items: [{ name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10', video: null }],
   assignments: [
     { id: ASSIGNMENT_ID, kind: 'group', targetName: 'Fuerza 50+', assignedAt: CREATED_AT },
   ],
   createdAt: CREATED_AT,
 };
+const READY_VIDEO = {
+  id: 'video-1',
+  title: 'Sentadilla goblet paso a paso',
+  status: 'ready',
+  reviewStatus: 'approved',
+  reviewNote: null,
+  durationSeconds: 372,
+  playback: {
+    streamUrl: 'https://video.example/video-1/playlist.m3u8',
+    thumbnailUrl: 'https://video.example/video-1/thumbnail.jpg',
+    expiresAt: '2026-10-07T14:00:00.000Z',
+  },
+};
+const PLAN_WITHOUT_VIDEO = { isIncluded: false, limitBytes: null, usedBytes: 0 };
+const PLAN_WITH_VIDEO = { isIncluded: true, limitBytes: 5_368_709_120, usedBytes: 0 };
 const LIST_ITEM = {
   id: ROUTINE_ID,
   name: 'Fuerza base',
@@ -110,6 +125,7 @@ describe('NewRoutineScreen', () => {
     mockApi({
       'GET /v1/me/memberships': OWNER_MEMBERSHIPS,
       [`GET ${BASE}/exercise-library`]: LIBRARY,
+      [`GET ${BASE}/video-plan`]: PLAN_WITHOUT_VIDEO,
       [`POST ${BASE}/routines`]: DETAIL,
     });
   });
@@ -128,8 +144,8 @@ describe('NewRoutineScreen', () => {
         name: 'Fuerza base',
         note: null,
         items: [
-          { name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10' },
-          { name: 'Mi ejercicio', category: null, prescription: null },
+          { name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10', videoId: null },
+          { name: 'Mi ejercicio', category: null, prescription: null, videoId: null },
         ],
       });
     });
@@ -175,6 +191,30 @@ describe('NewRoutineScreen', () => {
 
     expect(screen.getByRole('button', { name: 'Guardar y asignar' })).toBeOnTheScreen();
   });
+
+  it('does not offer videos when the plan does not include them', async () => {
+    renderScreen(<NewRoutineScreen />);
+    fireEvent.press(await screen.findByRole('button', { name: 'Añadir Sentadilla goblet' }));
+
+    await waitFor(() => {
+      expect(findApiCall('GET', `${BASE}/video-plan`)).toBeDefined();
+    });
+    expect(screen.queryByRole('button', { name: /Añadir vídeo/ })).toBeNull();
+  });
+
+  it('offers to add a video to each exercise when the plan includes them', async () => {
+    mockApi({
+      'GET /v1/me/memberships': OWNER_MEMBERSHIPS,
+      [`GET ${BASE}/exercise-library`]: LIBRARY,
+      [`GET ${BASE}/video-plan`]: PLAN_WITH_VIDEO,
+    });
+    renderScreen(<NewRoutineScreen />);
+    fireEvent.press(await screen.findByRole('button', { name: 'Añadir Sentadilla goblet' }));
+
+    expect(
+      await screen.findByRole('button', { name: 'Añadir vídeo: Sentadilla goblet' }),
+    ).toBeOnTheScreen();
+  });
 });
 
 describe('RoutineDetailScreen', () => {
@@ -196,6 +236,23 @@ describe('RoutineDetailScreen', () => {
     expect(await screen.findByText('Sentadilla goblet')).toBeOnTheScreen();
     expect(screen.getByText('Descansa 90 s entre series.')).toBeOnTheScreen();
     expect(screen.getByText('Grupo Fuerza 50+')).toBeOnTheScreen();
+  });
+
+  it('plays the video of an exercise', async () => {
+    mockApi({
+      'GET /v1/me/memberships': OWNER_MEMBERSHIPS,
+      [`GET ${BASE}/routines/${ROUTINE_ID}`]: {
+        ...DETAIL,
+        items: [{ ...DETAIL.items[0], video: READY_VIDEO }],
+      },
+    });
+    renderScreen(<RoutineDetailScreen />);
+
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Reproducir Sentadilla goblet paso a paso' }),
+    );
+
+    expect(screen.getByLabelText('Vídeo: Sentadilla goblet paso a paso')).toBeOnTheScreen();
   });
 
   it('removes an assignment', async () => {

@@ -1,4 +1,4 @@
-import type { CreateRoutineRequestDto } from '@/shared/api/generated/model';
+import type { CreateRoutineRequestDto, VideoResponseDto } from '@/shared/api/generated/model';
 
 export const MAX_ROUTINE_EXERCISES = 30;
 
@@ -8,6 +8,8 @@ export interface DraftExercise {
   name: string;
   category: string;
   prescription: string;
+  /** El vídeo que muestra cómo se hace, si el plan del centro lo permite y se ha subido. */
+  video: VideoResponseDto | null;
 }
 
 export type AssignmentTargetDraft =
@@ -42,7 +44,7 @@ export function addExercise(
   if (name === '' || draft.exercises.length >= MAX_ROUTINE_EXERCISES) return draft;
   return {
     ...draft,
-    exercises: [...draft.exercises, { ...exercise, name, prescription: '' }],
+    exercises: [...draft.exercises, { ...exercise, name, prescription: '', video: null }],
   };
 }
 
@@ -59,6 +61,19 @@ export function setPrescription(
     ...draft,
     exercises: draft.exercises.map((exercise) =>
       exercise.key === key ? { ...exercise, prescription } : exercise,
+    ),
+  };
+}
+
+export function setExerciseVideo(
+  draft: RoutineDraft,
+  key: string,
+  video: VideoResponseDto | null,
+): RoutineDraft {
+  return {
+    ...draft,
+    exercises: draft.exercises.map((exercise) =>
+      exercise.key === key ? { ...exercise, video } : exercise,
     ),
   };
 }
@@ -92,10 +107,11 @@ export function buildCreateRoutineRequest(draft: RoutineDraft): CreateRoutineReq
   return {
     name: draft.name.trim(),
     note: draft.note.trim() === '' ? null : draft.note.trim(),
-    items: draft.exercises.map(({ name, category, prescription }) => ({
+    items: draft.exercises.map(({ name, category, prescription, video }) => ({
       name,
       category: category === '' ? null : category,
       prescription: prescription.trim() === '' ? null : prescription.trim(),
+      videoId: video?.id ?? null,
     })),
     ...(assignTo && { assignTo }),
   };

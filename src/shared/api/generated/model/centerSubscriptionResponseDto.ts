@@ -25,4 +25,15 @@ export interface CenterSubscriptionResponseDto {
      * @maximum 9007199254740991
      */
   activeClientCount: number;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     * @nullable
+     */
+  videoStorageLimitBytes: number | null;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  videoStorageUsedBytes: number;
 }

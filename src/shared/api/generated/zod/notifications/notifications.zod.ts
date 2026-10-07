@@ -43,7 +43,7 @@ export const NotificationsListResponse = zod.object({
   "unreadCount": zod.int().min(notificationsListResponseUnreadCountMin).max(notificationsListResponseUnreadCountMax),
   "notifications": zod.array(zod.object({
   "id": zod.uuid().regex(notificationsListResponseNotificationsItemIdRegExp),
-  "kind": zod.enum(['booking_created', 'booking_cancelled', 'booking_created_by_team', 'booking_cancelled_by_team', 'absence_added', 'booking_affected_by_absence', 'routine_assigned']),
+  "kind": zod.enum(['booking_created', 'booking_cancelled', 'booking_created_by_team', 'booking_cancelled_by_team', 'absence_added', 'booking_affected_by_absence', 'routine_assigned', 'staff_video_submitted', 'staff_video_reviewed']),
   "data": zod.record(zod.string(), zod.string()),
   "bookingId": zod.uuid().regex(notificationsListResponseNotificationsItemBookingIdRegExp).nullable(),
   "isRead": zod.boolean(),

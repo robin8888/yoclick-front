@@ -416,13 +416,21 @@ export const centersGetSubscriptionResponseMaxClientsMax = 9007199254740991;
 export const centersGetSubscriptionResponseActiveClientCountMin = -9007199254740991;
 export const centersGetSubscriptionResponseActiveClientCountMax = 9007199254740991;
 
+export const centersGetSubscriptionResponseVideoStorageLimitBytesMin = -9007199254740991;
+export const centersGetSubscriptionResponseVideoStorageLimitBytesMax = 9007199254740991;
+
+export const centersGetSubscriptionResponseVideoStorageUsedBytesMin = -9007199254740991;
+export const centersGetSubscriptionResponseVideoStorageUsedBytesMax = 9007199254740991;
+
 
 
 export const CentersGetSubscriptionResponse = zod.object({
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSubscriptionResponseTrialEndsAtRegExp).nullable(),
   "maxClients": zod.int().min(centersGetSubscriptionResponseMaxClientsMin).max(centersGetSubscriptionResponseMaxClientsMax).nullable(),
-  "activeClientCount": zod.int().min(centersGetSubscriptionResponseActiveClientCountMin).max(centersGetSubscriptionResponseActiveClientCountMax)
+  "activeClientCount": zod.int().min(centersGetSubscriptionResponseActiveClientCountMin).max(centersGetSubscriptionResponseActiveClientCountMax),
+  "videoStorageLimitBytes": zod.int().min(centersGetSubscriptionResponseVideoStorageLimitBytesMin).max(centersGetSubscriptionResponseVideoStorageLimitBytesMax).nullable(),
+  "videoStorageUsedBytes": zod.int().min(centersGetSubscriptionResponseVideoStorageUsedBytesMin).max(centersGetSubscriptionResponseVideoStorageUsedBytesMax)
 })
 
 /**

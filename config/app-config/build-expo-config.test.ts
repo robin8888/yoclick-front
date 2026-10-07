@@ -73,6 +73,15 @@ describe('buildExpoConfig (shared variant)', () => {
     ]);
   });
 
+  it('plays videos only while the app is open', () => {
+    const { plugins } = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
+
+    expect(plugins).toContainEqual([
+      'expo-video',
+      { supportsBackgroundPlayback: false, supportsPictureInPicture: false },
+    ]);
+  });
+
   it('declares Spanish permission usage strings', () => {
     const infoPlist = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV)).ios?.infoPlist;
 

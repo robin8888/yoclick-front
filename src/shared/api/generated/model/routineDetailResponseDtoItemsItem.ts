@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { RoutineDetailResponseDtoItemsItemVideo } from './routineDetailResponseDtoItemsItemVideo.ts';
 
 export type RoutineDetailResponseDtoItemsItem = {
   name: string;
@@ -12,4 +13,6 @@ export type RoutineDetailResponseDtoItemsItem = {
   category: string | null;
   /** @nullable */
   prescription: string | null;
+  /** @nullable */
+  video: RoutineDetailResponseDtoItemsItemVideo;
 };

@@ -54,6 +54,10 @@
     "NETWORK_OFFLINE": "No hay conexión. Comprueba tu internet e inténtalo de nuevo",
     "NETWORK_TIMEOUT": "La conexión es lenta y no hemos podido terminar. Inténtalo de nuevo",
     "LOGO_INVALID": "Ese archivo no es un logo válido. Usa una imagen PNG, JPG o WebP",
+    "VIDEO_NOT_INCLUDED": "El plan de tu centro no incluye vídeo.",
+    "VIDEO_TOO_LARGE": "El vídeo es demasiado grande. El máximo son 500 MB.",
+    "VIDEO_QUOTA_EXCEEDED": "Tu centro ha llenado su espacio de vídeo. Borra alguno para poder subir otro.",
+    "VIDEO_NOT_REVIEWABLE": "Este vídeo ya no está pendiente de revisión.",
     "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera",
     "CHECKIN_CODE_INVALID": "Este código QR no es válido o ha caducado. Pide que lo actualicen",
     "CHECKIN_NO_BOOKING": "Esta persona no tiene una cita confirmada para registrar ahora",
@@ -429,7 +433,9 @@
       "subtitle": "Paso 1 de 3 · Servicio",
       "stepLabel": "Paso 1 de 3",
       "continueLabel": "Continuar",
-      "kind": { "individual": "Individual" },
+      "kind": {
+        "individual": "Individual"
+      },
       "free": "Gratis",
       "emptyTitle": "Aún no hay servicios",
       "emptyDescription": "Tu centro todavía no tiene servicios reservables. Vuelve más tarde.",
@@ -513,6 +519,7 @@
       "title": "Inicio de {{centerName}}",
       "quickAccess": "Accesos rápidos",
       "myBookingsAction": "Mis citas",
+      "teamAction": "Nuestro equipo",
       "weekTitle": "Esta semana",
       "weekCount": "{{completedCount}} de {{goalCount}} sesiones",
       "weekOfGoal": "de {{goalCount}} sesiones",
@@ -727,6 +734,10 @@
     "bookingAffectedByAbsenceTitle": "Tu cita puede cambiar",
     "routineAssignedTitle": "Tienes algo nuevo que practicar",
     "routineAssignedDescription": "{{actorName}} te ha asignado «{{routineName}}».",
+    "staffVideoSubmittedTitle": "Hay un vídeo por revisar",
+    "staffVideoSubmittedDescription": "{{uploaderName}} ha subido su vídeo de presentación y espera tu revisión.",
+    "staffVideoReviewedTitle": "Han revisado tu vídeo",
+    "staffVideoReviewedDescription": "{{actorName}} ha revisado tu vídeo de presentación. Ábrelo para ver qué ha decidido.",
     "bookingCreatedByTeamDescription": "{{actorName}} te ha puesto una cita de {{serviceName}} el {{when}}.",
     "bookingCancelledByTeamDescription": "{{actorName}} ha cancelado tu cita de {{serviceName}} del {{when}}.",
     "absenceAddedDescription": "{{staffName}} no estará: {{range}}. {{actorName}} lo ha anotado.",
@@ -954,6 +965,8 @@
       "subscriptionSubtitle": "Tu plan y el uso de tu centro",
       "inviteTeamTitle": "Equipo y permisos",
       "inviteTeamSubtitle": "Invitaciones, roles y horas",
+      "teamProfilesTitle": "Perfiles y vídeos del equipo",
+      "teamProfilesSubtitle": "Revisa lo que ven tus {{clientWord}}",
       "recordsTitle": "Registro de clases",
       "recordsSubtitle": "Cuánto duró cada clase y quién la dio",
       "darkThemeTitle": "Tema oscuro",
@@ -1398,6 +1411,70 @@
       "appointmentSummary": "{{serviceName}} · {{time}}",
       "scanAnotherAction": "Escanear otro",
       "openAction": "Escanear QR"
+    }
+  },
+  "videos": {
+    "upload": {
+      "addAction": "Añadir vídeo",
+      "changeAction": "Cambiar vídeo",
+      "removeAction": "Quitar vídeo",
+      "retryAction": "Reintentar",
+      "uploading": "Subiendo… {{percent}} %",
+      "uploadingLabel": "Subida del vídeo",
+      "processing": "Procesando el vídeo. Puedes seguir usando la app.",
+      "failed": "No hemos podido subir el vídeo. Revisa tu conexión y vuelve a intentarlo.",
+      "tooLarge": "El vídeo pesa más de 500 MB. Elige uno más corto o comprímelo.",
+      "processingFailed": "No hemos podido procesar ese vídeo. Prueba con otro."
+    },
+    "player": {
+      "playLabel": "Reproducir {{title}}",
+      "playerLabel": "Vídeo: {{title}}",
+      "closeLabel": "Cerrar el vídeo",
+      "processingBadge": "Procesando",
+      "failedBadge": "Con error",
+      "pendingReviewBadge": "Pendiente de revisión",
+      "changesRequestedBadge": "Cambios pedidos",
+      "approvedBadge": "Publicado",
+      "duration": "{{duration}}"
+    },
+    "plan": {
+      "notIncludedTitle": "Tu plan no incluye vídeo",
+      "notIncludedDescription": "Los vídeos forman parte del plan Premium. Puedes ampliar tu plan desde la web de Yoclick.",
+      "usage": "Espacio de vídeo: {{used}} de {{limit}}"
+    },
+    "profile": {
+      "title": "Mi perfil profesional",
+      "introTitle": "Vídeo de presentación",
+      "introHint": "Preséntate en 30 segundos y enseña algo que domines. Buena luz y sonido claro.",
+      "statusPending": "Pendiente de revisión: el centro lo verá antes de publicarlo.",
+      "statusApproved": "Publicado: ya lo ven en el centro.",
+      "statusChanges": "El centro te pide cambios: {{note}}",
+      "statusChangesNoNote": "El centro te pide cambios. Sube otro vídeo.",
+      "loadError": "No hemos podido cargar tu perfil"
+    },
+    "teamAdmin": {
+      "myVideoAction": "Mi vídeo de presentación",
+      "title": "Perfiles del equipo",
+      "subtitle": "Lo que ven tus {{clientWord}} antes de reservar",
+      "pendingTitle": "Pendientes de revisión",
+      "nothingPending": "No hay nada pendiente de revisar. Cuando alguien del equipo suba un vídeo, aparecerá aquí.",
+      "teamTitle": "Equipo",
+      "withVideo": "Con vídeo",
+      "withoutVideo": "Sin vídeo",
+      "approveAction": "Aprobar y publicar",
+      "requestChangesAction": "Pedir cambios",
+      "changesTitle": "Pedir cambios",
+      "changesNoteLabel": "Qué debe cambiar",
+      "changesNotePlaceholder": "Hay poca luz; ¿puedes grabarlo en la sala grande?",
+      "changesSendAction": "Enviar",
+      "changesCancelAction": "Cancelar",
+      "loadError": "No hemos podido cargar el equipo"
+    },
+    "team": {
+      "title": "Nuestro equipo",
+      "emptyTitle": "Todavía no hay vídeos del equipo",
+      "emptyDescription": "Cuando el centro publique las presentaciones de su equipo, las verás aquí.",
+      "loadError": "No hemos podido cargar el equipo"
     }
   }
 }

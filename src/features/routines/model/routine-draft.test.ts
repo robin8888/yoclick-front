@@ -7,6 +7,7 @@ import {
   isExerciseInDraft,
   MAX_ROUTINE_EXERCISES,
   removeExercise,
+  setExerciseVideo,
   setPrescription,
   type RoutineDraft,
 } from './routine-draft';
@@ -43,6 +44,7 @@ describe('adding and removing exercises', () => {
       name: `Ejercicio ${String(index)}`,
       category: '',
       prescription: '',
+      video: null,
     }));
     const draft: RoutineDraft = { ...EMPTY_ROUTINE_DRAFT, exercises: full };
 
@@ -114,8 +116,14 @@ describe('buildCreateRoutineRequest', () => {
     name: ' Fuerza base ',
     note: ' Descansa 90 s ',
     exercises: [
-      { key: 'k1', name: 'Sentadilla goblet', category: 'Piernas', prescription: ' 4 × 10 ' },
-      { key: 'k2', name: 'Mi ejercicio', category: '', prescription: '' },
+      {
+        key: 'k1',
+        name: 'Sentadilla goblet',
+        category: 'Piernas',
+        prescription: ' 4 × 10 ',
+        video: null,
+      },
+      { key: 'k2', name: 'Mi ejercicio', category: '', prescription: '', video: null },
     ],
     target: { kind: 'none' },
   };
@@ -125,8 +133,8 @@ describe('buildCreateRoutineRequest', () => {
       name: 'Fuerza base',
       note: 'Descansa 90 s',
       items: [
-        { name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10' },
-        { name: 'Mi ejercicio', category: null, prescription: null },
+        { name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10', videoId: null },
+        { name: 'Mi ejercicio', category: null, prescription: null, videoId: null },
       ],
     });
   });
@@ -143,5 +151,43 @@ describe('buildCreateRoutineRequest', () => {
 
     expect(toClient.assignTo).toEqual({ clientMembershipId: 'm1' });
     expect(toGroup.assignTo).toEqual({ groupId: 'g1' });
+  });
+});
+
+describe('videos in the exercises', () => {
+  const READY_VIDEO = {
+    id: 'video-1',
+    title: 'Sentadilla',
+    status: 'ready',
+    reviewStatus: 'approved',
+    reviewNote: null,
+    durationSeconds: 42,
+    playback: null,
+  } as const;
+
+  it('attaches a video to one exercise only and detaches it', () => {
+    const draft = addExercise(addExercise(EMPTY_ROUTINE_DRAFT, SQUAT), PLANK);
+
+    const withVideo = setExerciseVideo(draft, 'k1', READY_VIDEO);
+    const withoutVideo = setExerciseVideo(withVideo, 'k1', null);
+
+    expect(withVideo.exercises.map(({ video }) => video?.id ?? null)).toEqual(['video-1', null]);
+    expect(withoutVideo.exercises.every(({ video }) => video === null)).toBe(true);
+  });
+
+  it('sends the id of the video with the exercise', () => {
+    const draft = setExerciseVideo(
+      {
+        ...EMPTY_ROUTINE_DRAFT,
+        name: 'Fuerza',
+        exercises: addExercise(EMPTY_ROUTINE_DRAFT, SQUAT).exercises,
+      },
+      'k1',
+      READY_VIDEO,
+    );
+
+    expect(buildCreateRoutineRequest(draft).items).toEqual([
+      { name: 'Sentadilla goblet', category: 'Piernas', prescription: null, videoId: 'video-1' },
+    ]);
   });
 });

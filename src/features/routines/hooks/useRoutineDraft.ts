@@ -1,11 +1,14 @@
 import { useRef, useState } from 'react';
 
+import type { VideoResponseDto } from '@/shared/api/generated/model';
+
 import {
   addExercise,
   EMPTY_ROUTINE_DRAFT,
   isExerciseInDraft,
   MAX_ROUTINE_EXERCISES,
   removeExercise,
+  setExerciseVideo,
   setPrescription,
   type AssignmentTargetDraft,
   type RoutineDraft,
@@ -21,6 +24,7 @@ export interface RoutineDraftEditing {
   isInRoutine: (exerciseName: string) => boolean;
   removeExerciseByKey: (key: string) => void;
   changePrescription: (key: string, prescription: string) => void;
+  changeVideo: (key: string, video: VideoResponseDto | null) => void;
   changeTarget: (target: AssignmentTargetDraft) => void;
 }
 
@@ -49,6 +53,9 @@ export function useRoutineDraft(): RoutineDraftEditing {
     },
     changePrescription: (key, prescription) => {
       setDraft((current) => setPrescription(current, key, prescription));
+    },
+    changeVideo: (key, video) => {
+      setDraft((current) => setExerciseVideo(current, key, video));
     },
     changeTarget: (target) => {
       setDraft((current) => ({ ...current, target }));

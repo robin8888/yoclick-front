@@ -17,4 +17,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   absence_added: 'absence_added',
   booking_affected_by_absence: 'booking_affected_by_absence',
   routine_assigned: 'routine_assigned',
+  staff_video_submitted: 'staff_video_submitted',
+  staff_video_reviewed: 'staff_video_reviewed',
 } as const;

@@ -1,5 +1,7 @@
 import { View } from 'react-native';
 
+import { useVideoPlan, VideoUploadField } from '@/features/videos';
+import type { VideoResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { IconButton } from '@/ui/atoms/IconButton';
@@ -49,6 +51,7 @@ interface DraftExerciseRowProps {
   position: number;
   exercise: DraftExercise;
   onPrescriptionChange: (prescription: string) => void;
+  onVideoChange: (video: VideoResponseDto | null) => void;
   onRemove: () => void;
 }
 
@@ -57,9 +60,11 @@ export function DraftExerciseRow({
   position,
   exercise,
   onPrescriptionChange,
+  onVideoChange,
   onRemove,
 }: Readonly<DraftExerciseRowProps>): React.JSX.Element {
   const theme = useTheme();
+  const canAddVideo = useVideoPlan().data?.isIncluded === true;
 
   return (
     <View style={createCardStyle(theme)}>
@@ -73,6 +78,14 @@ export function DraftExerciseRow({
         placeholder={i18n.t('routines.builder.prescriptionPlaceholder')}
         maxLength={120}
       />
+      {canAddVideo ? (
+        <VideoUploadField
+          purpose="exercise"
+          video={exercise.video}
+          onVideoChange={onVideoChange}
+          accessibilityName={exercise.name}
+        />
+      ) : null}
     </View>
   );
 }

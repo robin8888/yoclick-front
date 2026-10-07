@@ -28,6 +28,20 @@ const TITLE_KEYS = {
   absence_added: 'notifications.absenceAddedTitle',
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceTitle',
   routine_assigned: 'notifications.routineAssignedTitle',
+  staff_video_submitted: 'notifications.staffVideoSubmittedTitle',
+  staff_video_reviewed: 'notifications.staffVideoReviewedTitle',
+} as const satisfies Record<NotificationItem['kind'], string>;
+
+const DESCRIPTION_KEYS = {
+  booking_created: 'notifications.bookingDescription',
+  booking_cancelled: 'notifications.bookingDescription',
+  booking_created_by_team: 'notifications.bookingCreatedByTeamDescription',
+  booking_cancelled_by_team: 'notifications.bookingCancelledByTeamDescription',
+  absence_added: 'notifications.absenceAddedDescription',
+  booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceDescription',
+  routine_assigned: 'notifications.routineAssignedDescription',
+  staff_video_submitted: 'notifications.staffVideoSubmittedDescription',
+  staff_video_reviewed: 'notifications.staffVideoReviewedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 /** Los avisos de cancelación llevan un icono de aviso en lugar del de calendario. */
@@ -63,31 +77,20 @@ export function describeNotification(
   notification: NotificationItem,
   timeZone: string,
 ): NotificationText {
-  const { data, kind } = notification;
+  const { data: noticeData, kind } = notification;
   const title = i18n.t(TITLE_KEYS[kind]);
-  if (kind === 'absence_added') return { title, description: describeAbsence(data) };
+  if (kind === 'absence_added') return { title, description: describeAbsence(noticeData) };
 
-  const when = formatWhen(data.startsAt ?? notification.createdAt, timeZone);
   const texts = {
-    clientName: data.clientName ?? '',
-    serviceName: data.serviceName ?? '',
-    staffName: data.staffName ?? '',
-    actorName: data.actorName ?? '',
-    when,
+    clientName: noticeData.clientName ?? '',
+    serviceName: noticeData.serviceName ?? '',
+    staffName: noticeData.staffName ?? '',
+    actorName: noticeData.actorName ?? '',
+    routineName: noticeData.routineName ?? '',
+    uploaderName: noticeData.uploaderName ?? '',
+    when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
   };
-  if (kind === 'booking_created_by_team') {
-    return { title, description: i18n.t('notifications.bookingCreatedByTeamDescription', texts) };
-  }
-  if (kind === 'booking_cancelled_by_team') {
-    return { title, description: i18n.t('notifications.bookingCancelledByTeamDescription', texts) };
-  }
-  if (kind === 'booking_affected_by_absence') {
-    return {
-      title,
-      description: i18n.t('notifications.bookingAffectedByAbsenceDescription', texts),
-    };
-  }
-  return { title, description: i18n.t('notifications.bookingDescription', texts) };
+  return { title, description: i18n.t(DESCRIPTION_KEYS[kind], texts) };
 }
 
 /** «Ahora», «hace 5 min», «hace 3 h» o la fecha corta para lo que tiene más de un día. */

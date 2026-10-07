@@ -36,6 +36,15 @@ function StaffProfileLinks({
       />
       <Button
         variant="outline"
+        leadingIconName="play"
+        label={i18n.t('videos.profile.title')}
+        isFullWidth
+        onPress={() => {
+          router.push('/(staff)/public-profile');
+        }}
+      />
+      <Button
+        variant="outline"
         leadingIconName="calendar"
         label={i18n.t('session.profile.availabilityAction')}
         isFullWidth
