@@ -234,6 +234,29 @@ describe('PlayableVideo', () => {
     expect(findApiCall('GET', `${BASE}/videos/video-1`)).toBeUndefined();
   });
 
+  it('tells the person when the player cannot play the video, with the reason', () => {
+    renderScreen(<PlayableVideo video={buildVideo({ title: 'Hola, soy Marta' })} />);
+    fireEvent.press(screen.getByRole('button', { name: 'Reproducir Hola, soy Marta' }));
+    const player = jest.mocked(useVideoPlayer).mock.results.at(-1)?.value as {
+      addListener: jest.Mock;
+    };
+    const [, handler] = player.addListener.mock.calls.at(-1) as [
+      string,
+      (event: { status: string; error?: { message: string } }) => void,
+    ];
+
+    act(() => {
+      handler({ status: 'error', error: { message: 'HTTP 403' } });
+    });
+
+    expect(
+      screen.getByText(
+        'No se puede reproducir este vídeo ahora. Comprueba tu conexión y vuelve a abrirlo.',
+      ),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('HTTP 403')).toBeOnTheScreen();
+  });
+
   it.each([
     { caseName: 'processing', status: 'processing', text: 'Procesando' },
     { caseName: 'failed', status: 'failed', text: 'Con error' },

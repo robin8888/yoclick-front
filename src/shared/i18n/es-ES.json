@@ -1487,7 +1487,8 @@
       "pendingReviewBadge": "Pendiente de revisión",
       "changesRequestedBadge": "Cambios pedidos",
       "approvedBadge": "Publicado",
-      "duration": "{{duration}}"
+      "duration": "{{duration}}",
+      "playbackFailed": "No se puede reproducir este vídeo ahora. Comprueba tu conexión y vuelve a abrirlo."
     },
     "plan": {
       "notIncludedTitle": "Tu plan no incluye vídeo",

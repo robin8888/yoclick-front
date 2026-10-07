@@ -39,7 +39,11 @@ jest.mock('expo-video', () => {
   const reactNative = jest.requireActual<typeof import('react-native')>('react-native');
   return {
     useVideoPlayer: jest.fn((_source: unknown, setup?: (player: unknown) => void) => {
-      const player = { play: jest.fn(), pause: jest.fn() };
+      const player = {
+        play: jest.fn(),
+        pause: jest.fn(),
+        addListener: jest.fn(() => ({ remove: jest.fn() })),
+      };
       setup?.(player);
       return player;
     }),
