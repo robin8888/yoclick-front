@@ -19,4 +19,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   routine_assigned: 'routine_assigned',
   staff_video_submitted: 'staff_video_submitted',
   staff_video_reviewed: 'staff_video_reviewed',
+  privacy_request_received: 'privacy_request_received',
+  privacy_request_resolved: 'privacy_request_resolved',
 } as const;

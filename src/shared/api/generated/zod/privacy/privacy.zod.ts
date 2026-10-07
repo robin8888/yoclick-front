@@ -51,3 +51,232 @@ export const PrivacyGetConsentSummaryResponse = zod.object({
   "parental": zod.int().min(privacyGetConsentSummaryResponseParentalMin).max(privacyGetConsentSummaryResponseParentalMax)
 })
 
+/**
+ * @summary Pide al centro acceso, rectificación, supresión u oposición. El centro tiene un mes para responder y la administración lo sabe por push. 409 PRIVACY_REQUEST_ALREADY_OPEN si ya hay una abierta del mismo derecho.
+ */
+export const privacyCreateRequestPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PrivacyCreateRequestParams = zod.object({
+  "centerId": zod.uuid().regex(privacyCreateRequestPathCenterIdRegExp)
+})
+
+export const PrivacyCreateRequestHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const privacyCreateRequestBodyMessageDefault = null;
+export const privacyCreateRequestBodyMessageMax = 500;
+
+
+
+export const PrivacyCreateRequestBody = zod.object({
+  "kind": zod.enum(['access', 'rectification', 'erasure', 'objection']),
+  "message": zod.string().max(privacyCreateRequestBodyMessageMax).nullish().default(privacyCreateRequestBodyMessageDefault)
+})
+
+export const privacyCreateRequestResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyCreateRequestResponseClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyCreateRequestResponseDueAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyCreateRequestResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyCreateRequestResponseResolvedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PrivacyCreateRequestResponse = zod.object({
+  "id": zod.uuid().regex(privacyCreateRequestResponseIdRegExp),
+  "clientMembershipId": zod.uuid().regex(privacyCreateRequestResponseClientMembershipIdRegExp),
+  "clientName": zod.string(),
+  "kind": zod.enum(['access', 'rectification', 'erasure', 'objection']),
+  "status": zod.enum(['open', 'completed', 'rejected']),
+  "message": zod.string().nullable(),
+  "dueAt": zod.iso.datetime({"offset":true}).regex(privacyCreateRequestResponseDueAtRegExp),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(privacyCreateRequestResponseCreatedAtRegExp),
+  "resolvedAt": zod.iso.datetime({"offset":true}).regex(privacyCreateRequestResponseResolvedAtRegExp).nullable(),
+  "resolutionNote": zod.string().nullable()
+})
+
+/**
+ * @summary Las solicitudes de la clientela: primero las abiertas (la que vence antes, arriba) y luego las resueltas.
+ */
+export const privacyListRequestsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PrivacyListRequestsParams = zod.object({
+  "centerId": zod.uuid().regex(privacyListRequestsPathCenterIdRegExp)
+})
+
+export const PrivacyListRequestsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const privacyListRequestsResponseRequestsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyListRequestsResponseRequestsItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyListRequestsResponseRequestsItemDueAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyListRequestsResponseRequestsItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyListRequestsResponseRequestsItemResolvedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PrivacyListRequestsResponse = zod.object({
+  "requests": zod.array(zod.object({
+  "id": zod.uuid().regex(privacyListRequestsResponseRequestsItemIdRegExp),
+  "clientMembershipId": zod.uuid().regex(privacyListRequestsResponseRequestsItemClientMembershipIdRegExp),
+  "clientName": zod.string(),
+  "kind": zod.enum(['access', 'rectification', 'erasure', 'objection']),
+  "status": zod.enum(['open', 'completed', 'rejected']),
+  "message": zod.string().nullable(),
+  "dueAt": zod.iso.datetime({"offset":true}).regex(privacyListRequestsResponseRequestsItemDueAtRegExp),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(privacyListRequestsResponseRequestsItemCreatedAtRegExp),
+  "resolvedAt": zod.iso.datetime({"offset":true}).regex(privacyListRequestsResponseRequestsItemResolvedAtRegExp).nullable(),
+  "resolutionNote": zod.string().nullable()
+}))
+})
+
+/**
+ * @summary Mis solicitudes al centro, de la más reciente a la más antigua.
+ */
+export const privacyListMyRequestsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PrivacyListMyRequestsParams = zod.object({
+  "centerId": zod.uuid().regex(privacyListMyRequestsPathCenterIdRegExp)
+})
+
+export const PrivacyListMyRequestsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const privacyListMyRequestsResponseRequestsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyListMyRequestsResponseRequestsItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyListMyRequestsResponseRequestsItemDueAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyListMyRequestsResponseRequestsItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyListMyRequestsResponseRequestsItemResolvedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PrivacyListMyRequestsResponse = zod.object({
+  "requests": zod.array(zod.object({
+  "id": zod.uuid().regex(privacyListMyRequestsResponseRequestsItemIdRegExp),
+  "clientMembershipId": zod.uuid().regex(privacyListMyRequestsResponseRequestsItemClientMembershipIdRegExp),
+  "clientName": zod.string(),
+  "kind": zod.enum(['access', 'rectification', 'erasure', 'objection']),
+  "status": zod.enum(['open', 'completed', 'rejected']),
+  "message": zod.string().nullable(),
+  "dueAt": zod.iso.datetime({"offset":true}).regex(privacyListMyRequestsResponseRequestsItemDueAtRegExp),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(privacyListMyRequestsResponseRequestsItemCreatedAtRegExp),
+  "resolvedAt": zod.iso.datetime({"offset":true}).regex(privacyListMyRequestsResponseRequestsItemResolvedAtRegExp).nullable(),
+  "resolutionNote": zod.string().nullable()
+}))
+})
+
+/**
+ * @summary Marca la solicitud como atendida o rechazada (al rechazar hay que decir por qué) y la persona lo sabe por push. 409 PRIVACY_REQUEST_CLOSED si ya estaba resuelta.
+ */
+export const privacyResolveRequestPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyResolveRequestPathRequestIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PrivacyResolveRequestParams = zod.object({
+  "centerId": zod.uuid().regex(privacyResolveRequestPathCenterIdRegExp),
+  "requestId": zod.uuid().regex(privacyResolveRequestPathRequestIdRegExp)
+})
+
+export const PrivacyResolveRequestHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const privacyResolveRequestBodyNoteDefault = null;
+export const privacyResolveRequestBodyNoteMax = 500;
+
+
+
+export const PrivacyResolveRequestBody = zod.object({
+  "outcome": zod.enum(['completed', 'rejected']),
+  "note": zod.string().max(privacyResolveRequestBodyNoteMax).nullish().default(privacyResolveRequestBodyNoteDefault)
+})
+
+export const privacyResolveRequestResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyResolveRequestResponseClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyResolveRequestResponseDueAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyResolveRequestResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyResolveRequestResponseResolvedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PrivacyResolveRequestResponse = zod.object({
+  "id": zod.uuid().regex(privacyResolveRequestResponseIdRegExp),
+  "clientMembershipId": zod.uuid().regex(privacyResolveRequestResponseClientMembershipIdRegExp),
+  "clientName": zod.string(),
+  "kind": zod.enum(['access', 'rectification', 'erasure', 'objection']),
+  "status": zod.enum(['open', 'completed', 'rejected']),
+  "message": zod.string().nullable(),
+  "dueAt": zod.iso.datetime({"offset":true}).regex(privacyResolveRequestResponseDueAtRegExp),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(privacyResolveRequestResponseCreatedAtRegExp),
+  "resolvedAt": zod.iso.datetime({"offset":true}).regex(privacyResolveRequestResponseResolvedAtRegExp).nullable(),
+  "resolutionNote": zod.string().nullable()
+})
+
+/**
+ * @summary Exporta lo que el centro guarda de una persona (RGPD art. 15): datos, citas, rutinas y solicitudes. Pide la contraseña de quien exporta y queda anotado.
+ */
+export const privacyExportClientDataPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const privacyExportClientDataPathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PrivacyExportClientDataParams = zod.object({
+  "centerId": zod.uuid().regex(privacyExportClientDataPathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(privacyExportClientDataPathMembershipIdRegExp)
+})
+
+export const PrivacyExportClientDataHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const privacyExportClientDataBodyPasswordMax = 256;
+
+
+
+export const PrivacyExportClientDataBody = zod.object({
+  "password": zod.string().min(1).max(privacyExportClientDataBodyPasswordMax)
+})
+
+export const privacyExportClientDataResponseExportedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponseMembershipJoinedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponseBookingsItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponseBookingsItemCheckedInAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponseBookingsItemCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponseRoutinesItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponsePrivacyRequestsItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const privacyExportClientDataResponsePrivacyRequestsItemResolvedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PrivacyExportClientDataResponse = zod.object({
+  "exportedAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseExportedAtRegExp),
+  "person": zod.object({
+  "fullName": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullable(),
+  "birthDate": zod.string().nullable()
+}),
+  "membership": zod.object({
+  "status": zod.string(),
+  "joinedAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseMembershipJoinedAtRegExp),
+  "level": zod.string().nullable(),
+  "groupName": zod.string().nullable()
+}),
+  "bookings": zod.array(zod.object({
+  "serviceName": zod.string(),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseBookingsItemStartsAtRegExp),
+  "status": zod.string(),
+  "checkedInAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseBookingsItemCheckedInAtRegExp).nullable(),
+  "cancelledAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseBookingsItemCancelledAtRegExp).nullable()
+})),
+  "routines": zod.array(zod.object({
+  "name": zod.string(),
+  "assignedAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponseRoutinesItemAssignedAtRegExp)
+})),
+  "privacyRequests": zod.array(zod.object({
+  "kind": zod.string(),
+  "status": zod.string(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponsePrivacyRequestsItemCreatedAtRegExp),
+  "resolvedAt": zod.iso.datetime({"offset":true}).regex(privacyExportClientDataResponsePrivacyRequestsItemResolvedAtRegExp).nullable()
+}))
+})
+

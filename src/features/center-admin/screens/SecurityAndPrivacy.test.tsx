@@ -96,6 +96,7 @@ describe('PrivacyLegalScreen', () => {
     signInAsOwner();
     mockApi({
       'GET /v1/me/memberships': { memberships: [] },
+      [`GET /v1/centers/${NORTE_CENTER_ID}/privacy-requests`]: { requests: [] },
       [`GET ${CONSENTS_PATH}`]: {
         clientCount: 212,
         privacy: 212,

@@ -6,23 +6,33 @@
  * OpenAPI spec version: 0.1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
+  ClientDataExportRequestDto,
+  ClientDataExportResponseDto,
   ConsentSummaryResponseDto,
-  ProblemDetailsDto
+  CreatePrivacyRequestDto,
+  PrivacyRequestListResponseDto,
+  PrivacyRequestResponseDto,
+  ProblemDetailsDto,
+  ResolvePrivacyRequestDto
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -148,3 +158,471 @@ export function usePrivacyGetConsentSummary<TData = Awaited<ReturnType<typeof pr
 
 
 
+export const getPrivacyCreateRequestUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/privacy-requests`
+}
+
+/**
+ * @summary Pide al centro acceso, rectificación, supresión u oposición. El centro tiene un mes para responder y la administración lo sabe por push. 409 PRIVACY_REQUEST_ALREADY_OPEN si ya hay una abierta del mismo derecho.
+ */
+export const privacyCreateRequest = async (centerId: string,
+    createPrivacyRequestDto: CreatePrivacyRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PrivacyRequestResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PrivacyRequestResponseDto>(getPrivacyCreateRequestUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(createPrivacyRequestDto)
+  }
+);}
+
+
+
+
+
+export const getPrivacyCreateRequestMutationKey = () => ['privacyCreateRequest'] as const;
+
+export const getPrivacyCreateRequestMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyCreateRequest>>, TError,PrivacyCreateRequestMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof privacyCreateRequest>>, TError,PrivacyCreateRequestMutationVariables, TContext> => {
+
+const mutationKey = getPrivacyCreateRequestMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof privacyCreateRequest>>, PrivacyCreateRequestMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  privacyCreateRequest(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PrivacyCreateRequestMutationResult = NonNullable<Awaited<ReturnType<typeof privacyCreateRequest>>>
+    export type PrivacyCreateRequestMutationBody = CreatePrivacyRequestDto
+    export type PrivacyCreateRequestMutationError = ErrorType<ProblemDetailsDto>
+    export type PrivacyCreateRequestMutationVariables = {centerId: string;data: CreatePrivacyRequestDto}
+
+    /**
+ * @summary Pide al centro acceso, rectificación, supresión u oposición. El centro tiene un mes para responder y la administración lo sabe por push. 409 PRIVACY_REQUEST_ALREADY_OPEN si ya hay una abierta del mismo derecho.
+ */
+export const usePrivacyCreateRequest = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyCreateRequest>>, TError,PrivacyCreateRequestMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof privacyCreateRequest>>,
+        TError,
+        PrivacyCreateRequestMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPrivacyCreateRequestMutationOptions(options), queryClient);
+    }
+    export const getPrivacyListRequestsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/privacy-requests`
+}
+
+/**
+ * @summary Las solicitudes de la clientela: primero las abiertas (la que vence antes, arriba) y luego las resueltas.
+ */
+export const privacyListRequests = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<PrivacyRequestListResponseDto> => {
+
+  return apiMutator<PrivacyRequestListResponseDto>(getPrivacyListRequestsUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPrivacyListRequestsQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/privacy-requests`
+    ] as const;
+    }
+
+
+export const getPrivacyListRequestsQueryOptions = <TData = Awaited<ReturnType<typeof privacyListRequests>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPrivacyListRequestsQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof privacyListRequests>>> = ({ signal }) => privacyListRequests(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PrivacyListRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof privacyListRequests>>>
+export type PrivacyListRequestsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePrivacyListRequests<TData = Awaited<ReturnType<typeof privacyListRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof privacyListRequests>>,
+          TError,
+          Awaited<ReturnType<typeof privacyListRequests>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePrivacyListRequests<TData = Awaited<ReturnType<typeof privacyListRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof privacyListRequests>>,
+          TError,
+          Awaited<ReturnType<typeof privacyListRequests>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePrivacyListRequests<TData = Awaited<ReturnType<typeof privacyListRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las solicitudes de la clientela: primero las abiertas (la que vence antes, arriba) y luego las resueltas.
+ */
+
+export function usePrivacyListRequests<TData = Awaited<ReturnType<typeof privacyListRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPrivacyListRequestsQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getPrivacyListMyRequestsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/privacy-requests/mine`
+}
+
+/**
+ * @summary Mis solicitudes al centro, de la más reciente a la más antigua.
+ */
+export const privacyListMyRequests = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<PrivacyRequestListResponseDto> => {
+
+  return apiMutator<PrivacyRequestListResponseDto>(getPrivacyListMyRequestsUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPrivacyListMyRequestsQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/privacy-requests/mine`
+    ] as const;
+    }
+
+
+export const getPrivacyListMyRequestsQueryOptions = <TData = Awaited<ReturnType<typeof privacyListMyRequests>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPrivacyListMyRequestsQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof privacyListMyRequests>>> = ({ signal }) => privacyListMyRequests(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PrivacyListMyRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof privacyListMyRequests>>>
+export type PrivacyListMyRequestsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePrivacyListMyRequests<TData = Awaited<ReturnType<typeof privacyListMyRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof privacyListMyRequests>>,
+          TError,
+          Awaited<ReturnType<typeof privacyListMyRequests>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePrivacyListMyRequests<TData = Awaited<ReturnType<typeof privacyListMyRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof privacyListMyRequests>>,
+          TError,
+          Awaited<ReturnType<typeof privacyListMyRequests>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePrivacyListMyRequests<TData = Awaited<ReturnType<typeof privacyListMyRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Mis solicitudes al centro, de la más reciente a la más antigua.
+ */
+
+export function usePrivacyListMyRequests<TData = Awaited<ReturnType<typeof privacyListMyRequests>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof privacyListMyRequests>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPrivacyListMyRequestsQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getPrivacyResolveRequestUrl = (centerId: string,
+    requestId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/privacy-requests/${requestId}/resolve`
+}
+
+/**
+ * @summary Marca la solicitud como atendida o rechazada (al rechazar hay que decir por qué) y la persona lo sabe por push. 409 PRIVACY_REQUEST_CLOSED si ya estaba resuelta.
+ */
+export const privacyResolveRequest = async (centerId: string,
+    requestId: string,
+    resolvePrivacyRequestDto: ResolvePrivacyRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PrivacyRequestResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PrivacyRequestResponseDto>(getPrivacyResolveRequestUrl(centerId,requestId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(resolvePrivacyRequestDto)
+  }
+);}
+
+
+
+
+
+export const getPrivacyResolveRequestMutationKey = () => ['privacyResolveRequest'] as const;
+
+export const getPrivacyResolveRequestMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyResolveRequest>>, TError,PrivacyResolveRequestMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof privacyResolveRequest>>, TError,PrivacyResolveRequestMutationVariables, TContext> => {
+
+const mutationKey = getPrivacyResolveRequestMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof privacyResolveRequest>>, PrivacyResolveRequestMutationVariables> = (props) => {
+          const {centerId,requestId,data} = props ?? {};
+
+          return  privacyResolveRequest(centerId,requestId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PrivacyResolveRequestMutationResult = NonNullable<Awaited<ReturnType<typeof privacyResolveRequest>>>
+    export type PrivacyResolveRequestMutationBody = ResolvePrivacyRequestDto
+    export type PrivacyResolveRequestMutationError = ErrorType<ProblemDetailsDto>
+    export type PrivacyResolveRequestMutationVariables = {centerId: string;requestId: string;data: ResolvePrivacyRequestDto}
+
+    /**
+ * @summary Marca la solicitud como atendida o rechazada (al rechazar hay que decir por qué) y la persona lo sabe por push. 409 PRIVACY_REQUEST_CLOSED si ya estaba resuelta.
+ */
+export const usePrivacyResolveRequest = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyResolveRequest>>, TError,PrivacyResolveRequestMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof privacyResolveRequest>>,
+        TError,
+        PrivacyResolveRequestMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPrivacyResolveRequestMutationOptions(options), queryClient);
+    }
+    export const getPrivacyExportClientDataUrl = (centerId: string,
+    membershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/clients/${membershipId}/data-export`
+}
+
+/**
+ * @summary Exporta lo que el centro guarda de una persona (RGPD art. 15): datos, citas, rutinas y solicitudes. Pide la contraseña de quien exporta y queda anotado.
+ */
+export const privacyExportClientData = async (centerId: string,
+    membershipId: string,
+    clientDataExportRequestDto: ClientDataExportRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<ClientDataExportResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<ClientDataExportResponseDto>(getPrivacyExportClientDataUrl(centerId,membershipId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(clientDataExportRequestDto)
+  }
+);}
+
+
+
+
+
+export const getPrivacyExportClientDataMutationKey = () => ['privacyExportClientData'] as const;
+
+export const getPrivacyExportClientDataMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyExportClientData>>, TError,PrivacyExportClientDataMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof privacyExportClientData>>, TError,PrivacyExportClientDataMutationVariables, TContext> => {
+
+const mutationKey = getPrivacyExportClientDataMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof privacyExportClientData>>, PrivacyExportClientDataMutationVariables> = (props) => {
+          const {centerId,membershipId,data} = props ?? {};
+
+          return  privacyExportClientData(centerId,membershipId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PrivacyExportClientDataMutationResult = NonNullable<Awaited<ReturnType<typeof privacyExportClientData>>>
+    export type PrivacyExportClientDataMutationBody = ClientDataExportRequestDto
+    export type PrivacyExportClientDataMutationError = ErrorType<ProblemDetailsDto>
+    export type PrivacyExportClientDataMutationVariables = {centerId: string;membershipId: string;data: ClientDataExportRequestDto}
+
+    /**
+ * @summary Exporta lo que el centro guarda de una persona (RGPD art. 15): datos, citas, rutinas y solicitudes. Pide la contraseña de quien exporta y queda anotado.
+ */
+export const usePrivacyExportClientData = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof privacyExportClientData>>, TError,PrivacyExportClientDataMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof privacyExportClientData>>,
+        TError,
+        PrivacyExportClientDataMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPrivacyExportClientDataMutationOptions(options), queryClient);
+    }

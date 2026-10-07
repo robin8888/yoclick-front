@@ -80,6 +80,25 @@ describe('describeNotification', () => {
       description:
         'Carlos Núñez ha revisado tu vídeo de presentación. Ábrelo para ver qué ha decidido.',
     },
+    {
+      kind: 'privacy_request_received',
+      noticeData: { clientName: 'Diego Martín', requestKind: 'access' },
+      title: 'Nueva solicitud de datos',
+      description: 'Diego Martín ha enviado una solicitud: Acceso a los datos.',
+    },
+    {
+      kind: 'privacy_request_resolved',
+      noticeData: { requestKind: 'erasure', outcome: 'completed' },
+      title: 'Han respondido a tu solicitud',
+      description: 'Han atendido tu solicitud: Supresión de datos.',
+    },
+    {
+      kind: 'privacy_request_resolved',
+      noticeData: { requestKind: 'rectification', outcome: 'rejected' },
+      title: 'Han respondido a tu solicitud',
+      description:
+        'Han rechazado tu solicitud: Rectificación de datos. Abre la app para ver el motivo.',
+    },
   ] as const)('writes the notice of $kind', ({ kind, noticeData, title, description }) => {
     expect(describeNotification(buildNotification(kind, noticeData), TIME_ZONE)).toEqual({
       title,

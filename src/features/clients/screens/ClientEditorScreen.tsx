@@ -5,6 +5,7 @@ import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ClientDataExportSection } from '../components/ClientDataExportSection';
 import { ClientEditorFields } from '../components/ClientEditorFields';
 import { useClientEditor } from '../hooks/useClientEditor';
 import { parseClientRouteParams } from '../model/client-route-params';
@@ -44,6 +45,7 @@ function ClientEditorContent({
         onGroupChoose={editor.chooseGroup}
       />
       {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
+      <ClientDataExportSection membershipId={membershipId} />
     </ScreenTemplate>
   );
 }

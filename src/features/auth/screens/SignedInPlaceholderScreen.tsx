@@ -14,6 +14,31 @@ interface SignedInPlaceholderScreenProps {
   canSwitchCenter: boolean;
 }
 
+/** Lo que el cliente tiene a mano en su perfil: cambiar de centro y su privacidad. */
+function ClientAccountLinks(): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <>
+      <Button
+        variant="secondary"
+        label={i18n.t('join.centers.title')}
+        onPress={() => {
+          router.push('/(client)/centers');
+        }}
+      />
+      <Button
+        variant="secondary"
+        leadingIconName="lock"
+        label={i18n.t('privacy.title')}
+        onPress={() => {
+          router.push('/(client)/privacy');
+        }}
+      />
+    </>
+  );
+}
+
 /**
  * Inicio provisional de cada zona hasta APP-3 (cliente), APP-5 (staff) y APP-6 (administración).
  * Existe para poder comprobar el flujo completo: entrar, ver la marca del centro y salir.
@@ -21,7 +46,6 @@ interface SignedInPlaceholderScreenProps {
 export function SignedInPlaceholderScreen({
   canSwitchCenter,
 }: Readonly<SignedInPlaceholderScreenProps>): React.JSX.Element {
-  const router = useRouter();
   const { signOut, isSigningOut } = useSignOut();
   const activeCenter = useActiveCenterSummary();
 
@@ -45,15 +69,7 @@ export function SignedInPlaceholderScreen({
       }
     >
       <Text color="ink2">{i18n.t('auth.session.placeholderDescription')}</Text>
-      {canSwitchCenter ? (
-        <Button
-          variant="secondary"
-          label={i18n.t('join.centers.title')}
-          onPress={() => {
-            router.push('/(client)/centers');
-          }}
-        />
-      ) : null}
+      {canSwitchCenter ? <ClientAccountLinks /> : null}
     </ScreenTemplate>
   );
 }

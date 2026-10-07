@@ -30,6 +30,8 @@ const TITLE_KEYS = {
   routine_assigned: 'notifications.routineAssignedTitle',
   staff_video_submitted: 'notifications.staffVideoSubmittedTitle',
   staff_video_reviewed: 'notifications.staffVideoReviewedTitle',
+  privacy_request_received: 'notifications.privacyRequestReceivedTitle',
+  privacy_request_resolved: 'notifications.privacyRequestResolvedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -42,7 +44,34 @@ const DESCRIPTION_KEYS = {
   routine_assigned: 'notifications.routineAssignedDescription',
   staff_video_submitted: 'notifications.staffVideoSubmittedDescription',
   staff_video_reviewed: 'notifications.staffVideoReviewedDescription',
+  privacy_request_received: 'notifications.privacyRequestReceivedDescription',
+  privacy_request_resolved: 'notifications.privacyRequestCompletedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
+
+const PRIVACY_RIGHT_KEYS = {
+  access: 'privacy.kinds.access',
+  rectification: 'privacy.kinds.rectification',
+  erasure: 'privacy.kinds.erasure',
+  objection: 'privacy.kinds.objection',
+} as const;
+
+type PrivacyRightKind = keyof typeof PRIVACY_RIGHT_KEYS;
+
+function describePrivacyRight(requestKind: string | undefined): string {
+  const isKnownRight = requestKind !== undefined && requestKind in PRIVACY_RIGHT_KEYS;
+  return isKnownRight ? i18n.t(PRIVACY_RIGHT_KEYS[requestKind as PrivacyRightKind]) : '';
+}
+
+/** Una solicitud rechazada tiene su propia frase: el motivo se lee dentro de la app. */
+function resolveDescriptionKey(
+  kind: NotificationItem['kind'],
+  noticeData: NotificationItem['data'],
+):
+  | (typeof DESCRIPTION_KEYS)[NotificationItem['kind']]
+  | 'notifications.privacyRequestRejectedDescription' {
+  const isRejected = kind === 'privacy_request_resolved' && noticeData.outcome === 'rejected';
+  return isRejected ? 'notifications.privacyRequestRejectedDescription' : DESCRIPTION_KEYS[kind];
+}
 
 /** Los avisos de cancelación llevan un icono de aviso en lugar del de calendario. */
 export function isCancellationNotification(kind: NotificationItem['kind']): boolean {
@@ -88,9 +117,10 @@ export function describeNotification(
     actorName: noticeData.actorName ?? '',
     routineName: noticeData.routineName ?? '',
     uploaderName: noticeData.uploaderName ?? '',
+    right: describePrivacyRight(noticeData.requestKind),
     when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
   };
-  return { title, description: i18n.t(DESCRIPTION_KEYS[kind], texts) };
+  return { title, description: i18n.t(resolveDescriptionKey(kind, noticeData), texts) };
 }
 
 /** «Ahora», «hace 5 min», «hace 3 h» o la fecha corta para lo que tiene más de un día. */

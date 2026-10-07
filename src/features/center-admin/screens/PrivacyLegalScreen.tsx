@@ -11,6 +11,7 @@ import { Text } from '@/ui/atoms/Text';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { PrivacyRequestsLoader } from '../components/PrivacyRequestsLoader';
 import { useConsentSummary } from '../hooks/useConsentSummary';
 import { createConsentCardStyle, CONSENT_ROW_STYLE, NOTE_STYLE } from './PrivacyLegalScreen.styles';
 
@@ -73,6 +74,7 @@ export function PrivacyLegalScreen(): React.JSX.Element {
         />
       ) : null}
       {summary.data === undefined ? null : <ConsentCard summary={summary.data} />}
+      <PrivacyRequestsLoader />
       <View style={NOTE_STYLE}>
         <Icon name="info" color="info" />
         <Text variant="caption" color="ink2">

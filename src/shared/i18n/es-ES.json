@@ -736,6 +736,11 @@
     "routineAssignedDescription": "{{actorName}} te ha asignado «{{routineName}}».",
     "staffVideoSubmittedTitle": "Hay un vídeo por revisar",
     "staffVideoSubmittedDescription": "{{uploaderName}} ha subido su vídeo de presentación y espera tu revisión.",
+    "privacyRequestReceivedTitle": "Nueva solicitud de datos",
+    "privacyRequestReceivedDescription": "{{clientName}} ha enviado una solicitud: {{right}}.",
+    "privacyRequestResolvedTitle": "Han respondido a tu solicitud",
+    "privacyRequestCompletedDescription": "Han atendido tu solicitud: {{right}}.",
+    "privacyRequestRejectedDescription": "Han rechazado tu solicitud: {{right}}. Abre la app para ver el motivo.",
     "staffVideoReviewedTitle": "Han revisado tu vídeo",
     "staffVideoReviewedDescription": "{{actorName}} ha revisado tu vídeo de presentación. Ábrelo para ver qué ha decidido.",
     "bookingCreatedByTeamDescription": "{{actorName}} te ha puesto una cita de {{serviceName}} el {{when}}.",
@@ -1189,7 +1194,24 @@
         "image": "Imagen",
         "parental": "Consentimiento parental"
       },
-      "legalNote": "Las plantillas legales son un punto de partida: revísalas con tu asesor."
+      "legalNote": "Las plantillas legales son un punto de partida: revísalas con tu asesor.",
+      "requests": {
+        "title": "Solicitudes de {{clientWord}}",
+        "errorTitle": "No hemos podido cargar las solicitudes",
+        "empty": "No hay solicitudes. Cuando alguien ejerza un derecho sobre sus datos, aparecerá aquí.",
+        "dueOn": "Plazo: {{date}}",
+        "overdue": "Fuera de plazo",
+        "resolvedOn": "Respondida el {{date}}",
+        "respondAction": "Responder",
+        "completeAction": "Marcar como atendida",
+        "rejectAction": "Rechazar",
+        "noteLabel": "Nota para la persona",
+        "noteHint": "Obligatoria si rechazas: cuéntale por qué.",
+        "sendRejectAction": "Rechazar solicitud",
+        "cancelAction": "Cancelar",
+        "messageFromClient": "Dice: {{message}}",
+        "exportHint": "Para responder a un acceso, exporta sus datos desde su ficha."
+      }
     },
     "details": {
       "title": "Datos del centro y horario",
@@ -1381,6 +1403,13 @@
       "step3": "3. Crea tu cuenta y reserva",
       "codeLine": "Código: {{joinCode}}",
       "shareAction": "Compartir el cartel"
+    },
+    "clientDataExport": {
+      "action": "Exportar sus datos",
+      "hint": "Derecho de acceso (RGPD): todo lo que el centro guarda de esta persona.",
+      "passwordLabel": "Tu contraseña",
+      "confirmAction": "Exportar",
+      "shareTitle": "Datos de {{name}}"
     }
   },
   "practice": {
@@ -1475,6 +1504,66 @@
       "emptyTitle": "Todavía no hay vídeos del equipo",
       "emptyDescription": "Cuando el centro publique las presentaciones de su equipo, las verás aquí.",
       "loadError": "No hemos podido cargar el equipo"
+    }
+  },
+  "privacy": {
+    "title": "Privacidad y datos",
+    "loadError": "No hemos podido cargar tu privacidad",
+    "kinds": {
+      "access": "Acceso a los datos",
+      "rectification": "Rectificación de datos",
+      "erasure": "Supresión de datos",
+      "objection": "Oposición al tratamiento"
+    },
+    "kindHints": {
+      "access": "Pide una copia de lo que el centro guarda de ti.",
+      "rectification": "Pide corregir datos que no son correctos.",
+      "erasure": "Pide que el centro borre tus datos.",
+      "objection": "Pide que el centro deje de usar tus datos para algo, como las promociones."
+    },
+    "consents": {
+      "title": "Tus consentimientos",
+      "privacyTitle": "Privacidad y condiciones",
+      "privacyHint": "Necesario para usar la app",
+      "marketingTitle": "Promociones y novedades",
+      "marketingHint": "Notificaciones y correos comerciales del centro",
+      "imageTitle": "Uso de mi imagen",
+      "imageHint": "Fotos y vídeos del centro",
+      "note": "Retirar un consentimiento no afecta a lo que ya se hizo con él."
+    },
+    "requests": {
+      "title": "Tus derechos ante el centro",
+      "intro": "El centro decide para qué usa tus datos. Puedes pedirle esto y tiene un mes para responderte.",
+      "askAction": "Pedir",
+      "askLabel": "Pedir: {{right}}",
+      "messageLabel": "Cuéntale al centro qué necesitas (opcional)",
+      "sendAction": "Enviar solicitud",
+      "cancelAction": "Cancelar",
+      "mineTitle": "Tus solicitudes",
+      "emptyMine": "Todavía no has enviado ninguna solicitud.",
+      "statusOpen": "Abierta",
+      "statusCompleted": "Atendida",
+      "statusRejected": "Rechazada",
+      "dueOn": "El centro responde antes del {{date}}",
+      "resolvedOn": "Respondida el {{date}}",
+      "resolutionNote": "Respuesta del centro: {{note}}",
+      "sent": "Solicitud enviada. El centro te avisará cuando responda."
+    },
+    "export": {
+      "title": "Descargar mis datos",
+      "description": "Una copia de los datos de tu cuenta en un archivo. Por seguridad te pedimos la contraseña.",
+      "passwordLabel": "Contraseña",
+      "action": "Descargar mis datos",
+      "confirmAction": "Descargar",
+      "shareTitle": "Mis datos de Yoclick"
+    },
+    "delete": {
+      "title": "Eliminar mi cuenta",
+      "openAction": "Eliminar mi cuenta",
+      "explanation": "Se elimina tu cuenta y tus datos personales. No se puede deshacer. Lo que la ley obliga a conservar lo conserva el centro.",
+      "passwordLabel": "Contraseña",
+      "confirmationLabel": "Escribe ELIMINAR para confirmar",
+      "confirmAction": "Eliminar mi cuenta para siempre"
     }
   }
 }

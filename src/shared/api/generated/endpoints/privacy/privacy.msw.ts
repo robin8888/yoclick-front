@@ -14,14 +14,22 @@ import type {
 } from 'msw';
 
 import type {
-  ConsentSummaryResponseDto
+  ClientDataExportResponseDto,
+  ConsentSummaryResponseDto,
+  PrivacyRequestListResponseDto,
+  PrivacyRequestResponseDto
 } from '../../model';
 
 import {
-  getPrivacyGetConsentSummaryResponseMock
+  getPrivacyCreateRequestResponseMock,
+  getPrivacyExportClientDataResponseMock,
+  getPrivacyGetConsentSummaryResponseMock,
+  getPrivacyListMyRequestsResponseMock,
+  getPrivacyListRequestsResponseMock,
+  getPrivacyResolveRequestResponseMock
 } from './privacy.faker.ts';
 
-export { getPrivacyGetConsentSummaryResponseMock } from './privacy.faker.ts';
+export { getPrivacyGetConsentSummaryResponseMock, getPrivacyCreateRequestResponseMock, getPrivacyListRequestsResponseMock, getPrivacyListMyRequestsResponseMock, getPrivacyResolveRequestResponseMock, getPrivacyExportClientDataResponseMock } from './privacy.faker.ts';
 
 
 export const getPrivacyGetConsentSummaryMockHandler = (overrideResponse?: ConsentSummaryResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ConsentSummaryResponseDto> | ConsentSummaryResponseDto), options?: RequestHandlerOptions) => {
@@ -35,6 +43,71 @@ export const getPrivacyGetConsentSummaryMockHandler = (overrideResponse?: Consen
       })
   }, options)
 }
+
+export const getPrivacyCreateRequestMockHandler = (overrideResponse?: PrivacyRequestResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PrivacyRequestResponseDto> | PrivacyRequestResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/privacy-requests', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPrivacyCreateRequestResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getPrivacyListRequestsMockHandler = (overrideResponse?: PrivacyRequestListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PrivacyRequestListResponseDto> | PrivacyRequestListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/privacy-requests', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPrivacyListRequestsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPrivacyListMyRequestsMockHandler = (overrideResponse?: PrivacyRequestListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PrivacyRequestListResponseDto> | PrivacyRequestListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/privacy-requests/mine', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPrivacyListMyRequestsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPrivacyResolveRequestMockHandler = (overrideResponse?: PrivacyRequestResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PrivacyRequestResponseDto> | PrivacyRequestResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/privacy-requests/:requestId/resolve', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPrivacyResolveRequestResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPrivacyExportClientDataMockHandler = (overrideResponse?: ClientDataExportResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ClientDataExportResponseDto> | ClientDataExportResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/clients/:membershipId/data-export', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPrivacyExportClientDataResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getPrivacyMock = () => [
-  getPrivacyGetConsentSummaryMockHandler()
+  getPrivacyGetConsentSummaryMockHandler(),
+  getPrivacyCreateRequestMockHandler(),
+  getPrivacyListRequestsMockHandler(),
+  getPrivacyListMyRequestsMockHandler(),
+  getPrivacyResolveRequestMockHandler(),
+  getPrivacyExportClientDataMockHandler()
 ]

@@ -145,3 +145,14 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 5 | **Contenidos** (`acontent`, `media`): subir vídeos y PDF y asignarlos por nivel, grupo o cliente; visor de PDF. | No existe. |
 | 6 | **Aviso de enlaces de reproducción caducados**: los enlaces duran 4 h; si una pantalla se queda abierta más tiempo hay que recargarla. | Al abrir la pantalla se piden enlaces nuevos. |
 | 7 | **Comprobar las claves reales de Bunny**: `npm run videos:check` en el back crea un vídeo vacío, firma una subida y un enlace, comprueba que el CDN acepta la firma y lo borra. La firma de reproducción (token de directorio del CDN) se ha escrito según la documentación de Bunny y **hay que verificarla con la cuenta real** antes de publicar. | — |
+
+## Derechos RGPD (`alegal`, `privacy`, `delacct`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Solicitudes de derechos al centro**~~ Resuelto (8 oct 2026): `POST /v1/centers/{id}/privacy-requests` (cliente: acceso, rectificación, supresión u oposición; una abierta por derecho), `GET …/privacy-requests/mine`, `GET …/privacy-requests` (administración: las abiertas primero, la que vence antes arriba) y `POST …/privacy-requests/{id}/resolve` (atendida, o rechazada con motivo). Plazo: **un mes** desde que se recibe (`dueAt`). No se borran (constancia). Migración `20261016090000_add_privacy_requests`. Avisos push a la administración al recibirla y a la persona al resolverla. | El cliente las pide desde «Privacidad y datos» y ve su estado y plazo; la administración las responde desde «Privacidad y legal» (con aviso «Fuera de plazo»). |
+| 2 | ~~**Responder a un derecho de acceso**~~ Resuelto: `POST …/clients/{membershipId}/data-export` (administración, pide su contraseña, queda en el registro de actividad) devuelve todo lo que el centro guarda de la persona. | «Exportar sus datos» en la ficha del cliente, por el menú de compartir. |
+| 3 | **Ejecutar una supresión pedida al centro**: resolver la solicitud solo la marca; borrar los datos de la persona en ese centro (o dar de baja) sigue siendo manual. La persona sí puede **eliminar su cuenta entera** desde la app (ya existía en la API). | El centro marca la solicitud como atendida tras hacerlo a mano. |
+| 4 | **Rutas**: la spec dice `/settings/privacy` y `/settings/delete-account`; se han puesto en `(client)/privacy` y `(client)/delete-account` para heredar la guarda de sesión y la barra. | — |
+| 5 | **Textos legales** (contrato de encargado, política de privacidad del centro, registro de actividades): siguen pendientes del asesor; el copy de la pantalla de borrado y de derechos es provisional y debe revisarse con él. | No se muestran. |
+| 6 | **Dueños de centro**: `DELETE /me` rechaza con `ACCOUNT_OWNS_CENTER` si la persona es propietaria de un centro; la app lo explica. No hay flujo para traspasar o cerrar el centro. | Mensaje de error. |
