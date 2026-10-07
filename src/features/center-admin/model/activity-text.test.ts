@@ -24,6 +24,7 @@ describe('describeActivityAction', () => {
       'cambió el servicio «Clase particular»',
     ],
     [{ kind: 'client_updated', subject: 'Ana Serrano' }, 'actualizó los datos de Ana Serrano'],
+    [{ kind: 'clients_imported', subject: '12' }, 'importó 12 personas desde un archivo'],
     [{ kind: 'join_code_regenerated', subject: null }, 'cambió el código del centro'],
     [{ kind: 'service_archived', subject: null }, 'archivó un servicio'],
     [{ kind: 'algo_nuevo', subject: null }, 'hizo un cambio'],

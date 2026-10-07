@@ -12,6 +12,7 @@ const WITH_SUBJECT_KEYS = {
   service_updated: 'centerAdmin.security.activity.withSubject.service_updated',
   room_created: 'centerAdmin.security.activity.withSubject.room_created',
   client_updated: 'centerAdmin.security.activity.withSubject.client_updated',
+  clients_imported: 'centerAdmin.security.activity.withSubject.clients_imported',
   group_created: 'centerAdmin.security.activity.withSubject.group_created',
   team_member_updated: 'centerAdmin.security.activity.withSubject.team_member_updated',
   booking_created_by_team: 'centerAdmin.security.activity.withSubject.booking_created_by_team',

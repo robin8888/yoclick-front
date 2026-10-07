@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { UpdateTeamMemberRequestDto } from '@/shared/api/generated/model';
 
 import { buildTeamMemberChanges, type TeamMemberDraft } from '../model/team-member-changes';
+import { pickGrantedPermissions } from '../model/team-permissions';
 import { isEditableTeamRole, type RosterMember } from '../model/team-roster';
 import { useTeamRoster } from './useTeamRoster';
 import { useUpdateTeamMember } from './useUpdateTeamMember';
@@ -25,7 +26,12 @@ function buildDraft(
   edits: Partial<TeamMemberDraft>,
 ): TeamMemberDraft | null {
   if (member === undefined || !isEditableTeamRole(member.role)) return null;
-  return { role: member.role, staffTitle: member.staffTitle ?? '', ...edits };
+  return {
+    role: member.role,
+    staffTitle: member.staffTitle ?? '',
+    grantedPermissions: pickGrantedPermissions(member.permissions),
+    ...edits,
+  };
 }
 
 /** El borrador de una persona del equipo: lo que hay en el servidor más lo que se va cambiando. */

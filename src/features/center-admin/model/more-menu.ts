@@ -7,6 +7,9 @@ export type MoreMenuTextKey =
   | 'brand'
   | 'services'
   | 'inviteClients'
+  | 'importClients'
+  | 'reports'
+  | 'subscription'
   | 'inviteTeam'
   | 'records'
   | 'security'
@@ -19,7 +22,7 @@ export interface MoreMenuEntry {
 }
 
 export interface MoreMenuGroup {
-  id: 'center' | 'team' | 'account';
+  id: 'center' | 'money' | 'team' | 'account';
   entries: readonly MoreMenuEntry[];
 }
 
@@ -34,8 +37,16 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
     entries: [
       { textKey: 'centerDetails', route: '/(admin)/center', iconName: 'edit' },
       { textKey: 'inviteClients', route: '/(admin)/invite-clients', iconName: 'qrCode' },
+      { textKey: 'importClients', route: '/(admin)/clients/import', iconName: 'file' },
       { textKey: 'brand', route: '/(admin)/(tabs)/brand', iconName: 'palette' },
       { textKey: 'services', route: '/(admin)/services', iconName: 'calendar' },
+    ],
+  },
+  {
+    id: 'money',
+    entries: [
+      { textKey: 'reports', route: '/(admin)/reports', iconName: 'creditCard' },
+      { textKey: 'subscription', route: '/(admin)/subscription', iconName: 'settings' },
     ],
   },
   {

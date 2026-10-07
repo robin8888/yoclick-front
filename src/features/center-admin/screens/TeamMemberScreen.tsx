@@ -12,6 +12,36 @@ import { TeamMemberFields } from '../components/TeamMemberFields';
 import { useTeamMemberEditor } from '../hooks/useTeamMemberEditor';
 import { parseTeamMemberRouteParams } from '../model/team-member-route-params';
 
+function TeamMemberBody({
+  editor,
+}: Readonly<{ editor: ReturnType<typeof useTeamMemberEditor> }>): React.JSX.Element {
+  const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
+  const { draft, member } = editor;
+
+  return (
+    <>
+      {draft === null ? (
+        <Text color="ink2">{i18n.t('centerAdmin.team.ownerNote')}</Text>
+      ) : (
+        <TeamMemberFields
+          draft={draft}
+          staffWord={vocabulary.staff.singular}
+          clientWord={vocabulary.client.plural}
+          onDraftChange={editor.changeDraft}
+        />
+      )}
+      {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
+      {member === undefined || draft === null ? null : (
+        <RemoveTeamMemberControl
+          memberName={member.fullName}
+          isRemoving={editor.isUpdating}
+          onRemoveConfirm={editor.removeFromTeam}
+        />
+      )}
+    </>
+  );
+}
+
 interface TeamMemberContentProps {
   membershipId: string;
 }
@@ -19,7 +49,6 @@ interface TeamMemberContentProps {
 function TeamMemberContent({ membershipId }: Readonly<TeamMemberContentProps>): React.JSX.Element {
   const router = useRouter();
   const editor = useTeamMemberEditor(membershipId);
-  const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.singular;
   const { draft, member } = editor;
 
   return (
@@ -40,19 +69,7 @@ function TeamMemberContent({ membershipId }: Readonly<TeamMemberContentProps>): 
         )
       }
     >
-      {draft === null ? (
-        <Text color="ink2">{i18n.t('centerAdmin.team.ownerNote')}</Text>
-      ) : (
-        <TeamMemberFields draft={draft} staffWord={staffWord} onDraftChange={editor.changeDraft} />
-      )}
-      {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
-      {member === undefined || draft === null ? null : (
-        <RemoveTeamMemberControl
-          memberName={member.fullName}
-          isRemoving={editor.isUpdating}
-          onRemoveConfirm={editor.removeFromTeam}
-        />
-      )}
+      <TeamMemberBody editor={editor} />
     </ScreenTemplate>
   );
 }

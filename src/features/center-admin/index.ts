@@ -1,6 +1,9 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { AdminComingSoonScreen } from './screens/AdminComingSoonScreen';
 export { AdminMoreScreen } from './screens/AdminMoreScreen';
+export { ImportClientsScreen } from './screens/ImportClientsScreen';
+export { SubscriptionScreen } from './screens/SubscriptionScreen';
+export { ReportsScreen } from './screens/ReportsScreen';
 export { InviteClientsScreen } from './screens/InviteClientsScreen';
 export { InviteTeamScreen } from './screens/InviteTeamScreen';
 export { ServiceEditorScreen } from './screens/ServiceEditorScreen';

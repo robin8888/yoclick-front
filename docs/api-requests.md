@@ -76,3 +76,38 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 3 | **Bono agotado** (estado del prototipo): no hay bonos del alumno todavía (ver «Inicio del alumno» fila 1). | El estado «Bono agotado» no se muestra. |
 | 4 | **Ficha completa del cliente** (`acfile`): asistencia, historial, notas privadas, pagos y acciones RGPD. | La ficha solo edita nivel y grupo. |
 | 5 | **Añadir varias personas a un grupo a la vez** y **quién da cada grupo al reservar**. | Se asigna desde la ficha de cada persona. |
+
+## Importar clientes (`aimport`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Importar desde un archivo**~~ Resuelto (7 oct 2026): `POST /v1/centers/{id}/clients/import` (hasta 500 filas con nombre, correo, teléfono y nivel). Quien no tiene cuenta recibe una **sin activar** (sin contraseña utilizable ni correo verificado); a quien ya es cliente se le actualiza el nivel; devuelve cuántos se crearon, cuántos se actualizaron y las filas que se quedaron fuera con su motivo. No envía ningún correo. | Elegir CSV, asignar columnas, revisar y ver el informe. Un archivo de más de 500 filas se envía en varias tandas. |
+| 2 | **Invitar a la app por correo** al importar (interruptor del prototipo): sigue sin enviarse ningún correo. **Reclamar la cuenta** ya funciona (7 oct 2026): quien fue importado entra con «¿Olvidaste tu contraseña?», recibe el código en su correo y fija su contraseña (eso también confirma el correo). Falta el aviso por correo que les diga que su centro les ha dado de alta. | El interruptor no se muestra: «No se avisa a nadie hasta que tú lo decidas». El centro debe decirles que entren con «¿Olvidaste tu contraseña?». |
+| 3 | **Importar el saldo de bonos** («Sesiones restantes del bono»): no hay bonos todavía (ver «Alumnos y grupos» fila 3). | La columna no se ofrece. |
+| 4 | **Filas sin correo**: una membresía necesita una cuenta y la cuenta, un correo; el prototipo las importaba igualmente. | Se cuentan como «sin correo válido» y no se importan. |
+| 5 | **Leer Excel** (`.xlsx`): el prototipo lo acepta; la app solo lee CSV (separado por comas, punto y coma o tabulador). | El texto dice «guarda la hoja como CSV». |
+
+## Informes (`areports`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Informes del centro**~~ Resuelto (7 oct 2026): `GET /v1/centers/{id}/reports?period=week\|month\|quarter` (últimos 7, 30 o 90 días contando hoy, con el periodo anterior para comparar). Devuelve ingresos estimados, ocupación media, retención a 3 meses, clientes activos e inactivos, ingresos de los últimos 6 meses, ocupación por servicio, citas y horas por profesional, y retención por mes de alta. | Pantalla con selector de periodo, cifras, gráfico de ingresos, barras por servicio, tabla por profesional y retención. |
+| 2 | **Ingresos reales**: no hay cobros, bonos ni cuotas, así que los «ingresos» son una **estimación** (precio del servicio por cada cita a la que vino la persona o que ya pasó confirmada). | Se dice en pantalla: «Es una estimación… Todavía no son cobros». |
+| 3 | **Ingresos por tipo** (cuotas, bonos, sesiones sueltas, matrículas) y **valoración media** por profesional: dependen de pagos y de valoraciones, que no existen. | No se muestran. |
+| 4 | **Ocupación por servicio**: es el tiempo reservado sobre el tiempo abierto de quienes lo dan (los servicios no tienen aforo ni horario fijo). | Barras de 0 a 100 %. |
+| 5 | **Campañas para inactivos** (`acamp`): el aviso «14 sin venir en 30 días» no abre ninguna campaña todavía. | Solo informa. |
+| 6 | **Exportar CSV**: se comparte el texto desde el menú del sistema; no se genera un archivo descargable. | Botón «CSV» del informe por profesional. |
+
+## Mi suscripción (`asubs`, `aplans`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Estado del plan**~~ Resuelto (7 oct 2026): `GET /v1/centers/{id}/subscription` (estado, fin de la prueba, tope de clientes y clientes activos). | «Mi suscripción» con plan, estado, prueba y uso del tope. |
+| 2 | **Nombre del plan**: no hay tabla `plans`; la app lo deduce del tope (150 Básico, 500 Pro, sin tope Premium). Cuando exista `plans`, el endpoint debería devolver `planId`. | Cualquier otro tope se muestra como «A medida». |
+| 3 | **Próximo cobro, método de pago, facturas y cambio de plan** (`asubs`, `aplans`): la suscripción se cobra en la web con Stripe Billing (decisión del 5 oct 2026) y los importes siguen pendientes ([PRECIO]). | No se muestran; una nota explica que se gestiona en la web. |
+
+## Permisos finos por rol (`ateam`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | **Que los permisos extra tengan efecto**: la API guarda `permissions` (`health:read`, `clients:manage`, `services:manage`, `agenda:manage`, `payments:view`, `reports:view`) y acepta cambiarlos, pero ninguna ruta los comprueba: solo mandan los roles. Hace falta decidir qué ruta exige cada permiso y añadir un guard antes de ofrecer interruptores en la app (si no, parecerían conceder algo que no concede). | La ficha del equipo cambia solo el rol (administración o quien da las sesiones) y el cargo. |
