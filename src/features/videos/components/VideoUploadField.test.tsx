@@ -205,6 +205,26 @@ describe('PlayableVideo', () => {
     expect(screen.getByLabelText('Vídeo: Hola, soy Marta')).toBeOnTheScreen();
   });
 
+  it('keeps asking while the video is processing and refreshes the screens when it is ready', async () => {
+    mockApi({
+      'GET /v1/me/memberships': { memberships: [] },
+      [`GET ${BASE}/videos/video-1`]: buildVideo(),
+    });
+    renderScreen(<PlayableVideo video={buildVideo({ status: 'processing', playback: null })} />);
+
+    expect(screen.getByText('Procesando el vídeo. Puedes seguir usando la app.')).toBeOnTheScreen();
+    await waitFor(() => {
+      expect(findApiCall('GET', `${BASE}/videos/video-1`)).toBeDefined();
+    });
+  });
+
+  it('does not ask the server about a video that is already ready', () => {
+    mockApi({ 'GET /v1/me/memberships': { memberships: [] } });
+    renderScreen(<PlayableVideo video={buildVideo()} />);
+
+    expect(findApiCall('GET', `${BASE}/videos/video-1`)).toBeUndefined();
+  });
+
   it.each([
     { caseName: 'processing', status: 'processing', text: 'Procesando' },
     { caseName: 'failed', status: 'failed', text: 'Con error' },

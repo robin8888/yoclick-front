@@ -8,8 +8,10 @@ import { useTheme } from '@/shared/theme';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
+import { useVideoProcessingWatch } from '../hooks/useVideoProcessingWatch';
 import { formatVideoDuration } from '../model/video-format';
 import { VideoPlayer } from './VideoPlayer';
+import { VideoUploadProgress } from './VideoUploadProgress';
 import { VideoStatusBadge } from './VideoStatusBadge';
 import {
   createDurationChipStyle,
@@ -68,11 +70,14 @@ export function PlayableVideo({
 }: Readonly<PlayableVideoProps>): React.JSX.Element {
   const [isPlaying, setIsPlaying] = useState(false);
   const { playback } = video;
+  const isProcessing = video.status === 'uploading' || video.status === 'processing';
+  useVideoProcessingWatch(video);
 
   return (
     <View style={STACK_STYLE}>
       {shouldShowTitle ? <Text variant="bodyStrong">{video.title}</Text> : null}
       {playback === null ? <VideoStatusBadge video={video} /> : null}
+      {isProcessing ? <VideoUploadProgress stage={{ kind: 'processing' }} /> : null}
       {playback !== null && isPlaying ? (
         <VideoPlayer streamUrl={playback.streamUrl} title={video.title} />
       ) : null}
