@@ -522,6 +522,12 @@
       "passEmpty": "Sin bono activo. Pregunta en tu centro."
     }
   },
+  "calendar": {
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "openCalendar": "Elegir en el calendario",
+    "datePlaceholder": "DD/MM/AAAA"
+  },
   "session": {
     "profile": {
       "availabilityAction": "Mi disponibilidad",
@@ -1008,7 +1014,7 @@
       "saveAbsenceAction": "Guardar ausencia",
       "fromLabel": "Desde",
       "untilLabel": "Hasta (si dura más de un día)",
-      "datePlaceholder": "AAAA-MM-DD",
+      "datePlaceholder": "DD/MM/AAAA",
       "reasonLabel": "Motivo",
       "reasons": {
         "vacation": "Vacaciones",
@@ -1103,7 +1109,7 @@
       "holidaysHelper": "Esos días no se puede reservar.",
       "holidayRemove": "Quitar el cierre {{label}}",
       "holidayDateLabel": "Fecha del cierre",
-      "holidayDatePlaceholder": "AAAA-MM-DD",
+      "holidayDatePlaceholder": "DD/MM/AAAA",
       "holidayLabelLabel": "Motivo del cierre",
       "holidayLabelPlaceholder": "Navidad",
       "holidayAddAction": "Añadir cierre",

@@ -3,11 +3,13 @@ import { View } from 'react-native';
 
 import type { CenterSettingsResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { formatNumericDate } from '@/shared/lib/format';
 import { Button } from '@/ui/atoms/Button';
 import { IconButton } from '@/ui/atoms/IconButton';
 import { Input } from '@/ui/atoms/Input';
 import { Text } from '@/ui/atoms/Text';
 
+import { SpanishDateField } from './SpanishDateField';
 import { useSaveCenterSettings } from '../hooks/useSaveCenterSettings';
 import { buildHolidayList, isValidHolidayDraft, type Holiday } from '../model/holidays';
 import { HOLIDAY_ROW_STYLE, HOLIDAYS_STYLE } from './HolidaysSection.styles';
@@ -22,7 +24,7 @@ interface HolidayRowProps {
 function HolidayRow({ holiday, onRemove }: Readonly<HolidayRowProps>): React.JSX.Element {
   return (
     <View style={HOLIDAY_ROW_STYLE}>
-      <Text variant="bodyStrong">{holiday.date}</Text>
+      <Text variant="bodyStrong">{formatNumericDate(holiday.date)}</Text>
       <Text color="ink2">{holiday.label}</Text>
       <IconButton
         iconName="close"
@@ -47,15 +49,16 @@ function HolidayAddForm({
 }: Readonly<HolidayAddFormProps>): React.JSX.Element {
   const [date, setDate] = useState('');
   const [label, setLabel] = useState('');
+  // Al guardar se vacía el formulario; cambiar la clave reinicia el texto del campo de fecha.
+  const [formVersion, setFormVersion] = useState(0);
 
   return (
     <>
-      <Input
+      <SpanishDateField
+        key={formVersion}
         value={date}
-        onChangeText={setDate}
+        onValueChange={setDate}
         accessibilityLabel={i18n.t('centerAdmin.details.holidayDateLabel')}
-        placeholder={i18n.t('centerAdmin.details.holidayDatePlaceholder')}
-        keyboardType="numbers-and-punctuation"
       />
       <Input
         value={label}
@@ -73,6 +76,7 @@ function HolidayAddForm({
           saveSettings({ holidays: buildHolidayList(holidays, { date, label }) }, () => {
             setDate('');
             setLabel('');
+            setFormVersion((version) => version + 1);
           });
         }}
       />

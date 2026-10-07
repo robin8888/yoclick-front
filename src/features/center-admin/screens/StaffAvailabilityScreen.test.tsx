@@ -118,7 +118,7 @@ describe('TeamMemberAvailabilityScreen', () => {
     renderScreen(<TeamMemberAvailabilityScreen />);
     fireEvent.press(await screen.findByRole('button', { name: 'Añadir ausencia' }));
 
-    fireEvent.changeText(screen.getByLabelText('Desde'), '2026-11-23');
+    fireEvent.changeText(screen.getByLabelText('Desde'), '23/11/2026');
     fireEvent.press(screen.getByRole('radio', { name: 'Formación' }));
     fireEvent.press(screen.getByRole('button', { name: 'Guardar ausencia' }));
 

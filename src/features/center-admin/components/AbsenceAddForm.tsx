@@ -5,7 +5,6 @@ import type { AddStaffAbsenceRequestDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/atoms/Icon';
-import { Input } from '@/ui/atoms/Input';
 import { Text } from '@/ui/atoms/Text';
 import { useTheme } from '@/shared/theme';
 
@@ -16,6 +15,7 @@ import {
   type AbsenceReason,
 } from '../model/absence-form';
 import { createFieldChoiceStyle, FIELD_CHOICES_STYLE } from './ImportColumnRow.styles';
+import { SpanishDateField } from './SpanishDateField';
 
 const FORM_STYLE = { gap: 12 } as const;
 
@@ -92,19 +92,15 @@ export function AbsenceAddForm({
 
   return (
     <View style={FORM_STYLE}>
-      <Input
+      <SpanishDateField
         value={startsOn}
-        onChangeText={setStartsOn}
+        onValueChange={setStartsOn}
         accessibilityLabel={i18n.t('centerAdmin.availability.fromLabel')}
-        placeholder={i18n.t('centerAdmin.availability.datePlaceholder')}
-        keyboardType="numbers-and-punctuation"
       />
-      <Input
+      <SpanishDateField
         value={endsOn}
-        onChangeText={setEndsOn}
+        onValueChange={setEndsOn}
         accessibilityLabel={i18n.t('centerAdmin.availability.untilLabel')}
-        placeholder={i18n.t('centerAdmin.availability.datePlaceholder')}
-        keyboardType="numbers-and-punctuation"
       />
       <ReasonChoices selectedReason={reason} onReasonChange={setReason} />
       <Button
