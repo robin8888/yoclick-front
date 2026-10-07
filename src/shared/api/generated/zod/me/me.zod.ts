@@ -49,20 +49,71 @@ export const MeRevokeSessionResponse = zod.void()
 /**
  * @summary Mi perfil.
  */
-export const meGetProfileResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const meGetProfileResponseBirthDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
-export const meGetProfileResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meGetProfileResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meGetProfileResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meGetProfileResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meGetProfileResponseIntroVideoDurationSecondsMin = -9007199254740991;
+export const meGetProfileResponseIntroVideoDurationSecondsMax = 9007199254740991;
+
+export const meGetProfileResponseIntroVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meGetProfileResponseTechniqueVideosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meGetProfileResponseTechniqueVideosItemDurationSecondsMin = -9007199254740991;
+export const meGetProfileResponseTechniqueVideosItemDurationSecondsMax = 9007199254740991;
+
+export const meGetProfileResponseTechniqueVideosItemPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meGetProfileResponseRatingCountMin = -9007199254740991;
+export const meGetProfileResponseRatingCountMax = 9007199254740991;
+
 
 
 export const MeGetProfileResponse = zod.object({
-  "id": zod.uuid().regex(meGetProfileResponseIdRegExp),
-  "email": zod.string(),
+  "membershipId": zod.uuid().regex(meGetProfileResponseMembershipIdRegExp),
+  "isMe": zod.boolean(),
   "fullName": zod.string(),
-  "phone": zod.string().nullable(),
-  "birthDate": zod.iso.date().regex(meGetProfileResponseBirthDateRegExp).nullable(),
-  "locale": zod.string(),
-  "isEmailVerified": zod.boolean(),
-  "createdAt": zod.iso.datetime({"offset":true}).regex(meGetProfileResponseCreatedAtRegExp)
+  "staffTitle": zod.string().nullable(),
+  "headline": zod.string().nullable(),
+  "bio": zod.string().nullable(),
+  "specialties": zod.array(zod.string()),
+  "languages": zod.array(zod.string()),
+  "status": zod.enum(['draft', 'pending', 'published', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "hasPublishConsent": zod.boolean(),
+  "certifications": zod.array(zod.object({
+  "id": zod.uuid().regex(meGetProfileResponseCertificationsItemIdRegExp),
+  "name": zod.string(),
+  "detail": zod.string().nullable(),
+  "isVerified": zod.boolean()
+})),
+  "introVideo": zod.object({
+  "id": zod.uuid().regex(meGetProfileResponseIntroVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(meGetProfileResponseIntroVideoDurationSecondsMin).max(meGetProfileResponseIntroVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(meGetProfileResponseIntroVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable(),
+  "techniqueVideos": zod.array(zod.object({
+  "id": zod.uuid().regex(meGetProfileResponseTechniqueVideosItemIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(meGetProfileResponseTechniqueVideosItemDurationSecondsMin).max(meGetProfileResponseTechniqueVideosItemDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(meGetProfileResponseTechniqueVideosItemPlaybackExpiresAtRegExp)
+}).nullable()
+})),
+  "rating": zod.object({
+  "average": zod.number(),
+  "count": zod.int().min(meGetProfileResponseRatingCountMin).max(meGetProfileResponseRatingCountMax)
+}).nullable()
 })
 
 /**
@@ -82,20 +133,71 @@ export const MeUpdateProfileBody = zod.object({
   "locale": zod.enum(['es-ES', 'en']).optional()
 })
 
-export const meUpdateProfileResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const meUpdateProfileResponseBirthDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
-export const meUpdateProfileResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meUpdateProfileResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meUpdateProfileResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meUpdateProfileResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meUpdateProfileResponseIntroVideoDurationSecondsMin = -9007199254740991;
+export const meUpdateProfileResponseIntroVideoDurationSecondsMax = 9007199254740991;
+
+export const meUpdateProfileResponseIntroVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meUpdateProfileResponseTechniqueVideosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meUpdateProfileResponseTechniqueVideosItemDurationSecondsMin = -9007199254740991;
+export const meUpdateProfileResponseTechniqueVideosItemDurationSecondsMax = 9007199254740991;
+
+export const meUpdateProfileResponseTechniqueVideosItemPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const meUpdateProfileResponseRatingCountMin = -9007199254740991;
+export const meUpdateProfileResponseRatingCountMax = 9007199254740991;
+
 
 
 export const MeUpdateProfileResponse = zod.object({
-  "id": zod.uuid().regex(meUpdateProfileResponseIdRegExp),
-  "email": zod.string(),
+  "membershipId": zod.uuid().regex(meUpdateProfileResponseMembershipIdRegExp),
+  "isMe": zod.boolean(),
   "fullName": zod.string(),
-  "phone": zod.string().nullable(),
-  "birthDate": zod.iso.date().regex(meUpdateProfileResponseBirthDateRegExp).nullable(),
-  "locale": zod.string(),
-  "isEmailVerified": zod.boolean(),
-  "createdAt": zod.iso.datetime({"offset":true}).regex(meUpdateProfileResponseCreatedAtRegExp)
+  "staffTitle": zod.string().nullable(),
+  "headline": zod.string().nullable(),
+  "bio": zod.string().nullable(),
+  "specialties": zod.array(zod.string()),
+  "languages": zod.array(zod.string()),
+  "status": zod.enum(['draft', 'pending', 'published', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "hasPublishConsent": zod.boolean(),
+  "certifications": zod.array(zod.object({
+  "id": zod.uuid().regex(meUpdateProfileResponseCertificationsItemIdRegExp),
+  "name": zod.string(),
+  "detail": zod.string().nullable(),
+  "isVerified": zod.boolean()
+})),
+  "introVideo": zod.object({
+  "id": zod.uuid().regex(meUpdateProfileResponseIntroVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(meUpdateProfileResponseIntroVideoDurationSecondsMin).max(meUpdateProfileResponseIntroVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(meUpdateProfileResponseIntroVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable(),
+  "techniqueVideos": zod.array(zod.object({
+  "id": zod.uuid().regex(meUpdateProfileResponseTechniqueVideosItemIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(meUpdateProfileResponseTechniqueVideosItemDurationSecondsMin).max(meUpdateProfileResponseTechniqueVideosItemDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(meUpdateProfileResponseTechniqueVideosItemPlaybackExpiresAtRegExp)
+}).nullable()
+})),
+  "rating": zod.object({
+  "average": zod.number(),
+  "count": zod.int().min(meUpdateProfileResponseRatingCountMin).max(meUpdateProfileResponseRatingCountMax)
+}).nullable()
 })
 
 /**

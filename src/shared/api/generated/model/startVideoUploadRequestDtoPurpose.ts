@@ -12,4 +12,5 @@ export type StartVideoUploadRequestDtoPurpose = typeof StartVideoUploadRequestDt
 export const StartVideoUploadRequestDtoPurpose = {
   exercise: 'exercise',
   profile: 'profile',
+  technique: 'technique',
 } as const;

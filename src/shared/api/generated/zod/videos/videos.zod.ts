@@ -32,7 +32,7 @@ export const videosStartUploadBodySizeBytesMax = 524288000;
 export const VideosStartUploadBody = zod.object({
   "title": zod.string().min(1).max(videosStartUploadBodyTitleMax),
   "sizeBytes": zod.int().gt(videosStartUploadBodySizeBytesExclusiveMin).max(videosStartUploadBodySizeBytesMax),
-  "purpose": zod.enum(['exercise', 'profile'])
+  "purpose": zod.enum(['exercise', 'profile', 'technique'])
 })
 
 export const videosStartUploadResponseVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -145,95 +145,5 @@ export const VideosGetPlanResponse = zod.object({
   "isIncluded": zod.boolean(),
   "limitBytes": zod.int().min(videosGetPlanResponseLimitBytesMin).max(videosGetPlanResponseLimitBytesMax).nullable(),
   "usedBytes": zod.int().min(videosGetPlanResponseUsedBytesMin).max(videosGetPlanResponseUsedBytesMax)
-})
-
-/**
- * @summary Aprueba o pide cambios en un vídeo de presentación pendiente; quien lo subió lo sabe por un aviso push.
- */
-export const videosReviewPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const videosReviewPathVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const VideosReviewParams = zod.object({
-  "centerId": zod.uuid().regex(videosReviewPathCenterIdRegExp),
-  "videoId": zod.uuid().regex(videosReviewPathVideoIdRegExp)
-})
-
-export const VideosReviewHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const videosReviewBodyNoteMax = 300;
-
-
-
-export const VideosReviewBody = zod.object({
-  "decision": zod.enum(['approve', 'request_changes']),
-  "note": zod.string().min(1).max(videosReviewBodyNoteMax).optional()
-})
-
-export const videosReviewResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const videosReviewResponseDurationSecondsMin = -9007199254740991;
-export const videosReviewResponseDurationSecondsMax = 9007199254740991;
-
-export const videosReviewResponsePlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
-
-
-export const VideosReviewResponse = zod.object({
-  "id": zod.uuid().regex(videosReviewResponseIdRegExp),
-  "title": zod.string(),
-  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
-  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
-  "reviewNote": zod.string().nullable(),
-  "durationSeconds": zod.int().min(videosReviewResponseDurationSecondsMin).max(videosReviewResponseDurationSecondsMax).nullable(),
-  "playback": zod.object({
-  "streamUrl": zod.string(),
-  "thumbnailUrl": zod.string(),
-  "expiresAt": zod.iso.datetime({"offset":true}).regex(videosReviewResponsePlaybackExpiresAtRegExp)
-}).nullable()
-})
-
-/**
- * @summary El equipo con su vídeo de presentación. La clientela solo ve los listos y aprobados; la administración, todos.
- */
-export const videosListTeamProfilesPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const VideosListTeamProfilesParams = zod.object({
-  "centerId": zod.uuid().regex(videosListTeamProfilesPathCenterIdRegExp)
-})
-
-export const VideosListTeamProfilesHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const videosListTeamProfilesResponseMembersItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const videosListTeamProfilesResponseMembersItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const videosListTeamProfilesResponseMembersItemVideoDurationSecondsMin = -9007199254740991;
-export const videosListTeamProfilesResponseMembersItemVideoDurationSecondsMax = 9007199254740991;
-
-export const videosListTeamProfilesResponseMembersItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
-
-
-export const VideosListTeamProfilesResponse = zod.object({
-  "members": zod.array(zod.object({
-  "membershipId": zod.uuid().regex(videosListTeamProfilesResponseMembersItemMembershipIdRegExp),
-  "isMe": zod.boolean(),
-  "fullName": zod.string(),
-  "staffTitle": zod.string().nullable(),
-  "video": zod.object({
-  "id": zod.uuid().regex(videosListTeamProfilesResponseMembersItemVideoIdRegExp),
-  "title": zod.string(),
-  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
-  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
-  "reviewNote": zod.string().nullable(),
-  "durationSeconds": zod.int().min(videosListTeamProfilesResponseMembersItemVideoDurationSecondsMin).max(videosListTeamProfilesResponseMembersItemVideoDurationSecondsMax).nullable(),
-  "playback": zod.object({
-  "streamUrl": zod.string(),
-  "thumbnailUrl": zod.string(),
-  "expiresAt": zod.iso.datetime({"offset":true}).regex(videosListTeamProfilesResponseMembersItemVideoPlaybackExpiresAtRegExp)
-}).nullable()
-}).nullable()
-}))
 })
 

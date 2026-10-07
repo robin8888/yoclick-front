@@ -15,7 +15,6 @@ import type {
 
 import type {
   StartVideoUploadResponseDto,
-  TeamProfilesResponseDto,
   VideoPlanResponseDto,
   VideoResponseDto
 } from '../../model';
@@ -23,12 +22,10 @@ import type {
 import {
   getVideosGetPlanResponseMock,
   getVideosGetResponseMock,
-  getVideosListTeamProfilesResponseMock,
-  getVideosReviewResponseMock,
   getVideosStartUploadResponseMock
 } from './videos.faker.ts';
 
-export { getVideosStartUploadResponseMock, getVideosGetResponseMock, getVideosGetPlanResponseMock, getVideosReviewResponseMock, getVideosListTeamProfilesResponseMock } from './videos.faker.ts';
+export { getVideosStartUploadResponseMock, getVideosGetResponseMock, getVideosGetPlanResponseMock } from './videos.faker.ts';
 
 
 export const getVideosStartUploadMockHandler = (overrideResponse?: StartVideoUploadResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<StartVideoUploadResponseDto> | StartVideoUploadResponseDto), options?: RequestHandlerOptions) => {
@@ -76,35 +73,9 @@ export const getVideosGetPlanMockHandler = (overrideResponse?: VideoPlanResponse
       })
   }, options)
 }
-
-export const getVideosReviewMockHandler = (overrideResponse?: VideoResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<VideoResponseDto> | VideoResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/videos/:videoId/review', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getVideosReviewResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getVideosListTeamProfilesMockHandler = (overrideResponse?: TeamProfilesResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<TeamProfilesResponseDto> | TeamProfilesResponseDto), options?: RequestHandlerOptions) => {
-  return http.get('*/v1/centers/:centerId/team-profiles', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getVideosListTeamProfilesResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
 export const getVideosMock = () => [
   getVideosStartUploadMockHandler(),
   getVideosGetMockHandler(),
   getVideosDeleteMockHandler(),
-  getVideosGetPlanMockHandler(),
-  getVideosReviewMockHandler(),
-  getVideosListTeamProfilesMockHandler()
+  getVideosGetPlanMockHandler()
 ]

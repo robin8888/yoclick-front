@@ -39,12 +39,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
     entries: [
       { textKey: 'centerDetails', route: '/(admin)/center', iconName: 'edit' },
       { textKey: 'inviteClients', route: '/(admin)/invite-clients', iconName: 'qrCode' },
-      {
-        textKey: 'routines',
-        // Se tipa a mano hasta que el servidor de Expo regenere los tipos de las rutas nuevas.
-        route: '/(admin)/routines' as Href,
-        iconName: 'play',
-      },
+      { textKey: 'routines', route: '/(admin)/routines', iconName: 'play' },
       { textKey: 'importClients', route: '/(admin)/clients/import', iconName: 'file' },
       { textKey: 'brand', route: '/(admin)/(tabs)/brand', iconName: 'palette' },
       { textKey: 'services', route: '/(admin)/services', iconName: 'calendar' },

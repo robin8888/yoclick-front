@@ -6,6 +6,9 @@ const MAX_STAFF_NAME_LENGTH = 120;
 export const ANY_STAFF_CHOICE = 'any';
 
 // Los parámetros de ruta no son de fiar (deep links, restauración de navegación): se validan.
+/** El paso de servicios puede venir con quien se quiere reservar (desde su perfil): se salta el paso de elegir quién. */
+export const serviceListRouteParamsSchema = z.object({ staffMembershipId: z.uuid().optional() });
+
 export const serviceRouteParamsSchema = z.object({ serviceId: z.uuid() });
 
 /** El paso de día y hora: con `staffMembershipId` solo se ofrecen las horas de esa persona. */

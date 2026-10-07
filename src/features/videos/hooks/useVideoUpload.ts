@@ -2,10 +2,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
-import {
-  getVideosGetPlanQueryKey,
-  getVideosListTeamProfilesQueryKey,
-} from '@/shared/api/generated/endpoints/videos/videos';
+import { getTeamProfilesListQueryKey } from '@/shared/api/generated/endpoints/team-profiles/team-profiles';
+import { getVideosGetPlanQueryKey } from '@/shared/api/generated/endpoints/videos/videos';
 import type { StartVideoUploadRequestDto, VideoResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { TusUploadError } from '@/shared/lib/tus-upload/upload-with-tus';
@@ -53,7 +51,7 @@ export function useVideoUpload(purpose: StartVideoUploadRequestDto['purpose']): 
     });
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: getVideosGetPlanQueryKey(centerId) }),
-      queryClient.invalidateQueries({ queryKey: getVideosListTeamProfilesQueryKey(centerId) }),
+      queryClient.invalidateQueries({ queryKey: getTeamProfilesListQueryKey(centerId) }),
     ]);
     if (video !== null) onReady(video);
   }

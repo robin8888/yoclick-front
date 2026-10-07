@@ -14,7 +14,7 @@ import type {
 } from '../../model';
 
 
-export const getNotificationsListResponseMock = (overrideResponse: Partial<Extract<NotificationListResponseDto, object>> = {}): NotificationListResponseDto => ({unreadCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), notifications: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), kind: faker.helpers.arrayElement(['booking_created','booking_cancelled','booking_created_by_team','booking_cancelled_by_team','absence_added','booking_affected_by_absence','routine_assigned','staff_video_submitted','staff_video_reviewed','privacy_request_received','privacy_request_resolved'] as const), data: {
+export const getNotificationsListResponseMock = (overrideResponse: Partial<Extract<NotificationListResponseDto, object>> = {}): NotificationListResponseDto => ({unreadCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), notifications: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), kind: faker.helpers.arrayElement(['booking_created','booking_cancelled','booking_created_by_team','booking_cancelled_by_team','absence_added','booking_affected_by_absence','routine_assigned','staff_video_submitted','staff_video_reviewed','privacy_request_received','privacy_request_resolved','staff_profile_submitted','staff_profile_reviewed','staff_review_received'] as const), data: {
         [faker.string.alphanumeric(5)]: faker.string.alpha({length: {min: 10, max: 20}})
       }, bookingId: faker.helpers.arrayElement([faker.string.uuid(), null]), isRead: faker.datatype.boolean(), createdAt: faker.date.past().toISOString().slice(0, 19) + 'Z'})), ...overrideResponse})
 

@@ -1,4 +1,4 @@
-import { useRouter, type Href } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import { useActiveCenterSummary } from '@/features/auth';
@@ -31,13 +31,13 @@ function StaffProfileLinks({
         label={capitalize(routineWordPlural)}
         isFullWidth
         onPress={() => {
-          router.push('/(staff)/routines' as Href);
+          router.push('/(staff)/routines');
         }}
       />
       <Button
         variant="outline"
         leadingIconName="play"
-        label={i18n.t('videos.profile.title')}
+        label={i18n.t('teamProfiles.editor.title')}
         isFullWidth
         onPress={() => {
           router.push('/(staff)/public-profile');

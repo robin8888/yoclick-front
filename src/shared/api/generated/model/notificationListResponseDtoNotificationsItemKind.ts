@@ -21,4 +21,7 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   staff_video_reviewed: 'staff_video_reviewed',
   privacy_request_received: 'privacy_request_received',
   privacy_request_resolved: 'privacy_request_resolved',
+  staff_profile_submitted: 'staff_profile_submitted',
+  staff_profile_reviewed: 'staff_profile_reviewed',
+  staff_review_received: 'staff_review_received',
 } as const;

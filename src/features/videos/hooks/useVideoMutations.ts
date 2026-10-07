@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
+import { getTeamProfilesListQueryKey } from '@/shared/api/generated/endpoints/team-profiles/team-profiles';
 import {
   getVideosGetPlanQueryKey,
-  getVideosListTeamProfilesQueryKey,
   videosDelete,
-  videosReview,
 } from '@/shared/api/generated/endpoints/videos/videos';
 
 import { useActiveCenterId } from './useActiveCenterId';
@@ -30,42 +29,13 @@ export function useDeleteVideo(): VideoMutation<string> {
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: getVideosGetPlanQueryKey(centerId) }),
-        queryClient.invalidateQueries({ queryKey: getVideosListTeamProfilesQueryKey(centerId) }),
+        queryClient.invalidateQueries({ queryKey: getTeamProfilesListQueryKey(centerId) }),
       ]),
   });
 
   return {
     run: (videoId, onDone) => {
       mutation.mutate(videoId, successOptions(onDone));
-    },
-    isRunning: mutation.isPending,
-    errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
-  };
-}
-
-export interface VideoReviewDecision {
-  videoId: string;
-  isApproved: boolean;
-  note?: string;
-}
-
-/** Aprobar o pedir cambios en el vídeo de presentación de alguien del equipo. */
-export function useReviewVideo(): VideoMutation<VideoReviewDecision> {
-  const centerId = useActiveCenterId();
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: ({ videoId, isApproved, note }: VideoReviewDecision) =>
-      videosReview(centerId, videoId, {
-        decision: isApproved ? 'approve' : 'request_changes',
-        ...(note !== undefined && { note }),
-      }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: getVideosListTeamProfilesQueryKey(centerId) }),
-  });
-
-  return {
-    run: (decision, onDone) => {
-      mutation.mutate(decision, successOptions(onDone));
     },
     isRunning: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,

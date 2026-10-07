@@ -1,4 +1,4 @@
-import { TeamProfilesAdminScreen } from '@/features/videos';
+import { TeamProfilesAdminScreen } from '@/features/team-profiles';
 
 export default function AdminTeamProfilesRoute(): React.JSX.Element {
   return <TeamProfilesAdminScreen />;

@@ -32,6 +32,9 @@ const TITLE_KEYS = {
   staff_video_reviewed: 'notifications.staffVideoReviewedTitle',
   privacy_request_received: 'notifications.privacyRequestReceivedTitle',
   privacy_request_resolved: 'notifications.privacyRequestResolvedTitle',
+  staff_profile_submitted: 'notifications.staffProfileSubmittedTitle',
+  staff_profile_reviewed: 'notifications.staffProfileReviewedTitle',
+  staff_review_received: 'notifications.staffReviewReceivedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -46,6 +49,9 @@ const DESCRIPTION_KEYS = {
   staff_video_reviewed: 'notifications.staffVideoReviewedDescription',
   privacy_request_received: 'notifications.privacyRequestReceivedDescription',
   privacy_request_resolved: 'notifications.privacyRequestCompletedDescription',
+  staff_profile_submitted: 'notifications.staffProfileSubmittedDescription',
+  staff_profile_reviewed: 'notifications.staffProfileApprovedDescription',
+  staff_review_received: 'notifications.staffReviewReceivedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -62,15 +68,20 @@ function describePrivacyRight(requestKind: string | undefined): string {
   return isKnownRight ? i18n.t(PRIVACY_RIGHT_KEYS[requestKind as PrivacyRightKind]) : '';
 }
 
-/** Una solicitud rechazada tiene su propia frase: el motivo se lee dentro de la app. */
+/** Una solicitud rechazada o un perfil con cambios pedidos tienen su propia frase: el motivo se lee dentro de la app. */
 function resolveDescriptionKey(
   kind: NotificationItem['kind'],
   noticeData: NotificationItem['data'],
 ):
   | (typeof DESCRIPTION_KEYS)[NotificationItem['kind']]
-  | 'notifications.privacyRequestRejectedDescription' {
+  | 'notifications.privacyRequestRejectedDescription'
+  | 'notifications.staffProfileChangesDescription' {
   const isRejected = kind === 'privacy_request_resolved' && noticeData.outcome === 'rejected';
-  return isRejected ? 'notifications.privacyRequestRejectedDescription' : DESCRIPTION_KEYS[kind];
+  if (isRejected) return 'notifications.privacyRequestRejectedDescription';
+  const hasChangesRequested =
+    kind === 'staff_profile_reviewed' && noticeData.outcome === 'changes_requested';
+  if (hasChangesRequested) return 'notifications.staffProfileChangesDescription';
+  return DESCRIPTION_KEYS[kind];
 }
 
 /** Los avisos de cancelación llevan un icono de aviso en lugar del de calendario. */
@@ -98,6 +109,35 @@ function describeAbsence(details: NotificationItem['data']): string {
   return `${sentence} ${affected}`;
 }
 
+interface NoticeTexts {
+  clientName: string;
+  serviceName: string;
+  staffName: string;
+  actorName: string;
+  routineName: string;
+  uploaderName: string;
+  right: string;
+  authorLabel: string;
+  rating: string;
+  when: string;
+}
+
+function buildNoticeTexts(notification: NotificationItem, timeZone: string): NoticeTexts {
+  const noticeData = notification.data;
+  return {
+    clientName: noticeData.clientName ?? '',
+    serviceName: noticeData.serviceName ?? '',
+    staffName: noticeData.staffName ?? '',
+    actorName: noticeData.actorName ?? '',
+    routineName: noticeData.routineName ?? '',
+    uploaderName: noticeData.uploaderName ?? '',
+    right: describePrivacyRight(noticeData.requestKind),
+    authorLabel: noticeData.authorLabel ?? '',
+    rating: noticeData.rating ?? '',
+    when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
+  };
+}
+
 /**
  * El texto de un aviso. El servidor solo manda los datos (quién, qué, cuándo): la frase se escribe
  * aquí para que lleve el vocabulario de la app y se pueda traducir.
@@ -110,17 +150,8 @@ export function describeNotification(
   const title = i18n.t(TITLE_KEYS[kind]);
   if (kind === 'absence_added') return { title, description: describeAbsence(noticeData) };
 
-  const texts = {
-    clientName: noticeData.clientName ?? '',
-    serviceName: noticeData.serviceName ?? '',
-    staffName: noticeData.staffName ?? '',
-    actorName: noticeData.actorName ?? '',
-    routineName: noticeData.routineName ?? '',
-    uploaderName: noticeData.uploaderName ?? '',
-    right: describePrivacyRight(noticeData.requestKind),
-    when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
-  };
-  return { title, description: i18n.t(resolveDescriptionKey(kind, noticeData), texts) };
+  const texts = buildNoticeTexts(notification, timeZone);
+  return { title, description: i18n.t(resolveDescriptionKey(kind, noticeData), { ...texts }) };
 }
 
 /** «Ahora», «hace 5 min», «hace 3 h» o la fecha corta para lo que tiene más de un día. */

@@ -99,6 +99,34 @@ describe('describeNotification', () => {
       description:
         'Han rechazado tu solicitud: Rectificación de datos. Abre la app para ver el motivo.',
     },
+    {
+      kind: 'staff_profile_submitted',
+      noticeData: { staffName: 'Marta Gil', actorName: 'Marta Gil' },
+      title: 'Hay un perfil por revisar',
+      description: 'Marta Gil ha enviado su perfil profesional y espera tu revisión.',
+    },
+    {
+      kind: 'staff_profile_reviewed',
+      noticeData: { staffName: 'Marta Gil', actorName: 'Carlos Núñez', outcome: 'approved' },
+      title: 'Han revisado tu perfil',
+      description: 'Carlos Núñez ha publicado tu perfil profesional.',
+    },
+    {
+      kind: 'staff_profile_reviewed',
+      noticeData: {
+        staffName: 'Marta Gil',
+        actorName: 'Carlos Núñez',
+        outcome: 'changes_requested',
+      },
+      title: 'Han revisado tu perfil',
+      description: 'Carlos Núñez te pide cambios en tu perfil profesional. Ábrelo para verlos.',
+    },
+    {
+      kind: 'staff_review_received',
+      noticeData: { authorLabel: 'Ana P.', rating: '5' },
+      title: 'Tienes una opinión nueva',
+      description: 'Ana P. te ha puntuado con 5 de 5.',
+    },
   ] as const)('writes the notice of $kind', ({ kind, noticeData, title, description }) => {
     expect(describeNotification(buildNotification(kind, noticeData), TIME_ZONE)).toEqual({
       title,

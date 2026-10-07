@@ -86,6 +86,34 @@ describe('booking flow', () => {
       });
     });
 
+    it('skips the instructor step when it comes from the profile of one of them', async () => {
+      setRouteParams({ staffMembershipId: STAFF_MEMBERSHIP_ID });
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookServiceScreen />);
+
+      fireEvent.press(await screen.findByRole('radio', { name: /Entrenamiento personal/ }));
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+
+      expect(getMockRouter().push).toHaveBeenCalledWith({
+        pathname: '/(client)/book/slot',
+        params: { serviceId: SERVICE_ID, staffMembershipId: STAFF_MEMBERSHIP_ID },
+      });
+    });
+
+    it('ignores an instructor that is not a valid id', async () => {
+      setRouteParams({ staffMembershipId: 'marta' });
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookServiceScreen />);
+
+      fireEvent.press(await screen.findByRole('radio', { name: /Entrenamiento personal/ }));
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+
+      expect(getMockRouter().push).toHaveBeenCalledWith({
+        pathname: '/(client)/book/staff',
+        params: { serviceId: SERVICE_ID },
+      });
+    });
+
     it('explains there are no services yet and offers a retry', async () => {
       mockApi({ [SERVICES_PATH]: { services: [] } });
       renderScreen(<BookServiceScreen />);
