@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { View } from 'react-native';
 
 import { useActiveCenterSummary } from '@/features/auth';
@@ -17,12 +17,42 @@ function capitalize(word: string): string {
   return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
 }
 
+/** Los accesos del perfil del equipo: sus rutinas (o prácticas, tareas…) y su disponibilidad. */
+function StaffProfileLinks({
+  routineWordPlural,
+}: Readonly<{ routineWordPlural: string }>): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <>
+      <Button
+        variant="outline"
+        leadingIconName="play"
+        label={capitalize(routineWordPlural)}
+        isFullWidth
+        onPress={() => {
+          router.push('/(staff)/routines' as Href);
+        }}
+      />
+      <Button
+        variant="outline"
+        leadingIconName="calendar"
+        label={i18n.t('session.profile.availabilityAction')}
+        isFullWidth
+        onPress={() => {
+          router.push('/(staff)/availability');
+        }}
+      />
+    </>
+  );
+}
+
 /** Prototipo `iagenda` › Perfil: quién eres, en qué centro y cómo cerrar la sesión. */
 export function StaffProfileScreen(): React.JSX.Element {
   const user = useSessionStore((state) => state.user);
   const center = useActiveCenterSummary();
-  const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.singular;
-  const router = useRouter();
+  const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
+  const staffWord = vocabulary.staff.singular;
   const { signOut, isSigningOut } = useSignOutFlow();
 
   return (
@@ -38,15 +68,7 @@ export function StaffProfileScreen(): React.JSX.Element {
           })}
         </Text>
       </View>
-      <Button
-        variant="outline"
-        leadingIconName="calendar"
-        label={i18n.t('session.profile.availabilityAction')}
-        isFullWidth
-        onPress={() => {
-          router.push('/(staff)/availability');
-        }}
-      />
+      <StaffProfileLinks routineWordPlural={vocabulary.routine.plural} />
       <Button
         variant="outline"
         leadingIconName="logOut"

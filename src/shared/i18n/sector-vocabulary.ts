@@ -32,6 +32,8 @@ export interface SectorVocabulary {
   readonly session: WordForms;
   /** Rótulo de la pestaña de contenido: Entrenar, Practicar… */
   readonly contentTabLabel: string;
+  /** Lo que el equipo prepara para practicar: rutina, secuencia, tarea… */
+  readonly routine: WordForms;
   readonly levels: readonly [string, string, string];
 }
 
@@ -46,6 +48,11 @@ const CLIENT: WordForms = { singular: 'cliente', plural: 'clientes' };
 const STUDENT: WordForms = { singular: 'alumno', plural: 'alumnos' };
 const SESSION: WordForms = { singular: 'sesión', plural: 'sesiones' };
 const CLASS: WordForms = { singular: 'clase', plural: 'clases' };
+const ROUTINE: WordForms = { singular: 'rutina', plural: 'rutinas' };
+const PRACTICE: WordForms = { singular: 'práctica', plural: 'prácticas' };
+const SEQUENCE: WordForms = { singular: 'secuencia', plural: 'secuencias' };
+const TASK: WordForms = { singular: 'tarea', plural: 'tareas' };
+const PLAN: WordForms = { singular: 'plan', plural: 'planes' };
 
 export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
   gym: {
@@ -54,6 +61,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: CLIENT,
     session: SESSION,
     contentTabLabel: 'Entrenar',
+    routine: ROUTINE,
     levels: FITNESS_LEVELS,
   },
   estudio: {
@@ -62,6 +70,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: CLIENT,
     session: SESSION,
     contentTabLabel: 'Entrenar',
+    routine: ROUTINE,
     levels: FITNESS_LEVELS,
   },
   readap: {
@@ -70,6 +79,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: CLIENT,
     session: SESSION,
     contentTabLabel: 'Entrenar',
+    routine: ROUTINE,
     levels: FITNESS_LEVELS,
   },
   box: {
@@ -78,6 +88,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: CLIENT,
     session: SESSION,
     contentTabLabel: 'Entrenar',
+    routine: ROUTINE,
     levels: FITNESS_LEVELS,
   },
   yoga: {
@@ -86,6 +97,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Practicar',
+    routine: SEQUENCE,
     levels: PRACTICE_LEVELS,
   },
   academia: {
@@ -94,6 +106,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Estudiar',
+    routine: TASK,
     levels: BASIC_LEVELS,
   },
   baile: {
@@ -102,6 +115,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Practicar',
+    routine: PRACTICE,
     levels: PRACTICE_LEVELS,
   },
   marciales: {
@@ -110,6 +124,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Practicar',
+    routine: PLAN,
     levels: ['Principiante', 'Intermedio', 'Avanzado'],
   },
   musica: {
@@ -118,6 +133,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Practicar',
+    routine: PRACTICE,
     levels: PRACTICE_LEVELS,
   },
   cocina: {
@@ -126,6 +142,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: STUDENT,
     session: CLASS,
     contentTabLabel: 'Aprender',
+    routine: PRACTICE,
     levels: PRACTICE_LEVELS,
   },
   otro: {
@@ -134,6 +151,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     client: CLIENT,
     session: CLASS,
     contentTabLabel: 'Contenido',
+    routine: PRACTICE,
     levels: BASIC_LEVELS,
   },
 };

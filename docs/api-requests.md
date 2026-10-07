@@ -123,3 +123,13 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 3 | **Cambiar la hora de una cita** (reprogramar) por parte del centro, el instructor o el cliente: no hay endpoint; hoy se cancela y se vuelve a reservar, con sus dos avisos. | Cancelar desde la agenda y poner la cita de nuevo. |
 | 4 | **Credenciales de los avisos**: iOS necesita la clave de push de Apple (EAS la crea al compilar con `eas credentials`) y Android la configuración de Firebase (FCM). En producción `PUSH_PROVIDER=expo` es obligatorio; en desarrollo `console` no entrega nada. | Sin esas credenciales no llegan avisos al móvil, pero se ven dentro de la app. |
 | 5 | **Aviso al importar clientes** y **correos**: lo que sea de avisar a clientes, equipo o administración va por push; el correo queda solo para cuenta (verificación, recuperación). | — |
+
+## Rutinas, prácticas, secuencias y tareas (`aroutines`)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Rutinas**~~ Resuelto (7 oct 2026): `GET /v1/centers/{id}/exercise-library` (ejercicios del tipo de centro, sacados del prototipo), `GET`/`POST /v1/centers/{id}/routines`, `GET`/`DELETE …/routines/{routineId}` (se archiva), `POST …/routines/{routineId}/assignments`, `DELETE …/assignments/{assignmentId}` y `GET /v1/centers/{id}/my-routines` para el cliente. Se asigna a una persona o a un grupo y quien la recibe lo sabe por push. Migraciones `20261012090000_add_routines` y `20261014090000_add_routine_assigned_notification`. | Administración y equipo (desde su perfil) crean desde la biblioteca o con ejercicios propios y asignan; el cliente lo ve en su pestaña de práctica. La palabra cambia por sector (rutina, práctica, secuencia, tarea, plan). |
+| 2 | **Vídeo de apoyo por ejercicio** («con vídeo de apoyo» del prototipo) y **contenidos** (`acontent`, `media`): hace falta almacenamiento de vídeo. | Los ejercicios solo llevan nombre, categoría y lo que hay que hacer (texto libre). |
+| 3 | **Marcar un ejercicio como hecho / progreso** del cliente y **«Practicar» con detalle de ejercicio**: no hay modelo de seguimiento. | El cliente solo consulta lo asignado. |
+| 4 | **Editar una rutina** ya creada: solo se crea, se asigna y se archiva. | Archivar y crear otra. |
+| 5 | **Ejercicios propios reutilizables**: los que escribe el centro viven solo en esa rutina. | Se vuelven a escribir. |

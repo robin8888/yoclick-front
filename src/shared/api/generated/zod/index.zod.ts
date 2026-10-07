@@ -13,6 +13,7 @@ export * from './onboarding/onboarding.zod.ts';
 export * from './privacy/privacy.zod.ts';
 export * from './reports/reports.zod.ts';
 export * from './rooms/rooms.zod.ts';
+export * from './routines/routines.zod.ts';
 export * from './scheduling/scheduling.zod.ts';
 export * from './services/services.zod.ts';
 export * from './team/team.zod.ts';

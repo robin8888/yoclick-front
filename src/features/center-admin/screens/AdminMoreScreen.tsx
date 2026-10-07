@@ -40,7 +40,8 @@ function DarkThemeRow(): React.JSX.Element {
 export function AdminMoreScreen(): React.JSX.Element {
   const router = useRouter();
   const { signOut, isSigningOut } = useSignOut();
-  const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
+  const { client, routine } = getSectorVocabulary(useActiveCenterSectorId());
+  const words = { clientWord: client.plural, routineWordPlural: routine.plural };
 
   return (
     <ScreenTemplate title={i18n.t('centerAdmin.more.title')} isLoading={isSigningOut}>
@@ -53,7 +54,7 @@ export function AdminMoreScreen(): React.JSX.Element {
             <ListItem
               key={entry.textKey}
               leadingIconName={entry.iconName}
-              title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, { clientWord })}
+              title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, words)}
               subtitle={i18n.t(`centerAdmin.more.${entry.textKey}Subtitle`)}
               onPress={() => {
                 router.push(entry.route);

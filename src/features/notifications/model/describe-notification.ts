@@ -27,6 +27,7 @@ const TITLE_KEYS = {
   booking_cancelled_by_team: 'notifications.bookingCancelledByTeamTitle',
   absence_added: 'notifications.absenceAddedTitle',
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceTitle',
+  routine_assigned: 'notifications.routineAssignedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 /** Los avisos de cancelación llevan un icono de aviso en lugar del de calendario. */
