@@ -12,6 +12,7 @@ export type MoreMenuTextKey =
   | 'reports'
   | 'subscription'
   | 'inviteTeam'
+  | 'myProfile'
   | 'teamProfiles'
   | 'records'
   | 'security'
@@ -56,6 +57,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
     id: 'team',
     entries: [
       { textKey: 'inviteTeam', route: '/(admin)/invite-team', iconName: 'users' },
+      { textKey: 'myProfile', route: '/(admin)/public-profile', iconName: 'user' },
       { textKey: 'teamProfiles', route: '/(admin)/team/profiles', iconName: 'play' },
       { textKey: 'records', route: '/(admin)/(tabs)/records', iconName: 'clock' },
     ],

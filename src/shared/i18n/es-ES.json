@@ -1000,7 +1000,9 @@
       "securityTitle": "Seguridad",
       "securitySubtitle": "Verificación en dos pasos y actividad",
       "privacyTitle": "Privacidad y legal",
-      "privacySubtitle": "Consentimientos de tus {{clientWord}}"
+      "privacySubtitle": "Consentimientos de tus {{clientWord}}",
+      "myProfileTitle": "Mi perfil profesional",
+      "myProfileSubtitle": "Tu vídeo, biografía y titulaciones"
     },
     "importClients": {
       "title": "Importar {{clientWord}}",
