@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { ConfirmSheet } from '@/ui/organisms/ConfirmSheet';
+
+const CENTERED_STYLE = { alignItems: 'center' } as const;
 
 interface RemoveGroupControlProps {
   groupName: string;
@@ -20,14 +23,16 @@ export function RemoveGroupControl({
 
   return (
     <>
-      <Button
-        variant="danger"
-        leadingIconName="trash"
-        label={i18n.t('clients.groupDetail.removeAction')}
-        onPress={() => {
-          setIsSheetVisible(true);
-        }}
-      />
+      <View style={CENTERED_STYLE}>
+        <Button
+          variant="primary"
+          leadingIconName="trash"
+          label={i18n.t('clients.groupDetail.removeAction')}
+          onPress={() => {
+            setIsSheetVisible(true);
+          }}
+        />
+      </View>
       <ConfirmSheet
         isVisible={isSheetVisible}
         title={i18n.t('clients.groupDetail.removeTitle')}

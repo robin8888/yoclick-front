@@ -3,14 +3,14 @@ import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
-import { CHOICE_CARD_LIST_STYLE, ChoiceCard } from '@/ui/molecules/ChoiceCard';
+import { OptionCard } from '@/ui/molecules/OptionCard';
 
 import {
   CENTER_TIME_ZONES,
   SECTOR_CHOICE_IDS,
   type CenterDetailsFormValues,
 } from '../model/center-details-form';
-import { CHOICE_FIELD_STYLE } from './CenterDetailsChoiceFields.styles';
+import { CHOICE_FIELD_STYLE, CHOICE_LIST_STYLE } from './CenterDetailsChoiceFields.styles';
 
 interface ChoiceFieldProps {
   control: Control<CenterDetailsFormValues>;
@@ -25,12 +25,11 @@ export function SectorChoiceField({ control }: Readonly<ChoiceFieldProps>): Reac
         control={control}
         name="sectorId"
         render={({ field }) => (
-          <View style={CHOICE_CARD_LIST_STYLE}>
+          <View style={CHOICE_LIST_STYLE}>
             {SECTOR_CHOICE_IDS.map((sectorId) => (
-              <ChoiceCard
+              <OptionCard
                 key={sectorId}
-                indicator="radio"
-                label={i18n.t(`onboarding.sectors.${sectorId}`)}
+                title={i18n.t(`onboarding.sectors.${sectorId}`)}
                 isSelected={field.value === sectorId}
                 onPress={() => {
                   field.onChange(sectorId);
@@ -56,12 +55,11 @@ export function TimeZoneChoiceField({ control }: Readonly<ChoiceFieldProps>): Re
         control={control}
         name="timezone"
         render={({ field }) => (
-          <View style={CHOICE_CARD_LIST_STYLE}>
+          <View style={CHOICE_LIST_STYLE}>
             {CENTER_TIME_ZONES.map((timezone) => (
-              <ChoiceCard
+              <OptionCard
                 key={timezone}
-                indicator="radio"
-                label={i18n.t(`centerAdmin.details.timezones.${timezone}`)}
+                title={i18n.t(`centerAdmin.details.timezones.${timezone}`)}
                 isSelected={field.value === timezone}
                 onPress={() => {
                   field.onChange(timezone);
