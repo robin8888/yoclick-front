@@ -12,4 +12,8 @@ export type NotificationListResponseDtoNotificationsItemKind = typeof Notificati
 export const NotificationListResponseDtoNotificationsItemKind = {
   booking_created: 'booking_created',
   booking_cancelled: 'booking_cancelled',
+  booking_created_by_team: 'booking_created_by_team',
+  booking_cancelled_by_team: 'booking_cancelled_by_team',
+  absence_added: 'absence_added',
+  booking_affected_by_absence: 'booking_affected_by_absence',
 } as const;

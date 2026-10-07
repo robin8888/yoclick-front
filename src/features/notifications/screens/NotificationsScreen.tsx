@@ -9,9 +9,14 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { NotificationRow } from '../components/NotificationRow';
+import { PushPermissionCard } from '../components/PushPermissionCard';
 import { useMarkNotificationsRead } from '../hooks/useMarkNotificationsRead';
 import { useNotifications } from '../hooks/useNotifications';
-import { describeNotification, formatNotificationAge } from '../model/describe-notification';
+import {
+  describeNotification,
+  formatNotificationAge,
+  isCancellationNotification,
+} from '../model/describe-notification';
 
 interface NotificationListProps {
   notifications: readonly NotificationListResponseDtoNotificationsItem[];
@@ -36,7 +41,7 @@ function NotificationList({
             description={text.description}
             ageLabel={formatNotificationAge(notification.createdAt, now, DEFAULT_CENTER_TIME_ZONE)}
             isRead={notification.isRead}
-            isCancellation={notification.kind === 'booking_cancelled'}
+            isCancellation={isCancellationNotification(notification.kind)}
             onPress={() => {
               if (!notification.isRead) onNoticeOpen(notification.id);
             }}
@@ -55,6 +60,7 @@ export function NotificationsScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate title={i18n.t('notifications.title')}>
+      <PushPermissionCard />
       {(notifications.data?.unreadCount ?? 0) > 0 ? (
         <Button
           variant="ghost"

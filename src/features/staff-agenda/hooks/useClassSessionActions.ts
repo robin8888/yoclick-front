@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
 import {
+  agendaCancelBooking,
   bookingsEnd,
   bookingsStart,
   getAgendaGetDayQueryKey,
@@ -11,8 +12,11 @@ import { useSessionStore } from '@/shared/auth/session-store';
 interface ClassSessionActions {
   startClass: () => void;
   endClass: (onEnded: () => void) => void;
+  /** Cancela la cita; el cliente recibe un aviso en su móvil. */
+  cancelBooking: (onCancelled: () => void) => void;
   isStarting: boolean;
   isEnding: boolean;
+  isCancelling: boolean;
   actionErrorMessage: string | null;
 }
 
@@ -25,6 +29,9 @@ export function useClassSessionActions(bookingId: string, isoDate: string): Clas
   const queryClient = useQueryClient();
   const startMutation = useMutation({ mutationFn: () => bookingsStart(centerId, bookingId) });
   const endMutation = useMutation({ mutationFn: () => bookingsEnd(centerId, bookingId) });
+  const cancelMutation = useMutation({
+    mutationFn: () => agendaCancelBooking(centerId, bookingId),
+  });
 
   function refreshAgenda(): Promise<void> {
     return queryClient.invalidateQueries({
@@ -32,7 +39,7 @@ export function useClassSessionActions(bookingId: string, isoDate: string): Clas
     });
   }
 
-  const failure = startMutation.error ?? endMutation.error;
+  const failure = startMutation.error ?? endMutation.error ?? cancelMutation.error;
   return {
     startClass: () => {
       startMutation.mutate(undefined, { onSuccess: () => void refreshAgenda() });
@@ -44,8 +51,16 @@ export function useClassSessionActions(bookingId: string, isoDate: string): Clas
         },
       });
     },
+    cancelBooking: (onCancelled) => {
+      cancelMutation.mutate(undefined, {
+        onSuccess: () => {
+          void refreshAgenda().then(onCancelled);
+        },
+      });
+    },
     isStarting: startMutation.isPending,
     isEnding: endMutation.isPending,
+    isCancelling: cancelMutation.isPending,
     actionErrorMessage: failure === null ? null : getApiErrorMessage(failure),
   };
 }

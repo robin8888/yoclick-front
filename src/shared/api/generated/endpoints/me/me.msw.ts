@@ -151,6 +151,26 @@ export const getMeExportDataMockHandler = (overrideResponse?: PersonalDataExport
       })
   }, options)
 }
+
+export const getMeRegisterPushDeviceMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.put('*/v1/me/push-token', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
+export const getMeUnregisterPushDeviceMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/push-token/unregister', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getMeMock = () => [
   getMeListSessionsMockHandler(),
   getMeRevokeSessionMockHandler(),
@@ -161,5 +181,7 @@ export const getMeMock = () => [
   getMeGetConsentsMockHandler(),
   getMeSetConsentMockHandler(),
   getMeChangePasswordMockHandler(),
-  getMeExportDataMockHandler()
+  getMeExportDataMockHandler(),
+  getMeRegisterPushDeviceMockHandler(),
+  getMeUnregisterPushDeviceMockHandler()
 ]

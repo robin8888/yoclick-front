@@ -20,6 +20,7 @@ const AGENDA_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/agenda`;
 const RECORDS_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/session-records`;
 const START_PATH = `POST /v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/start`;
 const END_PATH = `POST /v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/end`;
+const CANCEL_PATH = `/v1/centers/${NORTE_CENTER_ID}/agenda/bookings/${BOOKING_ID}/cancel`;
 
 function signInToCenter(): void {
   act(() => {
@@ -209,6 +210,47 @@ describe('ClassSessionScreen', () => {
         findApiCall('POST', `/v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/end`),
       ).toBeDefined();
     });
+  });
+
+  it('asks before cancelling an appointment and tells the client will be notified', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]),
+      [`POST ${CANCEL_PATH}`]: buildBooking({ status: 'cancelled' }),
+    });
+    renderScreen(<ClassSessionScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Cancelar cita' }));
+
+    expect(await screen.findByText('¿Cancelar esta cita?')).toBeOnTheScreen();
+    expect(screen.getByText(/Avisaremos a Lucía Torres en su móvil/)).toBeOnTheScreen();
+    expect(findApiCall('POST', CANCEL_PATH)).toBeUndefined();
+    fireEvent.press(screen.getByRole('button', { name: 'Sí, cancelar cita' }));
+    await waitFor(() => {
+      expect(findApiCall('POST', CANCEL_PATH)).toBeDefined();
+    });
+  });
+
+  it('keeps the appointment when the person changes their mind', async () => {
+    mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]) });
+    renderScreen(<ClassSessionScreen />);
+    fireEvent.press(await screen.findByRole('button', { name: 'Cancelar cita' }));
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Mantener la cita' }));
+
+    expect(findApiCall('POST', CANCEL_PATH)).toBeUndefined();
+  });
+
+  it('does not offer to cancel a class that has already started', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([
+        buildAgendaEntry(-10, { startedAt: new Date(Date.now() - 600_000).toISOString() }),
+      ]),
+    });
+    renderScreen(<ClassSessionScreen />);
+
+    await screen.findByRole('button', { name: 'Terminar clase' });
+
+    expect(screen.queryByRole('button', { name: 'Cancelar cita' })).toBeNull();
   });
 
   it('shows previous versus real duration once the class is finished', async () => {

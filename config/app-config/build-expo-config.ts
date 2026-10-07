@@ -82,6 +82,8 @@ function buildPlugins(
       },
     ],
     ['expo-build-properties', { android: { usesCleartextTraffic: false } }],
+    // Avisos push de citas y ausencias: el permiso se pide en el momento de usarlos, con explicación.
+    'expo-notifications',
     // Solo se escanean QR: sin micrófono, ni su permiso en iOS ni RECORD_AUDIO en Android (SEC-22).
     [
       'expo-camera',

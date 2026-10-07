@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { getSessionServices } from './default-session-services';
 import { useSessionStore } from './session-store';
-import { runSignOutCleanups } from './sign-out-cleanup';
+import { runPreSignOutTasks, runSignOutCleanups } from './sign-out-cleanup';
 
 export interface SignOutFlow {
   isSignedIn: boolean;
@@ -19,8 +19,7 @@ interface SignOutFlowOptions {
 
 /**
  * Cierre de sesión completo (CLAUDE.md › Seguridad): token, caché de Query, estado de cada módulo,
- * caché de imágenes y vuelta a la raíz. El push token se desregistrará cuando exista el registro
- * de notificaciones.
+ * caché de imágenes y vuelta a la raíz. El móvil se da de baja de los avisos push antes de cerrar.
  */
 export function useSignOutFlow({ onSignedOut }: SignOutFlowOptions = {}): SignOutFlow {
   const router = useRouter();
@@ -29,8 +28,8 @@ export function useSignOutFlow({ onSignedOut }: SignOutFlowOptions = {}): SignOu
 
   function signOut(): void {
     setIsSigningOut(true);
-    void getSessionServices()
-      .signOut()
+    void runPreSignOutTasks()
+      .then(() => getSessionServices().signOut())
       .then(() => {
         runSignOutCleanups();
         onSignedOut?.();

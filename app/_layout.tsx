@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 
 import { SessionBootstrap } from '@/features/auth';
 import { AppThemeProvider } from '@/features/join';
+import { PushNotificationsSetup } from '@/features/notifications';
 import { queryClient } from '@/shared/api/query-client';
 import { BackActionProvider, useAppFonts } from '@/shared/theme';
 
@@ -25,6 +26,7 @@ export default function RootLayout(): React.JSX.Element | null {
       <AppThemeProvider>
         <SessionBootstrap>
           <BackActionProvider>
+            <PushNotificationsSetup />
             <Stack screenOptions={{ headerShown: false }} />
           </BackActionProvider>
         </SessionBootstrap>

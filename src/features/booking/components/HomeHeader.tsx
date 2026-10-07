@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { NotificationBell } from '@/features/notifications';
 import { useTheme } from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Text } from '@/ui/atoms/Text';
@@ -30,6 +31,7 @@ export function HomeHeader({
           {greeting}
         </Text>
       </View>
+      <NotificationBell href="/(client)/notifications" />
       <Avatar name={fullName} size="md" />
     </View>
   );

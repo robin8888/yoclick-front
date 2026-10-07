@@ -113,3 +113,13 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | # | Falta | Qué hace la app mientras tanto |
 |---|---|---|
 | 1 | **Que los permisos extra tengan efecto**: la API guarda `permissions` (`health:read`, `clients:manage`, `services:manage`, `agenda:manage`, `payments:view`, `reports:view`) y acepta cambiarlos, pero ninguna ruta los comprueba: solo mandan los roles. Hace falta decidir qué ruta exige cada permiso y añadir un guard antes de ofrecer interruptores en la app (si no, parecerían conceder algo que no concede). | La ficha del equipo cambia solo el rol (administración o quien da las sesiones) y el cargo. |
+
+## Avisos push (todo aviso a clientes, equipo y administración va por push)
+
+| # | Falta | Qué hace la app mientras tanto |
+|---|---|---|
+| 1 | ~~**Avisos push**~~ Resuelto (7 oct 2026): `PUT /v1/me/push-token` y `POST /v1/me/push-token/unregister` registran y dan de baja el móvil; la API envía los avisos por el servicio de Expo **después** de confirmar la acción (nunca la rompe y reintenta si falla). El texto del push es genérico (sin nombres, horas ni servicios): el detalle solo se ve dentro de la app. Migración `20261013090000_add_push_devices`. | La app pide el permiso con una tarjeta que explica para qué sirve, registra el móvil, lo da de baja al cerrar sesión y abre los avisos al tocar uno. |
+| 2 | ~~**Quién recibe qué**~~ Resuelto: el cliente que reserva o cancela avisa a la persona que da la cita y a la administración; si el cambio lo hace el centro o el instructor (`POST /v1/centers/{id}/agenda/bookings/{bookingId}/cancel`, nuevo; o poner una cita desde la agenda), se avisa al cliente; una ausencia avisa a la administración, a la persona ausente (si no la anotó ella) y a cada cliente con una cita esos días. Quien hace el cambio no recibe el aviso. | Los avisos también se ven en la campana (nueva para el cliente). |
+| 3 | **Cambiar la hora de una cita** (reprogramar) por parte del centro, el instructor o el cliente: no hay endpoint; hoy se cancela y se vuelve a reservar, con sus dos avisos. | Cancelar desde la agenda y poner la cita de nuevo. |
+| 4 | **Credenciales de los avisos**: iOS necesita la clave de push de Apple (EAS la crea al compilar con `eas credentials`) y Android la configuración de Firebase (FCM). En producción `PUSH_PROVIDER=expo` es obligatorio; en desarrollo `console` no entrega nada. | Sin esas credenciales no llegan avisos al móvil, pero se ven dentro de la app. |
+| 5 | **Aviso al importar clientes** y **correos**: lo que sea de avisar a clientes, equipo o administración va por push; el correo queda solo para cuenta (verificación, recuperación). | — |

@@ -245,3 +245,28 @@ export const MeExportDataResponse = zod.object({
 }))
 })
 
+/**
+ * @summary Registra este móvil para recibir avisos push. Si el token ya era de otra cuenta (otra persona usó antes el móvil), pasa a esta.
+ */
+export const meRegisterPushDeviceBodyTokenRegExp = new RegExp('^Expo(?:nent)?PushToken\\[[A-Za-z0-9_-]{10,200}\\]$');
+
+
+export const MeRegisterPushDeviceBody = zod.object({
+  "token": zod.string().regex(meRegisterPushDeviceBodyTokenRegExp),
+  "platform": zod.enum(['ios', 'android'])
+})
+
+export const MeRegisterPushDeviceResponse = zod.void()
+
+/**
+ * @summary Da de baja este móvil: deja de recibir avisos push (al cerrar sesión).
+ */
+export const meUnregisterPushDeviceBodyTokenRegExp = new RegExp('^Expo(?:nent)?PushToken\\[[A-Za-z0-9_-]{10,200}\\]$');
+
+
+export const MeUnregisterPushDeviceBody = zod.object({
+  "token": zod.string().regex(meUnregisterPushDeviceBodyTokenRegExp)
+})
+
+export const MeUnregisterPushDeviceResponse = zod.void()
+

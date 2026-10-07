@@ -36,7 +36,9 @@ import type {
   PersonalDataExportResponseDto,
   ProblemDetailsDto,
   ProfileResponseDto,
+  RegisterPushDeviceRequestDto,
   SetConsentRequestDto,
+  UnregisterPushDeviceRequestDto,
   UpdateProfileRequestDto
 } from '../../model';
 
@@ -957,4 +959,178 @@ export const useMeExportData = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getMeExportDataMutationOptions(options), queryClient);
+    }
+    export const getMeRegisterPushDeviceUrl = () => {
+
+
+
+
+  return `/v1/me/push-token`
+}
+
+/**
+ * @summary Registra este móvil para recibir avisos push. Si el token ya era de otra cuenta (otra persona usó antes el móvil), pasa a esta.
+ */
+export const meRegisterPushDevice = async (registerPushDeviceRequestDto: RegisterPushDeviceRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<void>(getMeRegisterPushDeviceUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(registerPushDeviceRequestDto)
+  }
+);}
+
+
+
+
+
+export const getMeRegisterPushDeviceMutationKey = () => ['meRegisterPushDevice'] as const;
+
+export const getMeRegisterPushDeviceMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRegisterPushDevice>>, TError,MeRegisterPushDeviceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meRegisterPushDevice>>, TError,MeRegisterPushDeviceMutationVariables, TContext> => {
+
+const mutationKey = getMeRegisterPushDeviceMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meRegisterPushDevice>>, MeRegisterPushDeviceMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meRegisterPushDevice(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeRegisterPushDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof meRegisterPushDevice>>>
+    export type MeRegisterPushDeviceMutationBody = RegisterPushDeviceRequestDto
+    export type MeRegisterPushDeviceMutationError = ErrorType<ProblemDetailsDto>
+    export type MeRegisterPushDeviceMutationVariables = {data: RegisterPushDeviceRequestDto}
+
+    /**
+ * @summary Registra este móvil para recibir avisos push. Si el token ya era de otra cuenta (otra persona usó antes el móvil), pasa a esta.
+ */
+export const useMeRegisterPushDevice = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRegisterPushDevice>>, TError,MeRegisterPushDeviceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meRegisterPushDevice>>,
+        TError,
+        MeRegisterPushDeviceMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeRegisterPushDeviceMutationOptions(options), queryClient);
+    }
+    export const getMeUnregisterPushDeviceUrl = () => {
+
+
+
+
+  return `/v1/me/push-token/unregister`
+}
+
+/**
+ * @summary Da de baja este móvil: deja de recibir avisos push (al cerrar sesión).
+ */
+export const meUnregisterPushDevice = async (unregisterPushDeviceRequestDto: UnregisterPushDeviceRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<void>(getMeUnregisterPushDeviceUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(unregisterPushDeviceRequestDto)
+  }
+);}
+
+
+
+
+
+export const getMeUnregisterPushDeviceMutationKey = () => ['meUnregisterPushDevice'] as const;
+
+export const getMeUnregisterPushDeviceMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUnregisterPushDevice>>, TError,MeUnregisterPushDeviceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meUnregisterPushDevice>>, TError,MeUnregisterPushDeviceMutationVariables, TContext> => {
+
+const mutationKey = getMeUnregisterPushDeviceMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meUnregisterPushDevice>>, MeUnregisterPushDeviceMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meUnregisterPushDevice(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeUnregisterPushDeviceMutationResult = NonNullable<Awaited<ReturnType<typeof meUnregisterPushDevice>>>
+    export type MeUnregisterPushDeviceMutationBody = UnregisterPushDeviceRequestDto
+    export type MeUnregisterPushDeviceMutationError = ErrorType<ProblemDetailsDto>
+    export type MeUnregisterPushDeviceMutationVariables = {data: UnregisterPushDeviceRequestDto}
+
+    /**
+ * @summary Da de baja este móvil: deja de recibir avisos push (al cerrar sesión).
+ */
+export const useMeUnregisterPushDevice = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meUnregisterPushDevice>>, TError,MeUnregisterPushDeviceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meUnregisterPushDevice>>,
+        TError,
+        MeUnregisterPushDeviceMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeUnregisterPushDeviceMutationOptions(options), queryClient);
     }

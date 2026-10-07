@@ -468,6 +468,62 @@ export const AgendaCreateBookingResponse = zod.object({
 })
 
 /**
+ * @summary Cancela una cita futura desde la agenda. La administración cancela cualquiera; el personal, solo las suyas. El cliente recibe un aviso push. Una ya cancelada, empezada o pasada responde 409 BOOKING_NOT_CANCELLABLE.
+ */
+export const agendaCancelBookingPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaCancelBookingPathBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const AgendaCancelBookingParams = zod.object({
+  "centerId": zod.uuid().regex(agendaCancelBookingPathCenterIdRegExp),
+  "bookingId": zod.uuid().regex(agendaCancelBookingPathBookingIdRegExp)
+})
+
+export const AgendaCancelBookingHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const agendaCancelBookingResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaCancelBookingResponseStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaCancelBookingResponseEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaCancelBookingResponseServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaCancelBookingResponseServiceDurationMinutesMin = -9007199254740991;
+export const agendaCancelBookingResponseServiceDurationMinutesMax = 9007199254740991;
+
+export const agendaCancelBookingResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaCancelBookingResponseCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaCancelBookingResponseStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaCancelBookingResponseEndedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaCancelBookingResponseActualDurationSecondsMin = -9007199254740991;
+export const agendaCancelBookingResponseActualDurationSecondsMax = 9007199254740991;
+
+export const agendaCancelBookingResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const AgendaCancelBookingResponse = zod.object({
+  "id": zod.uuid().regex(agendaCancelBookingResponseIdRegExp),
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseEndsAtRegExp),
+  "service": zod.object({
+  "id": zod.uuid().regex(agendaCancelBookingResponseServiceIdRegExp),
+  "name": zod.string(),
+  "durationMinutes": zod.int().min(agendaCancelBookingResponseServiceDurationMinutesMin).max(agendaCancelBookingResponseServiceDurationMinutesMax),
+  "color": zod.string().nullable()
+}),
+  "staff": zod.object({
+  "membershipId": zod.uuid().regex(agendaCancelBookingResponseStaffMembershipIdRegExp),
+  "fullName": zod.string()
+}),
+  "cancelledAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseCancelledAtRegExp).nullable(),
+  "cancelWithinPolicy": zod.boolean().nullable(),
+  "startedAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseStartedAtRegExp).nullable(),
+  "endedAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseEndedAtRegExp).nullable(),
+  "actualDurationSeconds": zod.int().min(agendaCancelBookingResponseActualDurationSecondsMin).max(agendaCancelBookingResponseActualDurationSecondsMax).nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseCreatedAtRegExp)
+})
+
+/**
  * @summary Registro de clases de un rango de días (máximo 31, en la zona del centro): las iniciadas con su duración real y las que ya pasaron de hora sin iniciarse (startedAt null). Incluye totales por profesional. Solo propiedad y administración, con segundo factor.
  */
 export const sessionRecordsListPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

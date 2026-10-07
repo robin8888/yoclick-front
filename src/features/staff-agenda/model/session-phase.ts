@@ -37,3 +37,14 @@ export function isWithinStartWindow({ startsAt, endsAt, now }: StartWindowInput)
   const closesAt = new Date(endsAt).getTime();
   return now.getTime() >= opensAt && now.getTime() <= closesAt;
 }
+
+/** Una cita que aún no ha empezado ni se ha cancelado se puede cancelar desde la agenda. */
+export function canCancelAppointment(
+  booking: SessionPhaseInput & { startsAt: string },
+  now: Date,
+): boolean {
+  return (
+    resolveSessionPhase(booking) === 'not-started' &&
+    now.getTime() < new Date(booking.startsAt).getTime()
+  );
+}

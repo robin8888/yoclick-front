@@ -708,6 +708,81 @@ export const useAgendaCreateBooking = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getAgendaCreateBookingMutationOptions(options), queryClient);
     }
+    export const getAgendaCancelBookingUrl = (centerId: string,
+    bookingId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/agenda/bookings/${bookingId}/cancel`
+}
+
+/**
+ * @summary Cancela una cita futura desde la agenda. La administración cancela cualquiera; el personal, solo las suyas. El cliente recibe un aviso push. Una ya cancelada, empezada o pasada responde 409 BOOKING_NOT_CANCELLABLE.
+ */
+export const agendaCancelBooking = async (centerId: string,
+    bookingId: string, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+  return apiMutator<BookingResponseDto>(getAgendaCancelBookingUrl(centerId,bookingId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getAgendaCancelBookingMutationKey = () => ['agendaCancelBooking'] as const;
+
+export const getAgendaCancelBookingMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaCancelBooking>>, TError,AgendaCancelBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof agendaCancelBooking>>, TError,AgendaCancelBookingMutationVariables, TContext> => {
+
+const mutationKey = getAgendaCancelBookingMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof agendaCancelBooking>>, AgendaCancelBookingMutationVariables> = (props) => {
+          const {centerId,bookingId} = props ?? {};
+
+          return  agendaCancelBooking(centerId,bookingId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AgendaCancelBookingMutationResult = NonNullable<Awaited<ReturnType<typeof agendaCancelBooking>>>
+
+    export type AgendaCancelBookingMutationError = ErrorType<ProblemDetailsDto>
+    export type AgendaCancelBookingMutationVariables = {centerId: string;bookingId: string}
+
+    /**
+ * @summary Cancela una cita futura desde la agenda. La administración cancela cualquiera; el personal, solo las suyas. El cliente recibe un aviso push. Una ya cancelada, empezada o pasada responde 409 BOOKING_NOT_CANCELLABLE.
+ */
+export const useAgendaCancelBooking = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaCancelBooking>>, TError,AgendaCancelBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof agendaCancelBooking>>,
+        TError,
+        AgendaCancelBookingMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAgendaCancelBookingMutationOptions(options), queryClient);
+    }
     export const getSessionRecordsListUrl = (centerId: string,
     params: SessionRecordsListParams,) => {
   const normalizedParams = new URLSearchParams();
