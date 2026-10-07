@@ -18,6 +18,8 @@ export function createSegmentStyle(theme: Theme, isSelected: boolean): ViewStyle
   return {
     flex: 1,
     minHeight: MIN_TOUCH_TARGET_SIZE,
+    // Aire a los lados para que una etiqueta larga («A nadie todavía») no toque el borde de la pastilla.
+    paddingHorizontal: theme.space[3],
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: theme.radius.pill,
