@@ -22,8 +22,10 @@ import type {
 
 import type {
   AgendaGetDaySummaryParams,
+  CenterReportResponseDto,
   DaySummaryResponseDto,
-  ProblemDetailsDto
+  ProblemDetailsDto,
+  ReportsGetCenterReportParams
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -153,6 +155,121 @@ export function useAgendaGetDaySummary<TData = Awaited<ReturnType<typeof agendaG
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getAgendaGetDaySummaryQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getReportsGetCenterReportUrl = (centerId: string,
+    params?: ReportsGetCenterReportParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/reports?${stringifiedParams}` : `/v1/centers/${centerId}/reports`
+}
+
+/**
+ * @summary Informes del centro de la última semana, mes (30 días) o trimestre (90 días): ingresos estimados por las citas, ocupación, retención, clientes inactivos, ocupación por servicio, horas por profesional y retención por mes de alta.
+ */
+export const reportsGetCenterReport = async (centerId: string,
+    params?: ReportsGetCenterReportParams, options?: Parameters<typeof apiMutator>[1]): Promise<CenterReportResponseDto> => {
+
+  return apiMutator<CenterReportResponseDto>(getReportsGetCenterReportUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getReportsGetCenterReportQueryKey = (centerId: string,
+    params?: ReportsGetCenterReportParams,) => {
+    return [
+    `/v1/centers/${centerId}/reports`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getReportsGetCenterReportQueryOptions = <TData = Awaited<ReturnType<typeof reportsGetCenterReport>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params?: ReportsGetCenterReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getReportsGetCenterReportQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof reportsGetCenterReport>>> = ({ signal }) => reportsGetCenterReport(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ReportsGetCenterReportQueryResult = NonNullable<Awaited<ReturnType<typeof reportsGetCenterReport>>>
+export type ReportsGetCenterReportQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useReportsGetCenterReport<TData = Awaited<ReturnType<typeof reportsGetCenterReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: undefined |  ReportsGetCenterReportParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof reportsGetCenterReport>>,
+          TError,
+          Awaited<ReturnType<typeof reportsGetCenterReport>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReportsGetCenterReport<TData = Awaited<ReturnType<typeof reportsGetCenterReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ReportsGetCenterReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof reportsGetCenterReport>>,
+          TError,
+          Awaited<ReturnType<typeof reportsGetCenterReport>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useReportsGetCenterReport<TData = Awaited<ReturnType<typeof reportsGetCenterReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ReportsGetCenterReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Informes del centro de la última semana, mes (30 días) o trimestre (90 días): ingresos estimados por las citas, ocupación, retención, clientes inactivos, ocupación por servicio, horas por profesional y retención por mes de alta.
+ */
+
+export function useReportsGetCenterReport<TData = Awaited<ReturnType<typeof reportsGetCenterReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ReportsGetCenterReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof reportsGetCenterReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getReportsGetCenterReportQueryOptions(centerId,params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

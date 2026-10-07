@@ -82,6 +82,65 @@ export const ClientsListResponse = zod.object({
 })
 
 /**
+ * @summary Importa clientes desde las filas de un archivo (nombre, correo, teléfono y nivel). Quien aún no tiene cuenta recibe una sin activar; no se envía ningún correo. Los que ya son clientes se actualizan; el resto de filas no importadas vuelven en el informe.
+ */
+export const clientsImportPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ClientsImportParams = zod.object({
+  "centerId": zod.uuid().regex(clientsImportPathCenterIdRegExp)
+})
+
+export const ClientsImportHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const clientsImportBodyRowsItemFullNameMax = 120;
+
+export const clientsImportBodyRowsItemEmailDefault = null;
+export const clientsImportBodyRowsItemEmailMax = 254;
+
+
+export const clientsImportBodyRowsItemEmailRegExp = new RegExp('^(?:[A-Za-z0-9_\'+\\-]+\\.)*[A-Za-z0-9_\'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$');
+export const clientsImportBodyRowsItemPhoneDefault = null;
+export const clientsImportBodyRowsItemPhoneMax = 30;
+
+export const clientsImportBodyRowsItemLevelDefault = null;
+export const clientsImportBodyRowsMax = 500;
+
+
+
+export const ClientsImportBody = zod.object({
+  "rows": zod.array(zod.object({
+  "fullName": zod.string().min(1).max(clientsImportBodyRowsItemFullNameMax),
+  "email": zod.email().max(clientsImportBodyRowsItemEmailMax).regex(clientsImportBodyRowsItemEmailRegExp).nullish().default(clientsImportBodyRowsItemEmailDefault),
+  "phone": zod.string().max(clientsImportBodyRowsItemPhoneMax).nullish().default(clientsImportBodyRowsItemPhoneDefault),
+  "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullish().default(clientsImportBodyRowsItemLevelDefault)
+})).min(1).max(clientsImportBodyRowsMax)
+})
+
+export const clientsImportResponseCreatedCountMin = -9007199254740991;
+export const clientsImportResponseCreatedCountMax = 9007199254740991;
+
+export const clientsImportResponseUpdatedCountMin = -9007199254740991;
+export const clientsImportResponseUpdatedCountMax = 9007199254740991;
+
+export const clientsImportResponseSkippedItemRowNumberMin = -9007199254740991;
+export const clientsImportResponseSkippedItemRowNumberMax = 9007199254740991;
+
+
+
+export const ClientsImportResponse = zod.object({
+  "createdCount": zod.int().min(clientsImportResponseCreatedCountMin).max(clientsImportResponseCreatedCountMax),
+  "updatedCount": zod.int().min(clientsImportResponseUpdatedCountMin).max(clientsImportResponseUpdatedCountMax),
+  "skipped": zod.array(zod.object({
+  "rowNumber": zod.int().min(clientsImportResponseSkippedItemRowNumberMin).max(clientsImportResponseSkippedItemRowNumberMax),
+  "email": zod.string().nullable(),
+  "reason": zod.enum(['missing_email', 'duplicated_in_file', 'blocked', 'team_member', 'client_limit_reached'])
+}))
+})
+
+/**
  * @summary Un cliente del centro con su nivel, su grupo y cómo va. 404 si no existe.
  */
 export const clientsGetPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

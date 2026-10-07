@@ -27,6 +27,7 @@ import type {
 import type {
   CenterBrandingResponseDto,
   CenterSettingsResponseDto,
+  CenterSubscriptionResponseDto,
   JoinCodeResponseDto,
   JoinStatsResponseDto,
   ProblemDetailsDto,
@@ -517,7 +518,107 @@ export const useCentersRegenerateJoinCode = <TError = ErrorType<ProblemDetailsDt
       > => {
       return useMutation(getCentersRegenerateJoinCodeMutationOptions(options), queryClient);
     }
-    export const getCentersGetLogoUrl = (centerId: string,) => {
+    export const getCentersGetSubscriptionUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/subscription`
+}
+
+/**
+ * @summary Estado del plan del centro: prueba o activo, fin de la prueba, tope de clientes y cuántos hay activos. La suscripción se gestiona y se paga en la web.
+ */
+export const centersGetSubscription = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<CenterSubscriptionResponseDto> => {
+
+  return apiMutator<CenterSubscriptionResponseDto>(getCentersGetSubscriptionUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersGetSubscriptionQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/subscription`
+    ] as const;
+    }
+
+
+export const getCentersGetSubscriptionQueryOptions = <TData = Awaited<ReturnType<typeof centersGetSubscription>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCentersGetSubscriptionQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersGetSubscription>>> = ({ signal }) => centersGetSubscription(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CentersGetSubscriptionQueryResult = NonNullable<Awaited<ReturnType<typeof centersGetSubscription>>>
+export type CentersGetSubscriptionQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useCentersGetSubscription<TData = Awaited<ReturnType<typeof centersGetSubscription>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetSubscription>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetSubscription>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetSubscription<TData = Awaited<ReturnType<typeof centersGetSubscription>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersGetSubscription>>,
+          TError,
+          Awaited<ReturnType<typeof centersGetSubscription>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersGetSubscription<TData = Awaited<ReturnType<typeof centersGetSubscription>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Estado del plan del centro: prueba o activo, fin de la prueba, tope de clientes y cuántos hay activos. La suscripción se gestiona y se paga en la web.
+ */
+
+export function useCentersGetSubscription<TData = Awaited<ReturnType<typeof centersGetSubscription>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersGetSubscription>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCentersGetSubscriptionQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getCentersGetLogoUrl = (centerId: string,) => {
 
 
 

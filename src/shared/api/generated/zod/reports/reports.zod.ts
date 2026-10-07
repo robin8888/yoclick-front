@@ -48,3 +48,106 @@ export const AgendaGetDaySummaryResponse = zod.object({
   "activeClientCount": zod.int().min(agendaGetDaySummaryResponseActiveClientCountMin).max(agendaGetDaySummaryResponseActiveClientCountMax)
 })
 
+/**
+ * @summary Informes del centro de la última semana, mes (30 días) o trimestre (90 días): ingresos estimados por las citas, ocupación, retención, clientes inactivos, ocupación por servicio, horas por profesional y retención por mes de alta.
+ */
+export const reportsGetCenterReportPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ReportsGetCenterReportParams = zod.object({
+  "centerId": zod.uuid().regex(reportsGetCenterReportPathCenterIdRegExp)
+})
+
+export const reportsGetCenterReportQueryPeriodDefault = `month`;
+
+export const ReportsGetCenterReportQueryParams = zod.object({
+  "period": zod.enum(['week', 'month', 'quarter']).default(reportsGetCenterReportQueryPeriodDefault)
+})
+
+export const ReportsGetCenterReportHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const reportsGetCenterReportResponseFromDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const reportsGetCenterReportResponseToDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const reportsGetCenterReportResponseEstimatedIncomeCentsMin = -9007199254740991;
+export const reportsGetCenterReportResponseEstimatedIncomeCentsMax = 9007199254740991;
+
+export const reportsGetCenterReportResponsePreviousEstimatedIncomeCentsMin = -9007199254740991;
+export const reportsGetCenterReportResponsePreviousEstimatedIncomeCentsMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseAverageOccupancyPercentMin = 0;
+export const reportsGetCenterReportResponseAverageOccupancyPercentMax = 100;
+
+export const reportsGetCenterReportResponseRetentionThreeMonthsPercentMin = 0;
+export const reportsGetCenterReportResponseRetentionThreeMonthsPercentMax = 100;
+
+export const reportsGetCenterReportResponseActiveClientCountMin = -9007199254740991;
+export const reportsGetCenterReportResponseActiveClientCountMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseInactiveClientCountMin = -9007199254740991;
+export const reportsGetCenterReportResponseInactiveClientCountMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseIncomeByMonthItemIncomeCentsMin = -9007199254740991;
+export const reportsGetCenterReportResponseIncomeByMonthItemIncomeCentsMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseServicesItemServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const reportsGetCenterReportResponseServicesItemSessionCountMin = -9007199254740991;
+export const reportsGetCenterReportResponseServicesItemSessionCountMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseServicesItemOccupancyPercentMin = 0;
+export const reportsGetCenterReportResponseServicesItemOccupancyPercentMax = 100;
+
+export const reportsGetCenterReportResponseStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const reportsGetCenterReportResponseStaffItemSessionCountMin = -9007199254740991;
+export const reportsGetCenterReportResponseStaffItemSessionCountMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseStaffItemOccupancyPercentMin = 0;
+export const reportsGetCenterReportResponseStaffItemOccupancyPercentMax = 100;
+
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemJoinedCountMin = -9007199254740991;
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemJoinedCountMax = 9007199254740991;
+
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterOneMonthPercentMin = 0;
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterOneMonthPercentMax = 100;
+
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterThreeMonthsPercentMin = 0;
+export const reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterThreeMonthsPercentMax = 100;
+
+
+
+export const ReportsGetCenterReportResponse = zod.object({
+  "period": zod.enum(['week', 'month', 'quarter']),
+  "fromDate": zod.iso.date().regex(reportsGetCenterReportResponseFromDateRegExp),
+  "toDate": zod.iso.date().regex(reportsGetCenterReportResponseToDateRegExp),
+  "estimatedIncomeCents": zod.int().min(reportsGetCenterReportResponseEstimatedIncomeCentsMin).max(reportsGetCenterReportResponseEstimatedIncomeCentsMax),
+  "previousEstimatedIncomeCents": zod.int().min(reportsGetCenterReportResponsePreviousEstimatedIncomeCentsMin).max(reportsGetCenterReportResponsePreviousEstimatedIncomeCentsMax),
+  "averageOccupancyPercent": zod.int().min(reportsGetCenterReportResponseAverageOccupancyPercentMin).max(reportsGetCenterReportResponseAverageOccupancyPercentMax).nullable(),
+  "retentionThreeMonthsPercent": zod.int().min(reportsGetCenterReportResponseRetentionThreeMonthsPercentMin).max(reportsGetCenterReportResponseRetentionThreeMonthsPercentMax).nullable(),
+  "activeClientCount": zod.int().min(reportsGetCenterReportResponseActiveClientCountMin).max(reportsGetCenterReportResponseActiveClientCountMax),
+  "inactiveClientCount": zod.int().min(reportsGetCenterReportResponseInactiveClientCountMin).max(reportsGetCenterReportResponseInactiveClientCountMax),
+  "incomeByMonth": zod.array(zod.object({
+  "month": zod.string(),
+  "incomeCents": zod.int().min(reportsGetCenterReportResponseIncomeByMonthItemIncomeCentsMin).max(reportsGetCenterReportResponseIncomeByMonthItemIncomeCentsMax)
+})),
+  "services": zod.array(zod.object({
+  "serviceId": zod.uuid().regex(reportsGetCenterReportResponseServicesItemServiceIdRegExp),
+  "name": zod.string(),
+  "sessionCount": zod.int().min(reportsGetCenterReportResponseServicesItemSessionCountMin).max(reportsGetCenterReportResponseServicesItemSessionCountMax),
+  "occupancyPercent": zod.int().min(reportsGetCenterReportResponseServicesItemOccupancyPercentMin).max(reportsGetCenterReportResponseServicesItemOccupancyPercentMax).nullable()
+})),
+  "staff": zod.array(zod.object({
+  "membershipId": zod.uuid().regex(reportsGetCenterReportResponseStaffItemMembershipIdRegExp),
+  "fullName": zod.string(),
+  "sessionCount": zod.int().min(reportsGetCenterReportResponseStaffItemSessionCountMin).max(reportsGetCenterReportResponseStaffItemSessionCountMax),
+  "hours": zod.number(),
+  "occupancyPercent": zod.int().min(reportsGetCenterReportResponseStaffItemOccupancyPercentMin).max(reportsGetCenterReportResponseStaffItemOccupancyPercentMax).nullable()
+})),
+  "retentionByJoinMonth": zod.array(zod.object({
+  "month": zod.string(),
+  "joinedCount": zod.int().min(reportsGetCenterReportResponseRetentionByJoinMonthItemJoinedCountMin).max(reportsGetCenterReportResponseRetentionByJoinMonthItemJoinedCountMax),
+  "retainedAfterOneMonthPercent": zod.int().min(reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterOneMonthPercentMin).max(reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterOneMonthPercentMax).nullable(),
+  "retainedAfterThreeMonthsPercent": zod.int().min(reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterThreeMonthsPercentMin).max(reportsGetCenterReportResponseRetentionByJoinMonthItemRetainedAfterThreeMonthsPercentMax).nullable()
+}))
+})
+

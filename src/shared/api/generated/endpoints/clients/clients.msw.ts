@@ -17,18 +17,20 @@ import type {
   ClientListResponseDto,
   ClientResponseDto,
   GroupListResponseDto,
-  GroupResponseDto
+  GroupResponseDto,
+  ImportClientsResponseDto
 } from '../../model';
 
 import {
   getClientsGetResponseMock,
+  getClientsImportResponseMock,
   getClientsListResponseMock,
   getClientsUpdateResponseMock,
   getGroupsCreateResponseMock,
   getGroupsListResponseMock
 } from './clients.faker.ts';
 
-export { getClientsListResponseMock, getClientsGetResponseMock, getClientsUpdateResponseMock, getGroupsListResponseMock, getGroupsCreateResponseMock } from './clients.faker.ts';
+export { getClientsListResponseMock, getClientsImportResponseMock, getClientsGetResponseMock, getClientsUpdateResponseMock, getGroupsListResponseMock, getGroupsCreateResponseMock } from './clients.faker.ts';
 
 
 export const getClientsListMockHandler = (overrideResponse?: ClientListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ClientListResponseDto> | ClientListResponseDto), options?: RequestHandlerOptions) => {
@@ -38,6 +40,18 @@ export const getClientsListMockHandler = (overrideResponse?: ClientListResponseD
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getClientsListResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getClientsImportMockHandler = (overrideResponse?: ImportClientsResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ImportClientsResponseDto> | ImportClientsResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/clients/import', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getClientsImportResponseMock(),
       { status: 200
       })
   }, options)
@@ -102,6 +116,7 @@ export const getGroupsArchiveMockHandler = (overrideResponse?: void | ((info: Pa
 }
 export const getClientsMock = () => [
   getClientsListMockHandler(),
+  getClientsImportMockHandler(),
   getClientsGetMockHandler(),
   getClientsUpdateMockHandler(),
   getGroupsListMockHandler(),

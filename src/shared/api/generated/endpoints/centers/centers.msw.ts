@@ -16,6 +16,7 @@ import type {
 import type {
   CenterBrandingResponseDto,
   CenterSettingsResponseDto,
+  CenterSubscriptionResponseDto,
   JoinCodeResponseDto,
   JoinStatsResponseDto
 } from '../../model';
@@ -25,11 +26,12 @@ import {
   getCentersGetJoinStatsResponseMock,
   getCentersGetLogoResponseMock,
   getCentersGetSettingsResponseMock,
+  getCentersGetSubscriptionResponseMock,
   getCentersRegenerateJoinCodeResponseMock,
   getCentersUpdateSettingsResponseMock
 } from './centers.faker.ts';
 
-export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetJoinStatsResponseMock, getCentersRegenerateJoinCodeResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
+export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetJoinStatsResponseMock, getCentersRegenerateJoinCodeResponseMock, getCentersGetSubscriptionResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
 
 
 export const getCentersGetBrandingMockHandler = (overrideResponse?: CenterBrandingResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterBrandingResponseDto> | CenterBrandingResponseDto), options?: RequestHandlerOptions) => {
@@ -92,6 +94,18 @@ export const getCentersRegenerateJoinCodeMockHandler = (overrideResponse?: JoinC
   }, options)
 }
 
+export const getCentersGetSubscriptionMockHandler = (overrideResponse?: CenterSubscriptionResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterSubscriptionResponseDto> | CenterSubscriptionResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/subscription', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersGetSubscriptionResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getCentersGetLogoMockHandler = (overrideResponse?: Blob | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<Blob> | Blob), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/logo', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -110,5 +124,6 @@ export const getCentersMock = () => [
   getCentersUpdateSettingsMockHandler(),
   getCentersGetJoinStatsMockHandler(),
   getCentersRegenerateJoinCodeMockHandler(),
+  getCentersGetSubscriptionMockHandler(),
   getCentersGetLogoMockHandler()
 ]

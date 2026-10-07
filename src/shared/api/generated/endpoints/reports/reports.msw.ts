@@ -14,14 +14,16 @@ import type {
 } from 'msw';
 
 import type {
+  CenterReportResponseDto,
   DaySummaryResponseDto
 } from '../../model';
 
 import {
-  getAgendaGetDaySummaryResponseMock
+  getAgendaGetDaySummaryResponseMock,
+  getReportsGetCenterReportResponseMock
 } from './reports.faker.ts';
 
-export { getAgendaGetDaySummaryResponseMock } from './reports.faker.ts';
+export { getAgendaGetDaySummaryResponseMock, getReportsGetCenterReportResponseMock } from './reports.faker.ts';
 
 
 export const getAgendaGetDaySummaryMockHandler = (overrideResponse?: DaySummaryResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<DaySummaryResponseDto> | DaySummaryResponseDto), options?: RequestHandlerOptions) => {
@@ -35,6 +37,19 @@ export const getAgendaGetDaySummaryMockHandler = (overrideResponse?: DaySummaryR
       })
   }, options)
 }
+
+export const getReportsGetCenterReportMockHandler = (overrideResponse?: CenterReportResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterReportResponseDto> | CenterReportResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/reports', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getReportsGetCenterReportResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getReportsMock = () => [
-  getAgendaGetDaySummaryMockHandler()
+  getAgendaGetDaySummaryMockHandler(),
+  getReportsGetCenterReportMockHandler()
 ]

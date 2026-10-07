@@ -12,6 +12,7 @@ import {
 import type {
   CenterBrandingResponseDto,
   CenterSettingsResponseDto,
+  CenterSubscriptionResponseDto,
   JoinCodeResponseDto,
   JoinStatsResponseDto
 } from '../../model';
@@ -26,6 +27,8 @@ export const getCentersUpdateSettingsResponseMock = (overrideResponse: Partial<E
 export const getCentersGetJoinStatsResponseMock = (overrideResponse: Partial<Extract<JoinStatsResponseDto, object>> = {}): JoinStatsResponseDto => ({month: faker.string.alpha({length: {min: 10, max: 20}}), qr: faker.number.int({min: -9007199254740991, max: 9007199254740991}), link: faker.number.int({min: -9007199254740991, max: 9007199254740991}), code: faker.number.int({min: -9007199254740991, max: 9007199254740991}), search: faker.number.int({min: -9007199254740991, max: 9007199254740991}), total: faker.number.int({min: -9007199254740991, max: 9007199254740991}), ...overrideResponse})
 
 export const getCentersRegenerateJoinCodeResponseMock = (overrideResponse: Partial<Extract<JoinCodeResponseDto, object>> = {}): JoinCodeResponseDto => ({joinCode: faker.string.alpha({length: {min: 10, max: 20}}), ...overrideResponse})
+
+export const getCentersGetSubscriptionResponseMock = (overrideResponse: Partial<Extract<CenterSubscriptionResponseDto, object>> = {}): CenterSubscriptionResponseDto => ({status: faker.helpers.arrayElement(['trial','active','past_due','suspended'] as const), trialEndsAt: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 19) + 'Z', null]), maxClients: faker.helpers.arrayElement([faker.number.int({min: -9007199254740991, max: 9007199254740991}), null]), activeClientCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), ...overrideResponse})
 
 export const getCentersGetLogoResponseMock = (): Blob => (faker.helpers.arrayElement([new Blob([new Uint8Array(faker.number.int({ min: 1, max: 64 }))]), new Blob([new Uint8Array(faker.number.int({ min: 1, max: 64 }))]), new Blob([new Uint8Array(faker.number.int({ min: 1, max: 64 }))])]))
 
