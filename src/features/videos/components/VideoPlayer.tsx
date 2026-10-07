@@ -2,6 +2,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 
 import { i18n } from '@/shared/i18n';
 
+import { buildVideoSource } from '../model/video-playback';
 import { PLAYER_STYLE } from './Videos.styles';
 
 interface VideoPlayerProps {
@@ -11,7 +12,7 @@ interface VideoPlayerProps {
 
 /** Reproduce el streaming adaptativo del vídeo; los controles son los del sistema, accesibles de serie. */
 export function VideoPlayer({ streamUrl, title }: Readonly<VideoPlayerProps>): React.JSX.Element {
-  const player = useVideoPlayer(streamUrl, (videoPlayer) => {
+  const player = useVideoPlayer(buildVideoSource(streamUrl), (videoPlayer) => {
     videoPlayer.play();
   });
 

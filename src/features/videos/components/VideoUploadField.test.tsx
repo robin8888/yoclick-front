@@ -8,6 +8,8 @@ import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { renderScreen } from '@/test/render-screen';
 
+import { useVideoPlayer } from 'expo-video';
+
 import { PlayableVideo } from './PlayableVideo';
 import { VideoUploadField } from './VideoUploadField';
 
@@ -203,6 +205,13 @@ describe('PlayableVideo', () => {
     fireEvent.press(screen.getByRole('button', { name: 'Reproducir Hola, soy Marta' }));
 
     expect(screen.getByLabelText('Vídeo: Hola, soy Marta')).toBeOnTheScreen();
+    expect(useVideoPlayer).toHaveBeenCalledWith(
+      {
+        uri: 'https://video.example/video-1/playlist.m3u8',
+        headers: { Referer: 'https://yoclick.app/' },
+      },
+      expect.any(Function),
+    );
   });
 
   it('keeps asking while the video is processing and refreshes the screens when it is ready', async () => {

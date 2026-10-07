@@ -10,6 +10,7 @@ import { Text } from '@/ui/atoms/Text';
 
 import { useVideoProcessingWatch } from '../hooks/useVideoProcessingWatch';
 import { formatVideoDuration } from '../model/video-format';
+import { buildVideoSource } from '../model/video-playback';
 import { VideoPlayer } from './VideoPlayer';
 import { VideoUploadProgress } from './VideoUploadProgress';
 import { VideoStatusBadge } from './VideoStatusBadge';
@@ -45,7 +46,7 @@ function Thumbnail({
       onPress={onPress}
       style={createThumbnailFrameStyle(theme)}
     >
-      <Image source={{ uri: thumbnailUrl }} style={THUMBNAIL_STYLE} contentFit="cover" />
+      <Image source={buildVideoSource(thumbnailUrl)} style={THUMBNAIL_STYLE} contentFit="cover" />
       <View style={createPlayBadgeStyle(theme)}>
         <Icon name="play" color="onBrand" />
       </View>
