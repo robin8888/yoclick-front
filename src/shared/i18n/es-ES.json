@@ -1596,7 +1596,11 @@
       "previewAction": "Ver como {{clientWord}}",
       "previewNote": "Vista previa: así te ven tus {{clientWord}}.",
       "closePreviewAction": "Volver a editar",
-      "planNotice": "Tu plan no incluye vídeo: puedes completar el resto del perfil."
+      "planNotice": "Tu plan no incluye vídeo: puedes completar el resto del perfil.",
+      "aboutYouTitle": "Sobre ti",
+      "aboutYouHint": "Lo primero que leen tus {{clientWord}} al abrir tu perfil.",
+      "techniqueHint": "Enseña cómo trabajas: un ejercicio, una técnica o una explicación corta.",
+      "certificationsHint": "El centro las comprueba y las marca como verificadas."
     },
     "team": {
       "title": "Nuestro equipo",

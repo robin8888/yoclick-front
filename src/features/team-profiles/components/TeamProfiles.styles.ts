@@ -3,6 +3,8 @@ import type { ViewStyle } from 'react-native';
 import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
 export const STACK_STYLE: ViewStyle = { gap: 12 };
+/** Entre tarjetas de una pantalla larga: más aire que dentro de una tarjeta. */
+export const WIDE_STACK_STYLE: ViewStyle = { gap: 16 };
 export const TIGHT_STACK_STYLE: ViewStyle = { gap: 4 };
 export const ROW_STYLE: ViewStyle = { flexDirection: 'row', alignItems: 'center', gap: 12 };
 export const WRAP_ROW_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: 8 };

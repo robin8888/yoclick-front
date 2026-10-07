@@ -10,6 +10,7 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 
 import { useAddCertification, useRemoveCertification } from '../hooks/useTeamProfileMutations';
 import { CertificationRow, RemoveCertificationButton } from './CertificationRows';
+import { ProfileSection } from './ProfileSection';
 import { STACK_STYLE } from './TeamProfiles.styles';
 
 const MAX_NAME_LENGTH = 120;
@@ -61,10 +62,10 @@ export function CertificationsEditor({
   const removal = useRemoveCertification();
 
   return (
-    <View style={STACK_STYLE}>
-      <Text variant="titleMd" role="heading">
-        {i18n.t('teamProfiles.editor.certificationsTitle')}
-      </Text>
+    <ProfileSection
+      title={i18n.t('teamProfiles.editor.certificationsTitle')}
+      description={i18n.t('teamProfiles.editor.certificationsHint')}
+    >
       {certifications.length === 0 ? (
         <Text color="ink2">{i18n.t('teamProfiles.editor.noCertifications')}</Text>
       ) : null}
@@ -84,6 +85,6 @@ export function CertificationsEditor({
       ))}
       {removal.errorMessage === null ? null : <FormErrorBanner message={removal.errorMessage} />}
       <AddCertificationForm />
-    </View>
+    </ProfileSection>
   );
 }

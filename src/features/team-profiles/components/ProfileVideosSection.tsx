@@ -4,10 +4,10 @@ import { PlayableVideo, useDeleteVideo, VideoUploadField } from '@/features/vide
 import type { ProfileResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
-import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 
-import { STACK_STYLE } from './TeamProfiles.styles';
+import { ProfileSection } from './ProfileSection';
+import { STACK_STYLE, WIDE_STACK_STYLE } from './TeamProfiles.styles';
 
 const MAX_TECHNIQUE_VIDEOS = 3;
 
@@ -17,10 +17,10 @@ function TechniqueVideos({
   const removal = useDeleteVideo();
 
   return (
-    <View style={STACK_STYLE}>
-      <Text variant="titleMd" role="heading">
-        {i18n.t('teamProfiles.editor.techniqueTitle', { count: videos.length })}
-      </Text>
+    <ProfileSection
+      title={i18n.t('teamProfiles.editor.techniqueTitle', { count: videos.length })}
+      description={i18n.t('teamProfiles.editor.techniqueHint')}
+    >
       {videos.map((video) => (
         <View key={video.id} style={STACK_STYLE}>
           <PlayableVideo video={video} shouldShowTitle />
@@ -40,7 +40,7 @@ function TechniqueVideos({
       {videos.length < MAX_TECHNIQUE_VIDEOS ? (
         <VideoUploadField purpose="technique" video={null} onVideoChange={() => undefined} />
       ) : null}
-    </View>
+    </ProfileSection>
   );
 }
 
@@ -49,20 +49,17 @@ export function ProfileVideosSection({
   profile,
 }: Readonly<{ profile: ProfileResponseDto }>): React.JSX.Element {
   return (
-    <View style={STACK_STYLE}>
-      <View style={STACK_STYLE}>
-        <Text variant="titleMd" role="heading">
-          {i18n.t('teamProfiles.editor.introTitle')}
-        </Text>
+    <View style={WIDE_STACK_STYLE}>
+      <ProfileSection
+        title={i18n.t('teamProfiles.editor.introTitle')}
+        description={i18n.t('teamProfiles.editor.introHint')}
+      >
         <VideoUploadField
           purpose="profile"
           video={profile.introVideo}
           onVideoChange={() => undefined}
         />
-        <Text variant="caption" color="ink2">
-          {i18n.t('teamProfiles.editor.introHint')}
-        </Text>
-      </View>
+      </ProfileSection>
       <TechniqueVideos videos={profile.techniqueVideos} />
     </View>
   );
