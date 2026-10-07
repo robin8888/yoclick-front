@@ -576,7 +576,12 @@
       "chosenTarget": "Elegido: {{name}}",
       "groupsEmpty": "Todavía no hay grupos.",
       "saveAction": "Guardar",
-      "saveAndAssignAction": "Guardar y asignar"
+      "saveAndAssignAction": "Guardar y asignar",
+      "assignHint": "Quien la reciba lo sabrá por un aviso en el móvil.",
+      "assignNoneHint": "Se guarda en tu lista y la asignas cuando quieras.",
+      "chosenClientHint": "Recibirá un aviso al guardar.",
+      "changeTargetAction": "Cambiar",
+      "changeTargetLabel": "Cambiar a {{name}}"
     },
     "detail": {
       "notFound": "No hemos encontrado esto. Puede que se haya archivado.",
