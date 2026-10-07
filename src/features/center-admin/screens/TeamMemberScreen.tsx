@@ -12,6 +12,25 @@ import { TeamMemberFields } from '../components/TeamMemberFields';
 import { useTeamMemberEditor } from '../hooks/useTeamMemberEditor';
 import { parseTeamMemberRouteParams } from '../model/team-member-route-params';
 
+function AvailabilityLink({ membershipId }: Readonly<{ membershipId: string }>): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <Button
+      variant="outline"
+      leadingIconName="calendar"
+      label={i18n.t('centerAdmin.team.availabilityAction')}
+      isFullWidth
+      onPress={() => {
+        router.push({
+          pathname: '/(admin)/team/availability/[membershipId]',
+          params: { membershipId },
+        });
+      }}
+    />
+  );
+}
+
 function TeamMemberBody({
   editor,
 }: Readonly<{ editor: ReturnType<typeof useTeamMemberEditor> }>): React.JSX.Element {
@@ -31,6 +50,9 @@ function TeamMemberBody({
         />
       )}
       {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
+      {member === undefined || draft === null ? null : (
+        <AvailabilityLink membershipId={member.membershipId} />
+      )}
       {member === undefined || draft === null ? null : (
         <RemoveTeamMemberControl
           memberName={member.fullName}

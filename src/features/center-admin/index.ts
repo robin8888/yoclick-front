@@ -2,6 +2,10 @@
 export { AdminComingSoonScreen } from './screens/AdminComingSoonScreen';
 export { AdminMoreScreen } from './screens/AdminMoreScreen';
 export { ImportClientsScreen } from './screens/ImportClientsScreen';
+export {
+  MyAvailabilityScreen,
+  TeamMemberAvailabilityScreen,
+} from './screens/StaffAvailabilityScreen';
 export { SubscriptionScreen } from './screens/SubscriptionScreen';
 export { ReportsScreen } from './screens/ReportsScreen';
 export { InviteClientsScreen } from './screens/InviteClientsScreen';

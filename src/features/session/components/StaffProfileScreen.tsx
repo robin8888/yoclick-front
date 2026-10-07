@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import { useActiveCenterSummary } from '@/features/auth';
@@ -21,6 +22,7 @@ export function StaffProfileScreen(): React.JSX.Element {
   const user = useSessionStore((state) => state.user);
   const center = useActiveCenterSummary();
   const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.singular;
+  const router = useRouter();
   const { signOut, isSigningOut } = useSignOutFlow();
 
   return (
@@ -36,6 +38,15 @@ export function StaffProfileScreen(): React.JSX.Element {
           })}
         </Text>
       </View>
+      <Button
+        variant="outline"
+        leadingIconName="calendar"
+        label={i18n.t('session.profile.availabilityAction')}
+        isFullWidth
+        onPress={() => {
+          router.push('/(staff)/availability');
+        }}
+      />
       <Button
         variant="outline"
         leadingIconName="logOut"

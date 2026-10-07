@@ -14,8 +14,10 @@ import type {
 } from 'msw';
 
 import type {
+  AddedStaffAbsenceResponseDto,
   InvitationResponseDto,
   PendingInvitationsResponseDto,
+  StaffAvailabilityResponseDto,
   TeamMemberResponseDto,
   TeamResponseDto
 } from '../../model';
@@ -23,11 +25,14 @@ import type {
 import {
   getInvitationsCreateResponseMock,
   getInvitationsListPendingResponseMock,
+  getTeamAddAbsenceResponseMock,
+  getTeamGetAvailabilityResponseMock,
   getTeamListResponseMock,
+  getTeamSaveAvailabilityResponseMock,
   getTeamUpdateMemberResponseMock
 } from './team.faker.ts';
 
-export { getTeamListResponseMock, getTeamUpdateMemberResponseMock, getInvitationsListPendingResponseMock, getInvitationsCreateResponseMock } from './team.faker.ts';
+export { getTeamListResponseMock, getTeamUpdateMemberResponseMock, getInvitationsListPendingResponseMock, getInvitationsCreateResponseMock, getTeamGetAvailabilityResponseMock, getTeamSaveAvailabilityResponseMock, getTeamAddAbsenceResponseMock } from './team.faker.ts';
 
 
 export const getTeamListMockHandler = (overrideResponse?: TeamResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<TeamResponseDto> | TeamResponseDto), options?: RequestHandlerOptions) => {
@@ -87,10 +92,60 @@ export const getInvitationsRevokeMockHandler = (overrideResponse?: void | ((info
       })
   }, options)
 }
+
+export const getTeamGetAvailabilityMockHandler = (overrideResponse?: StaffAvailabilityResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<StaffAvailabilityResponseDto> | StaffAvailabilityResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/team/:membershipId/availability', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getTeamGetAvailabilityResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getTeamSaveAvailabilityMockHandler = (overrideResponse?: StaffAvailabilityResponseDto | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<StaffAvailabilityResponseDto> | StaffAvailabilityResponseDto), options?: RequestHandlerOptions) => {
+  return http.put('*/v1/centers/:centerId/team/:membershipId/availability', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getTeamSaveAvailabilityResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getTeamAddAbsenceMockHandler = (overrideResponse?: AddedStaffAbsenceResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<AddedStaffAbsenceResponseDto> | AddedStaffAbsenceResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/team/:membershipId/absences', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getTeamAddAbsenceResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getTeamRemoveAbsenceMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/team/:membershipId/absences/:absenceId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getTeamMock = () => [
   getTeamListMockHandler(),
   getTeamUpdateMemberMockHandler(),
   getInvitationsListPendingMockHandler(),
   getInvitationsCreateMockHandler(),
-  getInvitationsRevokeMockHandler()
+  getInvitationsRevokeMockHandler(),
+  getTeamGetAvailabilityMockHandler(),
+  getTeamSaveAvailabilityMockHandler(),
+  getTeamAddAbsenceMockHandler(),
+  getTeamRemoveAbsenceMockHandler()
 ]

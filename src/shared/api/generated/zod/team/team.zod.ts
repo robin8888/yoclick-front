@@ -170,3 +170,262 @@ export const InvitationsRevokeHeader = zod.object({
 
 export const InvitationsRevokeResponse = zod.void()
 
+/**
+ * @summary Horario propio y ausencias de una persona del equipo.
+ */
+export const teamGetAvailabilityPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamGetAvailabilityPathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamGetAvailabilityParams = zod.object({
+  "centerId": zod.uuid().regex(teamGetAvailabilityPathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(teamGetAvailabilityPathMembershipIdRegExp)
+})
+
+export const TeamGetAvailabilityHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const teamGetAvailabilityResponseWeeklyHoursMonMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursTueMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursWedMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursThuMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursFriMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursSatMax = 4;
+
+export const teamGetAvailabilityResponseWeeklyHoursSunMax = 4;
+
+export const teamGetAvailabilityResponseAbsencesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamGetAvailabilityResponseAbsencesItemStartsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const teamGetAvailabilityResponseAbsencesItemEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const TeamGetAvailabilityResponse = zod.object({
+  "weeklyHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursMonMax),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursTueMax),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursWedMax),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursThuMax),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursFriMax),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursSatMax),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamGetAvailabilityResponseWeeklyHoursSunMax)
+}).nullable(),
+  "absences": zod.array(zod.object({
+  "id": zod.uuid().regex(teamGetAvailabilityResponseAbsencesItemIdRegExp),
+  "startsOn": zod.iso.date().regex(teamGetAvailabilityResponseAbsencesItemStartsOnRegExp),
+  "endsOn": zod.iso.date().regex(teamGetAvailabilityResponseAbsencesItemEndsOnRegExp),
+  "reason": zod.enum(['vacation', 'training', 'personal', 'other'])
+}))
+})
+
+/**
+ * @summary Guarda el horario semanal propio. Solo se puede reservar con la persona dentro de esos tramos y del horario del centro. `null` vuelve al horario del centro.
+ */
+export const teamSaveAvailabilityPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamSaveAvailabilityPathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamSaveAvailabilityParams = zod.object({
+  "centerId": zod.uuid().regex(teamSaveAvailabilityPathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(teamSaveAvailabilityPathMembershipIdRegExp)
+})
+
+export const TeamSaveAvailabilityHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const teamSaveAvailabilityBodyWeeklyHoursMonMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursTueMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursWedMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursThuMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursFriMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursSatMax = 4;
+
+export const teamSaveAvailabilityBodyWeeklyHoursSunMax = 4;
+
+
+
+export const TeamSaveAvailabilityBody = zod.object({
+  "weeklyHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursMonMax).optional(),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursTueMax).optional(),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursWedMax).optional(),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursThuMax).optional(),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursFriMax).optional(),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursSatMax).optional(),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityBodyWeeklyHoursSunMax).optional()
+}).nullable()
+})
+
+export const teamSaveAvailabilityResponseWeeklyHoursMonMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursTueMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursWedMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursThuMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursFriMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursSatMax = 4;
+
+export const teamSaveAvailabilityResponseWeeklyHoursSunMax = 4;
+
+export const teamSaveAvailabilityResponseAbsencesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamSaveAvailabilityResponseAbsencesItemStartsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const teamSaveAvailabilityResponseAbsencesItemEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const TeamSaveAvailabilityResponse = zod.object({
+  "weeklyHours": zod.object({
+  "mon": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursMonMax),
+  "tue": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursTueMax),
+  "wed": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursWedMax),
+  "thu": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursThuMax),
+  "fri": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursFriMax),
+  "sat": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursSatMax),
+  "sun": zod.array(zod.object({
+  "opensAt": zod.string(),
+  "closesAt": zod.string()
+})).max(teamSaveAvailabilityResponseWeeklyHoursSunMax)
+}).nullable(),
+  "absences": zod.array(zod.object({
+  "id": zod.uuid().regex(teamSaveAvailabilityResponseAbsencesItemIdRegExp),
+  "startsOn": zod.iso.date().regex(teamSaveAvailabilityResponseAbsencesItemStartsOnRegExp),
+  "endsOn": zod.iso.date().regex(teamSaveAvailabilityResponseAbsencesItemEndsOnRegExp),
+  "reason": zod.enum(['vacation', 'training', 'personal', 'other'])
+}))
+})
+
+/**
+ * @summary Añade unos días de ausencia (vacaciones, formación…). No se pueden reservar citas con la persona esos días; las que ya había se cuentan en la respuesta para que el centro las reasigne.
+ */
+export const teamAddAbsencePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamAddAbsencePathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamAddAbsenceParams = zod.object({
+  "centerId": zod.uuid().regex(teamAddAbsencePathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(teamAddAbsencePathMembershipIdRegExp)
+})
+
+export const TeamAddAbsenceHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const teamAddAbsenceBodyStartsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const teamAddAbsenceBodyEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const TeamAddAbsenceBody = zod.object({
+  "startsOn": zod.iso.date().regex(teamAddAbsenceBodyStartsOnRegExp),
+  "endsOn": zod.iso.date().regex(teamAddAbsenceBodyEndsOnRegExp),
+  "reason": zod.enum(['vacation', 'training', 'personal', 'other'])
+})
+
+export const teamAddAbsenceResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamAddAbsenceResponseStartsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const teamAddAbsenceResponseEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const teamAddAbsenceResponseAffectedBookingCountMin = -9007199254740991;
+export const teamAddAbsenceResponseAffectedBookingCountMax = 9007199254740991;
+
+
+
+export const TeamAddAbsenceResponse = zod.object({
+  "id": zod.uuid().regex(teamAddAbsenceResponseIdRegExp),
+  "startsOn": zod.iso.date().regex(teamAddAbsenceResponseStartsOnRegExp),
+  "endsOn": zod.iso.date().regex(teamAddAbsenceResponseEndsOnRegExp),
+  "reason": zod.enum(['vacation', 'training', 'personal', 'other']),
+  "affectedBookingCount": zod.int().min(teamAddAbsenceResponseAffectedBookingCountMin).max(teamAddAbsenceResponseAffectedBookingCountMax)
+})
+
+/**
+ * @summary Quita una ausencia.
+ */
+export const teamRemoveAbsencePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamRemoveAbsencePathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamRemoveAbsencePathAbsenceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamRemoveAbsenceParams = zod.object({
+  "centerId": zod.uuid().regex(teamRemoveAbsencePathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(teamRemoveAbsencePathMembershipIdRegExp),
+  "absenceId": zod.uuid().regex(teamRemoveAbsencePathAbsenceIdRegExp)
+})
+
+export const TeamRemoveAbsenceHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const TeamRemoveAbsenceResponse = zod.void()
+

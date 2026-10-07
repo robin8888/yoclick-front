@@ -25,10 +25,14 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  AddStaffAbsenceRequestDto,
+  AddedStaffAbsenceResponseDto,
   InvitationResponseDto,
   InviteRequestDto,
   PendingInvitationsResponseDto,
   ProblemDetailsDto,
+  SaveStaffWeeklyHoursRequestDto,
+  StaffAvailabilityResponseDto,
   TeamMemberResponseDto,
   TeamResponseDto,
   UpdateTeamMemberRequestDto
@@ -509,4 +513,369 @@ export const useInvitationsRevoke = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getInvitationsRevokeMutationOptions(options), queryClient);
+    }
+    export const getTeamGetAvailabilityUrl = (centerId: string,
+    membershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team/${membershipId}/availability`
+}
+
+/**
+ * @summary Horario propio y ausencias de una persona del equipo.
+ */
+export const teamGetAvailability = async (centerId: string,
+    membershipId: string, options?: Parameters<typeof apiMutator>[1]): Promise<StaffAvailabilityResponseDto> => {
+
+  return apiMutator<StaffAvailabilityResponseDto>(getTeamGetAvailabilityUrl(centerId,membershipId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getTeamGetAvailabilityQueryKey = (centerId: string,
+    membershipId: string,) => {
+    return [
+    `/v1/centers/${centerId}/team/${membershipId}/availability`
+    ] as const;
+    }
+
+
+export const getTeamGetAvailabilityQueryOptions = <TData = Awaited<ReturnType<typeof teamGetAvailability>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    membershipId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getTeamGetAvailabilityQueryKey(centerId,membershipId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof teamGetAvailability>>> = ({ signal }) => teamGetAvailability(centerId,membershipId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && membershipId !== null && membershipId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type TeamGetAvailabilityQueryResult = NonNullable<Awaited<ReturnType<typeof teamGetAvailability>>>
+export type TeamGetAvailabilityQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useTeamGetAvailability<TData = Awaited<ReturnType<typeof teamGetAvailability>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    membershipId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof teamGetAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof teamGetAvailability>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTeamGetAvailability<TData = Awaited<ReturnType<typeof teamGetAvailability>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    membershipId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof teamGetAvailability>>,
+          TError,
+          Awaited<ReturnType<typeof teamGetAvailability>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useTeamGetAvailability<TData = Awaited<ReturnType<typeof teamGetAvailability>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    membershipId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Horario propio y ausencias de una persona del equipo.
+ */
+
+export function useTeamGetAvailability<TData = Awaited<ReturnType<typeof teamGetAvailability>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    membershipId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof teamGetAvailability>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getTeamGetAvailabilityQueryOptions(centerId,membershipId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getTeamSaveAvailabilityUrl = (centerId: string,
+    membershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team/${membershipId}/availability`
+}
+
+/**
+ * @summary Guarda el horario semanal propio. Solo se puede reservar con la persona dentro de esos tramos y del horario del centro. `null` vuelve al horario del centro.
+ */
+export const teamSaveAvailability = async (centerId: string,
+    membershipId: string,
+    saveStaffWeeklyHoursRequestDto: SaveStaffWeeklyHoursRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<StaffAvailabilityResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<StaffAvailabilityResponseDto>(getTeamSaveAvailabilityUrl(centerId,membershipId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(saveStaffWeeklyHoursRequestDto)
+  }
+);}
+
+
+
+
+
+export const getTeamSaveAvailabilityMutationKey = () => ['teamSaveAvailability'] as const;
+
+export const getTeamSaveAvailabilityMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamSaveAvailability>>, TError,TeamSaveAvailabilityMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof teamSaveAvailability>>, TError,TeamSaveAvailabilityMutationVariables, TContext> => {
+
+const mutationKey = getTeamSaveAvailabilityMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof teamSaveAvailability>>, TeamSaveAvailabilityMutationVariables> = (props) => {
+          const {centerId,membershipId,data} = props ?? {};
+
+          return  teamSaveAvailability(centerId,membershipId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TeamSaveAvailabilityMutationResult = NonNullable<Awaited<ReturnType<typeof teamSaveAvailability>>>
+    export type TeamSaveAvailabilityMutationBody = SaveStaffWeeklyHoursRequestDto
+    export type TeamSaveAvailabilityMutationError = ErrorType<ProblemDetailsDto>
+    export type TeamSaveAvailabilityMutationVariables = {centerId: string;membershipId: string;data: SaveStaffWeeklyHoursRequestDto}
+
+    /**
+ * @summary Guarda el horario semanal propio. Solo se puede reservar con la persona dentro de esos tramos y del horario del centro. `null` vuelve al horario del centro.
+ */
+export const useTeamSaveAvailability = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamSaveAvailability>>, TError,TeamSaveAvailabilityMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof teamSaveAvailability>>,
+        TError,
+        TeamSaveAvailabilityMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTeamSaveAvailabilityMutationOptions(options), queryClient);
+    }
+    export const getTeamAddAbsenceUrl = (centerId: string,
+    membershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team/${membershipId}/absences`
+}
+
+/**
+ * @summary Añade unos días de ausencia (vacaciones, formación…). No se pueden reservar citas con la persona esos días; las que ya había se cuentan en la respuesta para que el centro las reasigne.
+ */
+export const teamAddAbsence = async (centerId: string,
+    membershipId: string,
+    addStaffAbsenceRequestDto: AddStaffAbsenceRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<AddedStaffAbsenceResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<AddedStaffAbsenceResponseDto>(getTeamAddAbsenceUrl(centerId,membershipId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(addStaffAbsenceRequestDto)
+  }
+);}
+
+
+
+
+
+export const getTeamAddAbsenceMutationKey = () => ['teamAddAbsence'] as const;
+
+export const getTeamAddAbsenceMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamAddAbsence>>, TError,TeamAddAbsenceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof teamAddAbsence>>, TError,TeamAddAbsenceMutationVariables, TContext> => {
+
+const mutationKey = getTeamAddAbsenceMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof teamAddAbsence>>, TeamAddAbsenceMutationVariables> = (props) => {
+          const {centerId,membershipId,data} = props ?? {};
+
+          return  teamAddAbsence(centerId,membershipId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TeamAddAbsenceMutationResult = NonNullable<Awaited<ReturnType<typeof teamAddAbsence>>>
+    export type TeamAddAbsenceMutationBody = AddStaffAbsenceRequestDto
+    export type TeamAddAbsenceMutationError = ErrorType<ProblemDetailsDto>
+    export type TeamAddAbsenceMutationVariables = {centerId: string;membershipId: string;data: AddStaffAbsenceRequestDto}
+
+    /**
+ * @summary Añade unos días de ausencia (vacaciones, formación…). No se pueden reservar citas con la persona esos días; las que ya había se cuentan en la respuesta para que el centro las reasigne.
+ */
+export const useTeamAddAbsence = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamAddAbsence>>, TError,TeamAddAbsenceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof teamAddAbsence>>,
+        TError,
+        TeamAddAbsenceMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTeamAddAbsenceMutationOptions(options), queryClient);
+    }
+    export const getTeamRemoveAbsenceUrl = (centerId: string,
+    membershipId: string,
+    absenceId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team/${membershipId}/absences/${absenceId}`
+}
+
+/**
+ * @summary Quita una ausencia.
+ */
+export const teamRemoveAbsence = async (centerId: string,
+    membershipId: string,
+    absenceId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getTeamRemoveAbsenceUrl(centerId,membershipId,absenceId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getTeamRemoveAbsenceMutationKey = () => ['teamRemoveAbsence'] as const;
+
+export const getTeamRemoveAbsenceMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamRemoveAbsence>>, TError,TeamRemoveAbsenceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof teamRemoveAbsence>>, TError,TeamRemoveAbsenceMutationVariables, TContext> => {
+
+const mutationKey = getTeamRemoveAbsenceMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof teamRemoveAbsence>>, TeamRemoveAbsenceMutationVariables> = (props) => {
+          const {centerId,membershipId,absenceId} = props ?? {};
+
+          return  teamRemoveAbsence(centerId,membershipId,absenceId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TeamRemoveAbsenceMutationResult = NonNullable<Awaited<ReturnType<typeof teamRemoveAbsence>>>
+
+    export type TeamRemoveAbsenceMutationError = ErrorType<ProblemDetailsDto>
+    export type TeamRemoveAbsenceMutationVariables = {centerId: string;membershipId: string;absenceId: string}
+
+    /**
+ * @summary Quita una ausencia.
+ */
+export const useTeamRemoveAbsence = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamRemoveAbsence>>, TError,TeamRemoveAbsenceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof teamRemoveAbsence>>,
+        TError,
+        TeamRemoveAbsenceMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTeamRemoveAbsenceMutationOptions(options), queryClient);
     }

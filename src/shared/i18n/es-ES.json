@@ -524,6 +524,7 @@
   },
   "session": {
     "profile": {
+      "availabilityAction": "Mi disponibilidad",
       "title": "Perfil",
       "roleAtCenter": "{{role}} en {{centerName}}"
     }
@@ -992,6 +993,36 @@
       "suspendedNote": "Tu centro está suspendido. Escríbenos y lo resolvemos.",
       "webNote": "La suscripción se gestiona y se paga en la web de Yoclick, no en la app. Te avisamos por correo del fin de la prueba y de cualquier impago."
     },
+    "availability": {
+      "title": "Disponibilidad",
+      "subtitle": "Solo se puede reservar en estas franjas y dentro del horario del centro",
+      "errorTitle": "No hemos podido cargar la disponibilidad",
+      "weeklyTitle": "Horario semanal",
+      "followsCenter": "Ahora sigue el horario del centro. Al guardar tendrá un horario propio.",
+      "hasOwnHours": "Tiene un horario propio.",
+      "saveAction": "Guardar horario",
+      "resetAction": "Volver al horario del centro",
+      "absencesTitle": "Ausencias",
+      "absencesEmpty": "No hay ausencias.",
+      "addAbsenceAction": "Añadir ausencia",
+      "saveAbsenceAction": "Guardar ausencia",
+      "fromLabel": "Desde",
+      "untilLabel": "Hasta (si dura más de un día)",
+      "datePlaceholder": "AAAA-MM-DD",
+      "reasonLabel": "Motivo",
+      "reasons": {
+        "vacation": "Vacaciones",
+        "training": "Formación",
+        "personal": "Asuntos propios",
+        "other": "Otro"
+      },
+      "singleDay": "{{date}}",
+      "dateRange": "{{from}} → {{to}}",
+      "removeAbsenceLabel": "Quitar la ausencia {{range}}",
+      "affectedBookings_one": "Hay {{count}} cita en esos días. Sigue en la agenda: reasígnala o avisa a la persona.",
+      "affectedBookings_other": "Hay {{count}} citas en esos días. Siguen en la agenda: reasígnalas o avisa a las personas.",
+      "note": "Una ausencia no cancela las citas que ya hubiera: siguen en la agenda para que el centro las reasigne."
+    },
     "security": {
       "title": "Seguridad",
       "twoFactorTitle": "Verificación en dos pasos",
@@ -1176,6 +1207,7 @@
         "servicesLabel": "Gestionar servicios",
         "servicesHint": "Crear, cambiar y archivar servicios y salas"
       },
+      "availabilityAction": "Disponibilidad y ausencias",
       "titleLabel": "Cargo",
       "titleHelper": "Es lo que ven los clientes, por ejemplo «Entrenadora personal».",
       "saveAction": "Guardar cambios",

@@ -64,7 +64,9 @@ endpoints: cada punto indica qué hace la app mientras tanto.
 | 1 | ~~**Salas y recursos**~~ Resuelto (6 oct 2026): `GET/POST /v1/centers/{id}/rooms`, `DELETE /v1/centers/{id}/rooms/{roomId}` (se archiva) y `roomId`/`room` en los servicios. Migración `20261008090000_add_rooms`. | «Salas y recursos» lista, añade (nombre y aforo) y quita; el editor de servicio elige sala. |
 | 2 | **Aviso de conflicto de sala** («Conflicto de sala» del prototipo): los servicios no tienen horario fijo ni periodo, las citas se reservan por huecos, así que no hay solapes de sala que detectar todavía. | La sala se guarda pero no bloquea ni avisa. |
 | 3 | **Cierres y festivos** del horario (`acenter`): el servidor ya los guarda (`holidays`) pero la app aún no tiene pantalla. | «Editar» horario cambia solo los tramos semanales. |
-| 4 | **Disponibilidad y ausencias del equipo** (`iavail`, `ateam`): no hay horario propio por persona ni vacaciones. | La disponibilidad sale del horario del centro. |
+| 4 | ~~**Disponibilidad y ausencias del equipo**~~ Resuelto (7 oct 2026): `GET`/`PUT /v1/centers/{id}/team/{membershipId}/availability` (horario semanal propio; `null` vuelve al del centro) y `POST`/`DELETE …/absences` (días de ausencia con motivo; la respuesta cuenta las citas que ya había). Los huecos y las reservas respetan ambas cosas. Migración `20261011090000_add_staff_availability`. | «Disponibilidad» en el perfil de cada profesional y en la ficha del equipo para la administración. |
+| 4b | **Reasignar o avisar de las citas que ya había** en una ausencia: la API solo las cuenta y siguen en la agenda. No se avisa a nadie por correo ni push. | Aviso en pantalla con el número de citas afectadas. |
+| 4c | **Horario del centro como punto de partida** para el personal: no puede leer los ajustes del centro, así que al crear su horario propio parte de una jornada de lunes a viernes de 9:00 a 17:00. | Se ajusta antes de guardar. |
 | 5 | **Permisos finos por rol** (`ateam`: qué ve cada rol): la app solo cambia el rol (administración / equipo) y el cargo. | «Quitar del equipo» marca a la persona como «ya no está». |
 
 ## Alumnos y grupos (`aclients`)
