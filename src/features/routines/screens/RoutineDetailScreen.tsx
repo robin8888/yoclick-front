@@ -14,6 +14,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { ArchiveRoutineControl } from '../components/ArchiveRoutineControl';
 import { ExerciseRows } from '../components/ExerciseRows';
 import { RoutineAssignmentsSection } from '../components/RoutineAssignmentsSection';
+import { RoutineProgressSection } from '../components/RoutineProgressSection';
 import { SECTION_STYLE } from '../components/RoutinesCommon.styles';
 import {
   useArchiveRoutine,
@@ -86,6 +87,7 @@ function RoutineDetailBody({
           unassignment.run(assignmentId);
         }}
       />
+      <RoutineProgressSection routineId={routine.id} />
       {errorMessage === null ? null : <FormErrorBanner message={errorMessage} />}
       <ArchiveRoutineControl
         routineName={routine.name}

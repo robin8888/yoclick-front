@@ -4,6 +4,7 @@ import type { ErrorType } from '@/shared/api/api-mutator';
 import { getGroupsListQueryOptions } from '@/shared/api/generated/endpoints/clients/clients';
 import {
   getRoutinesGetExerciseLibraryQueryOptions,
+  getRoutinesGetProgressQueryOptions,
   getRoutinesGetQueryOptions,
   getRoutinesListMineQueryOptions,
   getRoutinesListQueryOptions,
@@ -14,6 +15,7 @@ import type {
   MyRoutinesResponseDto,
   RoutineDetailResponseDto,
   RoutineListResponseDto,
+  RoutineProgressResponseDto,
 } from '@/shared/api/generated/model';
 
 import { useActiveCenterId } from './useActiveCenterId';
@@ -31,6 +33,13 @@ export function useRoutineDetail(
   routineId: string,
 ): UseQueryResult<RoutineDetailResponseDto, ErrorType> {
   return useQuery(getRoutinesGetQueryOptions(useActiveCenterId(), routineId));
+}
+
+/** Cuántas veces ha hecho la rutina cada persona que la tiene. */
+export function useRoutineProgress(
+  routineId: string,
+): UseQueryResult<RoutineProgressResponseDto, ErrorType> {
+  return useQuery(getRoutinesGetProgressQueryOptions(useActiveCenterId(), routineId));
 }
 
 /** Lo que el cliente tiene asignado, directamente o por su grupo. */

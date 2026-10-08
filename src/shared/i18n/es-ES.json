@@ -614,6 +614,20 @@
       "archiveConfirmAction": "Sí, archivar",
       "keepAction": "Mantener"
     },
+    "progress": {
+      "timesDone_zero": "Todavía no la has hecho",
+      "timesDone_one": "La has hecho {{count}} vez",
+      "timesDone_other": "La has hecho {{count}} veces",
+      "checkExerciseLabel": "Marcar {{exercise}} como hecho",
+      "doneTodayAction": "Hoy hice esta rutina",
+      "alreadyDoneToday": "Ya la has registrado hoy. ¡Bien hecho!",
+      "recordedAnnouncement": "Registrado: hoy has hecho esta rutina.",
+      "teamTitle": "Quién la ha hecho",
+      "teamEmpty": "Todavía no la tiene nadie, así que no hay nada que seguir.",
+      "teamPersonTimes_zero": "Aún no la ha hecho",
+      "teamPersonTimes_one": "{{count}} vez · última {{date}}",
+      "teamPersonTimes_other": "{{count}} veces · última {{date}}"
+    },
     "client": {
       "emptyTitle": "Todavía no tienes nada asignado",
       "emptyDescription": "Cuando tu centro te asigne algo para practicar, lo verás aquí.",

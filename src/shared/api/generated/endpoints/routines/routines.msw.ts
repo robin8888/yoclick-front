@@ -16,21 +16,25 @@ import type {
 import type {
   ExerciseLibraryResponseDto,
   MyRoutinesResponseDto,
+  RoutineCompletionResponseDto,
   RoutineDetailResponseDto,
-  RoutineListResponseDto
+  RoutineListResponseDto,
+  RoutineProgressResponseDto
 } from '../../model';
 
 import {
   getRoutinesAssignResponseMock,
   getRoutinesCreateResponseMock,
   getRoutinesGetExerciseLibraryResponseMock,
+  getRoutinesGetProgressResponseMock,
   getRoutinesGetResponseMock,
   getRoutinesListMineResponseMock,
   getRoutinesListResponseMock,
+  getRoutinesRecordCompletionResponseMock,
   getRoutinesUpdateResponseMock
 } from './routines.faker.ts';
 
-export { getRoutinesGetExerciseLibraryResponseMock, getRoutinesListResponseMock, getRoutinesCreateResponseMock, getRoutinesGetResponseMock, getRoutinesUpdateResponseMock, getRoutinesListMineResponseMock, getRoutinesAssignResponseMock } from './routines.faker.ts';
+export { getRoutinesGetExerciseLibraryResponseMock, getRoutinesListResponseMock, getRoutinesCreateResponseMock, getRoutinesGetResponseMock, getRoutinesUpdateResponseMock, getRoutinesListMineResponseMock, getRoutinesRecordCompletionResponseMock, getRoutinesGetProgressResponseMock, getRoutinesAssignResponseMock } from './routines.faker.ts';
 
 
 export const getRoutinesGetExerciseLibraryMockHandler = (overrideResponse?: ExerciseLibraryResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ExerciseLibraryResponseDto> | ExerciseLibraryResponseDto), options?: RequestHandlerOptions) => {
@@ -115,6 +119,30 @@ export const getRoutinesListMineMockHandler = (overrideResponse?: MyRoutinesResp
   }, options)
 }
 
+export const getRoutinesRecordCompletionMockHandler = (overrideResponse?: RoutineCompletionResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<RoutineCompletionResponseDto> | RoutineCompletionResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/routines/:routineId/completions', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRoutinesRecordCompletionResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getRoutinesGetProgressMockHandler = (overrideResponse?: RoutineProgressResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoutineProgressResponseDto> | RoutineProgressResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/routines/:routineId/progress', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRoutinesGetProgressResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getRoutinesAssignMockHandler = (overrideResponse?: RoutineDetailResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<RoutineDetailResponseDto> | RoutineDetailResponseDto), options?: RequestHandlerOptions) => {
   return http.post('*/v1/centers/:centerId/routines/:routineId/assignments', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
@@ -144,6 +172,8 @@ export const getRoutinesMock = () => [
   getRoutinesArchiveMockHandler(),
   getRoutinesUpdateMockHandler(),
   getRoutinesListMineMockHandler(),
+  getRoutinesRecordCompletionMockHandler(),
+  getRoutinesGetProgressMockHandler(),
   getRoutinesAssignMockHandler(),
   getRoutinesUnassignMockHandler()
 ]

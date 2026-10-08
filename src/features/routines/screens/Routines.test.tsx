@@ -58,6 +58,7 @@ const READY_VIDEO = {
     expiresAt: '2026-10-07T14:00:00.000Z',
   },
 };
+const NO_PROGRESS = { completionCount: 0, lastCompletedAt: null, isCompletedToday: false };
 const PLAN_WITHOUT_VIDEO = { isIncluded: false, limitBytes: null, usedBytes: 0 };
 const PLAN_WITH_VIDEO = { isIncluded: true, limitBytes: 5_368_709_120, usedBytes: 0 };
 const LIST_ITEM = {
@@ -228,7 +229,26 @@ describe('RoutineDetailScreen', () => {
       [`GET ${BASE}/routines/${ROUTINE_ID}`]: DETAIL,
       [`DELETE ${BASE}/routines/${ROUTINE_ID}/assignments/${ASSIGNMENT_ID}`]: null,
       [`DELETE ${BASE}/routines/${ROUTINE_ID}`]: null,
+      [`GET ${BASE}/routines/${ROUTINE_ID}/progress`]: {
+        people: [
+          {
+            membershipId: 'a',
+            fullName: 'Ana Gil',
+            completionCount: 2,
+            lastCompletedAt: CREATED_AT,
+          },
+          { membershipId: 'b', fullName: 'Bruno Sanz', completionCount: 0, lastCompletedAt: null },
+        ],
+      },
     });
+  });
+
+  it('shows the team how many times each person did it', async () => {
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
+
+    expect(await screen.findByText('Ana Gil')).toBeOnTheScreen();
+    expect(screen.getByText('2 veces · última 07/10/2026')).toBeOnTheScreen();
+    expect(screen.getByText('Aún no la ha hecho')).toBeOnTheScreen();
   });
 
   it('shows the exercises, the note and who has it', async () => {
@@ -343,13 +363,58 @@ describe('PracticeScreen (client)', () => {
   it('shows what the center assigned, with the exercises', async () => {
     mockApi({
       'GET /v1/me/memberships': CLIENT_MEMBERSHIPS,
-      [`GET ${BASE}/my-routines`]: { routines: [{ ...DETAIL, assignedAt: CREATED_AT }] },
+      [`GET ${BASE}/my-routines`]: {
+        routines: [{ ...DETAIL, assignedAt: CREATED_AT, progress: NO_PROGRESS }],
+      },
     });
     renderScreen(<PracticeScreen />);
 
     expect(await screen.findByText('Fuerza base')).toBeOnTheScreen();
     expect(screen.getByText('Recibida el 07/10/2026')).toBeOnTheScreen();
     expect(screen.getByText('Sentadilla goblet')).toBeOnTheScreen();
+  });
+
+  it('records that the client did the routine with the exercises they marked', async () => {
+    mockApi({
+      'GET /v1/me/memberships': CLIENT_MEMBERSHIPS,
+      [`GET ${BASE}/my-routines`]: {
+        routines: [{ ...DETAIL, assignedAt: CREATED_AT, progress: NO_PROGRESS }],
+      },
+      [`POST ${BASE}/routines/${ROUTINE_ID}/completions`]: {
+        completedAt: CREATED_AT,
+        completedItemCount: 1,
+        totalItemCount: 1,
+        isNew: true,
+      },
+    });
+    renderScreen(<PracticeScreen />);
+
+    expect(await screen.findByText('Todavía no la has hecho')).toBeOnTheScreen();
+    const recordButton = screen.getByRole('button', { name: 'Hoy hice esta rutina' });
+    expect(recordButton).toBeDisabled();
+    fireEvent.press(screen.getByRole('checkbox', { name: 'Marcar Sentadilla goblet como hecho' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Hoy hice esta rutina' }));
+
+    await waitFor(() => {
+      expect(findApiCall('POST', `${BASE}/routines/${ROUTINE_ID}/completions`)?.body).toEqual({
+        completedItemCount: 1,
+      });
+    });
+  });
+
+  it('shows that it was already done today instead of offering to record it again', async () => {
+    const doneToday = { completionCount: 3, lastCompletedAt: CREATED_AT, isCompletedToday: true };
+    mockApi({
+      'GET /v1/me/memberships': CLIENT_MEMBERSHIPS,
+      [`GET ${BASE}/my-routines`]: {
+        routines: [{ ...DETAIL, assignedAt: CREATED_AT, progress: doneToday }],
+      },
+    });
+    renderScreen(<PracticeScreen />);
+
+    expect(await screen.findByText('Ya la has registrado hoy. ¡Bien hecho!')).toBeOnTheScreen();
+    expect(screen.getByText('La has hecho 3 veces')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Hoy hice esta rutina' })).toBeNull();
   });
 
   it('explains there is nothing assigned yet', async () => {

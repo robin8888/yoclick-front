@@ -30,8 +30,11 @@ import type {
   ExerciseLibraryResponseDto,
   MyRoutinesResponseDto,
   ProblemDetailsDto,
+  RecordCompletionRequestDto,
+  RoutineCompletionResponseDto,
   RoutineDetailResponseDto,
   RoutineListResponseDto,
+  RoutineProgressResponseDto,
   UpdateRoutineRequestDto
 } from '../../model';
 
@@ -708,6 +711,204 @@ export function useRoutinesListMine<TData = Awaited<ReturnType<typeof routinesLi
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getRoutinesListMineQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getRoutinesRecordCompletionUrl = (centerId: string,
+    routineId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/routines/${routineId}/completions`
+}
+
+/**
+ * @summary Registra «hoy hice esta rutina» con cuántos ejercicios marcó. Solo si la tiene asignada (directamente o por su grupo). Una vez por día local del centro: repetirlo devuelve lo ya registrado (isNew=false). 400 si marca 0 o más ejercicios de los que tiene.
+ */
+export const routinesRecordCompletion = async (centerId: string,
+    routineId: string,
+    recordCompletionRequestDto: RecordCompletionRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RoutineCompletionResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<RoutineCompletionResponseDto>(getRoutinesRecordCompletionUrl(centerId,routineId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(recordCompletionRequestDto)
+  }
+);}
+
+
+
+
+
+export const getRoutinesRecordCompletionMutationKey = () => ['routinesRecordCompletion'] as const;
+
+export const getRoutinesRecordCompletionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof routinesRecordCompletion>>, TError,RoutinesRecordCompletionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof routinesRecordCompletion>>, TError,RoutinesRecordCompletionMutationVariables, TContext> => {
+
+const mutationKey = getRoutinesRecordCompletionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof routinesRecordCompletion>>, RoutinesRecordCompletionMutationVariables> = (props) => {
+          const {centerId,routineId,data} = props ?? {};
+
+          return  routinesRecordCompletion(centerId,routineId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RoutinesRecordCompletionMutationResult = NonNullable<Awaited<ReturnType<typeof routinesRecordCompletion>>>
+    export type RoutinesRecordCompletionMutationBody = RecordCompletionRequestDto
+    export type RoutinesRecordCompletionMutationError = ErrorType<ProblemDetailsDto>
+    export type RoutinesRecordCompletionMutationVariables = {centerId: string;routineId: string;data: RecordCompletionRequestDto}
+
+    /**
+ * @summary Registra «hoy hice esta rutina» con cuántos ejercicios marcó. Solo si la tiene asignada (directamente o por su grupo). Una vez por día local del centro: repetirlo devuelve lo ya registrado (isNew=false). 400 si marca 0 o más ejercicios de los que tiene.
+ */
+export const useRoutinesRecordCompletion = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof routinesRecordCompletion>>, TError,RoutinesRecordCompletionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof routinesRecordCompletion>>,
+        TError,
+        RoutinesRecordCompletionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRoutinesRecordCompletionMutationOptions(options), queryClient);
+    }
+    export const getRoutinesGetProgressUrl = (centerId: string,
+    routineId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/routines/${routineId}/progress`
+}
+
+/**
+ * @summary Cuántas veces ha registrado la rutina cada persona que la tiene (directamente o por su grupo), por nombre.
+ */
+export const routinesGetProgress = async (centerId: string,
+    routineId: string, options?: Parameters<typeof apiMutator>[1]): Promise<RoutineProgressResponseDto> => {
+
+  return apiMutator<RoutineProgressResponseDto>(getRoutinesGetProgressUrl(centerId,routineId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getRoutinesGetProgressQueryKey = (centerId: string,
+    routineId: string,) => {
+    return [
+    `/v1/centers/${centerId}/routines/${routineId}/progress`
+    ] as const;
+    }
+
+
+export const getRoutinesGetProgressQueryOptions = <TData = Awaited<ReturnType<typeof routinesGetProgress>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    routineId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRoutinesGetProgressQueryKey(centerId,routineId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof routinesGetProgress>>> = ({ signal }) => routinesGetProgress(centerId,routineId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && routineId !== null && routineId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RoutinesGetProgressQueryResult = NonNullable<Awaited<ReturnType<typeof routinesGetProgress>>>
+export type RoutinesGetProgressQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useRoutinesGetProgress<TData = Awaited<ReturnType<typeof routinesGetProgress>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    routineId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof routinesGetProgress>>,
+          TError,
+          Awaited<ReturnType<typeof routinesGetProgress>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoutinesGetProgress<TData = Awaited<ReturnType<typeof routinesGetProgress>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    routineId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof routinesGetProgress>>,
+          TError,
+          Awaited<ReturnType<typeof routinesGetProgress>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoutinesGetProgress<TData = Awaited<ReturnType<typeof routinesGetProgress>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    routineId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Cuántas veces ha registrado la rutina cada persona que la tiene (directamente o por su grupo), por nombre.
+ */
+
+export function useRoutinesGetProgress<TData = Awaited<ReturnType<typeof routinesGetProgress>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    routineId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof routinesGetProgress>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRoutinesGetProgressQueryOptions(centerId,routineId,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

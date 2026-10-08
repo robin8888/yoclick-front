@@ -340,6 +340,10 @@ export const routinesListMineResponseRoutinesItemItemsItemVideoDurationSecondsMa
 
 export const routinesListMineResponseRoutinesItemItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const routinesListMineResponseRoutinesItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const routinesListMineResponseRoutinesItemProgressCompletionCountMin = -9007199254740991;
+export const routinesListMineResponseRoutinesItemProgressCompletionCountMax = 9007199254740991;
+
+export const routinesListMineResponseRoutinesItemProgressLastCompletedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const RoutinesListMineResponse = zod.object({
@@ -365,7 +369,84 @@ export const RoutinesListMineResponse = zod.object({
 }).nullable()
 }).nullable()
 })),
-  "assignedAt": zod.iso.datetime({"offset":true}).regex(routinesListMineResponseRoutinesItemAssignedAtRegExp)
+  "assignedAt": zod.iso.datetime({"offset":true}).regex(routinesListMineResponseRoutinesItemAssignedAtRegExp),
+  "progress": zod.object({
+  "completionCount": zod.int().min(routinesListMineResponseRoutinesItemProgressCompletionCountMin).max(routinesListMineResponseRoutinesItemProgressCompletionCountMax),
+  "lastCompletedAt": zod.iso.datetime({"offset":true}).regex(routinesListMineResponseRoutinesItemProgressLastCompletedAtRegExp).nullable(),
+  "isCompletedToday": zod.boolean()
+})
+}))
+})
+
+/**
+ * @summary Registra «hoy hice esta rutina» con cuántos ejercicios marcó. Solo si la tiene asignada (directamente o por su grupo). Una vez por día local del centro: repetirlo devuelve lo ya registrado (isNew=false). 400 si marca 0 o más ejercicios de los que tiene.
+ */
+export const routinesRecordCompletionPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesRecordCompletionPathRoutineIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoutinesRecordCompletionParams = zod.object({
+  "centerId": zod.uuid().regex(routinesRecordCompletionPathCenterIdRegExp),
+  "routineId": zod.uuid().regex(routinesRecordCompletionPathRoutineIdRegExp)
+})
+
+export const RoutinesRecordCompletionHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const routinesRecordCompletionBodyCompletedItemCountMax = 30;
+
+
+
+export const RoutinesRecordCompletionBody = zod.object({
+  "completedItemCount": zod.int().min(1).max(routinesRecordCompletionBodyCompletedItemCountMax)
+})
+
+export const routinesRecordCompletionResponseCompletedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const routinesRecordCompletionResponseCompletedItemCountMin = -9007199254740991;
+export const routinesRecordCompletionResponseCompletedItemCountMax = 9007199254740991;
+
+export const routinesRecordCompletionResponseTotalItemCountMin = -9007199254740991;
+export const routinesRecordCompletionResponseTotalItemCountMax = 9007199254740991;
+
+
+
+export const RoutinesRecordCompletionResponse = zod.object({
+  "completedAt": zod.iso.datetime({"offset":true}).regex(routinesRecordCompletionResponseCompletedAtRegExp),
+  "completedItemCount": zod.int().min(routinesRecordCompletionResponseCompletedItemCountMin).max(routinesRecordCompletionResponseCompletedItemCountMax),
+  "totalItemCount": zod.int().min(routinesRecordCompletionResponseTotalItemCountMin).max(routinesRecordCompletionResponseTotalItemCountMax),
+  "isNew": zod.boolean()
+})
+
+/**
+ * @summary Cuántas veces ha registrado la rutina cada persona que la tiene (directamente o por su grupo), por nombre.
+ */
+export const routinesGetProgressPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesGetProgressPathRoutineIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoutinesGetProgressParams = zod.object({
+  "centerId": zod.uuid().regex(routinesGetProgressPathCenterIdRegExp),
+  "routineId": zod.uuid().regex(routinesGetProgressPathRoutineIdRegExp)
+})
+
+export const RoutinesGetProgressHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const routinesGetProgressResponsePeopleItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesGetProgressResponsePeopleItemCompletionCountMin = -9007199254740991;
+export const routinesGetProgressResponsePeopleItemCompletionCountMax = 9007199254740991;
+
+export const routinesGetProgressResponsePeopleItemLastCompletedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const RoutinesGetProgressResponse = zod.object({
+  "people": zod.array(zod.object({
+  "membershipId": zod.uuid().regex(routinesGetProgressResponsePeopleItemMembershipIdRegExp),
+  "fullName": zod.string(),
+  "completionCount": zod.int().min(routinesGetProgressResponsePeopleItemCompletionCountMin).max(routinesGetProgressResponsePeopleItemCompletionCountMax),
+  "lastCompletedAt": zod.iso.datetime({"offset":true}).regex(routinesGetProgressResponsePeopleItemLastCompletedAtRegExp).nullable()
 }))
 })
 

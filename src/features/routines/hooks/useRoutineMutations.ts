@@ -2,11 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
 import {
+  getRoutinesGetProgressQueryKey,
   getRoutinesGetQueryKey,
+  getRoutinesListMineQueryKey,
   getRoutinesListQueryKey,
   routinesArchive,
   routinesAssign,
   routinesCreate,
+  routinesRecordCompletion,
   routinesUnassign,
   routinesUpdate,
 } from '@/shared/api/generated/endpoints/routines/routines';
@@ -75,6 +78,31 @@ export function useUpdateRoutine(routineId: string): RoutineMutation<UpdateRouti
   return {
     run: (request, onDone) => {
       mutation.mutate(request, successOptions(onDone));
+    },
+    isRunning: mutation.isPending,
+    errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
+  };
+}
+
+/** «Hoy hice esta rutina»: no es optimista, el servidor decide si cuenta; después se recarga lo del cliente. */
+export function useRecordRoutineCompletion(routineId: string): RoutineMutation<number> {
+  const centerId = useActiveCenterId();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (completedItemCount: number) =>
+      routinesRecordCompletion(centerId, routineId, { completedItemCount }),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: getRoutinesListMineQueryKey(centerId) }),
+        queryClient.invalidateQueries({
+          queryKey: getRoutinesGetProgressQueryKey(centerId, routineId),
+        }),
+      ]),
+  });
+
+  return {
+    run: (completedItemCount, onDone) => {
+      mutation.mutate(completedItemCount, successOptions(onDone));
     },
     isRunning: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
