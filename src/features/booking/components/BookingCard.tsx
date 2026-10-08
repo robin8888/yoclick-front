@@ -26,6 +26,32 @@ function buildCancelAction(booking: Booking, onCancelRequest: (booking: Booking)
   return action;
 }
 
+function buildRescheduleAction(booking: Booking, onRescheduleRequest: (booking: Booking) => void) {
+  const action: AppointmentButtonAction = {
+    label: i18n.t('booking.list.rescheduleAction'),
+    accessibilityLabel: i18n.t('booking.list.rescheduleActionLabel', {
+      serviceName: booking.service.name,
+    }),
+    variant: 'outline',
+    onPress: () => {
+      onRescheduleRequest(booking);
+    },
+  };
+  return action;
+}
+
+interface BookingRequests {
+  onCancelRequest: (booking: Booking) => void;
+  onRescheduleRequest: (booking: Booking) => void;
+}
+
+function buildButtonActions(booking: Booking, requests: BookingRequests) {
+  return [
+    buildRescheduleAction(booking, requests.onRescheduleRequest),
+    buildCancelAction(booking, requests.onCancelRequest),
+  ];
+}
+
 function buildDetailsLabel(booking: Booking): string {
   return i18n.t('booking.list.detailsLine', {
     time: formatTime24h(booking.startsAt, DEFAULT_CENTER_TIME_ZONE),
@@ -38,17 +64,24 @@ interface BookingCardProps {
   booking: Booking;
   /** Solo las próximas y confirmadas se pueden cancelar. */
   onCancelRequest: ((booking: Booking) => void) | undefined;
+  /** Solo las próximas y confirmadas se pueden cambiar de hora. */
+  onRescheduleRequest: ((booking: Booking) => void) | undefined;
 }
 
 /** Una cita de «Mis citas» con el estilo del prototipo `appts`. */
 export function BookingCard({
   booking,
   onCancelRequest,
+  onRescheduleRequest,
 }: Readonly<BookingCardProps>): React.JSX.Element {
   const router = useRouter();
   const qrAvailability = useCheckInQrAvailability(booking);
   const presentation = presentBookingStatus(booking.status);
-  const isActionable = presentation.canBeCancelled && onCancelRequest !== undefined;
+  const requests =
+    onCancelRequest === undefined || onRescheduleRequest === undefined
+      ? null
+      : { onCancelRequest, onRescheduleRequest };
+  const isActionable = presentation.canBeCancelled && requests !== null;
 
   return (
     <AppointmentCard
@@ -57,7 +90,7 @@ export function BookingCard({
       detailsLabel={buildDetailsLabel(booking)}
       statusLabel={i18n.t(`booking.list.status.${booking.status}`)}
       statusTone={presentation.tone}
-      buttonActions={isActionable ? [buildCancelAction(booking, onCancelRequest)] : []}
+      buttonActions={requests !== null && isActionable ? buildButtonActions(booking, requests) : []}
       linkActions={
         isActionable
           ? [

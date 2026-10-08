@@ -28,3 +28,13 @@ export const confirmBookingRouteParamsSchema = z.object({
 export type ConfirmBookingRouteParams = z.infer<typeof confirmBookingRouteParamsSchema>;
 
 export const bookedRouteParamsSchema = z.object({ bookingId: z.uuid() });
+
+/** Cambiar la hora de una cita: lo justo para pedir los huecos del mismo servicio y persona. */
+export const rescheduleRouteParamsSchema = z.object({
+  bookingId: z.uuid(),
+  serviceId: z.uuid(),
+  staffMembershipId: z.uuid(),
+  serviceName: z.string().min(1).max(MAX_STAFF_NAME_LENGTH),
+  startsAt: z.iso.datetime(),
+});
+export type RescheduleRouteParams = z.infer<typeof rescheduleRouteParamsSchema>;

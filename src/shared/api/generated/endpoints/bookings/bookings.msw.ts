@@ -29,11 +29,12 @@ import {
   getBookingsCreateResponseMock,
   getBookingsEndResponseMock,
   getBookingsListMineResponseMock,
+  getBookingsRescheduleResponseMock,
   getBookingsStartResponseMock,
   getSessionRecordsListResponseMock
 } from './bookings.faker.ts';
 
-export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getAgendaCreateBookingResponseMock, getAgendaCancelBookingResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
+export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsRescheduleResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getAgendaCreateBookingResponseMock, getAgendaCancelBookingResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
 
 
 export const getBookingsCreateMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
@@ -67,6 +68,18 @@ export const getBookingsCancelMockHandler = (overrideResponse?: CancelBookingRes
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getBookingsCancelResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getBookingsRescheduleMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/bookings/:bookingId/reschedule', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getBookingsRescheduleResponseMock(),
       { status: 200
       })
   }, options)
@@ -147,6 +160,7 @@ export const getBookingsMock = () => [
   getBookingsCreateMockHandler(),
   getBookingsListMineMockHandler(),
   getBookingsCancelMockHandler(),
+  getBookingsRescheduleMockHandler(),
   getBookingsStartMockHandler(),
   getBookingsEndMockHandler(),
   getAgendaGetDayMockHandler(),

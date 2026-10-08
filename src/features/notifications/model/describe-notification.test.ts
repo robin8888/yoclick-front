@@ -60,6 +60,25 @@ describe('describeNotification', () => {
     expect(text.description).toContain('Carlos Núñez ha cancelado tu cita');
   });
 
+  it('tells the client who moved their appointment', () => {
+    const text = describeNotification(
+      buildNotification('booking_rescheduled_by_team', BOOKING_DATA),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Han cambiado la hora de una cita tuya');
+    expect(text.description).toContain('Carlos Núñez ha cambiado tu cita');
+  });
+
+  it('tells the team that a client moved their appointment', () => {
+    const text = describeNotification(
+      buildNotification('booking_rescheduled', BOOKING_DATA),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Cita cambiada de hora');
+  });
+
   it.each([
     {
       kind: 'routine_assigned',

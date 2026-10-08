@@ -47,6 +47,8 @@
     "CENTER_LIMIT_REACHED": "Has alcanzado el máximo de centros que puedes gestionar",
     "TEAM_CHANGE_NOT_ALLOWED": "No puedes hacer ese cambio en el equipo",
     "BOOKING_NOT_CANCELLABLE": "Esta reserva ya no se puede cancelar",
+    "BOOKING_NOT_RESCHEDULABLE": "Esta reserva ya no se puede cambiar de hora",
+    "RESCHEDULE_TOO_LATE": "Ya no queda antelación para cambiar la hora. Habla con el centro",
     "CHECKIN_TOKEN_EXPIRED": "El código QR ha caducado. Genera uno nuevo",
     "CHECKIN_WRONG_SESSION": "Este código QR no corresponde a esta sesión",
     "APP_VERSION_UNSUPPORTED": "Esta versión de la app ya no es compatible. Actualízala para continuar",
@@ -502,6 +504,8 @@
       "withStaff": "Con {{staffName}}",
       "cancelAction": "Cancelar",
       "cancelActionLabel": "Cancelar cita de {{serviceName}}",
+      "rescheduleAction": "Cambiar hora",
+      "rescheduleActionLabel": "Cambiar la hora de la cita de {{serviceName}}",
       "accessQrAction": "QR de acceso",
       "detailsLine": "{{time}} · {{durationMinutes}} min · {{staffName}}",
       "status": {
@@ -510,6 +514,12 @@
         "attended": "Realizada",
         "no_show": "No asististe"
       }
+    },
+    "reschedule": {
+      "title": "Cambiar hora",
+      "subtitle": "{{serviceName}} · ahora {{whenLabel}}",
+      "confirmLabel": "Confirmar nueva hora",
+      "announcement": "Cita cambiada de hora."
     },
     "cancel": {
       "title": "¿Cancelar esta cita?",
@@ -744,6 +754,8 @@
     "bookingCancelledTitle": "Cita cancelada",
     "bookingCreatedByTeamTitle": "Tienes una cita nueva",
     "bookingCancelledByTeamTitle": "Han cancelado una cita tuya",
+    "bookingRescheduledTitle": "Cita cambiada de hora",
+    "bookingRescheduledByTeamTitle": "Han cambiado la hora de una cita tuya",
     "absenceAddedTitle": "Ausencia en el equipo",
     "bookingAffectedByAbsenceTitle": "Tu cita puede cambiar",
     "routineAssignedTitle": "Tienes algo nuevo que practicar",
@@ -759,6 +771,7 @@
     "staffVideoReviewedDescription": "{{actorName}} ha revisado tu vídeo de presentación. Ábrelo para ver qué ha decidido.",
     "bookingCreatedByTeamDescription": "{{actorName}} te ha puesto una cita de {{serviceName}} el {{when}}.",
     "bookingCancelledByTeamDescription": "{{actorName}} ha cancelado tu cita de {{serviceName}} del {{when}}.",
+    "bookingRescheduledByTeamDescription": "{{actorName}} ha cambiado tu cita de {{serviceName}} al {{when}}.",
     "absenceAddedDescription": "{{staffName}} no estará: {{range}}. {{actorName}} lo ha anotado.",
     "absenceAffectedCount_zero": "Ninguna cita afectada.",
     "absenceAffectedCount_one": "{{count}} cita afectada.",

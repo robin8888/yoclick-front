@@ -24,4 +24,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   staff_profile_submitted: 'staff_profile_submitted',
   staff_profile_reviewed: 'staff_profile_reviewed',
   staff_review_received: 'staff_review_received',
+  booking_rescheduled: 'booking_rescheduled',
+  booking_rescheduled_by_team: 'booking_rescheduled_by_team',
 } as const;

@@ -6,6 +6,7 @@ export { BookServiceScreen } from './screens/BookServiceScreen';
 export { BookStaffScreen } from './screens/BookStaffScreen';
 export { BookSlotScreen } from './screens/BookSlotScreen';
 export { ClientHomeScreen } from './screens/ClientHomeScreen';
+export { RescheduleBookingScreen } from './screens/RescheduleBookingScreen';
 export { MyBookingsScreen } from './screens/MyBookingsScreen';
 export { DEFAULT_CENTER_TIME_ZONE } from './model/booking-labels';
 export { formatLongDate } from './model/home-labels';

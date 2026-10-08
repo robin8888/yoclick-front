@@ -45,6 +45,18 @@ function BookingsContent({ scope, bookings }: Readonly<BookingsContentProps>): R
           router.push('/(client)/(tabs)/book');
         }}
         onCancelRequest={cancellation.askToCancel}
+        onRescheduleRequest={(booking) => {
+          router.push({
+            pathname: '/(client)/book/reschedule',
+            params: {
+              bookingId: booking.id,
+              serviceId: booking.service.id,
+              staffMembershipId: booking.staff.membershipId,
+              serviceName: booking.service.name,
+              startsAt: booking.startsAt,
+            },
+          });
+        }}
       />
       <CancelBookingSheet
         booking={cancellation.bookingToCancel}

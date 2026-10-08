@@ -201,6 +201,69 @@ export const BookingsCancelResponse = zod.object({
 })
 
 /**
+ * @summary Cambia de hora una reserva propia (mismo servicio y, si sigue libre, misma persona). La hora debe coincidir con un hueco de /availability. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE si ya no queda. 409 BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SLOT_UNAVAILABLE, OUTSIDE_BOOKING_WINDOW y ALREADY_BOOKED como al reservar. Pedir la hora que ya tiene devuelve la reserva sin cambios.
+ */
+export const bookingsReschedulePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsReschedulePathBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsRescheduleParams = zod.object({
+  "centerId": zod.uuid().regex(bookingsReschedulePathCenterIdRegExp),
+  "bookingId": zod.uuid().regex(bookingsReschedulePathBookingIdRegExp)
+})
+
+export const BookingsRescheduleHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const bookingsRescheduleBodyStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const BookingsRescheduleBody = zod.object({
+  "startsAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleBodyStartsAtRegExp)
+})
+
+export const bookingsRescheduleResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsRescheduleResponseStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsRescheduleResponseEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsRescheduleResponseServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsRescheduleResponseServiceDurationMinutesMin = -9007199254740991;
+export const bookingsRescheduleResponseServiceDurationMinutesMax = 9007199254740991;
+
+export const bookingsRescheduleResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsRescheduleResponseCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsRescheduleResponseStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsRescheduleResponseEndedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsRescheduleResponseActualDurationSecondsMin = -9007199254740991;
+export const bookingsRescheduleResponseActualDurationSecondsMax = 9007199254740991;
+
+export const bookingsRescheduleResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const BookingsRescheduleResponse = zod.object({
+  "id": zod.uuid().regex(bookingsRescheduleResponseIdRegExp),
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseEndsAtRegExp),
+  "service": zod.object({
+  "id": zod.uuid().regex(bookingsRescheduleResponseServiceIdRegExp),
+  "name": zod.string(),
+  "durationMinutes": zod.int().min(bookingsRescheduleResponseServiceDurationMinutesMin).max(bookingsRescheduleResponseServiceDurationMinutesMax),
+  "color": zod.string().nullable()
+}),
+  "staff": zod.object({
+  "membershipId": zod.uuid().regex(bookingsRescheduleResponseStaffMembershipIdRegExp),
+  "fullName": zod.string()
+}),
+  "cancelledAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseCancelledAtRegExp).nullable(),
+  "cancelWithinPolicy": zod.boolean().nullable(),
+  "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseStartedAtRegExp).nullable(),
+  "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseEndedAtRegExp).nullable(),
+  "actualDurationSeconds": zod.int().min(bookingsRescheduleResponseActualDurationSecondsMin).max(bookingsRescheduleResponseActualDurationSecondsMax).nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseCreatedAtRegExp)
+})
+
+/**
  * @summary Inicia la clase: el servidor guarda startedAt y la app calcula el temporizador a partir de él. Quien atiende la reserva (o administración); para el resto, 404. Solo reservas confirmadas, desde 15 minutos antes hasta que termina (409 BOOKING_NOT_STARTABLE); 409 SESSION_ALREADY_OPEN si esa persona ya tiene otra clase en marcha. Repetirla devuelve la misma reserva.
  */
 export const bookingsStartPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

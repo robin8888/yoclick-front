@@ -35,6 +35,7 @@ import type {
   EndSessionRequestDto,
   MyBookingsResponseDto,
   ProblemDetailsDto,
+  RescheduleBookingRequestDto,
   SessionRecordsListParams,
   SessionRecordsResponseDto
 } from '../../model';
@@ -339,6 +340,96 @@ export const useBookingsCancel = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getBookingsCancelMutationOptions(options), queryClient);
+    }
+    export const getBookingsRescheduleUrl = (centerId: string,
+    bookingId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/bookings/${bookingId}/reschedule`
+}
+
+/**
+ * @summary Cambia de hora una reserva propia (mismo servicio y, si sigue libre, misma persona). La hora debe coincidir con un hueco de /availability. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE si ya no queda. 409 BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SLOT_UNAVAILABLE, OUTSIDE_BOOKING_WINDOW y ALREADY_BOOKED como al reservar. Pedir la hora que ya tiene devuelve la reserva sin cambios.
+ */
+export const bookingsReschedule = async (centerId: string,
+    bookingId: string,
+    rescheduleBookingRequestDto: RescheduleBookingRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getBookingsRescheduleUrl(centerId,bookingId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(rescheduleBookingRequestDto)
+  }
+);}
+
+
+
+
+
+export const getBookingsRescheduleMutationKey = () => ['bookingsReschedule'] as const;
+
+export const getBookingsRescheduleMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsReschedule>>, TError,BookingsRescheduleMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof bookingsReschedule>>, TError,BookingsRescheduleMutationVariables, TContext> => {
+
+const mutationKey = getBookingsRescheduleMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookingsReschedule>>, BookingsRescheduleMutationVariables> = (props) => {
+          const {centerId,bookingId,data} = props ?? {};
+
+          return  bookingsReschedule(centerId,bookingId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BookingsRescheduleMutationResult = NonNullable<Awaited<ReturnType<typeof bookingsReschedule>>>
+    export type BookingsRescheduleMutationBody = RescheduleBookingRequestDto
+    export type BookingsRescheduleMutationError = ErrorType<ProblemDetailsDto>
+    export type BookingsRescheduleMutationVariables = {centerId: string;bookingId: string;data: RescheduleBookingRequestDto}
+
+    /**
+ * @summary Cambia de hora una reserva propia (mismo servicio y, si sigue libre, misma persona). La hora debe coincidir con un hueco de /availability. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE si ya no queda. 409 BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SLOT_UNAVAILABLE, OUTSIDE_BOOKING_WINDOW y ALREADY_BOOKED como al reservar. Pedir la hora que ya tiene devuelve la reserva sin cambios.
+ */
+export const useBookingsReschedule = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsReschedule>>, TError,BookingsRescheduleMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof bookingsReschedule>>,
+        TError,
+        BookingsRescheduleMutationVariables,
+        TContext
+      > => {
+      return useMutation(getBookingsRescheduleMutationOptions(options), queryClient);
     }
     export const getBookingsStartUrl = (centerId: string,
     bookingId: string,) => {

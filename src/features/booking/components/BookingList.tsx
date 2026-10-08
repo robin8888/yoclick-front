@@ -30,6 +30,7 @@ interface BookingListProps {
   bookings: readonly MyBookingsResponseDtoBookingsItem[];
   onBookAction: () => void;
   onCancelRequest: (booking: MyBookingsResponseDtoBookingsItem) => void;
+  onRescheduleRequest: (booking: MyBookingsResponseDtoBookingsItem) => void;
 }
 
 /** Las citas de una pestaña, o el vacío con su siguiente paso (agendar). */
@@ -38,6 +39,7 @@ export function BookingList({
   bookings,
   onBookAction,
   onCancelRequest,
+  onRescheduleRequest,
 }: Readonly<BookingListProps>): React.JSX.Element {
   if (bookings.length === 0) return <EmptyBookings scope={scope} onBookAction={onBookAction} />;
   return (
@@ -47,6 +49,7 @@ export function BookingList({
           key={booking.id}
           booking={booking}
           onCancelRequest={scope === 'upcoming' ? onCancelRequest : undefined}
+          onRescheduleRequest={scope === 'upcoming' ? onRescheduleRequest : undefined}
         />
       ))}
     </>
