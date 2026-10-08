@@ -3,6 +3,7 @@ import { parseInviteContact } from './invite-contact';
 describe('parseInviteContact', () => {
   it.each([
     ['600 111 222', { kind: 'phone', phone: '+34600111222' }],
+    ['699189483', { kind: 'phone', phone: '+34699189483' }],
     ['+34 600-111-222', { kind: 'phone', phone: '+34600111222' }],
     ['0034600111222', { kind: 'phone', phone: '+34600111222' }],
     ['+44 7700 900123', { kind: 'phone', phone: '+447700900123' }],
