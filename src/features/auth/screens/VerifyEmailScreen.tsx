@@ -8,6 +8,7 @@ import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { useHasPlatformLook } from '../components/AuthBrandHeader';
 import { ResendCodeAction } from '../components/ResendCodeAction';
 import { VerificationCodeTextField } from '../components/VerificationCodeTextField';
 import { useVerifyEmailForm } from '../hooks/useVerifyEmailForm';
@@ -15,12 +16,13 @@ import { useVerifyEmailForm } from '../hooks/useVerifyEmailForm';
 /** Verificación del correo con un código de 6 dígitos (5 intentos, 15 minutos). */
 export function VerifyEmailScreen(): React.JSX.Element {
   const form = useVerifyEmailForm();
+  const hasPlatformLook = useHasPlatformLook();
 
   // Sin correo pendiente (p. ej. la app se reinició) no hay nada que verificar aquí.
   if (form.email === null) return <Redirect href="/(auth)/login" />;
   return (
     <ScreenTemplate
-      hasPlatformHeroBackground
+      hasPlatformHeroBackground={hasPlatformLook}
       isHeaderCentered
       headerAccessory={<IconBadge iconName="mail" />}
       isLoading={form.isSubmitting || form.isResending}

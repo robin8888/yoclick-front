@@ -1,12 +1,16 @@
 import { useRouter } from 'expo-router';
 
-import { usePendingCenterStore } from '@/features/join';
+import {
+  describeInvitedRole,
+  useInvitedCenterPreview,
+  usePendingCenterStore,
+} from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { Logo } from '@/ui/atoms/Logo';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { AuthBrandHeader, useHasPlatformLook } from '../components/AuthBrandHeader';
 import { AuthLinkButton } from '../components/AuthLinkButton';
 import { AuthNoticeBanner } from '../components/AuthNoticeBanner';
 import { EmailTextField } from '../components/EmailTextField';
@@ -17,15 +21,28 @@ import { useLoginForm } from '../hooks/useLoginForm';
 // Logotipo completo en blanco, más pequeño que en el inicio para dejar sitio al formulario.
 const LOGIN_LOGO_HEIGHT = 110;
 
+function buildLoginSubtitle(
+  pendingCenterName: string | undefined,
+  invitation: ReturnType<typeof useInvitedCenterPreview>,
+): string {
+  if (invitation !== undefined) {
+    return i18n.t('join.invitation.loginSubtitle', {
+      centerName: invitation.center.name,
+      roleName: describeInvitedRole(invitation),
+    });
+  }
+  if (pendingCenterName === undefined) return i18n.t('auth.login.subtitleWithoutCenter');
+  return i18n.t('auth.login.subtitleWithCenter', { centerName: pendingCenterName });
+}
+
 /** Prototipo `login`. Apple y Google quedan fuera hasta decidir el inicio de sesión social. */
 export function LoginScreen(): React.JSX.Element {
   const router = useRouter();
-  const centerName = usePendingCenterStore((state) => state.pendingCenter?.name);
+  const pendingCenterName = usePendingCenterStore((state) => state.pendingCenter?.name);
+  const invitation = useInvitedCenterPreview();
+  const hasPlatformLook = useHasPlatformLook();
   const { control, submitLogin, isSubmitting, errorMessage } = useLoginForm();
-  const subtitle =
-    centerName === undefined
-      ? i18n.t('auth.login.subtitleWithoutCenter')
-      : i18n.t('auth.login.subtitleWithCenter', { centerName });
+  const subtitle = buildLoginSubtitle(pendingCenterName, invitation);
 
   return (
     <ScreenTemplate
@@ -35,9 +52,9 @@ export function LoginScreen(): React.JSX.Element {
       loadingLabel={getSharedStateCopy().loadingLabel}
       onBackPress={router.canGoBack() ? router.back : undefined}
       backLabel={i18n.t('actions.back')}
-      hasPlatformHeroBackground
+      hasPlatformHeroBackground={hasPlatformLook}
       isHeaderCentered
-      headerAccessory={<Logo variant="lockup" height={LOGIN_LOGO_HEIGHT} />}
+      headerAccessory={<AuthBrandHeader platformLogoHeight={LOGIN_LOGO_HEIGHT} />}
       footer={<LoginFooter isSubmitting={isSubmitting} onSubmit={submitLogin} />}
     >
       <AuthNoticeBanner />

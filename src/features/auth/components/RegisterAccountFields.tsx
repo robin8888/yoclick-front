@@ -11,14 +11,17 @@ import { RegistrationConsents } from './RegistrationConsents';
 
 interface RegisterAccountFieldsProps {
   control: Control<RegisterAccountFormValues>;
+  /** Con una invitación el rol ya viene decidido: no se pregunta «Soy…». */
+  hasInvitation: boolean;
 }
 
 export function RegisterAccountFields({
   control,
+  hasInvitation,
 }: Readonly<RegisterAccountFieldsProps>): React.JSX.Element {
   return (
     <>
-      <AccountRoleField control={control} />
+      {hasInvitation ? null : <AccountRoleField control={control} />}
       <FormTextField
         control={control}
         name="fullName"
