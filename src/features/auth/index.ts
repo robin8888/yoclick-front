@@ -12,6 +12,7 @@ export { SignedOutOnlyGate } from './components/SignedOutOnlyGate';
 export { ForgotPasswordScreen } from './screens/ForgotPasswordScreen';
 export { LoginScreen } from './screens/LoginScreen';
 export { MfaChallengeScreen } from './screens/MfaChallengeScreen';
+export { AccessScanScreen } from './screens/AccessScanScreen';
 export { InviteCodeScreen } from './screens/InviteCodeScreen';
 export { RegisterAccountScreen } from './screens/RegisterAccountScreen';
 export { RegisterGoalsScreen } from './screens/RegisterGoalsScreen';

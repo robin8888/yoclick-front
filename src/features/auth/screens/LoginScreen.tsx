@@ -1,10 +1,6 @@
 import { useRouter } from 'expo-router';
 
-import {
-  describeInvitedRole,
-  useInvitedCenterPreview,
-  usePendingCenterStore,
-} from '@/features/join';
+import { describeAccessRole, useAccessCenter, type AccessCenter } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
@@ -21,28 +17,21 @@ import { useLoginForm } from '../hooks/useLoginForm';
 // Logotipo completo en blanco, más pequeño que en el inicio para dejar sitio al formulario.
 const LOGIN_LOGO_HEIGHT = 110;
 
-function buildLoginSubtitle(
-  pendingCenterName: string | undefined,
-  invitation: ReturnType<typeof useInvitedCenterPreview>,
-): string {
-  if (invitation !== undefined) {
-    return i18n.t('join.invitation.loginSubtitle', {
-      centerName: invitation.center.name,
-      roleName: describeInvitedRole(invitation),
-    });
-  }
-  if (pendingCenterName === undefined) return i18n.t('auth.login.subtitleWithoutCenter');
-  return i18n.t('auth.login.subtitleWithCenter', { centerName: pendingCenterName });
+function buildLoginSubtitle(accessCenter: AccessCenter | undefined): string {
+  if (accessCenter === undefined) return i18n.t('auth.login.subtitleWithoutCenter');
+  return i18n.t('join.invitation.loginSubtitle', {
+    centerName: accessCenter.name,
+    roleName: describeAccessRole(accessCenter),
+  });
 }
 
 /** Prototipo `login`. Apple y Google quedan fuera hasta decidir el inicio de sesión social. */
 export function LoginScreen(): React.JSX.Element {
   const router = useRouter();
-  const pendingCenterName = usePendingCenterStore((state) => state.pendingCenter?.name);
-  const invitation = useInvitedCenterPreview();
+  const accessCenter = useAccessCenter();
   const hasPlatformLook = useHasPlatformLook();
   const { control, submitLogin, isSubmitting, errorMessage } = useLoginForm();
-  const subtitle = buildLoginSubtitle(pendingCenterName, invitation);
+  const subtitle = buildLoginSubtitle(accessCenter);
 
   return (
     <ScreenTemplate

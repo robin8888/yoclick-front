@@ -46,7 +46,9 @@ describe('LoginScreen', () => {
     });
     renderScreen(<LoginScreen />);
 
-    expect(screen.getByText('Entra en Studio Norte')).toBeOnTheScreen();
+    expect(
+      screen.getByText('Inicia sesión para entrar en Studio Norte como cliente.'),
+    ).toBeOnTheScreen();
   });
 
   it('starts the session with the returned tokens and goes to the root', async () => {

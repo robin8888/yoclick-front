@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { useForm, useWatch, type Control } from 'react-hook-form';
 
-import { useInvitedCenterPreview, usePendingInvitationStore } from '@/features/join';
+import { useAccessCenter, usePendingInvitationStore } from '@/features/join';
 
 import { useAuthFlowStore } from '../model/auth-flow-store';
 import {
@@ -51,7 +51,7 @@ export function useRegisterAccountForm(): RegisterAccountForm {
   const saveRegistrationDraft = useAuthFlowStore((state) => state.saveRegistrationDraft);
   const rememberRole = useRememberAccountRole();
   const hasInvitationLink = usePendingInvitationStore((state) => state.invitationCode !== null);
-  const invitedRole = useInvitedCenterPreview()?.role;
+  const accessRole = useAccessCenter()?.role;
   const { registerAccount, isRegistering, registrationErrorMessage } = useRegisterAccountRequest();
   const { control, handleSubmit } = useForm<RegisterAccountFormValues>({
     resolver: zodResolver(registerAccountFormSchema),
@@ -61,7 +61,7 @@ export function useRegisterAccountForm(): RegisterAccountForm {
   });
   const formRole = useWatch({ control, name: 'accountRole' });
   // Con la invitación ya consultada manda su rol; sin consultar, lo que marque el formulario.
-  const selectedRole = mapInvitedRoleToAccountRole(invitedRole) ?? formRole;
+  const selectedRole = mapInvitedRoleToAccountRole(accessRole) ?? formRole;
 
   const submitAccount = handleSubmit((account) => {
     const accountToRegister = {

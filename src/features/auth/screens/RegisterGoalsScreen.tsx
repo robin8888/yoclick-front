@@ -1,7 +1,7 @@
 import { Redirect, useRouter } from 'expo-router';
 import { useWatch } from 'react-hook-form';
 
-import { useInvitedCenterPreview, usePendingCenterStore } from '@/features/join';
+import { useAccessCenter } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { getSectorVocabulary } from '@/shared/i18n/sector-vocabulary';
@@ -22,8 +22,7 @@ const GOALS_LOGO_HEIGHT = 110;
 /** Prototipo `reg2`: el nivel inicial sale de la experiencia y el sector del centro. */
 export function RegisterGoalsScreen(): React.JSX.Element {
   const router = useRouter();
-  const pendingSectorId = usePendingCenterStore((state) => state.pendingCenter?.sectorId);
-  const sectorId = useInvitedCenterPreview()?.center.sectorId ?? pendingSectorId;
+  const sectorId = useAccessCenter()?.sectorId;
   const hasPlatformLook = useHasPlatformLook();
   const form = useRegisterGoalsForm();
   const experience = useWatch({ control: form.control, name: 'experience' }) as

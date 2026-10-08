@@ -46,7 +46,8 @@ export function InviteCodeScreen(): React.JSX.Element {
       <LargeCodeField
         control={entry.control}
         name="invitationCode"
-        label={i18n.t('join.invitation.fieldLabel')}
+        label={i18n.t('join.invitation.anyCodeFieldLabel')}
+        helperText={i18n.t('join.invitation.codeHelper')}
         placeholder={i18n.t('join.invitation.placeholder')}
         maxLength={MAX_INVITATION_CODE_LENGTH}
         onSubmitEditing={entry.submitCode}

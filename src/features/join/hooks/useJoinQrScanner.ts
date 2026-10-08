@@ -1,6 +1,8 @@
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 
+import type { PublicCenterResponseDto } from '@/shared/api/generated/model';
+
 import { parseJoinQrContent } from '../model/join-qr-content';
 import { useFindCenterByJoinCode } from './useFindCenterByJoinCode';
 
@@ -12,8 +14,13 @@ interface JoinQrScanner {
   isLookingUpCenter: boolean;
 }
 
-/** Del QR al centro: valida el contenido, busca el centro y pasa a confirmarlo. */
-export function useJoinQrScanner(): JoinQrScanner {
+/**
+ * Del QR al centro: valida el contenido y busca el centro. Después, `onCenterFound` decide a dónde
+ * seguir (por defecto, a confirmarlo con la sesión abierta).
+ */
+export function useJoinQrScanner(
+  onCenterFound?: (center: PublicCenterResponseDto) => void,
+): JoinQrScanner {
   const router = useRouter();
   const findCenter = useFindCenterByJoinCode('qr');
   const [scanProblem, setScanProblem] = useState<JoinQrScanProblem | null>(null);
@@ -32,7 +39,8 @@ export function useJoinQrScanner(): JoinQrScanner {
     setScanProblem(null);
     findCenter.mutate(joinCode, {
       onSuccess: (center) => {
-        router.push(`/join/${center.id}`);
+        if (onCenterFound === undefined) router.push(`/join/${center.id}`);
+        else onCenterFound(center);
       },
       onError: (error) => {
         // Permite volver a escanear el mismo QR tras un fallo de red.

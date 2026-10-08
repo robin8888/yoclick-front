@@ -88,7 +88,7 @@ describe('InviteCodeScreen', () => {
     mockApi({ [PREVIEW_PATH]: STAFF_BY_PHONE });
     renderScreen(<InviteCodeScreen />);
 
-    fireEvent.changeText(screen.getByLabelText('Código de invitación'), CODE);
+    fireEvent.changeText(screen.getByLabelText('Código del centro o de invitación'), CODE);
     fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
 
     await waitFor(() => {
@@ -105,7 +105,7 @@ describe('InviteCodeScreen', () => {
     });
     renderScreen(<InviteCodeScreen />);
 
-    fireEvent.changeText(screen.getByLabelText('Código de invitación'), CODE);
+    fireEvent.changeText(screen.getByLabelText('Código del centro o de invitación'), CODE);
     fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
 
     expect(await screen.findByRole('alert')).toBeOnTheScreen();

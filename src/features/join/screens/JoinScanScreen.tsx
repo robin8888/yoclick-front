@@ -1,4 +1,3 @@
-import { useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
@@ -10,8 +9,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { SignOutAction } from '@/features/session';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
-import { CameraPermissionPrompt } from '../components/CameraPermissionPrompt';
-import { JoinScanCamera } from '../components/JoinScanCamera';
+import { ScanCameraArea } from '../components/ScanCameraArea';
 import { useJoinQrScanner, type JoinQrScanProblem } from '../hooks/useJoinQrScanner';
 
 function getScanProblemMessage(scanProblem: JoinQrScanProblem): string {
@@ -22,28 +20,6 @@ function getScanProblemMessage(scanProblem: JoinQrScanProblem): string {
 
 // Logotipo completo en blanco, del mismo tamaño que en el inicio de sesión y el registro.
 const SCAN_LOGO_HEIGHT = 110;
-
-interface ScanCameraAreaProps {
-  isPaused: boolean;
-  onQrScan: (scannedText: string) => void;
-}
-
-/** La cámara cuando hay permiso y, si no, la petición del permiso. */
-function ScanCameraArea({ isPaused, onQrScan }: Readonly<ScanCameraAreaProps>): React.JSX.Element {
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-
-  if (cameraPermission?.granted === true) {
-    return <JoinScanCamera isPaused={isPaused} onQrScan={onQrScan} />;
-  }
-  return (
-    <CameraPermissionPrompt
-      canAskAgain={cameraPermission?.canAskAgain !== false}
-      onRequestPermission={() => {
-        void requestCameraPermission();
-      }}
-    />
-  );
-}
 
 /** Prototipo `jqr`. La cámara solo se enciende en esta pantalla y no se guarda nada. */
 export function JoinScanScreen(): React.JSX.Element {
