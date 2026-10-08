@@ -4,14 +4,14 @@ import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 
-import type { useRoutineBuilder } from '../hooks/useRoutineBuilder';
+import type { RoutineBuilder } from '../hooks/useRoutineBuilder';
 import { AssignTargetField } from './AssignTargetField';
 import { CustomExerciseField } from './CustomExerciseField';
 import { DraftExerciseRow } from './DraftExerciseRow';
 import { ExerciseLibraryPicker } from './ExerciseLibraryPicker';
 import { SECTION_STYLE } from './RoutinesCommon.styles';
 
-type Builder = ReturnType<typeof useRoutineBuilder>;
+type Builder = RoutineBuilder;
 
 function DraftExercises({ builder }: Readonly<{ builder: Builder }>): React.JSX.Element {
   const { exercises } = builder.draft;
@@ -77,7 +77,9 @@ export function RoutineBuilderForm({ builder }: Readonly<{ builder: Builder }>):
             builder.addLibraryExercise(exercise);
         }}
       />
-      <AssignTargetField target={builder.draft.target} onTargetChange={builder.changeTarget} />
+      {builder.canChooseTarget ? (
+        <AssignTargetField target={builder.draft.target} onTargetChange={builder.changeTarget} />
+      ) : null}
     </View>
   );
 }

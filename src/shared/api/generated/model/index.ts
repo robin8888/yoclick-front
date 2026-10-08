@@ -361,6 +361,8 @@ export * from './updateClientRequestDto.ts';
 export * from './updateClientRequestDtoLevel.ts';
 export * from './updateProfileRequestDto.ts';
 export * from './updateProfileRequestDtoLocale.ts';
+export * from './updateRoutineRequestDto.ts';
+export * from './updateRoutineRequestDtoItemsItem.ts';
 export * from './updateServiceRequestDto.ts';
 export * from './updateTeamMemberRequestDto.ts';
 export * from './updateTeamMemberRequestDtoPermissionsItem.ts';

@@ -5,6 +5,7 @@ import { LoadErrorState } from '@/features/join';
 import type { RoutineDetailResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
+import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
@@ -20,11 +21,50 @@ import {
   useUnassignRoutine,
 } from '../hooks/useRoutineMutations';
 import { useRoutineDetail } from '../hooks/useRoutineQueries';
-import { parseRoutineRouteParams } from '../model/routine-routes';
+import {
+  buildEditRoutineRoute,
+  parseRoutineRouteParams,
+  type RoutineRouteBase,
+} from '../model/routine-routes';
+
+interface RoutineDetailBodyProps {
+  routine: RoutineDetailResponseDto;
+  routeBase: RoutineRouteBase;
+}
+
+function EditRoutineButton({
+  routine,
+  routeBase,
+}: Readonly<RoutineDetailBodyProps>): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <Button
+      label={i18n.t('routines.detail.editAction')}
+      accessibilityLabel={i18n.t('routines.detail.editActionLabel', { name: routine.name })}
+      variant="outline"
+      onPress={() => {
+        router.push(buildEditRoutineRoute(routeBase, routine.id));
+      }}
+    />
+  );
+}
+
+function RoutineNote({ note }: Readonly<{ note: string }>): React.JSX.Element {
+  return (
+    <View>
+      <Text variant="titleMd" role="heading">
+        {i18n.t('routines.detail.notesTitle')}
+      </Text>
+      <Text color="ink2">{note}</Text>
+    </View>
+  );
+}
 
 function RoutineDetailBody({
   routine,
-}: Readonly<{ routine: RoutineDetailResponseDto }>): React.JSX.Element {
+  routeBase,
+}: Readonly<RoutineDetailBodyProps>): React.JSX.Element {
   const router = useRouter();
   const assignment = useAssignRoutine(routine.id);
   const unassignment = useUnassignRoutine(routine.id);
@@ -33,14 +73,8 @@ function RoutineDetailBody({
 
   return (
     <View style={SECTION_STYLE}>
-      {routine.note === null ? null : (
-        <View>
-          <Text variant="titleMd" role="heading">
-            {i18n.t('routines.detail.notesTitle')}
-          </Text>
-          <Text color="ink2">{routine.note}</Text>
-        </View>
-      )}
+      <EditRoutineButton routine={routine} routeBase={routeBase} />
+      {routine.note === null ? null : <RoutineNote note={routine.note} />}
       <ExerciseRows exercises={routine.items} />
       <RoutineAssignmentsSection
         assignments={routine.assignments}
@@ -64,7 +98,10 @@ function RoutineDetailBody({
   );
 }
 
-function RoutineDetailContent({ routineId }: Readonly<{ routineId: string }>): React.JSX.Element {
+function RoutineDetailContent({
+  routineId,
+  routeBase,
+}: Readonly<{ routineId: string; routeBase: RoutineRouteBase }>): React.JSX.Element {
   const router = useRouter();
   const routine = useRoutineDetail(routineId);
 
@@ -85,14 +122,18 @@ function RoutineDetailContent({ routineId }: Readonly<{ routineId: string }>): R
           isRetrying={routine.isFetching}
         />
       ) : null}
-      {routine.data === undefined ? null : <RoutineDetailBody routine={routine.data} />}
+      {routine.data === undefined ? null : (
+        <RoutineDetailBody routine={routine.data} routeBase={routeBase} />
+      )}
     </ScreenTemplate>
   );
 }
 
 /** Una rutina con sus ejercicios, a quién está asignada, y archivarla. */
-export function RoutineDetailScreen(): React.JSX.Element {
+export function RoutineDetailScreen({
+  routeBase,
+}: Readonly<{ routeBase: RoutineRouteBase }>): React.JSX.Element {
   const params = parseRoutineRouteParams(useLocalSearchParams());
   if (params === null) return <Redirect href="/" />;
-  return <RoutineDetailContent routineId={params.routineId} />;
+  return <RoutineDetailContent routineId={params.routineId} routeBase={routeBase} />;
 }

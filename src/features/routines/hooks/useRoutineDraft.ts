@@ -29,8 +29,10 @@ export interface RoutineDraftEditing {
 }
 
 /** El borrador de la rutina y las formas de cambiarlo. */
-export function useRoutineDraft(): RoutineDraftEditing {
-  const [draft, setDraft] = useState<RoutineDraft>(EMPTY_ROUTINE_DRAFT);
+export function useRoutineDraft(
+  initialDraft: RoutineDraft = EMPTY_ROUTINE_DRAFT,
+): RoutineDraftEditing {
+  const [draft, setDraft] = useState<RoutineDraft>(initialDraft);
   const nextKey = useRef(0);
 
   return {

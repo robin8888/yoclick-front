@@ -8,6 +8,7 @@ import { findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
+import { EditRoutineScreen } from './EditRoutineScreen';
 import { NewRoutineScreen } from './NewRoutineScreen';
 import { RoutineDetailScreen } from './RoutineDetailScreen';
 import { RoutinesScreen } from './RoutinesScreen';
@@ -231,11 +232,19 @@ describe('RoutineDetailScreen', () => {
   });
 
   it('shows the exercises, the note and who has it', async () => {
-    renderScreen(<RoutineDetailScreen />);
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
 
     expect(await screen.findByText('Sentadilla goblet')).toBeOnTheScreen();
     expect(screen.getByText('Descansa 90 s entre series.')).toBeOnTheScreen();
     expect(screen.getByText('Grupo Fuerza 50+')).toBeOnTheScreen();
+  });
+
+  it('opens the edit screen of the routine', async () => {
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Editar Fuerza base' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith(`/(admin)/routines/edit/${ROUTINE_ID}`);
   });
 
   it('plays the video of an exercise', async () => {
@@ -246,7 +255,7 @@ describe('RoutineDetailScreen', () => {
         items: [{ ...DETAIL.items[0], video: READY_VIDEO }],
       },
     });
-    renderScreen(<RoutineDetailScreen />);
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
 
     fireEvent.press(
       await screen.findByRole('button', { name: 'Reproducir Sentadilla goblet paso a paso' }),
@@ -256,7 +265,7 @@ describe('RoutineDetailScreen', () => {
   });
 
   it('removes an assignment', async () => {
-    renderScreen(<RoutineDetailScreen />);
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
 
     fireEvent.press(
       await screen.findByRole('button', { name: 'Quitar la asignación de Grupo Fuerza 50+' }),
@@ -270,7 +279,7 @@ describe('RoutineDetailScreen', () => {
   });
 
   it('asks before archiving', async () => {
-    renderScreen(<RoutineDetailScreen />);
+    renderScreen(<RoutineDetailScreen routeBase="/(admin)/routines" />);
 
     fireEvent.press(await screen.findByRole('button', { name: 'Archivar' }));
     expect(await screen.findByText('¿Archivar?')).toBeOnTheScreen();
@@ -280,6 +289,49 @@ describe('RoutineDetailScreen', () => {
     await waitFor(() => {
       expect(findApiCall('DELETE', `${BASE}/routines/${ROUTINE_ID}`)).toBeDefined();
     });
+  });
+});
+
+describe('EditRoutineScreen', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signIn();
+    jest.mocked(useLocalSearchParams).mockReturnValue({ routineId: ROUTINE_ID });
+    mockApi({
+      'GET /v1/me/memberships': OWNER_MEMBERSHIPS,
+      [`GET ${BASE}/exercise-library`]: LIBRARY,
+      [`GET ${BASE}/video-plan`]: PLAN_WITHOUT_VIDEO,
+      [`GET ${BASE}/routines/${ROUTINE_ID}`]: DETAIL,
+      [`PUT ${BASE}/routines/${ROUTINE_ID}`]: DETAIL,
+    });
+  });
+
+  it('starts from the saved routine and does not offer to assign it again', async () => {
+    renderScreen(<EditRoutineScreen />);
+
+    expect(await screen.findByDisplayValue('Fuerza base')).toBeOnTheScreen();
+    expect(screen.getByDisplayValue('Descansa 90 s entre series.')).toBeOnTheScreen();
+    expect(screen.getByDisplayValue('4 × 10')).toBeOnTheScreen();
+    expect(screen.queryByText('Asignar a')).toBeNull();
+    expect(screen.getByText(/recibirá un aviso con los cambios/)).toBeOnTheScreen();
+  });
+
+  it('saves the changes keeping the exercises that were already there', async () => {
+    renderScreen(<EditRoutineScreen />);
+
+    fireEvent.changeText(await screen.findByDisplayValue('Fuerza base'), 'Fuerza v2');
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PUT', `${BASE}/routines/${ROUTINE_ID}`)?.body).toEqual({
+        name: 'Fuerza v2',
+        note: 'Descansa 90 s entre series.',
+        items: [
+          { name: 'Sentadilla goblet', category: 'Piernas', prescription: '4 × 10', videoId: null },
+        ],
+      });
+    });
+    expect(getMockRouter().back).toHaveBeenCalled();
   });
 });
 

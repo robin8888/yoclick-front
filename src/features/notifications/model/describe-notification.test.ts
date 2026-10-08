@@ -70,6 +70,16 @@ describe('describeNotification', () => {
     expect(text.description).toContain('Carlos Núñez ha cambiado tu cita');
   });
 
+  it('tells the client that the routine they practise changed', () => {
+    const text = describeNotification(
+      buildNotification('routine_updated', { routineName: 'Fuerza base', actorName: 'Marta Gil' }),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Han actualizado algo que practicas');
+    expect(text.description).toBe('Marta Gil ha cambiado «Fuerza base».');
+  });
+
   it('tells the team that a client moved their appointment', () => {
     const text = describeNotification(
       buildNotification('booking_rescheduled', BOOKING_DATA),

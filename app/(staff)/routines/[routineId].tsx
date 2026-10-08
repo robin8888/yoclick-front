@@ -1,5 +1,5 @@
 import { RoutineDetailScreen } from '@/features/routines';
 
 export default function StaffRoutineDetailRoute(): React.JSX.Element {
-  return <RoutineDetailScreen />;
+  return <RoutineDetailScreen routeBase="/(staff)/routines" />;
 }

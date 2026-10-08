@@ -12,6 +12,10 @@ export function buildRoutineDetailRoute(routeBase: RoutineRouteBase, routineId: 
   return `${routeBase}/${routineId}` as Href;
 }
 
+export function buildEditRoutineRoute(routeBase: RoutineRouteBase, routineId: string): Href {
+  return `${routeBase}/edit/${routineId}` as Href;
+}
+
 const routineRouteParamsSchema = z.object({ routineId: z.uuid() });
 
 /** El parámetro de ruta es entrada no confiable (SEC-M4): `null` si no es un UUID. */

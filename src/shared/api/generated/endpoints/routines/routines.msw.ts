@@ -26,10 +26,11 @@ import {
   getRoutinesGetExerciseLibraryResponseMock,
   getRoutinesGetResponseMock,
   getRoutinesListMineResponseMock,
-  getRoutinesListResponseMock
+  getRoutinesListResponseMock,
+  getRoutinesUpdateResponseMock
 } from './routines.faker.ts';
 
-export { getRoutinesGetExerciseLibraryResponseMock, getRoutinesListResponseMock, getRoutinesCreateResponseMock, getRoutinesGetResponseMock, getRoutinesListMineResponseMock, getRoutinesAssignResponseMock } from './routines.faker.ts';
+export { getRoutinesGetExerciseLibraryResponseMock, getRoutinesListResponseMock, getRoutinesCreateResponseMock, getRoutinesGetResponseMock, getRoutinesUpdateResponseMock, getRoutinesListMineResponseMock, getRoutinesAssignResponseMock } from './routines.faker.ts';
 
 
 export const getRoutinesGetExerciseLibraryMockHandler = (overrideResponse?: ExerciseLibraryResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ExerciseLibraryResponseDto> | ExerciseLibraryResponseDto), options?: RequestHandlerOptions) => {
@@ -90,6 +91,18 @@ export const getRoutinesArchiveMockHandler = (overrideResponse?: void | ((info: 
   }, options)
 }
 
+export const getRoutinesUpdateMockHandler = (overrideResponse?: RoutineDetailResponseDto | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<RoutineDetailResponseDto> | RoutineDetailResponseDto), options?: RequestHandlerOptions) => {
+  return http.put('*/v1/centers/:centerId/routines/:routineId', async (info: Parameters<Parameters<typeof http.put>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRoutinesUpdateResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getRoutinesListMineMockHandler = (overrideResponse?: MyRoutinesResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MyRoutinesResponseDto> | MyRoutinesResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/my-routines', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -129,6 +142,7 @@ export const getRoutinesMock = () => [
   getRoutinesCreateMockHandler(),
   getRoutinesGetMockHandler(),
   getRoutinesArchiveMockHandler(),
+  getRoutinesUpdateMockHandler(),
   getRoutinesListMineMockHandler(),
   getRoutinesAssignMockHandler(),
   getRoutinesUnassignMockHandler()

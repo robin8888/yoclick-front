@@ -593,6 +593,11 @@
       "changeTargetAction": "Cambiar",
       "changeTargetLabel": "Cambiar a {{name}}"
     },
+    "edit": {
+      "title": "Editar {{routineWord}}",
+      "saveAction": "Guardar cambios",
+      "notifyHint": "Quien la tenga asignada recibirá un aviso con los cambios."
+    },
     "detail": {
       "notFound": "No hemos encontrado esto. Puede que se haya archivado.",
       "notesTitle": "Indicaciones",
@@ -601,6 +606,8 @@
       "groupAssignment": "Grupo {{name}}",
       "removeAssignmentLabel": "Quitar la asignación de {{name}}",
       "assignMoreAction": "Asignar a otra persona o grupo",
+      "editAction": "Editar",
+      "editActionLabel": "Editar {{name}}",
       "archiveAction": "Archivar",
       "archiveConfirmTitle": "¿Archivar?",
       "archiveConfirmMessage": "«{{name}}» dejará de verse para quien la tenga asignada.",
@@ -759,7 +766,9 @@
     "absenceAddedTitle": "Ausencia en el equipo",
     "bookingAffectedByAbsenceTitle": "Tu cita puede cambiar",
     "routineAssignedTitle": "Tienes algo nuevo que practicar",
+    "routineUpdatedTitle": "Han actualizado algo que practicas",
     "routineAssignedDescription": "{{actorName}} te ha asignado «{{routineName}}».",
+    "routineUpdatedDescription": "{{actorName}} ha cambiado «{{routineName}}».",
     "staffVideoSubmittedTitle": "Hay un vídeo por revisar",
     "staffVideoSubmittedDescription": "{{uploaderName}} ha subido su vídeo de presentación y espera tu revisión.",
     "privacyRequestReceivedTitle": "Nueva solicitud de datos",

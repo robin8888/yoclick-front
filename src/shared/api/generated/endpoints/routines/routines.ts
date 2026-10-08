@@ -31,7 +31,8 @@ import type {
   MyRoutinesResponseDto,
   ProblemDetailsDto,
   RoutineDetailResponseDto,
-  RoutineListResponseDto
+  RoutineListResponseDto,
+  UpdateRoutineRequestDto
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -527,6 +528,96 @@ export const useRoutinesArchive = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getRoutinesArchiveMutationOptions(options), queryClient);
+    }
+    export const getRoutinesUpdateUrl = (centerId: string,
+    routineId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/routines/${routineId}`
+}
+
+/**
+ * @summary Cambia el nombre, la nota y los ejercicios de una rutina (lo que no se envía se quita). Quien la tiene asignada recibe un aviso push. Las asignaciones no cambian.
+ */
+export const routinesUpdate = async (centerId: string,
+    routineId: string,
+    updateRoutineRequestDto: UpdateRoutineRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RoutineDetailResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<RoutineDetailResponseDto>(getRoutinesUpdateUrl(centerId,routineId),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(updateRoutineRequestDto)
+  }
+);}
+
+
+
+
+
+export const getRoutinesUpdateMutationKey = () => ['routinesUpdate'] as const;
+
+export const getRoutinesUpdateMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof routinesUpdate>>, TError,RoutinesUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof routinesUpdate>>, TError,RoutinesUpdateMutationVariables, TContext> => {
+
+const mutationKey = getRoutinesUpdateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof routinesUpdate>>, RoutinesUpdateMutationVariables> = (props) => {
+          const {centerId,routineId,data} = props ?? {};
+
+          return  routinesUpdate(centerId,routineId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RoutinesUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof routinesUpdate>>>
+    export type RoutinesUpdateMutationBody = UpdateRoutineRequestDto
+    export type RoutinesUpdateMutationError = ErrorType<ProblemDetailsDto>
+    export type RoutinesUpdateMutationVariables = {centerId: string;routineId: string;data: UpdateRoutineRequestDto}
+
+    /**
+ * @summary Cambia el nombre, la nota y los ejercicios de una rutina (lo que no se envía se quita). Quien la tiene asignada recibe un aviso push. Las asignaciones no cambian.
+ */
+export const useRoutinesUpdate = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof routinesUpdate>>, TError,RoutinesUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof routinesUpdate>>,
+        TError,
+        RoutinesUpdateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRoutinesUpdateMutationOptions(options), queryClient);
     }
     export const getRoutinesListMineUrl = (centerId: string,) => {
 

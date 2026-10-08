@@ -8,10 +8,12 @@ import {
   routinesAssign,
   routinesCreate,
   routinesUnassign,
+  routinesUpdate,
 } from '@/shared/api/generated/endpoints/routines/routines';
 import type {
   CreateRoutineRequestDto,
   RoutineDetailResponseDto,
+  UpdateRoutineRequestDto,
 } from '@/shared/api/generated/model';
 
 import type { AssignmentTargetDraft } from '../model/routine-draft';
@@ -54,6 +56,28 @@ export function useCreateRoutine(): RoutineMutation<CreateRoutineRequestDto> & {
     isRunning: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
     created: mutation.data,
+  };
+}
+
+/** Guarda los cambios de una rutina; las listas y el detalle se recargan desde el servidor. */
+export function useUpdateRoutine(routineId: string): RoutineMutation<UpdateRoutineRequestDto> {
+  const centerId = useActiveCenterId();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (request: UpdateRoutineRequestDto) => routinesUpdate(centerId, routineId, request),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: getRoutinesGetQueryKey(centerId, routineId) }),
+        queryClient.invalidateQueries({ queryKey: getRoutinesListQueryKey(centerId) }),
+      ]),
+  });
+
+  return {
+    run: (request, onDone) => {
+      mutation.mutate(request, successOptions(onDone));
+    },
+    isRunning: mutation.isPending,
+    errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
   };
 }
 

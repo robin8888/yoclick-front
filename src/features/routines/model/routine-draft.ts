@@ -1,4 +1,9 @@
-import type { CreateRoutineRequestDto, VideoResponseDto } from '@/shared/api/generated/model';
+import type {
+  CreateRoutineRequestDto,
+  RoutineDetailResponseDto,
+  UpdateRoutineRequestDto,
+  VideoResponseDto,
+} from '@/shared/api/generated/model';
 
 export const MAX_ROUTINE_EXERCISES = 30;
 
@@ -102,8 +107,8 @@ function buildAssignTo(target: AssignmentTargetDraft): CreateRoutineRequestDto['
   return undefined;
 }
 
-export function buildCreateRoutineRequest(draft: RoutineDraft): CreateRoutineRequestDto {
-  const assignTo = buildAssignTo(draft.target);
+/** Lo que se guarda de una rutina, igual al crearla que al editarla. */
+export function buildUpdateRoutineRequest(draft: RoutineDraft): UpdateRoutineRequestDto {
   return {
     name: draft.name.trim(),
     note: draft.note.trim() === '' ? null : draft.note.trim(),
@@ -113,6 +118,26 @@ export function buildCreateRoutineRequest(draft: RoutineDraft): CreateRoutineReq
       prescription: prescription.trim() === '' ? null : prescription.trim(),
       videoId: video?.id ?? null,
     })),
-    ...(assignTo && { assignTo }),
+  };
+}
+
+export function buildCreateRoutineRequest(draft: RoutineDraft): CreateRoutineRequestDto {
+  const assignTo = buildAssignTo(draft.target);
+  return { ...buildUpdateRoutineRequest(draft), ...(assignTo && { assignTo }) };
+}
+
+/** El borrador de una rutina guardada: al editar, a quién está asignada no se toca aquí. */
+export function buildDraftFromRoutine(routine: RoutineDetailResponseDto): RoutineDraft {
+  return {
+    name: routine.name,
+    note: routine.note ?? '',
+    exercises: routine.items.map((item, position) => ({
+      key: `saved-${String(position)}`,
+      name: item.name,
+      category: item.category ?? '',
+      prescription: item.prescription ?? '',
+      video: item.video,
+    })),
+    target: { kind: 'none' },
   };
 }

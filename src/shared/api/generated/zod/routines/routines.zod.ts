@@ -232,6 +232,94 @@ export const RoutinesArchiveHeader = zod.object({
 export const RoutinesArchiveResponse = zod.void()
 
 /**
+ * @summary Cambia el nombre, la nota y los ejercicios de una rutina (lo que no se envía se quita). Quien la tiene asignada recibe un aviso push. Las asignaciones no cambian.
+ */
+export const routinesUpdatePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesUpdatePathRoutineIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoutinesUpdateParams = zod.object({
+  "centerId": zod.uuid().regex(routinesUpdatePathCenterIdRegExp),
+  "routineId": zod.uuid().regex(routinesUpdatePathRoutineIdRegExp)
+})
+
+export const RoutinesUpdateHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const routinesUpdateBodyNameMax = 80;
+
+export const routinesUpdateBodyNoteDefault = null;
+export const routinesUpdateBodyNoteMax = 500;
+
+export const routinesUpdateBodyItemsItemNameMax = 120;
+
+export const routinesUpdateBodyItemsItemCategoryDefault = null;
+export const routinesUpdateBodyItemsItemCategoryMax = 60;
+
+export const routinesUpdateBodyItemsItemPrescriptionDefault = null;
+export const routinesUpdateBodyItemsItemPrescriptionMax = 120;
+
+export const routinesUpdateBodyItemsItemVideoIdDefault = null;
+export const routinesUpdateBodyItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesUpdateBodyItemsMax = 30;
+
+
+
+export const RoutinesUpdateBody = zod.object({
+  "name": zod.string().min(1).max(routinesUpdateBodyNameMax),
+  "note": zod.string().max(routinesUpdateBodyNoteMax).nullish().default(routinesUpdateBodyNoteDefault),
+  "items": zod.array(zod.object({
+  "name": zod.string().min(1).max(routinesUpdateBodyItemsItemNameMax),
+  "category": zod.string().max(routinesUpdateBodyItemsItemCategoryMax).nullish().default(routinesUpdateBodyItemsItemCategoryDefault),
+  "prescription": zod.string().max(routinesUpdateBodyItemsItemPrescriptionMax).nullish().default(routinesUpdateBodyItemsItemPrescriptionDefault),
+  "videoId": zod.uuid().regex(routinesUpdateBodyItemsItemVideoIdRegExp).nullish().default(routinesUpdateBodyItemsItemVideoIdDefault)
+})).min(1).max(routinesUpdateBodyItemsMax)
+})
+
+export const routinesUpdateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesUpdateResponseItemsItemVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesUpdateResponseItemsItemVideoDurationSecondsMin = -9007199254740991;
+export const routinesUpdateResponseItemsItemVideoDurationSecondsMax = 9007199254740991;
+
+export const routinesUpdateResponseItemsItemVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const routinesUpdateResponseAssignmentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const routinesUpdateResponseAssignmentsItemAssignedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const routinesUpdateResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const RoutinesUpdateResponse = zod.object({
+  "id": zod.uuid().regex(routinesUpdateResponseIdRegExp),
+  "name": zod.string(),
+  "note": zod.string().nullable(),
+  "items": zod.array(zod.object({
+  "name": zod.string(),
+  "category": zod.string().nullable(),
+  "prescription": zod.string().nullable(),
+  "video": zod.object({
+  "id": zod.uuid().regex(routinesUpdateResponseItemsItemVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(routinesUpdateResponseItemsItemVideoDurationSecondsMin).max(routinesUpdateResponseItemsItemVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(routinesUpdateResponseItemsItemVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable()
+})),
+  "assignments": zod.array(zod.object({
+  "id": zod.uuid().regex(routinesUpdateResponseAssignmentsItemIdRegExp),
+  "kind": zod.enum(['client', 'group']),
+  "targetName": zod.string(),
+  "assignedAt": zod.iso.datetime({"offset":true}).regex(routinesUpdateResponseAssignmentsItemAssignedAtRegExp)
+})),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(routinesUpdateResponseCreatedAtRegExp)
+})
+
+/**
  * @summary Las rutinas que me han asignado, directamente o por mi grupo, con sus ejercicios.
  */
 export const routinesListMinePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
