@@ -96,12 +96,13 @@ function buildPlugins(
         recordAudioAndroid: false,
       },
     ],
-    // Solo se elige de la galería (logo del centro y foto de perfil): sin cámara ni micrófono aquí.
+    // Solo se elige de la galería (logo del centro y foto de perfil), sin micrófono. No se pone
+    // `cameraPermission: false`: en Android bloquearía CAMERA para toda la app y el escáner de QR
+    // (expo-camera) nunca podría pedirla.
     [
       'expo-image-picker',
       {
         photosPermission: PHOTO_LIBRARY_USAGE_DESCRIPTION,
-        cameraPermission: false,
         microphonePermission: false,
       },
     ],
