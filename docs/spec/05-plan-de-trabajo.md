@@ -4,6 +4,19 @@ Un ticket = una rama (`feat/API-012-bookings-create`) = un PR pequeño (< 400 l�
 
 Orden recomendado: **API-0 → API-1 → APP-0 en paralelo con API-2 → …** La app trabaja con mocks MSW generados del contrato hasta que el endpoint real existe.
 
+## Actualización (8 oct 2026, cierre del día)
+
+Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2e en verde; front: 1630 tests, lint y typecheck en verde.
+
+- ✅ **Cambiar hora de una reserva** (cliente): `POST /bookings/:id/reschedule` con el plazo de cancelación y push; pantalla «Cambiar hora». 🟡 Falta que el equipo mueva reservas desde la agenda.
+- ✅ **Editar rutinas** (`PUT /routines/:id`, un aviso por persona) y **progreso de rutinas** («Hoy hice esta rutina», casillas por ejercicio, «Quién la ha hecho» para el equipo). Falta: series/pesos, gráficos, avisar al equipo.
+- ✅ **Alta de alumnos e instructores con código del centro**: invitación por teléfono o correo desde Más › Invitar (WhatsApp, SMS o copiar), reenviar y anular pendientes, el código aplica la marca del centro (logo y color) en inicio, registro, verificación y login, enlace «¿Has olvidado tu contraseña?» visible, aceptación automática tras el login (idempotente, `accepted_by_user_id`), teclado de Android que ya no tapa los campos.
+- ✅ **Aviso push al centro** cuando alguien se da de alta (`member_joined`, propietario y administradores).
+- ✅ **Primera pantalla**: «Tengo un código de mi centro» y escáner de QR (escanear el QR de «Invita a tus alumnos» equivale a escribir el código corto). Probado en iPhone: funciona.
+- 🟡 **Android: la cámara del escáner no se abría**. Causa: el plugin `expo-image-picker` con `cameraPermission: false` bloqueaba `CAMERA` en toda la app. Corregido (`0a7d675`); falta recompilar (`eas build --profile development --platform android`) y confirmar en el móvil.
+- ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
+- ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
+
 ## Estado de avance (5 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Basado en el historial de git de cada repo.
