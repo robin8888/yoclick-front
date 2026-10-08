@@ -8,7 +8,7 @@ import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
-import { InviteTeamScreen } from './InviteTeamScreen';
+import { InvitePersonScreen } from './InvitePersonScreen';
 import { ServiceEditorScreen } from './ServiceEditorScreen';
 import { ServicesScreen } from './ServicesScreen';
 
@@ -224,49 +224,92 @@ describe('ServiceEditorScreen', () => {
   });
 });
 
-describe('InviteTeamScreen', () => {
+describe('InvitePersonScreen', () => {
   beforeEach(() => {
     resetMockRouter();
     signInAsOwner();
+    jest.mocked(useLocalSearchParams).mockReturnValue({ role: 'staff' });
   });
 
-  it('invites an instructor by email and lists the pending invitations', async () => {
+  it('invites an instructor by email, shows the code and lists the pending ones', async () => {
     mockApi({
       [`GET ${INVITATIONS_PATH}`]: {
         invitations: [
           {
             id: 'inv-1',
             email: 'laura@verticetc.es',
+            phone: null,
             role: 'staff',
             expiresAt: '2026-10-20T10:00:00.000Z',
             createdAt: '2026-10-05T10:00:00.000Z',
           },
         ],
       },
-      [`POST ${INVITATIONS_PATH}`]: { id: 'inv-2', email: 'dani@verticetc.es', role: 'staff' },
+      [`POST ${INVITATIONS_PATH}`]: {
+        id: 'inv-2',
+        email: 'dani@verticetc.es',
+        phone: null,
+        role: 'staff',
+        expiresAt: '2026-10-20T10:00:00.000Z',
+        code: 'ABCD-EFGH-JKLM',
+      },
     });
-    renderScreen(<InviteTeamScreen />);
+    renderScreen(<InvitePersonScreen />);
     expect(await screen.findByText('laura@verticetc.es')).toBeOnTheScreen();
 
-    fireEvent.changeText(screen.getByLabelText('Correo del instructor'), 'dani@verticetc.es');
-    fireEvent.press(screen.getByRole('button', { name: 'Añadir' }));
+    fireEvent.changeText(screen.getByLabelText('Teléfono o correo'), 'dani@verticetc.es');
+    fireEvent.press(screen.getByRole('button', { name: 'Crear invitación' }));
 
-    await waitFor(() => {
-      expect(findApiCall('POST', INVITATIONS_PATH)?.body).toEqual({
-        email: 'dani@verticetc.es',
-        role: 'staff',
-      });
+    expect(await screen.findByText('ABCD-EFGH-JKLM')).toBeOnTheScreen();
+    expect(findApiCall('POST', INVITATIONS_PATH)?.body).toEqual({
+      email: 'dani@verticetc.es',
+      role: 'staff',
     });
   });
 
-  it('rejects an email that is not valid without calling the server', async () => {
+  it('invites by phone with the number normalized and offers WhatsApp and SMS', async () => {
+    mockApi({
+      [`GET ${INVITATIONS_PATH}`]: { invitations: [] },
+      [`POST ${INVITATIONS_PATH}`]: {
+        id: 'inv-3',
+        email: null,
+        phone: '+34600111222',
+        role: 'staff',
+        expiresAt: '2026-10-20T10:00:00.000Z',
+        code: 'ABCD-EFGH-JKLM',
+      },
+    });
+    renderScreen(<InvitePersonScreen />);
+
+    fireEvent.changeText(await screen.findByLabelText('Teléfono o correo'), '600 111 222');
+    fireEvent.press(screen.getByRole('button', { name: 'Crear invitación' }));
+
+    expect(await screen.findByRole('button', { name: 'Enviar por WhatsApp' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Enviar por SMS' })).toBeOnTheScreen();
+    expect(findApiCall('POST', INVITATIONS_PATH)?.body).toEqual({
+      phone: '+34600111222',
+      role: 'staff',
+    });
+  });
+
+  it('asks for a client invitation when the route says so', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ role: 'client' });
     mockApi({ [`GET ${INVITATIONS_PATH}`]: { invitations: [] } });
-    renderScreen(<InviteTeamScreen />);
+    renderScreen(<InvitePersonScreen />);
 
-    fireEvent.changeText(screen.getByLabelText('Correo del instructor'), 'dani');
-    fireEvent.press(screen.getByRole('button', { name: 'Añadir' }));
+    expect(await screen.findByText(/Invitar como/)).toBeOnTheScreen();
+  });
 
-    expect(await screen.findByText('El correo no parece válido')).toBeOnTheScreen();
+  it('rejects a contact that is neither a phone nor an email without calling the server', async () => {
+    mockApi({ [`GET ${INVITATIONS_PATH}`]: { invitations: [] } });
+    renderScreen(<InvitePersonScreen />);
+
+    fireEvent.changeText(screen.getByLabelText('Teléfono o correo'), 'dani');
+    fireEvent.press(screen.getByRole('button', { name: 'Crear invitación' }));
+
+    expect(
+      await screen.findByText('Escribe un teléfono (600 111 222) o un correo válido'),
+    ).toBeOnTheScreen();
     expect(findApiCall('POST', INVITATIONS_PATH)).toBeUndefined();
   });
 });

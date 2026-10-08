@@ -2,11 +2,14 @@ import { z } from 'zod';
 
 import { i18n } from '@/shared/i18n';
 
-export const inviteInstructorFormSchema = z.object({
-  email: z
+import { parseInviteContact } from './invite-contact';
+
+export const invitePersonFormSchema = z.object({
+  contact: z
     .string()
     .trim()
-    .min(1, { error: () => i18n.t('validation.emailRequired') })
-    .pipe(z.email({ error: () => i18n.t('validation.emailInvalid') })),
+    .refine((contact) => parseInviteContact(contact) !== null, {
+      error: () => i18n.t('centerAdmin.team.contactInvalid'),
+    }),
 });
-export type InviteInstructorFormValues = z.infer<typeof inviteInstructorFormSchema>;
+export type InvitePersonFormValues = z.infer<typeof invitePersonFormSchema>;

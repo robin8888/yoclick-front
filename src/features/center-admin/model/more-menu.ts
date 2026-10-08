@@ -2,6 +2,8 @@ import type { Href } from 'expo-router';
 
 import type { IconName } from '@/ui/atoms/Icon';
 
+import { buildInvitePersonRoute } from './invite-person-route';
+
 export type MoreMenuTextKey =
   | 'centerDetails'
   | 'brand'
@@ -11,7 +13,8 @@ export type MoreMenuTextKey =
   | 'routines'
   | 'reports'
   | 'subscription'
-  | 'inviteTeam'
+  | 'inviteStudent'
+  | 'inviteInstructor'
   | 'myProfile'
   | 'teamProfiles'
   | 'records'
@@ -40,6 +43,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
     entries: [
       { textKey: 'centerDetails', route: '/(admin)/center', iconName: 'edit' },
       { textKey: 'inviteClients', route: '/(admin)/invite-clients', iconName: 'qrCode' },
+      { textKey: 'inviteStudent', route: buildInvitePersonRoute('client'), iconName: 'mail' },
       { textKey: 'routines', route: '/(admin)/routines', iconName: 'play' },
       { textKey: 'importClients', route: '/(admin)/clients/import', iconName: 'file' },
       { textKey: 'brand', route: '/(admin)/(tabs)/brand', iconName: 'palette' },
@@ -56,7 +60,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
   {
     id: 'team',
     entries: [
-      { textKey: 'inviteTeam', route: '/(admin)/invite-team', iconName: 'users' },
+      { textKey: 'inviteInstructor', route: buildInvitePersonRoute('staff'), iconName: 'users' },
       { textKey: 'myProfile', route: '/(admin)/public-profile', iconName: 'user' },
       { textKey: 'teamProfiles', route: '/(admin)/team/profiles', iconName: 'play' },
       { textKey: 'records', route: '/(admin)/(tabs)/records', iconName: 'clock' },

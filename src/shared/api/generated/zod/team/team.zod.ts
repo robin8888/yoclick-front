@@ -109,7 +109,8 @@ export const invitationsListPendingResponseInvitationsItemCreatedAtRegExp = new 
 export const InvitationsListPendingResponse = zod.object({
   "invitations": zod.array(zod.object({
   "id": zod.uuid().regex(invitationsListPendingResponseInvitationsItemIdRegExp),
-  "email": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "expiresAt": zod.iso.datetime({"offset":true}).regex(invitationsListPendingResponseInvitationsItemExpiresAtRegExp),
   "createdAt": zod.iso.datetime({"offset":true}).regex(invitationsListPendingResponseInvitationsItemCreatedAtRegExp)
@@ -117,7 +118,7 @@ export const InvitationsListPendingResponse = zod.object({
 })
 
 /**
- * @summary Invita por correo a un cliente, a alguien del equipo o a otra administradora. El personal solo invita clientes. El código llega por correo, sin enlaces.
+ * @summary Invita a un cliente, a alguien del equipo o a otra administradora, por correo o por teléfono (uno de los dos). Con correo, la API lo envía (sin enlaces). Con teléfono, la app comparte el código por WhatsApp o SMS y vale con cualquier cuenta. El personal solo invita clientes. La respuesta trae el código una sola vez.
  */
 export const invitationsCreatePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -134,10 +135,13 @@ export const invitationsCreateBodyEmailMax = 254;
 
 
 export const invitationsCreateBodyEmailRegExp = new RegExp('^(?:[A-Za-z0-9_\'+\\-]+\\.)*[A-Za-z0-9_\'+\\-]*[A-Za-z0-9_+-]@(?:[A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$');
+export const invitationsCreateBodyPhoneMax = 24;
+
 
 
 export const InvitationsCreateBody = zod.object({
-  "email": zod.email().max(invitationsCreateBodyEmailMax).regex(invitationsCreateBodyEmailRegExp),
+  "email": zod.email().max(invitationsCreateBodyEmailMax).regex(invitationsCreateBodyEmailRegExp).optional(),
+  "phone": zod.string().min(1).max(invitationsCreateBodyPhoneMax).optional(),
   "role": zod.enum(['admin', 'staff', 'client'])
 })
 
@@ -147,9 +151,11 @@ export const invitationsCreateResponseExpiresAtRegExp = new RegExp('^(?:(?:\\d\\
 
 export const InvitationsCreateResponse = zod.object({
   "id": zod.uuid().regex(invitationsCreateResponseIdRegExp),
-  "email": zod.string(),
+  "email": zod.string().nullable(),
+  "phone": zod.string().nullable(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
-  "expiresAt": zod.iso.datetime({"offset":true}).regex(invitationsCreateResponseExpiresAtRegExp)
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(invitationsCreateResponseExpiresAtRegExp),
+  "code": zod.string()
 })
 
 /**

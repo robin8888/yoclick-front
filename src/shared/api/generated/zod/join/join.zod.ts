@@ -116,7 +116,7 @@ export const joinGetInvitationResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]
 
 export const JoinGetInvitationResponse = zod.object({
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
-  "emailHint": zod.string(),
+  "emailHint": zod.string().nullable(),
   "expiresAt": zod.iso.datetime({"offset":true}).regex(joinGetInvitationResponseExpiresAtRegExp),
   "center": zod.object({
   "id": zod.uuid().regex(joinGetInvitationResponseCenterIdRegExp),

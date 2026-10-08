@@ -360,7 +360,7 @@ export const getInvitationsCreateUrl = (centerId: string,) => {
 }
 
 /**
- * @summary Invita por correo a un cliente, a alguien del equipo o a otra administradora. El personal solo invita clientes. El código llega por correo, sin enlaces.
+ * @summary Invita a un cliente, a alguien del equipo o a otra administradora, por correo o por teléfono (uno de los dos). Con correo, la API lo envía (sin enlaces). Con teléfono, la app comparte el código por WhatsApp o SMS y vale con cualquier cuenta. El personal solo invita clientes. La respuesta trae el código una sola vez.
  */
 export const invitationsCreate = async (centerId: string,
     inviteRequestDto: InviteRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<InvitationResponseDto> => {
@@ -427,7 +427,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type InvitationsCreateMutationVariables = {centerId: string;data: InviteRequestDto}
 
     /**
- * @summary Invita por correo a un cliente, a alguien del equipo o a otra administradora. El personal solo invita clientes. El código llega por correo, sin enlaces.
+ * @summary Invita a un cliente, a alguien del equipo o a otra administradora, por correo o por teléfono (uno de los dos). Con correo, la API lo envía (sin enlaces). Con teléfono, la app comparte el código por WhatsApp o SMS y vale con cualquier cuenta. El personal solo invita clientes. La respuesta trae el código una sola vez.
  */
 export const useInvitationsCreate = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof invitationsCreate>>, TError,InvitationsCreateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

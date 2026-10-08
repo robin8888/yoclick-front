@@ -9,20 +9,26 @@ import { Text } from '@/ui/atoms/Text';
 import { ADMIN_CARD_TEXT_STYLE, createAdminCardStyle } from './AdminCard.styles';
 
 interface PendingInvitationRowProps {
-  email: string;
+  /** Correo o teléfono al que se envió. */
+  recipient: string;
+  expiresOn: string;
 }
 
 /** Una invitación enviada que aún no se ha aceptado. */
 export function PendingInvitationRow({
-  email,
+  recipient,
+  expiresOn,
 }: Readonly<PendingInvitationRowProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
     <View style={createAdminCardStyle(theme)}>
-      <Avatar name={email} isDecorative />
+      <Avatar name={recipient} isDecorative />
       <View style={ADMIN_CARD_TEXT_STYLE}>
-        <Text variant="bodyStrong">{email}</Text>
+        <Text variant="bodyStrong">{recipient}</Text>
+        <Text variant="caption" color="ink2">
+          {i18n.t('centerAdmin.team.expiresOn', { date: expiresOn })}
+        </Text>
       </View>
       <Badge tone="info" label={i18n.t('centerAdmin.team.pendingBadge')} />
     </View>

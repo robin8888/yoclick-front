@@ -36,12 +36,29 @@ function DarkThemeRow(): React.JSX.Element {
   );
 }
 
+/** Las palabras del sector que llevan los textos del menú. */
+interface MoreMenuWords {
+  clientWord: string;
+  routineWordPlural: string;
+  clientSingular: string;
+  staffSingular: string;
+}
+
+function useMoreMenuWords(): MoreMenuWords {
+  const { client, routine, staff } = getSectorVocabulary(useActiveCenterSectorId());
+  return {
+    clientWord: client.plural,
+    routineWordPlural: routine.plural,
+    clientSingular: client.singular,
+    staffSingular: staff.singular,
+  };
+}
+
 /** Prototipo `amore`: los accesos de administración agrupados, el tema y cerrar sesión. */
 export function AdminMoreScreen(): React.JSX.Element {
   const router = useRouter();
   const { signOut, isSigningOut } = useSignOut();
-  const { client, routine } = getSectorVocabulary(useActiveCenterSectorId());
-  const words = { clientWord: client.plural, routineWordPlural: routine.plural };
+  const words = useMoreMenuWords();
 
   return (
     <ScreenTemplate title={i18n.t('centerAdmin.more.title')} isLoading={isSigningOut}>
@@ -54,7 +71,7 @@ export function AdminMoreScreen(): React.JSX.Element {
             <ListItem
               key={entry.textKey}
               leadingIconName={entry.iconName}
-              title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, words)}
+              title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, { ...words })}
               subtitle={i18n.t(`centerAdmin.more.${entry.textKey}Subtitle`)}
               onPress={() => {
                 router.push(entry.route);
