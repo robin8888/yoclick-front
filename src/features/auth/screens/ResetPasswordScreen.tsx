@@ -5,6 +5,7 @@ import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { useHasPlatformLook } from '../components/AuthBrandHeader';
 import { PasswordTextField } from '../components/PasswordTextField';
 import { VerificationCodeTextField } from '../components/VerificationCodeTextField';
 import { useResetPasswordForm } from '../hooks/useResetPasswordForm';
@@ -13,11 +14,12 @@ import { useResetPasswordForm } from '../hooks/useResetPasswordForm';
 export function ResetPasswordScreen(): React.JSX.Element {
   const router = useRouter();
   const form = useResetPasswordForm();
+  const hasPlatformLook = useHasPlatformLook();
 
   if (form.email === null) return <Redirect href="/(auth)/forgot-password" />;
   return (
     <ScreenTemplate
-      hasPlatformHeroBackground
+      hasPlatformHeroBackground={hasPlatformLook}
       title={i18n.t('auth.resetPassword.title')}
       subtitle={i18n.t('auth.resetPassword.subtitle', { email: form.email })}
       onBackPress={router.back}

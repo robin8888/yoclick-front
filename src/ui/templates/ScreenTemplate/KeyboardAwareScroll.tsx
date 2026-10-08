@@ -15,7 +15,7 @@ interface KeyboardAwareScrollProps {
 /**
  * El contenido con scroll de una pantalla. En iOS, `automaticallyAdjustKeyboardInsets` hace que el
  * sistema deje sitio al teclado y desplace hasta el campo que se escribe, sin que tape nada;
- * Android redimensiona la ventana por sí solo. Arrastrar el contenido cierra el teclado.
+ * en Android lo hace el `KeyboardAvoidingView` de la plantilla. Arrastrar el contenido cierra el teclado.
  */
 export function KeyboardAwareScroll({
   isContentCentered,

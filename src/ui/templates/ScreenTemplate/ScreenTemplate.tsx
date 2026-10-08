@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { platformHeroColorOverrides, ThemeProvider, useTheme } from '@/shared/theme';
@@ -17,6 +17,8 @@ import { KeyboardAwareScroll } from './KeyboardAwareScroll';
 import { CenterHoneycombBackground } from './CenterHoneycombBackground';
 import { PlatformHeroBackground } from './PlatformHeroBackground';
 import { ScreenTemplateTop } from './ScreenTemplateTop';
+
+const KEYBOARD_AVOIDING_STYLE = { flex: 1 } as const;
 
 /** Esqueleto de pantalla: zona segura, cabecera, contenido con scroll y acción fija abajo. */
 export function ScreenTemplate(props: Readonly<ScreenTemplateProps>): React.JSX.Element {
@@ -116,6 +118,22 @@ function ScreenFrame({
   );
 }
 
+/**
+ * En Android la app va a pantalla completa y el sistema ya no encoge la ventana al salir el teclado:
+ * se encoge aquí, para que el campo que se escribe quede a la vista. En iOS lo hace el scroll.
+ */
+function KeyboardAvoidingFrame({ children }: Readonly<{ children: ReactNode }>): React.JSX.Element {
+  return (
+    <KeyboardAvoidingView
+      style={KEYBOARD_AVOIDING_STYLE}
+      behavior="padding"
+      enabled={Platform.OS === 'android'}
+    >
+      {children}
+    </KeyboardAvoidingView>
+  );
+}
+
 type ScreenBodyProps = Omit<ScreenTemplateProps, 'isLoading' | 'loadingLabel'>;
 
 /** Zona segura con el contenido que hace scroll y, encima, las acciones fijas. */
@@ -134,26 +152,28 @@ function ScreenBody({
   );
 
   return (
-    <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
-      <KeyboardAwareScroll
-        isContentCentered={isContentCentered}
-        trailingContent={isKeyboardVisible ? footerView : null}
-      >
-        <ScreenHeaderSlot
-          isHidden={isHeaderHidden}
-          hasPlatformHeroBackground={hasPlatformHeroBackground}
-          headerProps={headerProps}
-        />
-        {children}
-      </KeyboardAwareScroll>
-      {isKeyboardVisible ? null : (
-        <FixedActions
-          footer={footer}
-          floatingAction={floatingAction}
-          hasPlatformHeroBackground={hasPlatformHeroBackground}
-        />
-      )}
-    </SafeAreaView>
+    <KeyboardAvoidingFrame>
+      <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
+        <KeyboardAwareScroll
+          isContentCentered={isContentCentered}
+          trailingContent={isKeyboardVisible ? footerView : null}
+        >
+          <ScreenHeaderSlot
+            isHidden={isHeaderHidden}
+            hasPlatformHeroBackground={hasPlatformHeroBackground}
+            headerProps={headerProps}
+          />
+          {children}
+        </KeyboardAwareScroll>
+        {isKeyboardVisible ? null : (
+          <FixedActions
+            footer={footer}
+            floatingAction={floatingAction}
+            hasPlatformHeroBackground={hasPlatformHeroBackground}
+          />
+        )}
+      </SafeAreaView>
+    </KeyboardAvoidingFrame>
   );
 }
 

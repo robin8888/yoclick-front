@@ -5,17 +5,19 @@ import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { useHasPlatformLook } from '../components/AuthBrandHeader';
 import { EmailTextField } from '../components/EmailTextField';
 import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm';
 
 /** Prototipo `forgot`, paso 1: el correo. */
 export function ForgotPasswordScreen(): React.JSX.Element {
   const router = useRouter();
+  const hasPlatformLook = useHasPlatformLook();
   const { control, submitEmail, isSubmitting, errorMessage } = useForgotPasswordForm();
 
   return (
     <ScreenTemplate
-      hasPlatformHeroBackground
+      hasPlatformHeroBackground={hasPlatformLook}
       title={i18n.t('auth.forgotPassword.title')}
       subtitle={i18n.t('auth.forgotPassword.subtitle')}
       onBackPress={router.back}

@@ -7,19 +7,40 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { MfaCodeField } from '../components/MfaCodeField';
+import { useHasPlatformLook } from '../components/AuthBrandHeader';
 import { MfaScreenLogo } from '../components/MfaScreenLogo';
 import { useMfaChallengeForm } from '../hooks/useMfaChallengeForm';
+
+interface MfaSubmitButtonProps {
+  isSubmitting: boolean;
+  onSubmit: () => void;
+}
+
+function MfaSubmitButton({
+  isSubmitting,
+  onSubmit,
+}: Readonly<MfaSubmitButtonProps>): React.JSX.Element {
+  return (
+    <Button
+      label={i18n.t('auth.mfa.submitLabel')}
+      isFullWidth
+      isLoading={isSubmitting}
+      onPress={onSubmit}
+    />
+  );
+}
 
 /** Segundo factor del login (obligatorio para administración, SEC-47). */
 export function MfaChallengeScreen(): React.JSX.Element {
   const router = useRouter();
   const form = useMfaChallengeForm();
   const isAppCode = form.codeKind === 'appCode';
+  const hasPlatformLook = useHasPlatformLook();
 
   if (!form.hasChallenge && !form.isSubmitting) return <Redirect href="/(auth)/login" />;
   return (
     <ScreenTemplate
-      hasPlatformHeroBackground
+      hasPlatformHeroBackground={hasPlatformLook}
       isHeaderCentered
       headerAccessory={<MfaScreenLogo />}
       isLoading={form.isSubmitting}
@@ -28,14 +49,7 @@ export function MfaChallengeScreen(): React.JSX.Element {
       subtitle={i18n.t(isAppCode ? 'auth.mfa.appCodeSubtitle' : 'auth.mfa.recoveryCodeSubtitle')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
-      footer={
-        <Button
-          label={i18n.t('auth.mfa.submitLabel')}
-          isFullWidth
-          isLoading={form.isSubmitting}
-          onPress={form.submitCode}
-        />
-      }
+      footer={<MfaSubmitButton isSubmitting={form.isSubmitting} onSubmit={form.submitCode} />}
     >
       {form.errorMessage === null ? null : <FormErrorBanner message={form.errorMessage} />}
       <MfaCodeField
