@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useEffect, useRef } from 'react';
 
 import type { InvitationPreviewResponseDto } from '@/shared/api/generated/model';
 
@@ -20,6 +21,8 @@ export function useInvitationFlow(): InvitationFlow {
   const router = useRouter();
   const savedCode = usePendingInvitationStore((state) => state.invitationCode);
   const clearInvitation = usePendingInvitationStore((state) => state.clearInvitation);
+  const isAutoAcceptAllowed = usePendingInvitationStore((state) => state.isAutoAcceptAllowed);
+  const hasAutoAccepted = useRef(false);
   const form = useInvitationCodeForm(savedCode);
   const acceptance = useInvitationAcceptance({
     invitationCode: form.submittedCode,
@@ -28,6 +31,14 @@ export function useInvitationFlow(): InvitationFlow {
     },
   });
   const invitation = acceptance.previewError === null ? acceptance.preview : undefined;
+  const { acceptInvitation } = acceptance;
+
+  // Aceptar sola es sincronizar con el servidor, y una sola vez: si falla, queda el botón.
+  useEffect(() => {
+    if (!isAutoAcceptAllowed || invitation === undefined || hasAutoAccepted.current) return;
+    hasAutoAccepted.current = true;
+    acceptInvitation();
+  }, [isAutoAcceptAllowed, invitation, acceptInvitation]);
 
   function handleSecondaryPress(): void {
     if (invitation !== undefined) {

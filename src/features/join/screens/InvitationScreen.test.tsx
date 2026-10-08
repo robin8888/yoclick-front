@@ -28,6 +28,7 @@ describe('InvitationScreen', () => {
   beforeEach(() => {
     resetMockRouter();
     act(() => {
+      useSessionStore.getState().resetSession();
       usePendingInvitationStore.getState().clearInvitation();
     });
   });
@@ -43,6 +44,37 @@ describe('InvitationScreen', () => {
     expect(screen.getByText('Entrarás como maestro.')).toBeOnTheScreen();
   });
 
+  it('accepts on its own when the code was brought before signing in', async () => {
+    mockApi({
+      'GET /v1/join/invitations/INV123': INVITATION_PREVIEW,
+      'POST /v1/join/invitations/INV123/accept': ACCEPTED_INVITATION,
+      'GET /v1/me/memberships': { memberships: [] },
+    });
+    act(() => {
+      useSessionStore.getState().resetSession();
+      usePendingInvitationStore.getState().saveInvitationCode('INV123');
+      useSessionStore.getState().startSession({ accessToken: 'token', user: null });
+    });
+    renderScreen(<InvitationScreen />);
+
+    await waitFor(() => {
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/');
+    });
+    expect(findApiCall('POST', '/v1/join/invitations/INV123/accept')).toBeDefined();
+  });
+
+  it('asks before accepting when the person already had a session', async () => {
+    mockApi({ 'GET /v1/join/invitations/INV123': INVITATION_PREVIEW });
+    act(() => {
+      useSessionStore.getState().startSession({ accessToken: 'token', user: null });
+      usePendingInvitationStore.getState().saveInvitationCode('INV123');
+    });
+    renderScreen(<InvitationScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Aceptar invitación' })).toBeOnTheScreen();
+    expect(findApiCall('POST', '/v1/join/invitations/INV123/accept')).toBeUndefined();
+  });
+
   it('accepts the invitation, makes the center active and goes to the root', async () => {
     mockApi({
       'GET /v1/join/invitations/INV123': INVITATION_PREVIEW,
@@ -50,6 +82,7 @@ describe('InvitationScreen', () => {
       'GET /v1/me/memberships': { memberships: [] },
     });
     act(() => {
+      useSessionStore.getState().startSession({ accessToken: 'token', user: null });
       usePendingInvitationStore.getState().saveInvitationCode('INV123');
     });
     renderScreen(<InvitationScreen />);

@@ -1,8 +1,15 @@
 import { create } from 'zustand';
 
+import { useSessionStore } from '@/shared/auth/session-store';
+
 interface PendingInvitationState {
   /** Código llegado por enlace (`/i/{código}`) y aún sin aceptar. */
   readonly invitationCode: string | null;
+  /**
+   * El código llegó antes de iniciar sesión (enlace o «Tengo un código»): al volver con sesión se
+   * acepta solo. Si ya había sesión se pide confirmación, porque podría ser otra cuenta.
+   */
+  readonly isAutoAcceptAllowed: boolean;
   /** La persona dijo en el registro que es instructor: al entrar se le pide su código. */
   readonly isInvitationExpected: boolean;
   readonly saveInvitationCode: (invitationCode: string) => void;
@@ -14,13 +21,15 @@ interface PendingInvitationState {
 export const usePendingInvitationStore = create<PendingInvitationState>((set) => ({
   invitationCode: null,
   isInvitationExpected: false,
+  isAutoAcceptAllowed: false,
   saveInvitationCode: (invitationCode) => {
-    set({ invitationCode, isInvitationExpected: true });
+    const isSignedOut = useSessionStore.getState().status !== 'signedIn';
+    set({ invitationCode, isInvitationExpected: true, isAutoAcceptAllowed: isSignedOut });
   },
   expectInvitation: () => {
     set({ isInvitationExpected: true });
   },
   clearInvitation: () => {
-    set({ invitationCode: null, isInvitationExpected: false });
+    set({ invitationCode: null, isInvitationExpected: false, isAutoAcceptAllowed: false });
   },
 }));

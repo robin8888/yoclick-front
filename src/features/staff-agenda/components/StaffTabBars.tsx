@@ -82,7 +82,7 @@ function listAdminTabs(clientsLabel: string): readonly PathTab[] {
       label: i18n.t('centerAdmin.tabs.more'),
       iconName: 'more',
       href: '/(admin)/(tabs)/more',
-      activePaths: ['/more', '/records', '/invite-clients', '/invite-team'],
+      activePaths: ['/more', '/records', '/invite-clients', '/invite-person'],
     },
   ];
 }

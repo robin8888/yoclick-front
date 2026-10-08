@@ -5,6 +5,7 @@ import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 
 import { useTeamRoster } from '../hooks/useTeamRoster';
+import { buildInvitePersonRoute } from '../model/invite-person-route';
 import { selectRosterMembers } from '../model/team-roster';
 import { SectionHeader } from './SectionHeader';
 import { TeamMemberRow } from './TeamMemberRow';
@@ -27,7 +28,7 @@ export function TeamSection(): React.JSX.Element {
         actionLabel={i18n.t('centerAdmin.team.inviteAction')}
         actionIconName="mail"
         onActionPress={() => {
-          router.push('/(admin)/invite-team');
+          router.push(buildInvitePersonRoute('staff'));
         }}
       />
       {roster.isError ? <Text color="danger">{i18n.t('centerAdmin.team.loadError')}</Text> : null}
