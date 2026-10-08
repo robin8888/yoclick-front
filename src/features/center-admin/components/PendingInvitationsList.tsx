@@ -11,11 +11,17 @@ const SECTION_STYLE = { gap: 16 } as const;
 const ISO_DATE_LENGTH = 10;
 
 /** Las invitaciones enviadas que aún no se han aceptado; no se pinta nada si no hay. */
+interface PendingInvitationsListProps {
+  invitations: readonly PendingInvitationsResponseDtoInvitationsItem[];
+  onResend: (invitation: PendingInvitationsResponseDtoInvitationsItem) => void;
+  onRevoke: (invitationId: string) => void;
+}
+
 export function PendingInvitationsList({
   invitations,
-}: Readonly<{
-  invitations: readonly PendingInvitationsResponseDtoInvitationsItem[];
-}>): React.JSX.Element | null {
+  onResend,
+  onRevoke,
+}: Readonly<PendingInvitationsListProps>): React.JSX.Element | null {
   if (invitations.length === 0) return null;
 
   return (
@@ -28,6 +34,12 @@ export function PendingInvitationsList({
           key={pending.id}
           recipient={pending.email ?? pending.phone ?? ''}
           expiresOn={formatNumericDate(pending.expiresAt.slice(0, ISO_DATE_LENGTH))}
+          onResend={() => {
+            onResend(pending);
+          }}
+          onRevoke={() => {
+            onRevoke(pending.id);
+          }}
         />
       ))}
     </View>

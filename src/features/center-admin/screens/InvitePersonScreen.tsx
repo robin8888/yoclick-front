@@ -40,7 +40,11 @@ function InvitePersonContent({ role }: Readonly<{ role: InvitedRole }>): React.J
       {invitation.inviteErrorMessage === null ? null : (
         <FormErrorBanner message={invitation.inviteErrorMessage} />
       )}
-      <PendingInvitationsList invitations={invitation.pendingInvitations} />
+      <PendingInvitationsList
+        invitations={invitation.pendingInvitations}
+        onResend={invitation.resendInvitation}
+        onRevoke={invitation.revokeInvitation}
+      />
     </ScreenTemplate>
   );
 }

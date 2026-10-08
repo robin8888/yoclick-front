@@ -292,6 +292,71 @@ describe('InvitePersonScreen', () => {
     });
   });
 
+  it('revokes a pending invitation', async () => {
+    mockApi({
+      [`GET ${INVITATIONS_PATH}`]: {
+        invitations: [
+          {
+            id: 'inv-1',
+            email: 'laura@verticetc.es',
+            phone: null,
+            role: 'staff',
+            expiresAt: '2026-10-20T10:00:00.000Z',
+            createdAt: '2026-10-05T10:00:00.000Z',
+          },
+        ],
+      },
+      [`DELETE ${INVITATIONS_PATH}/inv-1`]: null,
+    });
+    renderScreen(<InvitePersonScreen />);
+
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Anular la invitación a laura@verticetc.es' }),
+    );
+
+    await waitFor(() => {
+      expect(findApiCall('DELETE', `${INVITATIONS_PATH}/inv-1`)).toBeDefined();
+    });
+  });
+
+  it('resends a pending phone invitation with a new code to the same number', async () => {
+    mockApi({
+      [`GET ${INVITATIONS_PATH}`]: {
+        invitations: [
+          {
+            id: 'inv-9',
+            email: null,
+            phone: '+34600111222',
+            role: 'staff',
+            expiresAt: '2026-10-20T10:00:00.000Z',
+            createdAt: '2026-10-05T10:00:00.000Z',
+          },
+        ],
+      },
+      [`POST ${INVITATIONS_PATH}`]: {
+        id: 'inv-10',
+        email: null,
+        phone: '+34600111222',
+        role: 'staff',
+        expiresAt: '2026-10-21T10:00:00.000Z',
+        code: 'WXYZ-2345-6789',
+      },
+    });
+    renderScreen(<InvitePersonScreen />);
+
+    fireEvent.press(
+      await screen.findByRole('button', {
+        name: 'Reenviar la invitación a +34600111222 con un código nuevo',
+      }),
+    );
+
+    expect(await screen.findByText('WXYZ-2345-6789')).toBeOnTheScreen();
+    expect(findApiCall('POST', INVITATIONS_PATH)?.body).toEqual({
+      phone: '+34600111222',
+      role: 'staff',
+    });
+  });
+
   it('asks for a client invitation when the route says so', async () => {
     jest.mocked(useLocalSearchParams).mockReturnValue({ role: 'client' });
     mockApi({ [`GET ${INVITATIONS_PATH}`]: { invitations: [] } });

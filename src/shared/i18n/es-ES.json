@@ -1447,7 +1447,11 @@
       "copiedAction": "Copiado",
       "anotherAction": "Invitar a otra persona",
       "shareMessage": "{{centerName}} te invita como {{roleWord}}. Abre la app de Yoclick, pulsa «Tengo un código» y escribe: {{code}}. También puedes entrar desde este enlace: {{link}}",
-      "expiresOn": "Caduca el {{date}}"
+      "expiresOn": "Caduca el {{date}}",
+      "resendAction": "Reenviar",
+      "resendLabel": "Reenviar la invitación a {{recipient}} con un código nuevo",
+      "revokeAction": "Anular",
+      "revokeLabel": "Anular la invitación a {{recipient}}"
     },
     "inviteClients": {
       "title": "Invita a tus {{clientWord}}",

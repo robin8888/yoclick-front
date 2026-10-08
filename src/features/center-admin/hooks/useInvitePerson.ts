@@ -4,6 +4,7 @@ import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   getInvitationsListPendingQueryKey,
   invitationsCreate,
+  invitationsRevoke,
   useInvitationsListPending,
 } from '@/shared/api/generated/endpoints/team/team';
 import type {
@@ -24,6 +25,18 @@ interface InvitePerson {
   isInviting: boolean;
   inviteErrorMessage: string | null;
   startAnother: () => void;
+  resendInvitation: (invitation: PendingInvitationsResponseDtoInvitationsItem) => void;
+  revokeInvitation: (invitationId: string) => void;
+}
+
+function toContact(pending: PendingInvitationsResponseDtoInvitationsItem): InviteContact | null {
+  if (pending.email !== null) return { kind: 'email', email: pending.email };
+  if (pending.phone !== null) return { kind: 'phone', phone: pending.phone };
+  return null;
+}
+
+function resolveErrorMessage(error: unknown): string | null {
+  return error === null || error === undefined ? null : getApiErrorMessage(error);
 }
 
 function buildRequestBody(contact: InviteContact, role: InvitedRole) {
@@ -44,6 +57,12 @@ export function useInvitePerson(role: InvitedRole): InvitePerson {
       queryClient.invalidateQueries({ queryKey: getInvitationsListPendingQueryKey(centerId) }),
   });
 
+  const revokeMutation = useMutation({
+    mutationFn: (invitationId: string) => invitationsRevoke(centerId, invitationId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: getInvitationsListPendingQueryKey(centerId) }),
+  });
+
   return {
     pendingInvitations: (pendingQuery.data?.invitations ?? []).filter(
       (invitation) => invitation.role === role,
@@ -53,7 +72,15 @@ export function useInvitePerson(role: InvitedRole): InvitePerson {
       inviteMutation.mutate(contact);
     },
     isInviting: inviteMutation.isPending,
-    inviteErrorMessage: inviteMutation.isError ? getApiErrorMessage(inviteMutation.error) : null,
+    inviteErrorMessage: resolveErrorMessage(inviteMutation.error ?? revokeMutation.error),
     startAnother: inviteMutation.reset,
+    // Invitar de nuevo al mismo destino anula la anterior y da un código nuevo.
+    resendInvitation: (pending) => {
+      const contact = toContact(pending);
+      if (contact !== null) inviteMutation.mutate(contact);
+    },
+    revokeInvitation: (invitationId) => {
+      revokeMutation.mutate(invitationId);
+    },
   };
 }
