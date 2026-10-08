@@ -31,6 +31,7 @@ const TITLE_KEYS = {
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceTitle',
   routine_assigned: 'notifications.routineAssignedTitle',
   routine_updated: 'notifications.routineUpdatedTitle',
+  member_joined: 'notifications.memberJoinedTitle',
   staff_video_submitted: 'notifications.staffVideoSubmittedTitle',
   staff_video_reviewed: 'notifications.staffVideoReviewedTitle',
   privacy_request_received: 'notifications.privacyRequestReceivedTitle',
@@ -51,6 +52,7 @@ const DESCRIPTION_KEYS = {
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceDescription',
   routine_assigned: 'notifications.routineAssignedDescription',
   routine_updated: 'notifications.routineUpdatedDescription',
+  member_joined: 'notifications.memberJoinedDescription',
   staff_video_submitted: 'notifications.staffVideoSubmittedDescription',
   staff_video_reviewed: 'notifications.staffVideoReviewedDescription',
   privacy_request_received: 'notifications.privacyRequestReceivedDescription',
@@ -122,24 +124,31 @@ interface NoticeTexts {
   actorName: string;
   routineName: string;
   uploaderName: string;
+  personName: string;
   right: string;
   authorLabel: string;
   rating: string;
   when: string;
 }
 
+/** Un dato del aviso que puede faltar: sin él, el texto queda vacío. */
+function textOf(value: string | undefined): string {
+  return value ?? '';
+}
+
 function buildNoticeTexts(notification: NotificationItem, timeZone: string): NoticeTexts {
   const noticeData = notification.data;
   return {
-    clientName: noticeData.clientName ?? '',
-    serviceName: noticeData.serviceName ?? '',
-    staffName: noticeData.staffName ?? '',
-    actorName: noticeData.actorName ?? '',
-    routineName: noticeData.routineName ?? '',
-    uploaderName: noticeData.uploaderName ?? '',
+    clientName: textOf(noticeData.clientName),
+    serviceName: textOf(noticeData.serviceName),
+    staffName: textOf(noticeData.staffName),
+    actorName: textOf(noticeData.actorName),
+    routineName: textOf(noticeData.routineName),
+    uploaderName: textOf(noticeData.uploaderName),
+    personName: textOf(noticeData.personName),
     right: describePrivacyRight(noticeData.requestKind),
-    authorLabel: noticeData.authorLabel ?? '',
-    rating: noticeData.rating ?? '',
+    authorLabel: textOf(noticeData.authorLabel),
+    rating: textOf(noticeData.rating),
     when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
   };
 }

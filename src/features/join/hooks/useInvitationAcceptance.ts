@@ -25,6 +25,18 @@ interface InvitationAcceptanceInput {
   onAccepted: () => void;
 }
 
+/** Solo una aceptación a la vez, aunque haya dos pantallas pidiéndola. */
+function tryBeginAcceptance(): boolean {
+  const { isAcceptInFlight, setAcceptInFlight } = usePendingInvitationStore.getState();
+  if (isAcceptInFlight) return false;
+  setAcceptInFlight(true);
+  return true;
+}
+
+function endAcceptance(): void {
+  usePendingInvitationStore.getState().setAcceptInFlight(false);
+}
+
 /** Consulta qué centro y rol da la invitación y, si la persona acepta, la une como ese rol. */
 export function useInvitationAcceptance({
   invitationCode,
@@ -39,10 +51,11 @@ export function useInvitationAcceptance({
   const acceptMutation = useJoinAcceptInvitation();
 
   function acceptInvitation(): void {
-    if (invitationCode === null) return;
+    if (invitationCode === null || !tryBeginAcceptance()) return;
     acceptMutation.mutate(
       { code: invitationCode },
       {
+        onError: endAcceptance,
         onSuccess: (acceptedInvitation) => {
           void queryClient
             .invalidateQueries({ queryKey: getMeListMembershipsQueryKey() })

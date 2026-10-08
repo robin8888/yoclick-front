@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
-import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
+import { buildApiError, findApiCall, getRecordedApiCalls, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
@@ -95,6 +95,32 @@ describe('InvitationScreen', () => {
     expect(findApiCall('POST', '/v1/join/invitations/INV123/accept')).toBeDefined();
     expect(useSessionStore.getState().activeCenterId).toBe(CENTER_ID);
     expect(usePendingInvitationStore.getState().invitationCode).toBeNull();
+  });
+
+  it('sends only one acceptance even if the button is pressed twice', async () => {
+    mockApi({
+      'GET /v1/join/invitations/INV123': INVITATION_PREVIEW,
+      'POST /v1/join/invitations/INV123/accept': ACCEPTED_INVITATION,
+      'GET /v1/me/memberships': { memberships: [] },
+    });
+    act(() => {
+      useSessionStore.getState().startSession({ accessToken: 'token', user: null });
+      usePendingInvitationStore.getState().saveInvitationCode('INV123');
+    });
+    renderScreen(<InvitationScreen />);
+    const button = await screen.findByRole('button', { name: 'Aceptar invitación' });
+
+    fireEvent.press(button);
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/');
+    });
+    const acceptCalls = getRecordedApiCalls().filter(
+      (call) =>
+        call.method === 'POST' && call.path.startsWith('/v1/join/invitations/INV123/accept'),
+    );
+    expect(acceptCalls).toHaveLength(1);
   });
 
   it('explains an invalid invitation and keeps the code field', async () => {

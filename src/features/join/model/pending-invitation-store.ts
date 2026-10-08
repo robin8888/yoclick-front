@@ -10,6 +10,9 @@ interface PendingInvitationState {
    * acepta solo. Si ya había sesión se pide confirmación, porque podría ser otra cuenta.
    */
   readonly isAutoAcceptAllowed: boolean;
+  /** Hay una aceptación en marcha: aunque haya dos pantallas, solo sale una petición. */
+  readonly isAcceptInFlight: boolean;
+  readonly setAcceptInFlight: (isAcceptInFlight: boolean) => void;
   /** La persona dijo en el registro que es instructor: al entrar se le pide su código. */
   readonly isInvitationExpected: boolean;
   readonly saveInvitationCode: (invitationCode: string) => void;
@@ -22,6 +25,10 @@ export const usePendingInvitationStore = create<PendingInvitationState>((set) =>
   invitationCode: null,
   isInvitationExpected: false,
   isAutoAcceptAllowed: false,
+  isAcceptInFlight: false,
+  setAcceptInFlight: (isAcceptInFlight) => {
+    set({ isAcceptInFlight });
+  },
   saveInvitationCode: (invitationCode) => {
     const isSignedOut = useSessionStore.getState().status !== 'signedIn';
     set({ invitationCode, isInvitationExpected: true, isAutoAcceptAllowed: isSignedOut });
@@ -30,6 +37,11 @@ export const usePendingInvitationStore = create<PendingInvitationState>((set) =>
     set({ isInvitationExpected: true });
   },
   clearInvitation: () => {
-    set({ invitationCode: null, isInvitationExpected: false, isAutoAcceptAllowed: false });
+    set({
+      invitationCode: null,
+      isInvitationExpected: false,
+      isAutoAcceptAllowed: false,
+      isAcceptInFlight: false,
+    });
   },
 }));
