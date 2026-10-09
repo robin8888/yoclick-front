@@ -47,7 +47,9 @@ export function StaffOptionList({
       {staff.map((member) => (
         <OptionCard
           key={member.membershipId}
-          leading={<Avatar name={member.fullName} size="md" isDecorative />}
+          leading={
+            <Avatar name={member.fullName} photoUrl={member.photoUrl} size="md" isDecorative />
+          }
           title={member.fullName}
           isSelected={selectedChoice === member.membershipId}
           onPress={() => {

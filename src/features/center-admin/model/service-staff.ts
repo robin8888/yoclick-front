@@ -3,6 +3,7 @@ import type { TeamResponseDtoMembersItem } from '@/shared/api/generated/model';
 export interface AssignableStaffMember {
   membershipId: string;
   fullName: string;
+  photoUrl: string | null;
   /** «Entrenador personal»; vacío si el equipo no le ha puesto cargo. */
   staffTitle: string | null;
 }
@@ -16,7 +17,12 @@ export function selectAssignableStaff(
 ): AssignableStaffMember[] {
   return teamMembers
     .filter((member) => member.status === 'active' && ASSIGNABLE_ROLES.includes(member.role))
-    .map(({ membershipId, fullName, staffTitle }) => ({ membershipId, fullName, staffTitle }));
+    .map(({ membershipId, fullName, photoUrl, staffTitle }) => ({
+      membershipId,
+      fullName,
+      photoUrl,
+      staffTitle,
+    }));
 }
 
 /** Añade o quita a una persona de la selección, sin repetirla. */

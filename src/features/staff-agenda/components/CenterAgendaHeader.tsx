@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { NotificationBell } from '@/features/notifications';
 import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
@@ -10,7 +11,7 @@ interface CenterAgendaHeaderProps {
   title: string;
 }
 
-/** Prototipo `aagenda`: logo del centro, fecha y título «Agenda del centro». */
+/** Prototipo `aagenda`: fecha, título «Agenda del centro» y la campana con los avisos sin leer. */
 export function CenterAgendaHeader({
   dateLabel,
   title,
@@ -27,6 +28,7 @@ export function CenterAgendaHeader({
           {title}
         </Text>
       </View>
+      <NotificationBell href="/(admin)/(tabs)/notifications" />
     </View>
   );
 }

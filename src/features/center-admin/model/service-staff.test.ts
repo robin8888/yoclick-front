@@ -8,6 +8,7 @@ function buildMember(overrides: Partial<TeamResponseDtoMembersItem>): TeamRespon
     userId: 'user-1',
     fullName: 'Álex Moreno',
     email: 'alex@example.com',
+    photoUrl: null,
     role: 'staff',
     status: 'active',
     staffTitle: null,
@@ -40,6 +41,7 @@ describe('selectAssignableStaff', () => {
     expect(staffMember).toEqual({
       membershipId: 'member-1',
       fullName: 'Álex Moreno',
+      photoUrl: null,
       staffTitle: 'Entrenador',
     });
   });

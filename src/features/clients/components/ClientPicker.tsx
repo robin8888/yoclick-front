@@ -17,6 +17,7 @@ import { CLIENT_PICKER_STYLE } from './ClientPicker.styles';
 interface PickableClient {
   membershipId: string;
   fullName: string;
+  photoUrl: string | null;
 }
 
 interface ClientPickerProps {
@@ -38,7 +39,7 @@ function PickerRow({ client, onPress }: Readonly<PickerRowProps>): React.JSX.Ele
       onPress={onPress}
       style={createClientRowStyle(theme)}
     >
-      <Avatar name={client.fullName} size="md" isDecorative />
+      <Avatar name={client.fullName} photoUrl={client.photoUrl} size="md" isDecorative />
       <View style={CLIENT_ROW_TEXT_STYLE}>
         <Text variant="bodyStrong" numberOfLines={1}>
           {client.fullName}

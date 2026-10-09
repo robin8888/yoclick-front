@@ -49,7 +49,7 @@ export function StaffClientRow({
       accessibilityLabel={spokenParts.join('. ')}
       style={createStaffClientRowStyle(theme)}
     >
-      <Avatar name={client.fullName} size="lg" isDecorative />
+      <Avatar name={client.fullName} photoUrl={client.photoUrl} size="lg" isDecorative />
       <View style={CLIENT_ROW_TEXT_STYLE}>
         <View style={createStaffClientHeadStyle(theme)}>
           <View style={CLIENT_ROW_TEXT_STYLE}>

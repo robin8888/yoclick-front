@@ -57,7 +57,7 @@ export function TeamMemberRow({
       onPress={onPress}
       style={createAdminCardStyle(theme)}
     >
-      <Avatar name={member.fullName} size="md" isDecorative />
+      <Avatar name={member.fullName} photoUrl={member.photoUrl} size="md" isDecorative />
       <View style={ADMIN_CARD_TEXT_STYLE}>
         <Text variant="bodyStrong">{member.fullName}</Text>
         <Text variant="caption" color="ink2">
