@@ -9,13 +9,18 @@ import { readEasProjectId } from '../model/push-token';
 import { usePushTokenStore } from '../model/push-token-store';
 import type { PushPermissionStatus } from './usePushPermission';
 
-const ANDROID_CHANNEL_ID = 'default';
+/**
+ * Debe llamarse igual que el canal al que manda los avisos el servidor (`ANDROID_CHANNEL_ID` en
+ * yoclick-back, expo-push-sender.ts). Es de prioridad alta para que el aviso suene y se asome en
+ * pantalla; un canal con un nombre nuevo, porque Android no deja subir la prioridad de uno ya creado.
+ */
+const ANDROID_CHANNEL_ID = 'avisos';
 
 async function ensureAndroidChannel(): Promise<void> {
   if (Platform.OS !== 'android') return;
   await Notifications.setNotificationChannelAsync(ANDROID_CHANNEL_ID, {
     name: 'Avisos',
-    importance: Notifications.AndroidImportance.DEFAULT,
+    importance: Notifications.AndroidImportance.HIGH,
   });
 }
 
