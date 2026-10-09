@@ -60,7 +60,7 @@ export function InstructorAgendaScreen(): React.JSX.Element {
         onDaySelect={day.selectDate}
       />
       <Button
-        variant="dark"
+        variant="primary"
         leadingIconName="qrCode"
         isFullWidth
         label={i18n.t('staffAgenda.instructor.scanAttendanceAction')}

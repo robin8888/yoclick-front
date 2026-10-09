@@ -11,7 +11,7 @@ interface AgendaDayStripProps {
   onDaySelect: (isoDate: string) => void;
 }
 
-/** Prototipo `iagenda`: la franja de días que se desplaza de lado; el elegido va en negro. */
+/** Prototipo `iagenda`: la franja de días que se desplaza de lado; el elegido lleva el color de la marca. */
 export function AgendaDayStrip({
   days,
   selectedIsoDate,
@@ -30,7 +30,6 @@ export function AgendaDayStrip({
           dayLabel={day.dayLabel}
           accessibilityLabel={day.fullLabel}
           isSelected={day.isoDate === selectedIsoDate}
-          selectedTone="ink"
           hasSlots
           onPress={() => {
             onDaySelect(day.isoDate);
