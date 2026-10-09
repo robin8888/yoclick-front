@@ -14,6 +14,8 @@ interface BaseInputProps {
   /** Texto del icono de error para lectores de pantalla (p. ej. «Hay un error en este campo»). */
   invalidAccessibilityLabel?: string;
   isDisabled?: boolean;
+  /** Varias líneas (biografía): el campo crece y el texto empieza arriba. */
+  isMultiline?: boolean;
   leadingIconName?: IconName;
   keyboardType?: TextInputProps['keyboardType'];
   autoCapitalize?: TextInputProps['autoCapitalize'];

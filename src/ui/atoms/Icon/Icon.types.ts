@@ -9,6 +9,7 @@ export const ICON_NAMES = [
   'chevronUp',
   'arrowLeft',
   'plus',
+  'upload',
   'minus',
   'eye',
   'eyeOff',

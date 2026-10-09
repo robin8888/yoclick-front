@@ -29,6 +29,7 @@ export function InputField(props: Readonly<InputFieldProps>): React.JSX.Element 
       ref={inputRef}
       placeholderTextColor={theme.colors.ink2}
       editable={!isDisabled}
+      multiline={props.isMultiline}
       secureTextEntry={isSecureTextHidden}
       onFocus={() => {
         onFocusChange(true);
@@ -39,7 +40,7 @@ export function InputField(props: Readonly<InputFieldProps>): React.JSX.Element 
         props.onBlur?.();
       }}
       allowFontScaling
-      style={createInputFieldStyle(textStyle)}
+      style={createInputFieldStyle(textStyle, props.isMultiline === true)}
     />
   );
 }

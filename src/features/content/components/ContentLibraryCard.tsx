@@ -74,7 +74,7 @@ export function ContentLibraryCard({
     <View style={createLibraryCardStyle(theme)}>
       <CardSummary content={content} caption={caption} onDetailsPress={onDetailsPress} />
       <Button
-        size="sm"
+        isFullWidth
         variant={isUnassigned ? 'primary' : 'secondary'}
         label={i18n.t('content.admin.assignAction')}
         accessibilityLabel={i18n.t('content.admin.assignActionLabel', { title: content.title })}

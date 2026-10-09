@@ -10,13 +10,15 @@ import type { InputProps } from './Input.types';
 import { InputField } from './InputField';
 
 export function Input(props: Readonly<InputProps>): React.JSX.Element {
-  const { isInvalid = false, isDisabled = false, leadingIconName } = props;
+  const { isInvalid = false, isDisabled = false, leadingIconName, isMultiline = false } = props;
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [isSecureTextVisible, setIsSecureTextVisible] = useState(false);
 
   return (
-    <View style={createInputContainerStyle({ theme, isFocused, isInvalid, isDisabled })}>
+    <View
+      style={createInputContainerStyle({ theme, isFocused, isInvalid, isDisabled, isMultiline })}
+    >
       {leadingIconName === undefined ? null : <Icon name={leadingIconName} color="ink2" />}
       <InputField
         {...props}

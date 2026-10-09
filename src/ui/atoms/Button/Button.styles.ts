@@ -13,7 +13,8 @@ const BUTTON_MIN_HEIGHTS: Readonly<Record<ButtonSize, number>> = {
 const OUTLINE_BORDER_WIDTH = 1.5;
 
 // Colores de contenido que aceptan a la vez Text, Icon y Spinner.
-type ButtonContentColor = 'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'onDanger' | 'surface';
+type ButtonContentColor =
+  'onBrand' | 'ink' | 'ink2' | 'brandInk' | 'danger' | 'onDanger' | 'surface';
 
 interface ButtonColors {
   backgroundColor: string;
@@ -45,6 +46,8 @@ function resolveVariantColors(theme: Theme, variant: ButtonVariant): ButtonColor
       return { backgroundColor: transparent, borderColor: colors.lineStrong, contentColor: 'ink' };
     case 'ghost':
       return { backgroundColor: transparent, borderColor: transparent, contentColor: 'brandInk' };
+    case 'ghostDanger':
+      return { backgroundColor: transparent, borderColor: transparent, contentColor: 'danger' };
     case 'dark':
       return { backgroundColor: colors.ink, borderColor: colors.ink, contentColor: 'surface' };
     case 'danger':
@@ -96,7 +99,8 @@ export function resolveButtonPresentation({
     alignItems: 'center',
     justifyContent: 'center',
     gap: theme.space[2],
-    alignSelf: isFullWidth ? 'stretch' : 'flex-start',
+    // Un botón normal solo en su sitio llena el ancho; el pequeño es una acción en línea y se queda a la izquierda.
+    alignSelf: isFullWidth || size !== 'sm' ? 'stretch' : 'flex-start',
   };
   return { style, contentColor };
 }
