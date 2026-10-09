@@ -3,10 +3,10 @@ import { View } from 'react-native';
 
 import { useActiveCenterSummary } from '@/features/auth';
 import { useActiveCenterSectorId } from '@/features/join';
+import { MyPhotoAvatar } from '@/features/photos';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -73,7 +73,7 @@ export function StaffProfileScreen(): React.JSX.Element {
   return (
     <ScreenTemplate title={i18n.t('session.profile.title')} isLoading={isSigningOut}>
       <View style={PROFILE_HEADER_STYLE}>
-        <Avatar name={user?.fullName ?? ''} size="xl" isDecorative />
+        <MyPhotoAvatar name={user?.fullName ?? ''} />
         <Text variant="titleLg">{user?.fullName ?? ''}</Text>
         <Text color="ink2">{user?.email ?? ''}</Text>
         <Text variant="caption" color="ink2">

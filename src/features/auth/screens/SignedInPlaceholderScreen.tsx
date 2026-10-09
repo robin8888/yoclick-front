@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
 
+import { MyPhotoAvatar } from '@/features/photos';
+import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
@@ -48,6 +50,7 @@ export function SignedInPlaceholderScreen({
 }: Readonly<SignedInPlaceholderScreenProps>): React.JSX.Element {
   const { signOut, isSigningOut } = useSignOut();
   const activeCenter = useActiveCenterSummary();
+  const user = useSessionStore((state) => state.user);
 
   return (
     <ScreenTemplate
@@ -68,6 +71,7 @@ export function SignedInPlaceholderScreen({
         />
       }
     >
+      <MyPhotoAvatar name={user?.fullName ?? ''} />
       <Text color="ink2">{i18n.t('auth.session.placeholderDescription')}</Text>
       {canSwitchCenter ? <ClientAccountLinks /> : null}
     </ScreenTemplate>
