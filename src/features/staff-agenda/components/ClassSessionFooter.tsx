@@ -1,17 +1,13 @@
 import type { AgendaResponseDtoEntriesItemBooking } from '@/shared/api/generated/model';
 import { useTickingNow } from '../hooks/useTickingNow';
-import { useVisibility } from '../hooks/useVisibility';
-import {
-  canCancelAppointment,
-  isWithinStartWindow,
-  resolveSessionPhase,
-} from '../model/session-phase';
-import { CancelAppointmentControl } from './CancelAppointmentControl';
-import { ClassSessionActions } from './ClassSessionActions';
-import { EndClassSheet } from './EndClassSheet';
+import { canCancelAppointment } from '../model/session-phase';
+import { AppointmentChangeActions } from './AppointmentChangeActions';
+import { ClassProgressControls } from './ClassProgressControls';
 
 interface ClassSessionFooterProps {
   booking: AgendaResponseDtoEntriesItemBooking;
+  /** El día de la agenda desde el que se abrió la cita. */
+  isoDate: string;
   clientName: string;
   isStarting: boolean;
   isEnding: boolean;
@@ -24,11 +20,12 @@ interface ClassSessionFooterProps {
 }
 
 /**
- * Los botones de la clase y las hojas de «¿Terminar la clase?» y «¿Cancelar esta cita?». La ventana
- * de inicio se vuelve a calcular cada segundo para que el botón se active solo al llegar la hora.
+ * Los botones de la clase y los de cambiar la hora o cancelar la cita. La ventana de inicio se
+ * vuelve a calcular cada segundo para que el botón se active solo al llegar la hora.
  */
 export function ClassSessionFooter({
   booking,
+  isoDate,
   clientName,
   isStarting,
   isEnding,
@@ -38,33 +35,26 @@ export function ClassSessionFooter({
   onCancel,
 }: Readonly<ClassSessionFooterProps>): React.JSX.Element {
   const now = useTickingNow();
-  const endSheet = useVisibility();
 
   return (
     <>
-      <ClassSessionActions
-        phase={resolveSessionPhase(booking)}
-        canStartNow={isWithinStartWindow({ ...booking, now })}
-        isStartWindowPast={now.getTime() > new Date(booking.endsAt).getTime()}
+      <ClassProgressControls
+        booking={booking}
+        now={now}
         isStarting={isStarting}
+        isEnding={isEnding}
         onStart={onStart}
-        onEndRequest={endSheet.show}
+        onEnd={onEnd}
       />
       {canCancelAppointment(booking, now) ? (
-        <CancelAppointmentControl
+        <AppointmentChangeActions
+          booking={booking}
+          isoDate={isoDate}
           clientName={clientName}
           isCancelling={isCancelling}
           onCancel={onCancel}
         />
       ) : null}
-      <EndClassSheet
-        isVisible={endSheet.isVisible}
-        isEnding={isEnding}
-        onConfirm={() => {
-          onEnd(endSheet.hide);
-        }}
-        onDismiss={endSheet.hide}
-      />
     </>
   );
 }

@@ -35,6 +35,7 @@ import type {
   EndSessionRequestDto,
   MyBookingsResponseDto,
   ProblemDetailsDto,
+  RescheduleAgendaBookingRequestDto,
   RescheduleBookingRequestDto,
   SessionRecordsListParams,
   SessionRecordsResponseDto
@@ -873,6 +874,96 @@ export const useAgendaCancelBooking = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getAgendaCancelBookingMutationOptions(options), queryClient);
+    }
+    export const getAgendaRescheduleBookingUrl = (centerId: string,
+    bookingId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/agenda/bookings/${bookingId}/reschedule`
+}
+
+/**
+ * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. La administración mueve cualquiera; el personal, solo las suyas y a su propia agenda. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
+ */
+export const agendaRescheduleBooking = async (centerId: string,
+    bookingId: string,
+    rescheduleAgendaBookingRequestDto: RescheduleAgendaBookingRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getAgendaRescheduleBookingUrl(centerId,bookingId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(rescheduleAgendaBookingRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAgendaRescheduleBookingMutationKey = () => ['agendaRescheduleBooking'] as const;
+
+export const getAgendaRescheduleBookingMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaRescheduleBooking>>, TError,AgendaRescheduleBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof agendaRescheduleBooking>>, TError,AgendaRescheduleBookingMutationVariables, TContext> => {
+
+const mutationKey = getAgendaRescheduleBookingMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof agendaRescheduleBooking>>, AgendaRescheduleBookingMutationVariables> = (props) => {
+          const {centerId,bookingId,data} = props ?? {};
+
+          return  agendaRescheduleBooking(centerId,bookingId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AgendaRescheduleBookingMutationResult = NonNullable<Awaited<ReturnType<typeof agendaRescheduleBooking>>>
+    export type AgendaRescheduleBookingMutationBody = RescheduleAgendaBookingRequestDto
+    export type AgendaRescheduleBookingMutationError = ErrorType<ProblemDetailsDto>
+    export type AgendaRescheduleBookingMutationVariables = {centerId: string;bookingId: string;data: RescheduleAgendaBookingRequestDto}
+
+    /**
+ * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. La administración mueve cualquiera; el personal, solo las suyas y a su propia agenda. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
+ */
+export const useAgendaRescheduleBooking = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaRescheduleBooking>>, TError,AgendaRescheduleBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof agendaRescheduleBooking>>,
+        TError,
+        AgendaRescheduleBookingMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAgendaRescheduleBookingMutationOptions(options), queryClient);
     }
     export const getSessionRecordsListUrl = (centerId: string,
     params: SessionRecordsListParams,) => {

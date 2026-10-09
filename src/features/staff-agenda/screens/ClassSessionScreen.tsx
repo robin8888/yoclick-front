@@ -39,6 +39,7 @@ function ClassSessionDetail({
       footer={
         <ClassSessionFooter
           booking={booking}
+          isoDate={isoDate}
           isStarting={actions.isStarting}
           isEnding={actions.isEnding}
           clientName={client.fullName}

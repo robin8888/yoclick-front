@@ -257,6 +257,7 @@ export * from './registerRequestDto.ts';
 export * from './registerRequestDtoConsents.ts';
 export * from './reportsGetCenterReportParams.ts';
 export * from './reportsGetCenterReportPeriod.ts';
+export * from './rescheduleAgendaBookingRequestDto.ts';
 export * from './rescheduleBookingRequestDto.ts';
 export * from './resendEmailVerificationRequestDto.ts';
 export * from './resetPasswordRequestDto.ts';

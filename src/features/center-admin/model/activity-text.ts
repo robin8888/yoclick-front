@@ -16,6 +16,8 @@ const WITH_SUBJECT_KEYS = {
   group_created: 'centerAdmin.security.activity.withSubject.group_created',
   team_member_updated: 'centerAdmin.security.activity.withSubject.team_member_updated',
   booking_created_by_team: 'centerAdmin.security.activity.withSubject.booking_created_by_team',
+  booking_rescheduled_by_team:
+    'centerAdmin.security.activity.withSubject.booking_rescheduled_by_team',
 } as const;
 
 /** El resto de acciones se cuentan sin nombre propio: «archivó un servicio». */

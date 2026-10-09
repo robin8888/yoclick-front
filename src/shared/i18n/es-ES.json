@@ -679,6 +679,11 @@
       "hourLabel": "Hora",
       "minuteLabel": "Minutos"
     },
+    "reschedule": {
+      "title": "Cambiar hora",
+      "subtitle": "Elige un hueco libre; avisaremos al cliente en su móvil.",
+      "confirmAction": "Confirmar nueva hora"
+    },
     "instructor": {
       "profileLabel": "Abrir mi perfil",
       "available": "Disponible {{hours}}",
@@ -742,6 +747,7 @@
       "startTooEarlyHint": "Podrás iniciarla 15 minutos antes de la hora.",
       "startTooLateHint": "Esta cita ya terminó y no se registró. Pide a administración que la revise.",
       "cancelledHint": "Esta cita está cancelada.",
+      "rescheduleAction": "Cambiar hora",
       "cancelAction": "Cancelar cita",
       "cancelConfirmTitle": "¿Cancelar esta cita?",
       "cancelConfirmMessage": "Avisaremos a {{clientName}} en su móvil de que la cita se cancela.",
@@ -1246,7 +1252,8 @@
           "clients_imported": "importó {{subject}} personas desde un archivo",
           "group_created": "creó el grupo «{{subject}}»",
           "team_member_updated": "cambió los datos de {{subject}} en el equipo",
-          "booking_created_by_team": "puso una cita de «{{subject}}»"
+          "booking_created_by_team": "puso una cita de «{{subject}}»",
+          "booking_rescheduled_by_team": "cambió la hora de una cita de «{{subject}}»"
         },
         "generic": {
           "service_archived": "archivó un servicio",

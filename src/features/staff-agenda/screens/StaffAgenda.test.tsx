@@ -3,7 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { buildAgenda, buildAgendaEntry, buildSessionRecords } from '@/test/agenda-factories';
-import { BOOKING_ID, buildBooking } from '@/test/booking-factories';
+import {
+  BOOKING_ID,
+  SERVICE_ID,
+  STAFF_MEMBERSHIP_ID,
+  buildBooking,
+} from '@/test/booking-factories';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
@@ -228,6 +233,36 @@ describe('ClassSessionScreen', () => {
     await waitFor(() => {
       expect(findApiCall('POST', CANCEL_PATH)).toBeDefined();
     });
+  });
+
+  it('opens the reschedule screen for the same service and person', async () => {
+    mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]) });
+    renderScreen(<ClassSessionScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Cambiar hora' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(staff)/reschedule-appointment',
+      params: {
+        bookingId: BOOKING_ID,
+        serviceId: SERVICE_ID,
+        staffMembershipId: STAFF_MEMBERSHIP_ID,
+        date: '2026-10-08',
+      },
+    });
+  });
+
+  it('does not offer to change the hour of a class that has already started', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([
+        buildAgendaEntry(-10, { startedAt: new Date(Date.now() - 600_000).toISOString() }),
+      ]),
+    });
+    renderScreen(<ClassSessionScreen />);
+
+    await screen.findByText('Entrenamiento personal');
+
+    expect(screen.queryByRole('button', { name: 'Cambiar hora' })).not.toBeOnTheScreen();
   });
 
   it('keeps the appointment when the person changes their mind', async () => {
