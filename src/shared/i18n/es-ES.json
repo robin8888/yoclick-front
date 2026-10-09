@@ -74,7 +74,12 @@
     "REVIEW_NOT_ALLOWED": "Solo puedes opinar de una sesión que hayas tenido con esta persona, y una vez por sesión.",
     "REVIEW_NOT_MODERABLE": "Esta opinión ya está revisada.",
     "PRIVACY_REQUEST_ALREADY_OPEN": "Ya tienes una solicitud abierta de ese derecho. Espera a que el centro responda.",
-    "PRIVACY_REQUEST_CLOSED": "Esta solicitud ya está resuelta."
+    "PRIVACY_REQUEST_CLOSED": "Esta solicitud ya está resuelta.",
+    "DOCUMENT_NOT_PDF": "Ese fichero no es un PDF válido.",
+    "DOCUMENT_TOO_LARGE": "El PDF es demasiado grande. El máximo son 50 MB.",
+    "DOCUMENT_QUOTA_EXCEEDED": "Tu centro ha llenado su espacio de documentos. Borra alguno para poder subir otro.",
+    "CONTENT_VIDEO_ALREADY_IN_LIBRARY": "Ese vídeo ya está en la biblioteca.",
+    "CONTENT_ASSIGNMENT_INVALID": "Ese grupo o esa persona ya no existe en tu centro."
   },
   "fieldErrors": {
     "invalid": "Revisa este campo",
@@ -843,7 +848,9 @@
     "staffProfileApprovedDescription": "{{actorName}} ha publicado tu perfil profesional.",
     "staffProfileChangesDescription": "{{actorName}} te pide cambios en tu perfil profesional. Ábrelo para verlos.",
     "staffReviewReceivedTitle": "Tienes una opinión nueva",
-    "staffReviewReceivedDescription": "{{authorLabel}} te ha puntuado con {{rating}} de 5."
+    "staffReviewReceivedDescription": "{{authorLabel}} te ha puntuado con {{rating}} de 5.",
+    "contentAssignedTitle": "Tienes contenido nuevo",
+    "contentAssignedDescription": "{{actorName}} te ha asignado «{{contentTitle}}»."
   },
   "clients": {
     "title": "{{clientWord}}",
@@ -1744,6 +1751,104 @@
       "rejectReviewAction": "Rechazar",
       "publishReviewLabel": "Publicar la opinión de {{author}}",
       "rejectReviewLabel": "Rechazar la opinión de {{author}}"
+    }
+  },
+  "content": {
+    "admin": {
+      "title": "Contenidos",
+      "subtitle": "Vídeos y PDF para tus {{clients}}",
+      "uploadTitle": "Subir vídeo o PDF",
+      "uploadHint": "MP4 hasta 500 MB · PDF hasta 50 MB",
+      "libraryTitle": "Biblioteca",
+      "itemCount_one": "{{count}} elemento",
+      "itemCount_other": "{{count}} elementos",
+      "unassigned": "Sin asignar",
+      "assignAction": "Asignar",
+      "assignActionLabel": "Asignar {{title}}",
+      "openDetailsLabel": "Detalles de {{title}}",
+      "emptyTitle": "Tu biblioteca está vacía",
+      "emptyDescription": "Sube un vídeo o un PDF y asígnalo a un nivel, un grupo o un {{client}}.",
+      "errorTitle": "No hemos podido cargar la biblioteca",
+      "storageUsage": "Espacio de PDF: {{used}} de {{limit}}",
+      "uploadedHint": "Subido. Ahora asígnalo.",
+      "processingKind": "Procesando",
+      "teamEmptyDescription": "Todavía no hay contenido. La administración del centro lo sube y desde aquí podrás asignarlo."
+    },
+    "upload": {
+      "chooseTitle": "¿Qué quieres subir?",
+      "videoAction": "Vídeo",
+      "pdfAction": "PDF",
+      "cancelAction": "Cancelar",
+      "pdfUploading": "Subiendo el PDF…",
+      "pdfUploadingLabel": "Subida del PDF",
+      "pdfFailed": "No hemos podido subir el PDF. Revisa tu conexión y vuelve a intentarlo.",
+      "pdfTooLarge": "El PDF pesa más de 50 MB. Elige uno más pequeño.",
+      "pdfReadError": "No hemos podido leer ese fichero. Prueba con otro."
+    },
+    "assign": {
+      "title": "Asignar contenido",
+      "byLevel": "Por nivel",
+      "byGroup": "Por grupo",
+      "byClient": "Por {{client}}",
+      "noGroups": "Todavía no hay grupos.",
+      "chosenClients": "Asignado a",
+      "removeClientLabel": "Quitar a {{name}}",
+      "confirmAction": "Guardar asignación",
+      "cancelAction": "Cancelar",
+      "pieceLabel": "«{{title}}»"
+    },
+    "details": {
+      "title": "Título y etiqueta",
+      "titleLabel": "Nombre: qué ejercicio o guía es",
+      "levelLabel": "Nivel",
+      "needLabel": "Etiqueta: de qué trata",
+      "noLevel": "Sin nivel",
+      "noNeed": "Sin etiqueta",
+      "saveAction": "Guardar",
+      "deleteAction": "Borrar",
+      "deleteConfirmTitle": "¿Borrar este contenido?",
+      "deleteConfirmMessage": "Se quita de la biblioteca y deja de verse. No se puede deshacer.",
+      "deleteConfirmAction": "Sí, borrar",
+      "keepAction": "Mantener"
+    },
+    "assignment": {
+      "level": "Nivel: {{level}}",
+      "group": "Grupo: {{name}}",
+      "client": "{{kind}}: {{name}}"
+    },
+    "client": {
+      "title": "Vídeos y guías",
+      "resultCount_one": "{{count}} resultado",
+      "resultCount_other": "{{count}} resultados",
+      "allLevels": "Todos",
+      "allNeeds": "Todas",
+      "levelsGroupLabel": "Nivel",
+      "needsGroupLabel": "Necesidad",
+      "noResultsTitle": "Sin resultados",
+      "noResultsDescription": "Prueba con otro nivel o necesidad.",
+      "emptyTitle": "Todavía no tienes contenido",
+      "emptyDescription": "Cuando tu centro te asigne vídeos o guías, aparecerán aquí.",
+      "errorTitle": "No hemos podido cargar tus vídeos y guías"
+    },
+    "kind": {
+      "video": "Vídeo",
+      "pdf": "PDF"
+    },
+    "meta": {
+      "pages_one": "{{count}} pág.",
+      "pages_other": "{{count}} págs.",
+      "megabytes": "{{megabytes}} MB"
+    },
+    "media": {
+      "videoTitle": "Vídeo",
+      "pdfTitle": "Guía PDF",
+      "videoDescription": "Explicación de la técnica, errores frecuentes y progresiones. Grabado por el equipo de {{center}}.",
+      "pdfDescription": "Descárgalo para tenerlo sin conexión o léelo aquí.",
+      "pdfCardCaption": "{{center}} · Documento de {{tab}}",
+      "downloadAction": "Abrir PDF",
+      "openFailed": "No hemos podido abrir el PDF. Inténtalo de nuevo.",
+      "errorTitle": "No hemos podido abrir este contenido",
+      "thumbnailLabel": "Vista previa de {{title}}"
     }
   }
 }

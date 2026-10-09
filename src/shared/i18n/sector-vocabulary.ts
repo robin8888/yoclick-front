@@ -35,11 +35,28 @@ export interface SectorVocabulary {
   /** Lo que el equipo prepara para practicar: rutina, secuencia, tarea… */
   readonly routine: WordForms;
   readonly levels: readonly [string, string, string];
+  /** Lo que cubre un contenido (fuerza, respiración, katas…): sirve para filtrar la biblioteca. */
+  readonly needs: readonly string[];
 }
 
 const FITNESS_LEVELS = ['Inicio', 'Base', 'Avanzado'] as const;
 const PRACTICE_LEVELS = ['Iniciación', 'Intermedio', 'Avanzado'] as const;
 const BASIC_LEVELS = ['Básico', 'Intermedio', 'Avanzado'] as const;
+
+const GYM_NEEDS = ['Fuerza', 'Movilidad', 'Espalda', 'Rodilla', 'Cardio'] as const;
+const YOGA_NEEDS = ['Respiración', 'Flexibilidad', 'Core', 'Relajación', 'Espalda'] as const;
+const ACADEMY_NEEDS = ['Inglés', 'Matemáticas', 'Lengua', 'Exámenes', 'Oposiciones'] as const;
+const DANCE_NEEDS = ['Salsa', 'Bachata', 'Flamenco', 'Técnica', 'Coreografías'] as const;
+const MARTIAL_NEEDS = [
+  'Katas',
+  'Técnica',
+  'Combate',
+  'Defensa personal',
+  'Preparación física',
+] as const;
+const MUSIC_NEEDS = ['Guitarra', 'Piano', 'Canto', 'Lenguaje musical', 'Batería'] as const;
+const COOKING_NEEDS = ['Técnicas', 'Panadería', 'Repostería', 'Cocina del mundo', 'Menús'] as const;
+const OTHER_NEEDS = ['General', 'Guías', 'Vídeos'] as const;
 
 const INSTRUCTOR: WordForms = { singular: 'instructor', plural: 'instructores' };
 const PROFESSIONAL: WordForms = { singular: 'profesional', plural: 'profesionales' };
@@ -63,6 +80,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Entrenar',
     routine: ROUTINE,
     levels: FITNESS_LEVELS,
+    needs: GYM_NEEDS,
   },
   estudio: {
     sectorId: 'estudio',
@@ -72,6 +90,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Entrenar',
     routine: ROUTINE,
     levels: FITNESS_LEVELS,
+    needs: GYM_NEEDS,
   },
   readap: {
     sectorId: 'readap',
@@ -81,6 +100,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Entrenar',
     routine: ROUTINE,
     levels: FITNESS_LEVELS,
+    needs: GYM_NEEDS,
   },
   box: {
     sectorId: 'box',
@@ -90,6 +110,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Entrenar',
     routine: ROUTINE,
     levels: FITNESS_LEVELS,
+    needs: GYM_NEEDS,
   },
   yoga: {
     sectorId: 'yoga',
@@ -99,6 +120,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Practicar',
     routine: SEQUENCE,
     levels: PRACTICE_LEVELS,
+    needs: YOGA_NEEDS,
   },
   academia: {
     sectorId: 'academia',
@@ -108,6 +130,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Estudiar',
     routine: TASK,
     levels: BASIC_LEVELS,
+    needs: ACADEMY_NEEDS,
   },
   baile: {
     sectorId: 'baile',
@@ -117,6 +140,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Practicar',
     routine: PRACTICE,
     levels: PRACTICE_LEVELS,
+    needs: DANCE_NEEDS,
   },
   marciales: {
     sectorId: 'marciales',
@@ -126,6 +150,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Practicar',
     routine: PLAN,
     levels: ['Principiante', 'Intermedio', 'Avanzado'],
+    needs: MARTIAL_NEEDS,
   },
   musica: {
     sectorId: 'musica',
@@ -135,6 +160,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Practicar',
     routine: PRACTICE,
     levels: PRACTICE_LEVELS,
+    needs: MUSIC_NEEDS,
   },
   cocina: {
     sectorId: 'cocina',
@@ -144,6 +170,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Aprender',
     routine: PRACTICE,
     levels: PRACTICE_LEVELS,
+    needs: COOKING_NEEDS,
   },
   otro: {
     sectorId: 'otro',
@@ -153,6 +180,7 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     contentTabLabel: 'Contenido',
     routine: PRACTICE,
     levels: BASIC_LEVELS,
+    needs: OTHER_NEEDS,
   },
 };
 

@@ -31,6 +31,7 @@ const TITLE_KEYS = {
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceTitle',
   routine_assigned: 'notifications.routineAssignedTitle',
   routine_updated: 'notifications.routineUpdatedTitle',
+  content_assigned: 'notifications.contentAssignedTitle',
   member_joined: 'notifications.memberJoinedTitle',
   staff_video_submitted: 'notifications.staffVideoSubmittedTitle',
   staff_video_reviewed: 'notifications.staffVideoReviewedTitle',
@@ -52,6 +53,7 @@ const DESCRIPTION_KEYS = {
   booking_affected_by_absence: 'notifications.bookingAffectedByAbsenceDescription',
   routine_assigned: 'notifications.routineAssignedDescription',
   routine_updated: 'notifications.routineUpdatedDescription',
+  content_assigned: 'notifications.contentAssignedDescription',
   member_joined: 'notifications.memberJoinedDescription',
   staff_video_submitted: 'notifications.staffVideoSubmittedDescription',
   staff_video_reviewed: 'notifications.staffVideoReviewedDescription',
@@ -123,6 +125,7 @@ interface NoticeTexts {
   staffName: string;
   actorName: string;
   routineName: string;
+  contentTitle: string;
   uploaderName: string;
   personName: string;
   right: string;
@@ -144,6 +147,7 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
     staffName: textOf(noticeData.staffName),
     actorName: textOf(noticeData.actorName),
     routineName: textOf(noticeData.routineName),
+    contentTitle: textOf(noticeData.contentTitle),
     uploaderName: textOf(noticeData.uploaderName),
     personName: textOf(noticeData.personName),
     right: describePrivacyRight(noticeData.requestKind),

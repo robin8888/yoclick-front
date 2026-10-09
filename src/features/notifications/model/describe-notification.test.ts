@@ -107,6 +107,12 @@ describe('describeNotification', () => {
       description: 'Marta Gil te ha asignado «Fuerza base».',
     },
     {
+      kind: 'content_assigned',
+      noticeData: { contentTitle: 'Guía de calentamiento', actorName: 'Marta Gil' },
+      title: 'Tienes contenido nuevo',
+      description: 'Marta Gil te ha asignado «Guía de calentamiento».',
+    },
+    {
       kind: 'staff_video_submitted',
       noticeData: { uploaderName: 'Marta Gil', actorName: 'Marta Gil' },
       title: 'Hay un vídeo por revisar',

@@ -27,5 +27,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   booking_rescheduled: 'booking_rescheduled',
   booking_rescheduled_by_team: 'booking_rescheduled_by_team',
   routine_updated: 'routine_updated',
+  content_assigned: 'content_assigned',
   member_joined: 'member_joined',
 } as const;

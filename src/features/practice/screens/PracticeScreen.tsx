@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { ClientContentSection } from '@/features/content';
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import { useMyRoutines } from '@/features/routines';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
@@ -45,6 +46,7 @@ export function PracticeScreen(): React.JSX.Element {
           <RoutineBlock key={routine.id} routine={routine} />
         ))}
       </View>
+      <ClientContentSection />
     </ScreenTemplate>
   );
 }

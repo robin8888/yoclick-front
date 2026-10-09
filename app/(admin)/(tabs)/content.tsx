@@ -1,6 +1,5 @@
-import { AdminComingSoonScreen } from '@/features/center-admin';
-import { i18n } from '@/shared/i18n';
+import { ContentLibraryScreen } from '@/features/content';
 
 export default function AdminContentRoute(): React.JSX.Element {
-  return <AdminComingSoonScreen title={i18n.t('centerAdmin.comingSoon.contentTitle')} />;
+  return <ContentLibraryScreen />;
 }
