@@ -8,7 +8,13 @@ import { useActiveCenterId } from './useActiveCenterId';
 
 const POLL_INTERVAL_MS = 5000;
 /** Las pantallas que enseñan vídeos: al terminar de procesarse uno, sus datos se piden de nuevo. */
-const SCREENS_WITH_VIDEOS = ['/team-profiles', '/routines', '/my-routines'];
+const SCREENS_WITH_VIDEOS = [
+  '/team-profiles',
+  '/routines',
+  '/my-routines',
+  '/content',
+  '/my-content',
+];
 
 function isQueryWithVideos(queryKey: readonly unknown[]): boolean {
   const key = JSON.stringify(queryKey);

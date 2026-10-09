@@ -14,7 +14,10 @@ import { PlayableVideo } from './PlayableVideo';
 import { VideoUploadField } from './VideoUploadField';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
-jest.mock('expo-image-picker', () => ({ launchImageLibraryAsync: jest.fn() }));
+jest.mock('expo-image-picker', () => ({
+  launchImageLibraryAsync: jest.fn(),
+  VideoExportPreset: { H264_1280x720: 6 },
+}));
 jest.mock('@/shared/lib/tus-upload/upload-with-tus', () => ({
   uploadWithTus: jest.fn(() => Promise.resolve()),
   TusUploadError: class TusUploadError extends Error {},
@@ -100,6 +103,9 @@ describe('VideoUploadField', () => {
     await waitFor(() => {
       expect(onVideoChange).toHaveBeenCalledWith(expect.objectContaining({ id: 'video-1' }));
     });
+    expect(launchImageLibraryAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ mediaTypes: ['videos'], videoExportPreset: 6 }),
+    );
     expect(findApiCall('POST', `${BASE}/videos`)?.body).toEqual({
       title: 'sentadilla',
       sizeBytes: 50_000_000,

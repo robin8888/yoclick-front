@@ -9,6 +9,7 @@ import type { VideoUploadStage } from '../model/video-upload';
 import {
   createProgressFillStyle,
   createProgressTrackStyle,
+  GROW_STYLE,
   ROW_STYLE,
   STACK_STYLE,
 } from './Videos.styles';
@@ -39,7 +40,9 @@ export function VideoUploadProgress({
     return (
       <View style={ROW_STYLE}>
         <Spinner accessibilityLabel={i18n.t('videos.upload.processing')} />
-        <Text color="ink2">{i18n.t('videos.upload.processing')}</Text>
+        <View style={GROW_STYLE}>
+          <Text color="ink2">{i18n.t('videos.upload.processing')}</Text>
+        </View>
       </View>
     );
   }
