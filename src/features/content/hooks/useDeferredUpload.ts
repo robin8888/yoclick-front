@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Platform } from 'react-native';
 
-export type UploadKind = 'video' | 'pdf';
+export type UploadKind = 'video' | 'pdf' | 'image';
 
 interface DeferredUpload {
   /** Cierra la hoja de «¿Qué quieres subir?» y abre el selector cuando ya no se está viendo. */
@@ -17,12 +17,13 @@ interface DeferredUpload {
  */
 export function useDeferredUpload(request: {
   hideSheet: () => void;
-  upload: { uploadVideo: () => void; uploadPdf: () => void };
+  upload: { uploadVideo: () => void; uploadPdf: () => void; uploadImage: () => void };
 }): DeferredUpload {
   const pendingKind = useRef<UploadKind | null>(null);
   const startUpload = (kind: UploadKind): void => {
     if (kind === 'video') request.upload.uploadVideo();
-    else request.upload.uploadPdf();
+    else if (kind === 'pdf') request.upload.uploadPdf();
+    else request.upload.uploadImage();
   };
 
   return {

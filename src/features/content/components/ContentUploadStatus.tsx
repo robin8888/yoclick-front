@@ -13,6 +13,7 @@ import { ROW_STYLE, STACK_STYLE } from './Content.styles';
 function pickFailureMessage(upload: ContentUpload): string | null {
   if (upload.video.stage.kind === 'failed') return upload.video.stage.message;
   if (upload.pdf.stage.kind === 'failed') return upload.pdf.stage.message;
+  if (upload.image.stage.kind === 'failed') return upload.image.stage.message;
   return upload.libraryErrorMessage;
 }
 
@@ -34,6 +35,16 @@ export function ContentUploadStatus({
         >
           <Spinner />
           <Text>{i18n.t('content.upload.pdfUploading')}</Text>
+        </View>
+      ) : null}
+      {upload.image.stage.kind === 'uploading' ? (
+        <View
+          style={ROW_STYLE}
+          accessible
+          accessibilityLabel={i18n.t('content.upload.imageUploadingLabel')}
+        >
+          <Spinner />
+          <Text>{i18n.t('content.upload.imageUploading')}</Text>
         </View>
       ) : null}
       {failureMessage === null ? null : <FormErrorBanner message={failureMessage} />}

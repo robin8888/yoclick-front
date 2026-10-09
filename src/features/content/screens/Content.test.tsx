@@ -19,6 +19,26 @@ configure({ asyncUtilTimeout: SLOW_MACHINE_ASYNC_TIMEOUT_MS });
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 jest.mock('expo-document-picker', () => ({ getDocumentAsync: jest.fn() }));
+jest.mock('expo-image-picker', () => ({
+  launchImageLibraryAsync: jest.fn(() =>
+    Promise.resolve({
+      canceled: false,
+      assets: [{ uri: 'file:///cache/foto.jpg', width: 3000, height: 2000 }],
+    }),
+  ),
+  launchCameraAsync: jest.fn(),
+  requestCameraPermissionsAsync: jest.fn(),
+}));
+jest.mock('expo-image-manipulator', () => ({
+  ImageManipulator: {
+    manipulate: jest.fn(() => ({
+      resize: jest.fn(),
+      renderAsync: () =>
+        Promise.resolve({ saveAsync: () => Promise.resolve({ uri: 'file:///cache/small.jpg' }) }),
+    })),
+  },
+  SaveFormat: { JPEG: 'jpeg' },
+}));
 
 const BASE = `/v1/centers/${NORTE_CENTER_ID}`;
 const PDF_ID = '0198f2a0-7c11-7aaa-8bbb-0123456789a1';
@@ -98,7 +118,7 @@ describe('ContentLibraryScreen', () => {
     expect(screen.getByText('Movilidad')).toBeOnTheScreen();
     expect(screen.getByText('2 elementos')).toBeOnTheScreen();
     expect(screen.getByText('Espacio de PDF: 3 MB de 1 GB')).toBeOnTheScreen();
-    expect(screen.getByText('Vídeos y PDF para tus clientes')).toBeOnTheScreen();
+    expect(screen.getByText('Vídeos, PDF e imágenes para tus clientes')).toBeOnTheScreen();
   });
 
   it('invites to upload the first piece when the library is empty', async () => {
@@ -128,7 +148,7 @@ describe('ContentLibraryScreen', () => {
     renderScreen(<ContentLibraryScreen />);
     await screen.findByText('Guía de calentamiento');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Subir vídeo o PDF' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
 
     expect(screen.getByText('¿Qué quieres subir?')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'PDF' })).toBeOnTheScreen();
@@ -237,7 +257,7 @@ describe('ContentLibraryScreen', () => {
     renderScreen(<ContentLibraryScreen />);
     await screen.findByText('Guía de calentamiento');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Subir vídeo o PDF' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
     fireEvent.press(screen.getByRole('button', { name: 'PDF' }));
     finishClosingUploadKindSheet();
 
@@ -246,6 +266,28 @@ describe('ContentLibraryScreen', () => {
     });
     expect(await screen.findByRole('heading', { name: 'Título y etiqueta' })).toBeOnTheScreen();
     expect(screen.getByText('Etiqueta: de qué trata')).toBeOnTheScreen();
+  });
+
+  it('uploads an image from the gallery and then asks for its title and label', async () => {
+    mockApi({
+      'GET /v1/me/memberships': MEMBERSHIPS('owner'),
+      [`GET ${BASE}/content`]: LIBRARY,
+      [`POST ${BASE}/content/images`]: { ...PDF_CONTENT, kind: 'image', pageCount: null },
+    });
+    jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+      blob: () => Promise.resolve(new Blob(['jpeg'])),
+    } as Response);
+    renderScreen(<ContentLibraryScreen />);
+    await screen.findByText('Guía de calentamiento');
+
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Imagen' }));
+    finishClosingUploadKindSheet();
+
+    await waitFor(() => {
+      expect(findApiCall('POST', `${BASE}/content/images`)?.path).toContain('title=Nueva');
+    });
+    expect(await screen.findByRole('heading', { name: 'Título y etiqueta' })).toBeOnTheScreen();
   });
 
   it('waits for the choice sheet to close before opening the file picker on iOS', async () => {
@@ -257,7 +299,7 @@ describe('ContentLibraryScreen', () => {
     renderScreen(<ContentLibraryScreen />);
     await screen.findByText('Guía de calentamiento');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Subir vídeo o PDF' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
     fireEvent.press(screen.getByRole('button', { name: 'PDF' }));
     expect(DocumentPicker.getDocumentAsync).not.toHaveBeenCalled();
     finishClosingUploadKindSheet();
@@ -278,7 +320,7 @@ describe('ContentLibraryScreen', () => {
     renderScreen(<ContentLibraryScreen />);
     await screen.findByText('Guía de calentamiento');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Subir vídeo o PDF' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
     fireEvent.press(screen.getByRole('button', { name: 'PDF' }));
     Platform.OS = originalOs;
 
@@ -303,7 +345,7 @@ describe('ContentLibraryScreen', () => {
     renderScreen(<ContentLibraryScreen />);
     await screen.findByText('Guía de calentamiento');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Subir vídeo o PDF' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Subir contenido' }));
     fireEvent.press(screen.getByRole('button', { name: 'PDF' }));
     finishClosingUploadKindSheet();
 
@@ -325,7 +367,7 @@ describe('ContentLibraryScreen for the team', () => {
     renderScreen(<ContentLibraryScreen canManageLibrary={false} onBackPress={jest.fn()} />);
 
     expect(await screen.findByText('Guía de calentamiento')).toBeOnTheScreen();
-    expect(screen.queryByRole('button', { name: 'Subir vídeo o PDF' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Subir contenido' })).toBeNull();
     expect(screen.queryByRole('button', { name: /Detalles de/ })).toBeNull();
     expect(screen.getByRole('button', { name: 'Asignar Guía de calentamiento' })).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Volver' })).toBeOnTheScreen();
@@ -449,6 +491,27 @@ describe('MediaScreen', () => {
     ).toBeOnTheScreen();
     expect(screen.getByText('Fuerza')).toBeOnTheScreen();
     expect(screen.getByText(/Grabado por el equipo de Gimnasio Norte/)).toBeOnTheScreen();
+  });
+
+  it('shows an assigned image and describes it', async () => {
+    jest.mocked(useLocalSearchParams).mockReturnValue({ id: PDF_ID });
+    mockApi({
+      'GET /v1/me/memberships': MEMBERSHIPS('client'),
+      [`GET ${BASE}/my-content/${PDF_ID}`]: {
+        ...PDF_CONTENT,
+        kind: 'image',
+        title: 'Postura correcta',
+        pageCount: null,
+        playback: null,
+        document: null,
+        image: { url: 'https://files.example/postura.jpg', expiresAt: '2026-10-09T14:00:00.000Z' },
+      },
+    });
+    renderScreen(<MediaScreen />);
+
+    expect(await screen.findByLabelText('Postura correcta')).toBeOnTheScreen();
+    expect(screen.getByText(/Imagen compartida por el equipo de Gimnasio Norte/)).toBeOnTheScreen();
+    expect(screen.getByText('Movilidad')).toBeOnTheScreen();
   });
 
   it('opens an assigned PDF in the reader of the phone', async () => {

@@ -1,5 +1,6 @@
 import type { ContentResponseDto } from '@/shared/api/generated/model';
 
+import type { UploadKind } from '../hooks/useDeferredUpload';
 import { AssignContentSheet } from './AssignContentSheet';
 import { ContentDetailsSheet } from './ContentDetailsSheet';
 import { UploadKindSheet } from './UploadKindSheet';
@@ -8,7 +9,7 @@ interface ContentSheetsProps {
   isUploadKindVisible: boolean;
   contentToAssign: ContentResponseDto | null;
   contentToEdit: ContentResponseDto | null;
-  onUploadChoose: (kind: 'video' | 'pdf') => void;
+  onUploadChoose: (kind: UploadKind) => void;
   onUploadKindDismiss: () => void;
   onUploadKindClosed: () => void;
   onAssignDismiss: () => void;
@@ -35,6 +36,9 @@ export function ContentSheets({
         }}
         onPdfChoose={() => {
           onUploadChoose('pdf');
+        }}
+        onImageChoose={() => {
+          onUploadChoose('image');
         }}
         onDismiss={onUploadKindDismiss}
         onClosed={onUploadKindClosed}

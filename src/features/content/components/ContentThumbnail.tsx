@@ -35,7 +35,7 @@ export function ContentThumbnail({
       )}
       <View style={thumbnailUrl === null ? undefined : OVERLAY_STYLE}>
         <Icon
-          name={kind === 'video' ? 'play' : 'file'}
+          name={THUMBNAIL_ICONS[kind]}
           size={isLarge ? 'large' : 'inline'}
           color={thumbnailUrl === null ? 'ink2' : 'surface'}
         />
@@ -44,4 +44,5 @@ export function ContentThumbnail({
   );
 }
 
+const THUMBNAIL_ICONS = { video: 'play', pdf: 'file', image: 'image' } as const;
 const OVERLAY_STYLE = { position: 'absolute' } as const;

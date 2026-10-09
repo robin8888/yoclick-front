@@ -8,6 +8,7 @@ import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ImageContentCard } from '../components/ImageContentCard';
 import { MediaDetails } from '../components/MediaDetails';
 import { PdfDocumentCard } from '../components/PdfDocumentCard';
 import { useMyContentDetail } from '../hooks/useContentQueries';
@@ -26,26 +27,35 @@ function toPlayableVideo(content: ContentDetailResponseDto): VideoResponseDto {
   };
 }
 
+function MediaViewer({
+  content,
+}: Readonly<{ content: ContentDetailResponseDto }>): React.JSX.Element {
+  if (content.kind === 'video') return <PlayableVideo video={toPlayableVideo(content)} />;
+  if (content.kind === 'image') return <ImageContentCard content={content} />;
+  return <PdfDocumentCard content={content} />;
+}
+
 function MediaBody({
   content,
 }: Readonly<{ content: ContentDetailResponseDto }>): React.JSX.Element {
   return (
     <>
-      {content.kind === 'video' ? (
-        <PlayableVideo video={toPlayableVideo(content)} />
-      ) : (
-        <PdfDocumentCard content={content} />
-      )}
+      <MediaViewer content={content} />
       <MediaDetails content={content} isTitleHidden={content.kind === 'pdf'} />
     </>
   );
 }
 
+const MEDIA_TITLE_KEYS = {
+  video: 'content.media.videoTitle',
+  pdf: 'content.media.pdfTitle',
+  image: 'content.media.imageTitle',
+} as const;
+
 function MediaContent({ contentId }: Readonly<{ contentId: string }>): React.JSX.Element {
   const router = useRouter();
   const detail = useMyContentDetail(contentId);
-  const titleKey =
-    detail.data?.kind === 'pdf' ? 'content.media.pdfTitle' : 'content.media.videoTitle';
+  const titleKey = MEDIA_TITLE_KEYS[detail.data?.kind ?? 'video'];
 
   return (
     <ScreenTemplate

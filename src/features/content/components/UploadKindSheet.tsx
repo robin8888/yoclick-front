@@ -6,6 +6,7 @@ interface UploadKindSheetProps {
   isVisible: boolean;
   onVideoChoose: () => void;
   onPdfChoose: () => void;
+  onImageChoose: () => void;
   onDismiss: () => void;
   /** La hoja ya terminó de cerrarse (iOS): ahora se puede abrir el selector del sistema. */
   onClosed: () => void;
@@ -16,6 +17,7 @@ export function UploadKindSheet({
   isVisible,
   onVideoChoose,
   onPdfChoose,
+  onImageChoose,
   onDismiss,
   onClosed,
 }: Readonly<UploadKindSheetProps>): React.JSX.Element {
@@ -32,6 +34,12 @@ export function UploadKindSheet({
         label={i18n.t('content.upload.pdfAction')}
         isFullWidth
         onPress={onPdfChoose}
+      />
+      <Button
+        variant="secondary"
+        label={i18n.t('content.upload.imageAction')}
+        isFullWidth
+        onPress={onImageChoose}
       />
       <Button
         variant="ghost"

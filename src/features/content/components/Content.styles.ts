@@ -59,6 +59,18 @@ export const CENTERED_ROW_STYLE: ViewStyle = {
   gap: 8,
 };
 
+const IMAGE_ASPECT_RATIO = 0.8;
+
+/** La imagen del alumno: ancha, en 4:5 y con fondo suave por si la imagen no llena el marco. */
+export function createImageStyle(theme: Theme): ImageStyle {
+  return {
+    width: '100%',
+    aspectRatio: IMAGE_ASPECT_RATIO,
+    borderRadius: theme.radius.lg,
+    backgroundColor: theme.colors.surface2,
+  };
+}
+
 export function createLibraryCardStyle(theme: Theme): ViewStyle {
   return {
     flexDirection: 'row',

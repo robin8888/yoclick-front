@@ -11,6 +11,12 @@ import { describeContentLevel } from '../model/content-levels';
 import { describeContentMeta } from '../model/content-meta';
 import { ROW_STYLE, STACK_STYLE } from './Content.styles';
 
+const MEDIA_DESCRIPTION_KEYS = {
+  video: 'content.media.videoDescription',
+  pdf: 'content.media.pdfDescription',
+  image: 'content.media.imageDescription',
+} as const;
+
 /** Título, nivel, necesidad, duración o páginas y la descripción corta de lo que se está viendo. */
 export function MediaDetails({
   content,
@@ -22,9 +28,8 @@ export function MediaDetails({
 }>): React.JSX.Element {
   const centerName = useActiveCenterName();
   const { levelWords } = useContentVocabulary();
-  const meta = content.kind === 'pdf' ? '' : describeContentMeta(content);
-  const descriptionKey =
-    content.kind === 'video' ? 'content.media.videoDescription' : 'content.media.pdfDescription';
+  const meta = content.kind === 'video' ? describeContentMeta(content) : '';
+  const descriptionKey = MEDIA_DESCRIPTION_KEYS[content.kind];
 
   return (
     <View style={STACK_STYLE}>
