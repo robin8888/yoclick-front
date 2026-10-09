@@ -37,12 +37,14 @@ export function ProfileEditorActions({
       {errorMessage === null ? null : <FormErrorBanner message={errorMessage} />}
       <Button
         variant="outline"
+        isFullWidth
         label={i18n.t('teamProfiles.editor.saveAction')}
         isDisabled={!hasChanges || isRunning}
         onPress={onSave}
       />
       <Button
         label={submitLabel}
+        isFullWidth
         isLoading={isRunning}
         isDisabled={!canSubmit}
         onPress={onSubmit}

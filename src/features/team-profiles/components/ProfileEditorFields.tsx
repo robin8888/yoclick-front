@@ -49,6 +49,7 @@ function TextInputs({
         accessibilityLabel={i18n.t('teamProfiles.editor.bioLabel')}
         placeholder={i18n.t('teamProfiles.editor.bioPlaceholder')}
         maxLength={MAX_BIO_LENGTH}
+        isMultiline
       />
     </>
   );

@@ -7,12 +7,36 @@ export const STACK_STYLE: ViewStyle = { gap: 12 };
 export const WIDE_STACK_STYLE: ViewStyle = { gap: 16 };
 export const TIGHT_STACK_STYLE: ViewStyle = { gap: 4 };
 export const ROW_STYLE: ViewStyle = { flexDirection: 'row', alignItems: 'center', gap: 12 };
+/** Contenido centrado en columna (cabecera del perfil). */
+export const CENTERED_STACK_STYLE: ViewStyle = { alignItems: 'center', gap: 8 };
+/** El botón mide lo que dice su texto y se queda en el centro (el átomo siempre se pega a la izquierda). */
+export const CENTER_ROW_STYLE: ViewStyle = {
+  alignSelf: 'stretch',
+  flexDirection: 'row',
+  justifyContent: 'center',
+};
 export const WRAP_ROW_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: 8 };
 export const GROW_STYLE: ViewStyle = { flex: 1 };
+
+/** Cuadrícula de dos columnas del prototipo (`grid2`). */
+export const GRID_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: 10 };
+export const GRID_CELL_STYLE: ViewStyle = { width: '48%', flexGrow: 1, gap: 4 };
 
 export function createCardStyle(theme: Theme): ViewStyle {
   return {
     gap: theme.space[3],
+    padding: theme.space[4],
+    borderRadius: theme.radius.lg,
+    borderWidth: 1,
+    borderColor: theme.colors.line,
+    backgroundColor: theme.colors.surface,
+  };
+}
+
+/** Lista agrupada del prototipo (`nf-list`): un solo borde y las filas separadas por una línea. */
+export function createListCardStyle(theme: Theme): ViewStyle {
+  return {
+    gap: theme.space[4],
     padding: theme.space[4],
     borderRadius: theme.radius.lg,
     borderWidth: 1,

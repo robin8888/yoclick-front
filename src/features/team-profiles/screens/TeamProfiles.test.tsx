@@ -77,11 +77,6 @@ describe('MyPublicProfileScreen', () => {
 
   it.each([
     {
-      caseName: 'a draft',
-      profile: buildProfile(),
-      text: 'Borrador: tus clientes todavía no lo ven.',
-    },
-    {
       caseName: 'waiting for the review',
       profile: buildProfile({ status: 'pending' }),
       text: 'Pendiente de revisión: el centro lo verá antes de publicarlo.',
@@ -101,6 +96,14 @@ describe('MyPublicProfileScreen', () => {
     renderScreen(<MyPublicProfileScreen />);
 
     expect(await screen.findByText(text)).toBeOnTheScreen();
+  });
+
+  it('does not label a draft, so nothing says "Borrador" at the top', async () => {
+    mockEditorApi(buildProfile());
+    renderScreen(<MyPublicProfileScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Ver como clientes' })).toBeOnTheScreen();
+    expect(screen.queryByText(/Borrador/)).not.toBeOnTheScreen();
   });
 
   it('warns that editing a published profile hides it until it is approved again', async () => {
@@ -249,7 +252,8 @@ describe('MyPublicProfileScreen', () => {
     await waitFor(() => {
       expect(findApiCall('DELETE', `${BASE}/team-profiles/me/certifications/cert-2`)).toBeDefined();
     });
-    fireEvent.changeText(screen.getByLabelText('Nombre de la titulación'), 'Curso de yoga');
+    fireEvent.press(screen.getByRole('button', { name: 'Nueva titulación' }));
+    fireEvent.changeText(await screen.findByLabelText('Nombre de la titulación'), 'Curso de yoga');
     fireEvent.changeText(screen.getByLabelText('Centro y año (opcional)'), 'Escuela, 2025');
     fireEvent.press(screen.getByRole('button', { name: 'Añadir titulación' }));
 
