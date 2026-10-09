@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 
-import { usePauseWhenScreenIsLeft } from '../hooks/usePauseWhenScreenIsLeft';
 import { usePlayerAspectRatio } from '../hooks/usePlayerAspectRatio';
 import { usePlayerFailure } from '../hooks/usePlayerFailure';
 import { buildVideoSource } from '../model/video-playback';
@@ -21,7 +20,6 @@ export function VideoPlayer({ streamUrl, title }: Readonly<VideoPlayerProps>): R
     videoPlayer.play();
   });
   const failure = usePlayerFailure(player);
-  usePauseWhenScreenIsLeft(player);
   const aspectRatio = usePlayerAspectRatio(player);
 
   return (

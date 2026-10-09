@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 
 import type { VideoResponseDto } from '@/shared/api/generated/model';
@@ -8,6 +8,7 @@ import { useTheme } from '@/shared/theme';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
+import { useOnScreenLeft } from '../hooks/useOnScreenLeft';
 import { useVideoProcessingWatch } from '../hooks/useVideoProcessingWatch';
 import { formatVideoDuration } from '../model/video-format';
 import { buildVideoSource } from '../model/video-playback';
@@ -77,6 +78,11 @@ function VideoStage({
 }: Readonly<{ video: VideoResponseDto; isCompact: boolean }>): React.JSX.Element | null {
   const [isPlaying, setIsPlaying] = useState(false);
   const { playback } = video;
+  // Al salir se descarta el reproductor: al volver se ve la miniatura y reproducir empieza limpio.
+  const stopPlaying = useCallback(() => {
+    setIsPlaying(false);
+  }, []);
+  useOnScreenLeft(stopPlaying);
 
   if (playback === null) return null;
   if (isPlaying) return <VideoPlayer streamUrl={playback.streamUrl} title={video.title} />;
