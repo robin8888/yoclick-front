@@ -1,4 +1,4 @@
-import type { ViewStyle } from 'react-native';
+import type { ImageStyle, ViewStyle } from 'react-native';
 
 import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
@@ -21,6 +21,17 @@ export const GROW_STYLE: ViewStyle = { flex: 1 };
 /** Cuadrícula de dos columnas del prototipo (`grid2`). */
 export const GRID_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: 10 };
 export const GRID_CELL_STYLE: ViewStyle = { width: '48%', flexGrow: 1, gap: 4 };
+
+/** La cuadrícula de fotos del perfil: dos columnas con las fotos en 4:5, algo más altas que anchas. */
+const GALLERY_PHOTO_WIDTH_UNITS = 4;
+const GALLERY_PHOTO_HEIGHT_UNITS = 5;
+const GALLERY_PHOTO_ASPECT_RATIO = GALLERY_PHOTO_WIDTH_UNITS / GALLERY_PHOTO_HEIGHT_UNITS;
+export const GALLERY_GRID_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: 10 };
+export const GALLERY_CELL_STYLE: ViewStyle = { width: '48%', flexGrow: 1, gap: 4 };
+
+export function createGalleryPhotoStyle(theme: Theme): ImageStyle {
+  return { width: '100%', aspectRatio: GALLERY_PHOTO_ASPECT_RATIO, borderRadius: theme.radius.lg };
+}
 
 export function createCardStyle(theme: Theme): ViewStyle {
   return {

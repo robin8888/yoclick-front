@@ -1,8 +1,8 @@
 import { View } from 'react-native';
 
 import type { ProfileResponseDto } from '@/shared/api/generated/model';
+import { MyPhotoAvatar } from '@/features/photos';
 import { i18n } from '@/shared/i18n';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
@@ -54,7 +54,7 @@ export function ProfileHeaderCard({
   return (
     <View style={STACK_STYLE}>
       <View style={CENTERED_STACK_STYLE}>
-        <Avatar name={profile.fullName} size="xl" isDecorative />
+        <MyPhotoAvatar name={profile.fullName} />
         <Text variant="titleMd" align="center">
           {profile.fullName}
         </Text>

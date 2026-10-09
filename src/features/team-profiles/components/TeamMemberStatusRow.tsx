@@ -15,7 +15,7 @@ export function TeamMemberStatusRow({
 }: Readonly<{ profile: ProfileResponseDto }>): React.JSX.Element {
   return (
     <View accessible style={ROW_STYLE}>
-      <Avatar name={profile.fullName} isDecorative />
+      <Avatar name={profile.fullName} photoUrl={profile.photoUrl} isDecorative />
       <View style={GROW_STYLE}>
         <Text variant="bodyStrong">{profile.fullName}</Text>
         <RatingSummaryLine rating={profile.rating} />

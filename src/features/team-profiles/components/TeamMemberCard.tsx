@@ -26,7 +26,7 @@ export function TeamMemberCard({
       onPress={onPress}
       style={[createCardStyle(theme), ROW_STYLE]}
     >
-      <Avatar name={profile.fullName} size="lg" isDecorative />
+      <Avatar name={profile.fullName} photoUrl={profile.photoUrl} size="lg" isDecorative />
       <View style={GROW_STYLE}>
         <Text variant="bodyStrong">{profile.fullName}</Text>
         {profile.headline === null ? null : (

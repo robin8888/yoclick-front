@@ -7,6 +7,8 @@ import {
   staffReviewsCreate,
   staffReviewsModerate,
   teamProfilesAddCertification,
+  teamProfilesAddPhoto,
+  teamProfilesRemovePhoto,
   teamProfilesRemoveCertification,
   teamProfilesReview,
   teamProfilesSaveMine,
@@ -120,5 +122,24 @@ export function useModerateStaffReview(): ApiMutation<{ reviewId: string; isAppr
       getStaffReviewsListPendingQueryKey(centerId),
       getTeamProfilesListQueryKey(centerId),
     ],
+  });
+}
+
+const PHOTO_UPLOAD_TIMEOUT_MS = 60_000;
+
+export function useAddProfilePhoto(): ApiMutation<Blob> {
+  const centerId = useActiveCenterId();
+  return useInvalidatingMutation({
+    send: (photo: Blob) =>
+      teamProfilesAddPhoto(centerId, photo, { timeoutMs: PHOTO_UPLOAD_TIMEOUT_MS }),
+    invalidates: [getTeamProfilesListQueryKey(centerId)],
+  });
+}
+
+export function useRemoveProfilePhoto(): ApiMutation<string> {
+  const centerId = useActiveCenterId();
+  return useInvalidatingMutation({
+    send: (photoId: string) => teamProfilesRemovePhoto(centerId, photoId),
+    invalidates: [getTeamProfilesListQueryKey(centerId)],
   });
 }

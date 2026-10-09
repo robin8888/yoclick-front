@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { View } from 'react-native';
 
 import { PlayableVideo } from '@/features/videos';
@@ -10,7 +11,14 @@ import { Text } from '@/ui/atoms/Text';
 import { CertificationRow } from './CertificationRows';
 import { RatingSummaryLine } from './RatingSummaryLine';
 import { ReviewsList } from './ReviewsList';
-import { createCardStyle, STACK_STYLE, WRAP_ROW_STYLE } from './TeamProfiles.styles';
+import {
+  createCardStyle,
+  createGalleryPhotoStyle,
+  GALLERY_CELL_STYLE,
+  GALLERY_GRID_STYLE,
+  STACK_STYLE,
+  WRAP_ROW_STYLE,
+} from './TeamProfiles.styles';
 
 interface ProfileDetailViewProps {
   profile: ProfileResponseDto;
@@ -26,6 +34,33 @@ function Chips({ items }: Readonly<{ items: readonly string[] }>): React.JSX.Ele
       {items.map((item) => (
         <Badge key={item} label={item} tone="brand" />
       ))}
+    </View>
+  );
+}
+
+function ProfilePhotoGallery({
+  photos,
+}: Readonly<{ photos: ProfileResponseDto['photos'] }>): React.JSX.Element | null {
+  const theme = useTheme();
+  if (photos.length === 0) return null;
+
+  return (
+    <View style={STACK_STYLE}>
+      <Text variant="titleMd" role="heading">
+        {i18n.t('teamProfiles.profile.photosTitle')}
+      </Text>
+      <View style={GALLERY_GRID_STYLE}>
+        {photos.map((photo, index) => (
+          <View key={photo.id} style={GALLERY_CELL_STYLE}>
+            <Image
+              source={{ uri: photo.url }}
+              style={createGalleryPhotoStyle(theme)}
+              contentFit="cover"
+              accessibilityLabel={i18n.t('teamProfiles.editor.photoLabel', { position: index + 1 })}
+            />
+          </View>
+        ))}
+      </View>
     </View>
   );
 }
@@ -98,6 +133,7 @@ export function ProfileDetailView({
           )}
         </View>
       )}
+      <ProfilePhotoGallery photos={profile.photos} />
       <TechniqueAndCertifications profile={profile} centerName={centerName} />
       {reviewsAction}
       {shouldShowReviews ? <ReviewsList membershipId={profile.membershipId} /> : null}

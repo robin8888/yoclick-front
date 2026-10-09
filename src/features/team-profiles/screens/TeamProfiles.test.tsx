@@ -37,6 +37,8 @@ function buildProfile(overrides: Partial<ProfileResponseDto> = {}): ProfileRespo
     membershipId: STAFF_ID,
     isMe: true,
     fullName: 'Marta Gil',
+    photoUrl: null,
+    photos: [],
     staffTitle: 'Entrenadora',
     headline: 'Entrenadora · 9 años de experiencia',
     bio: 'Ayudo a personas de cualquier nivel a progresar.',
@@ -222,6 +224,38 @@ describe('MyPublicProfileScreen', () => {
     fireEvent.press(await screen.findByRole('button', { name: 'Enviar a revisión' }));
 
     expect(await screen.findByText('Añade algo a tu perfil antes de enviarlo.')).toBeOnTheScreen();
+  });
+
+  it('lists the photos of the profile and removes one', async () => {
+    mockEditorApi(
+      buildProfile({
+        photos: [
+          { id: 'photo-1', url: 'https://cdn.example/1.jpg' },
+          { id: 'photo-2', url: 'https://cdn.example/2.jpg' },
+        ],
+      }),
+      { [`DELETE ${BASE}/team-profiles/me/photos/photo-2`]: null },
+    );
+    renderScreen(<MyPublicProfileScreen />);
+
+    expect(await screen.findByText('Fotos (2 de 6)')).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: 'Quitar la foto 2' }));
+
+    await waitFor(() => {
+      expect(findApiCall('DELETE', `${BASE}/team-profiles/me/photos/photo-2`)).toBeDefined();
+    });
+  });
+
+  it('hides the add-photo tile once the profile has six photos', async () => {
+    const photos = Array.from({ length: 6 }, (_, index) => ({
+      id: `photo-${String(index)}`,
+      url: `https://cdn.example/${String(index)}.jpg`,
+    }));
+    mockEditorApi(buildProfile({ photos }));
+    renderScreen(<MyPublicProfileScreen />);
+
+    expect(await screen.findByText('Fotos (6 de 6)')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Añadir foto' })).not.toBeOnTheScreen();
   });
 
   it('adds and removes certifications, saying whether the center verified them', async () => {

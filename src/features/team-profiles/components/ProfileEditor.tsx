@@ -9,6 +9,7 @@ import { CertificationsEditor } from './CertificationsEditor';
 import { ProfileEditorActions } from './ProfileEditorActions';
 import { ProfileEditorFields } from './ProfileEditorFields';
 import { ProfileHeaderCard } from './ProfileHeaderCard';
+import { ProfilePhotosSection } from './ProfilePhotosSection';
 import { ProfileSection } from './ProfileSection';
 import { ProfileVideosSection } from './ProfileVideosSection';
 import { PublishConsentRow } from './PublishConsentRow';
@@ -36,6 +37,7 @@ export function ProfileEditor({
     <View style={WIDE_STACK_STYLE}>
       <ProfileHeaderCard profile={profile} clientWord={clientWord} onPreview={onPreview} />
       {isVideoIncluded ? <ProfileVideosSection profile={profile} /> : <VideoPlanNotice />}
+      <ProfilePhotosSection profile={profile} />
       <ProfileSection
         title={i18n.t('teamProfiles.editor.aboutYouTitle')}
         description={i18n.t('teamProfiles.editor.aboutYouHint', { clientWord })}
@@ -43,15 +45,13 @@ export function ProfileEditor({
         <ProfileEditorFields draft={editor.draft} onDraftChange={editor.setDraft} />
       </ProfileSection>
       <CertificationsEditor certifications={profile.certifications} />
-      <ProfileSection>
-        <PublishConsentRow
-          centerName={centerName}
-          isGranted={editor.draft.hasPublishConsent}
-          onToggle={(hasPublishConsent) => {
-            editor.setDraft({ ...editor.draft, hasPublishConsent });
-          }}
-        />
-      </ProfileSection>
+      <PublishConsentRow
+        centerName={centerName}
+        isGranted={editor.draft.hasPublishConsent}
+        onToggle={(hasPublishConsent) => {
+          editor.setDraft({ ...editor.draft, hasPublishConsent });
+        }}
+      />
       <ProfileEditorActions
         status={profile.status}
         hasChanges={editor.hasChanges}

@@ -13,6 +13,8 @@ function buildProfile(overrides: Partial<ProfileResponseDto> = {}): ProfileRespo
     membershipId: 'staff-1',
     isMe: true,
     fullName: 'Marta Gil',
+    photoUrl: null,
+    photos: [],
     staffTitle: null,
     headline: 'Entrenadora',
     bio: 'Hola.',
