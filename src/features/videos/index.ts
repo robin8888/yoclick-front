@@ -8,3 +8,4 @@ export { formatStorageSize, formatVideoDuration } from './model/video-format';
 export { useVideoUpload, type VideoUpload } from './hooks/useVideoUpload';
 export { VideoUploadProgress } from './components/VideoUploadProgress';
 export { buildVideoSource } from './model/video-playback';
+export { VideoDropTile } from './components/VideoDropTile';

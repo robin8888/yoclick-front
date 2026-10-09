@@ -34,7 +34,7 @@ export function VideoFieldActions({
       <Button
         variant={hasVideo ? 'secondary' : 'outline'}
         size="sm"
-        leadingIconName="plus"
+        leadingIconName={hasVideo ? 'upload' : 'plus'}
         label={addOrChangeLabel}
         accessibilityLabel={withName(addOrChangeLabel)}
         isDisabled={isDisabled}
@@ -42,7 +42,7 @@ export function VideoFieldActions({
       />
       {hasVideo ? (
         <Button
-          variant="ghost"
+          variant="ghostDanger"
           size="sm"
           label={removeLabel}
           accessibilityLabel={withName(removeLabel)}

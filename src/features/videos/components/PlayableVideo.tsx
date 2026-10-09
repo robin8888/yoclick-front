@@ -18,6 +18,7 @@ import {
   createDurationChipStyle,
   createPlayBadgeStyle,
   createThumbnailFrameStyle,
+  createVideoTitleStyle,
   STACK_STYLE,
   THUMBNAIL_STYLE,
 } from './Videos.styles';
@@ -26,15 +27,19 @@ interface PlayableVideoProps {
   video: VideoResponseDto;
   /** Con título encima, para listas de vídeos; en una rutina el ejercicio ya lo dice. */
   shouldShowTitle?: boolean;
+  /** Versión pequeña para cuadrículas de dos columnas (vídeos de técnica). */
+  isCompact?: boolean;
 }
 
 function Thumbnail({
   video,
   thumbnailUrl,
+  isCompact,
   onPress,
 }: Readonly<{
   video: VideoResponseDto;
   thumbnailUrl: string;
+  isCompact: boolean;
   onPress: () => void;
 }>): React.JSX.Element {
   const theme = useTheme();
@@ -44,11 +49,16 @@ function Thumbnail({
       accessibilityRole="button"
       accessibilityLabel={i18n.t('videos.player.playLabel', { title: video.title })}
       onPress={onPress}
-      style={createThumbnailFrameStyle(theme)}
+      style={createThumbnailFrameStyle(theme, isCompact)}
     >
       <Image source={buildVideoSource(thumbnailUrl)} style={THUMBNAIL_STYLE} contentFit="cover" />
-      <View style={createPlayBadgeStyle(theme)}>
+      <View style={createPlayBadgeStyle(theme, isCompact)}>
         <Icon name="play" color="onBrand" />
+      </View>
+      <View style={createVideoTitleStyle(theme)}>
+        <Text variant="caption" color="surface" numberOfLines={1}>
+          {video.title}
+        </Text>
       </View>
       {video.durationSeconds === null ? null : (
         <View style={createDurationChipStyle(theme)}>
@@ -61,6 +71,27 @@ function Thumbnail({
   );
 }
 
+function VideoStage({
+  video,
+  isCompact,
+}: Readonly<{ video: VideoResponseDto; isCompact: boolean }>): React.JSX.Element | null {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { playback } = video;
+
+  if (playback === null) return null;
+  if (isPlaying) return <VideoPlayer streamUrl={playback.streamUrl} title={video.title} />;
+  return (
+    <Thumbnail
+      video={video}
+      thumbnailUrl={playback.thumbnailUrl}
+      isCompact={isCompact}
+      onPress={() => {
+        setIsPlaying(true);
+      }}
+    />
+  );
+}
+
 /**
  * Un vídeo en una pantalla: miniatura con el botón de reproducir y, al tocarla, el reproductor.
  * Mientras no está listo (o si falló) solo dice en qué estado está.
@@ -68,29 +99,17 @@ function Thumbnail({
 export function PlayableVideo({
   video,
   shouldShowTitle = false,
+  isCompact = false,
 }: Readonly<PlayableVideoProps>): React.JSX.Element {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const { playback } = video;
   const isProcessing = video.status === 'uploading' || video.status === 'processing';
   useVideoProcessingWatch(video);
 
   return (
     <View style={STACK_STYLE}>
       {shouldShowTitle ? <Text variant="bodyStrong">{video.title}</Text> : null}
-      {playback === null ? <VideoStatusBadge video={video} /> : null}
+      {video.playback === null ? <VideoStatusBadge video={video} /> : null}
       {isProcessing ? <VideoUploadProgress stage={{ kind: 'processing' }} /> : null}
-      {playback !== null && isPlaying ? (
-        <VideoPlayer streamUrl={playback.streamUrl} title={video.title} />
-      ) : null}
-      {playback !== null && !isPlaying ? (
-        <Thumbnail
-          video={video}
-          thumbnailUrl={playback.thumbnailUrl}
-          onPress={() => {
-            setIsPlaying(true);
-          }}
-        />
-      ) : null}
+      <VideoStage video={video} isCompact={isCompact} />
     </View>
   );
 }

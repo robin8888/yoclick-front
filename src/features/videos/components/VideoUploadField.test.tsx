@@ -246,10 +246,13 @@ describe('PlayableVideo', () => {
     const player = jest.mocked(useVideoPlayer).mock.results.at(-1)?.value as {
       addListener: jest.Mock;
     };
-    const [, handler] = player.addListener.mock.calls.at(-1) as [
-      string,
-      (event: { status: string; error?: { message: string } }) => void,
-    ];
+    const statusCall = (player.addListener.mock.calls as unknown[][]).find(
+      ([name]) => name === 'statusChange',
+    ) ?? ['', () => undefined];
+    const handler = statusCall[1] as (event: {
+      status: string;
+      error?: { message: string };
+    }) => void;
 
     act(() => {
       handler({ status: 'error', error: { message: 'HTTP 403' } });

@@ -1,11 +1,13 @@
 import { View } from 'react-native';
 
 import type { StartVideoUploadRequestDto, VideoResponseDto } from '@/shared/api/generated/model';
+import { i18n } from '@/shared/i18n';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 
 import { useDeleteVideo } from '../hooks/useVideoMutations';
 import { useVideoUpload } from '../hooks/useVideoUpload';
 import { PlayableVideo } from './PlayableVideo';
+import { VideoDropTile } from './VideoDropTile';
 import { VideoFieldActions } from './VideoFieldActions';
 import { VideoUploadProgress } from './VideoUploadProgress';
 import { STACK_STYLE } from './Videos.styles';
@@ -16,6 +18,47 @@ interface VideoUploadFieldProps {
   video: VideoResponseDto | null;
   onVideoChange: (video: VideoResponseDto | null) => void;
   accessibilityName?: string;
+  /** Con vídeo vacío se muestra el recuadro de rayas con este texto en lugar del botón. */
+  emptyTileTitle?: string;
+}
+
+interface VideoFieldControlsProps {
+  video: VideoResponseDto | null;
+  emptyTileTitle: string | undefined;
+  accessibilityName: string | undefined;
+  isDisabled: boolean;
+  onAddOrChange: () => void;
+  onRemove: () => void;
+}
+
+/** El recuadro de rayas (si se pide y no hay vídeo) o los botones de añadir, cambiar y quitar. */
+function VideoFieldControls({
+  video,
+  emptyTileTitle,
+  accessibilityName,
+  isDisabled,
+  onAddOrChange,
+  onRemove,
+}: Readonly<VideoFieldControlsProps>): React.JSX.Element {
+  if (video === null && emptyTileTitle !== undefined) {
+    return (
+      <VideoDropTile
+        title={emptyTileTitle}
+        accessibilityLabel={i18n.t('videos.upload.addAction')}
+        isDisabled={isDisabled}
+        onPress={onAddOrChange}
+      />
+    );
+  }
+  return (
+    <VideoFieldActions
+      hasVideo={video !== null}
+      isDisabled={isDisabled}
+      accessibilityName={accessibilityName}
+      onAddOrChange={onAddOrChange}
+      onRemove={onRemove}
+    />
+  );
 }
 
 /**
@@ -27,6 +70,7 @@ export function VideoUploadField({
   video,
   onVideoChange,
   accessibilityName,
+  emptyTileTitle,
 }: Readonly<VideoUploadFieldProps>): React.JSX.Element {
   const upload = useVideoUpload(purpose);
   const removal = useDeleteVideo();
@@ -38,10 +82,11 @@ export function VideoUploadField({
       {video === null ? null : <PlayableVideo video={video} />}
       <VideoUploadProgress stage={upload.stage} />
       {errorMessage === null ? null : <FormErrorBanner message={errorMessage} />}
-      <VideoFieldActions
-        hasVideo={video !== null}
-        isDisabled={upload.isBusy || removal.isRunning}
+      <VideoFieldControls
+        video={video}
+        emptyTileTitle={emptyTileTitle}
         accessibilityName={accessibilityName}
+        isDisabled={upload.isBusy || removal.isRunning}
         onAddOrChange={() => {
           upload.start(onVideoChange);
         }}

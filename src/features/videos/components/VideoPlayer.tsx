@@ -4,6 +4,8 @@ import { View } from 'react-native';
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 
+import { usePauseWhenScreenIsLeft } from '../hooks/usePauseWhenScreenIsLeft';
+import { usePlayerAspectRatio } from '../hooks/usePlayerAspectRatio';
 import { usePlayerFailure } from '../hooks/usePlayerFailure';
 import { buildVideoSource } from '../model/video-playback';
 import { PLAYER_STYLE, STACK_STYLE } from './Videos.styles';
@@ -19,12 +21,14 @@ export function VideoPlayer({ streamUrl, title }: Readonly<VideoPlayerProps>): R
     videoPlayer.play();
   });
   const failure = usePlayerFailure(player);
+  usePauseWhenScreenIsLeft(player);
+  const aspectRatio = usePlayerAspectRatio(player);
 
   return (
     <View style={STACK_STYLE}>
       <VideoView
         player={player}
-        style={PLAYER_STYLE}
+        style={[PLAYER_STYLE, { aspectRatio }]}
         nativeControls
         fullscreenOptions={{ enable: true }}
         accessibilityLabel={i18n.t('videos.player.playerLabel', { title })}
