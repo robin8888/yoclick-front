@@ -58,14 +58,14 @@ describe('BrandScreen', () => {
     });
   });
 
-  it('shows the published name, the color groups and the contrast report', async () => {
+  it('shows the published name, the color picker and the contrast report', async () => {
     mockBrandApi();
     await renderLoadedBrandScreen();
 
     expect(screen.getByDisplayValue('Studio Norte')).toBeOnTheScreen();
-    expect(screen.getByText('Vivos')).toBeOnTheScreen();
-    expect(screen.getByText('Pastel')).toBeOnTheScreen();
-    expect(screen.getByText('Metalizados')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Selector de color')).toBeOnTheScreen();
+    expect(screen.getByLabelText('Color en hexadecimal')).toBeOnTheScreen();
+    expect(screen.queryByText('Vivos')).not.toBeOnTheScreen();
     expect(screen.getByRole('heading', { name: 'Contraste accesible' })).toBeOnTheScreen();
   });
 
@@ -80,7 +80,7 @@ describe('BrandScreen', () => {
     mockBrandApi();
     await renderLoadedBrandScreen();
 
-    fireEvent.press(screen.getByRole('button', { name: 'Color #A9D6E5' }));
+    fireEvent.changeText(screen.getByLabelText('Color en hexadecimal'), '#A9D6E5');
     fireEvent.press(screen.getByRole('button', { name: 'Publicar cambios' }));
 
     await waitFor(() => {
@@ -100,15 +100,15 @@ describe('BrandScreen', () => {
     expect(screen.getByRole('button', { name: 'Publicar cambios' })).toBeDisabled();
   });
 
-  it('opens the color selector with the hexadecimal field', async () => {
+  it('moves the color with the hue control of the picker', async () => {
     mockBrandApi();
     await renderLoadedBrandScreen();
 
-    fireEvent.press(
-      screen.getByRole('button', { name: 'Selector de color y color personalizado' }),
-    );
+    fireEvent(screen.getByLabelText('Tono'), 'accessibilityAction', {
+      nativeEvent: { actionName: 'increment' },
+    });
 
-    expect(screen.getByLabelText('Color en hexadecimal')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Publicar cambios' })).toBeEnabled();
   });
 
   it('offers a retry when the settings cannot be loaded', async () => {

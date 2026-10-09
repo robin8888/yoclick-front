@@ -3,10 +3,9 @@ import { View } from 'react-native';
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
+import { ColorPicker } from '@/ui/organisms/ColorPicker';
 
-import { buildColorGrid } from '../model/color-grid';
-import { BRAND_SWATCH_LIST_STYLE, BRAND_SWATCH_SECTION_STYLE } from './BrandSwatchPicker.styles';
-import { ColorSwatch } from './ColorSwatch';
+import { BRAND_SWATCH_SECTION_STYLE } from './BrandSwatchPicker.styles';
 
 interface BrandCustomColorPanelProps {
   selectedColor: string;
@@ -14,10 +13,9 @@ interface BrandCustomColorPanelProps {
   onColorChange: (hexColor: string) => void;
 }
 
-const COLOR_GRID = buildColorGrid();
 const HEX_COLOR_LENGTH = 7;
 
-/** El selector de color: una cuadrícula de tonos y, debajo, el campo para escribir el hexadecimal. */
+/** El selector de color: se arrastra sobre el cuadrado y la barra de tono y, debajo, se puede escribir el hexadecimal. */
 export function BrandCustomColorPanel({
   selectedColor,
   hasColorProblem,
@@ -28,18 +26,11 @@ export function BrandCustomColorPanel({
       <Text variant="caption" color="ink2">
         {i18n.t('branding.color.gridHelper')}
       </Text>
-      <View style={BRAND_SWATCH_LIST_STYLE}>
-        {COLOR_GRID.map((gridColor) => (
-          <ColorSwatch
-            key={gridColor}
-            swatchColor={gridColor}
-            isSelected={gridColor === selectedColor.toUpperCase()}
-            onPress={() => {
-              onColorChange(gridColor);
-            }}
-          />
-        ))}
-      </View>
+      <ColorPicker
+        value={selectedColor}
+        onValueChange={onColorChange}
+        accessibilityLabel={i18n.t('branding.color.pickerLabel')}
+      />
       <FormField
         label={i18n.t('branding.color.customFieldLabel')}
         helperText={i18n.t('branding.color.customFieldHelper')}
