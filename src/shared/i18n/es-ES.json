@@ -75,6 +75,11 @@
     "REVIEW_NOT_MODERABLE": "Esta opinión ya está revisada.",
     "PRIVACY_REQUEST_ALREADY_OPEN": "Ya tienes una solicitud abierta de ese derecho. Espera a que el centro responda.",
     "PRIVACY_REQUEST_CLOSED": "Esta solicitud ya está resuelta.",
+    "PHOTO_NOT_IMAGE": "Ese fichero no es una foto válida. Usa una imagen JPG, PNG o WebP.",
+    "PHOTO_QUOTA_EXCEEDED": "Tu centro ha llenado su espacio de fotos. Quita alguna para poder subir otra.",
+    "VIDEO_UPLOADS_IN_PROGRESS": "Tu centro ya tiene varios vídeos subiéndose. Espera a que terminen para subir otro.",
+    "PHOTO_TOO_LARGE": "La foto es demasiado grande. El máximo son 5 MB.",
+    "PROFILE_PHOTO_LIMIT_REACHED": "Tu perfil ya tiene 6 fotos. Quita alguna para añadir otra.",
     "DOCUMENT_NOT_PDF": "Ese fichero no es un PDF válido.",
     "DOCUMENT_TOO_LARGE": "El PDF es demasiado grande. El máximo son 50 MB.",
     "DOCUMENT_QUOTA_EXCEEDED": "Tu centro ha llenado su espacio de documentos. Borra alguno para poder subir otro.",
@@ -91,6 +96,21 @@
     "too_big": "Es demasiado grande",
     "required": "Este campo es obligatorio",
     "taken": "Ya está en uso"
+  },
+  "photos": {
+    "addLabel": "Añadir foto de perfil",
+    "changeLabel": "Cambiar foto de perfil",
+    "visibilityNote": "La ve el equipo de tu centro. Si la quitas, se muestran tus iniciales.",
+    "sheet": {
+      "title": "Foto de perfil",
+      "takeAction": "Hacer foto",
+      "libraryAction": "Elegir de la galería",
+      "removeAction": "Quitar foto"
+    },
+    "problem": {
+      "cameraDenied": "Sin permiso para la cámara no podemos hacer la foto. Puedes dárselo en los ajustes del teléfono o elegir una de la galería.",
+      "unreadable": "No hemos podido preparar esa foto. Prueba con otra."
+    }
   },
   "actions": {
     "back": "Volver",
@@ -193,6 +213,9 @@
       "allowCameraAction": "Permitir la cámara",
       "openSettingsAction": "Abrir ajustes",
       "useCodeInsteadAction": "Tengo un código"
+    },
+    "link": {
+      "errorTitle": "No hemos podido abrir ese enlace"
     },
     "invitation": {
       "title": "Tengo una invitación",
@@ -974,16 +997,8 @@
     },
     "color": {
       "title": "Color principal",
-      "optionLabel": "Color {{hex}}",
-      "customLabel": "Selector de color y color personalizado",
-      "showCustomAction": "Selector de color",
-      "selectorHelper": "Elige cualquier tono o escribe un hexadecimal",
-      "gridHelper": "Toca un tono de la cuadrícula, de más oscuro (arriba) a más claro (abajo).",
-      "groups": {
-        "vivid": "Vivos",
-        "pastel": "Pastel",
-        "metallic": "Metalizados"
-      },
+      "gridHelper": "Arrastra sobre el cuadrado para elegir la intensidad y el brillo, y por la barra para cambiar el tono.",
+      "pickerLabel": "Selector de color",
       "customFieldLabel": "Color en hexadecimal",
       "customFieldHelper": "Por ejemplo, #E4572E",
       "invalid": "Escribe un color válido, como #E4572E"
@@ -1657,6 +1672,12 @@
       "statusChangesNoNote": "El centro te pide cambios. Revisa tu perfil y vuelve a enviarlo.",
       "editWarning": "Si cambias algo de un perfil publicado, deja de verse hasta que el centro lo vuelva a aprobar.",
       "introTitle": "Vídeo de presentación",
+      "photosTitle": "Fotos ({{count}} de 6)",
+      "photosHint": "Enseña cómo trabajas, tu espacio o tus resultados. El centro las revisa junto con el resto del perfil.",
+      "addPhotoAction": "Añadir foto",
+      "removePhotoAction": "Quitar",
+      "removePhotoLabel": "Quitar la foto {{position}}",
+      "photoLabel": "Foto {{position}} de tu perfil",
       "introDropTitle": "Sube tu vídeo de presentación",
       "introHint": "Preséntate en 30 segundos y enseña algo que domines. Buena luz y sonido claro.",
       "techniqueTitle": "Vídeos de técnica ({{count}} de 3)",
@@ -1700,6 +1721,7 @@
     "profile": {
       "notFound": "No encontramos este perfil",
       "aboutTitle": "Sobre mí",
+      "photosTitle": "Fotos",
       "languagesLine": "Idiomas: {{languages}}",
       "techniqueTitle": "Vídeos de técnica",
       "certificationsTitle": "Titulaciones",
@@ -1759,8 +1781,8 @@
   "content": {
     "admin": {
       "title": "Contenidos",
-      "subtitle": "Vídeos y PDF para tus {{clients}}",
-      "uploadTitle": "Subir vídeo o PDF",
+      "subtitle": "Vídeos, PDF e imágenes para tus {{clients}}",
+      "uploadTitle": "Subir contenido",
       "uploadHint": "MP4 hasta 500 MB · PDF hasta 50 MB",
       "libraryTitle": "Biblioteca",
       "itemCount_one": "{{count}} elemento",
@@ -1781,6 +1803,10 @@
       "chooseTitle": "¿Qué quieres subir?",
       "videoAction": "Vídeo",
       "pdfAction": "PDF",
+      "imageAction": "Imagen",
+      "imageDefaultTitle": "Nueva imagen",
+      "imageUploading": "Subiendo la imagen…",
+      "imageUploadingLabel": "Subida de la imagen",
       "cancelAction": "Cancelar",
       "pdfUploading": "Subiendo el PDF…",
       "pdfUploadingLabel": "Subida del PDF",
@@ -1835,7 +1861,8 @@
     },
     "kind": {
       "video": "Vídeo",
-      "pdf": "PDF"
+      "pdf": "PDF",
+      "image": "Imagen"
     },
     "meta": {
       "pages_one": "{{count}} pág.",
@@ -1845,6 +1872,8 @@
     "media": {
       "videoTitle": "Vídeo",
       "pdfTitle": "Guía PDF",
+      "imageTitle": "Imagen",
+      "imageDescription": "Imagen compartida por el equipo de {{center}}.",
       "videoDescription": "Explicación de la técnica, errores frecuentes y progresiones. Grabado por el equipo de {{center}}.",
       "pdfDescription": "Descárgalo para tenerlo sin conexión o léelo aquí.",
       "pdfCardCaption": "{{center}} · Documento de {{tab}}",

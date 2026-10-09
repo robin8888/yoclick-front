@@ -2,6 +2,7 @@ export { BackActionProvider, useBackAction } from './back-action';
 export { CenterIdentityProvider, useCenterIdentity } from './center-identity';
 export type { CenterIdentity } from './center-identity';
 export { centerHoneycomb } from './center-honeycomb';
+export { convertHexToHsv, convertHsvToHex, type HsvColor } from './color-conversion';
 export { buildHoneycombTile } from './honeycomb-tile';
 export { buildTheme } from './build-theme';
 export { calculateContrastRatio, deriveBrandTokens } from './brand-engine';
@@ -33,9 +34,4 @@ export {
   platformHeroColorOverrides,
   platformHeroHoneycomb,
 } from './platform-hero';
-export {
-  BRAND_COLOR_PRESETS,
-  BRAND_SWATCH_GROUPS,
-  DEFAULT_BRAND_COLOR,
-} from './brand-color-presets';
-export type { BrandSwatchGroup, BrandSwatchGroupId } from './brand-color-presets';
+export { BRAND_COLOR_PRESETS, DEFAULT_BRAND_COLOR } from './brand-color-presets';
