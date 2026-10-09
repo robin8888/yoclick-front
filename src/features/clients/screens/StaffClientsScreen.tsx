@@ -13,7 +13,7 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { StaffClientRow } from '../components/StaffClientRow';
-import { createStaffClientCardStyle } from '../components/StaffClientRow.styles';
+import { createStaffClientListStyle } from '../components/StaffClientRow.styles';
 import { useActiveClientCount } from '../hooks/useActiveClientCount';
 import { useClientFilters } from '../hooks/useClientFilters';
 import { useClientList } from '../hooks/useClientList';
@@ -79,13 +79,12 @@ function StaffClientRows({
 
   return (
     <>
-      <View style={createStaffClientCardStyle(theme)}>
-        {clients.map((client, index) => (
+      <View style={createStaffClientListStyle(theme)}>
+        {clients.map((client) => (
           <StaffClientRow
             key={client.membershipId}
             client={client}
             levelLabel={describeClientLevel(client.level, vocabulary.levels)}
-            isLast={index === clients.length - 1}
           />
         ))}
       </View>
