@@ -25,6 +25,7 @@ export { InvitationLinkScreen } from './screens/InvitationLinkScreen';
 export { InvitationScreen } from './screens/InvitationScreen';
 export { JoinCodeScreen } from './screens/JoinCodeScreen';
 export { JoinConfirmScreen } from './screens/JoinConfirmScreen';
+export { JoinLinkScreen } from './screens/JoinLinkScreen';
 export { JoinSearchScreen } from './screens/JoinSearchScreen';
 export { JoinStartScreen } from './screens/JoinStartScreen';
 export { MyCentersScreen } from './screens/MyCentersScreen';
