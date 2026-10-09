@@ -1,12 +1,16 @@
 import { getSessionServices } from '@/shared/auth/default-session-services';
 
 import type { ApiError } from './api-error';
+import type { TransportRequestInit } from './http-transport';
 
 /**
  * Mutator de Orval: todas las funciones generadas pasan por aquí. Devuelve el cuerpo ya parseado
  * y lanza `ApiError` / `NetworkError` en lugar de devolver el error dentro de la unión de tipos.
  */
-export function apiMutator<TResponseBody>(path: string, init: RequestInit): Promise<TResponseBody> {
+export function apiMutator<TResponseBody>(
+  path: string,
+  init: TransportRequestInit,
+): Promise<TResponseBody> {
   return getSessionServices().apiClient.request<TResponseBody>(path, init);
 }
 

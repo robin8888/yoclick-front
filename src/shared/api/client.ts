@@ -1,5 +1,5 @@
 import { isApiError } from './api-error';
-import type { HttpTransport } from './http-transport';
+import type { HttpTransport, TransportRequestInit } from './http-transport';
 
 export const CENTER_ID_HEADER = 'X-Center-Id';
 export const IDEMPOTENCY_KEY_HEADER = 'Idempotency-Key';
@@ -21,7 +21,7 @@ export interface ApiClientDependencies {
 
 export interface ApiClient {
   /** Devuelve el cuerpo JSON ya parseado. Lanza `ApiError` o `NetworkError`. */
-  request: <TResponseBody>(path: string, init: RequestInit) => Promise<TResponseBody>;
+  request: <TResponseBody>(path: string, init: TransportRequestInit) => Promise<TResponseBody>;
 }
 
 // Coincide por segmento completo: `/v1/me` cubre `/v1/me/consents` pero no `/v1/memberships`.
@@ -46,7 +46,7 @@ interface HeaderContext {
   activeCenterId: string | null;
 }
 
-function buildHeaders(path: string, init: RequestInit, context: HeaderContext): Headers {
+function buildHeaders(path: string, init: TransportRequestInit, context: HeaderContext): Headers {
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
   if (isPublicPath(path)) return headers;
@@ -64,7 +64,7 @@ function buildHeaders(path: string, init: RequestInit, context: HeaderContext): 
 }
 
 export function createApiClient(dependencies: ApiClientDependencies): ApiClient {
-  async function sendOnce(path: string, init: RequestInit, accessToken: string | null) {
+  async function sendOnce(path: string, init: TransportRequestInit, accessToken: string | null) {
     const headers = buildHeaders(path, init, {
       accessToken,
       activeCenterId: dependencies.getActiveCenterId(),
@@ -82,7 +82,10 @@ export function createApiClient(dependencies: ApiClientDependencies): ApiClient 
     return dependencies.refreshAccessToken();
   }
 
-  async function request<TResponseBody>(path: string, init: RequestInit): Promise<TResponseBody> {
+  async function request<TResponseBody>(
+    path: string,
+    init: TransportRequestInit,
+  ): Promise<TResponseBody> {
     const accessToken = isPublicPath(path) ? null : dependencies.getAccessToken();
     try {
       const response = await sendOnce(path, init, accessToken);

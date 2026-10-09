@@ -10,9 +10,12 @@ export interface TransportResponse {
   readonly body: unknown;
 }
 
+/** Una petición normal con, si hace falta, un tiempo de espera propio (la subida de un PDF tarda más que un JSON). */
+export type TransportRequestInit = RequestInit & { timeoutMs?: number };
+
 export interface HttpTransport {
   /** Lanza `ApiError` si la respuesta no es 2xx y `NetworkError` si no hay respuesta. */
-  send: (path: string, init: RequestInit) => Promise<TransportResponse>;
+  send: (path: string, init: TransportRequestInit) => Promise<TransportResponse>;
 }
 
 export interface HttpTransportConfig {
@@ -70,11 +73,12 @@ export function createHttpTransport(config: HttpTransportConfig): HttpTransport 
   const { baseUrl, timeoutMs, onResponseHeaders } = config;
   const fetchImplementation = config.fetchImplementation ?? fetch;
 
-  async function send(path: string, init: RequestInit): Promise<TransportResponse> {
-    const abortScope = createAbortScope(timeoutMs, init.signal);
+  async function send(path: string, init: TransportRequestInit): Promise<TransportResponse> {
+    const { timeoutMs: requestTimeoutMs, ...fetchInit } = init;
+    const abortScope = createAbortScope(requestTimeoutMs ?? timeoutMs, init.signal);
     try {
       const response = await fetchImplementation(`${baseUrl}${path}`, {
-        ...init,
+        ...fetchInit,
         signal: abortScope.signal,
       });
       onResponseHeaders?.(response.headers);

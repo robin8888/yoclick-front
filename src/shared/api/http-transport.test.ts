@@ -115,6 +115,26 @@ describe('createHttpTransport', () => {
     jest.useRealTimers();
   });
 
+  it('waits as long as the request itself asks for, instead of the default', async () => {
+    jest.useFakeTimers();
+    const transport = createHttpTransport({
+      baseUrl: BASE_URL,
+      timeoutMs: TIMEOUT_MS,
+      fetchImplementation: createHangingFetch(),
+    });
+
+    const failure = transport
+      .send('/health', { timeoutMs: TIMEOUT_MS * 4 })
+      .catch((caught: unknown) => caught);
+    await jest.advanceTimersByTimeAsync(TIMEOUT_MS * 2);
+    const hasStillWaited = jest.getTimerCount() > 0;
+    await jest.advanceTimersByTimeAsync(TIMEOUT_MS * 2);
+
+    expect(hasStillWaited).toBe(true);
+    expect(await failure).toMatchObject({ reason: 'timeout' });
+    jest.useRealTimers();
+  });
+
   it('rethrows the abort when the caller cancels the request', async () => {
     const callerController = new AbortController();
     const transport = createHttpTransport({
