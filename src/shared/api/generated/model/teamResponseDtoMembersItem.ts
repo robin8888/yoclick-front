@@ -16,6 +16,8 @@ export type TeamResponseDtoMembersItem = {
   userId: string;
   fullName: string;
   email: string;
+  /** @nullable */
+  photoUrl: string | null;
   role: TeamResponseDtoMembersItemRole;
   status: TeamResponseDtoMembersItemStatus;
   /** @nullable */

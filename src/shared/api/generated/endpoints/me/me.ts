@@ -31,6 +31,7 @@ import type {
   ListOpenSessionsRequestDto,
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
+  MyPhotoResponseDto,
   OpenSessionsResponseDto,
   PasswordChangedResponseDto,
   PersonalDataExportResponseDto,
@@ -1133,4 +1134,164 @@ export const useMeUnregisterPushDevice = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getMeUnregisterPushDeviceMutationOptions(options), queryClient);
+    }
+    export const getMeSetPhotoUrl = () => {
+
+
+
+
+  return `/v1/me/photo`
+}
+
+/**
+ * @summary Cambia mi foto de perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo). Sustituye a la anterior. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 429 RATE_LIMITED.
+ */
+export const meSetPhoto = async (meSetPhotoBody: Blob, options?: Parameters<typeof apiMutator>[1]): Promise<MyPhotoResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<MyPhotoResponseDto>(getMeSetPhotoUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'image/jpeg', ...getHeaders(options?.headers) },
+    body: meSetPhotoBody
+  }
+);}
+
+
+
+
+
+export const getMeSetPhotoMutationKey = () => ['meSetPhoto'] as const;
+
+export const getMeSetPhotoMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSetPhoto>>, TError,MeSetPhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meSetPhoto>>, TError,MeSetPhotoMutationVariables, TContext> => {
+
+const mutationKey = getMeSetPhotoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meSetPhoto>>, MeSetPhotoMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  meSetPhoto(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeSetPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof meSetPhoto>>>
+    export type MeSetPhotoMutationBody = Blob
+    export type MeSetPhotoMutationError = ErrorType<ProblemDetailsDto>
+    export type MeSetPhotoMutationVariables = {data: Blob}
+
+    /**
+ * @summary Cambia mi foto de perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo). Sustituye a la anterior. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 429 RATE_LIMITED.
+ */
+export const useMeSetPhoto = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meSetPhoto>>, TError,MeSetPhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meSetPhoto>>,
+        TError,
+        MeSetPhotoMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMeSetPhotoMutationOptions(options), queryClient);
+    }
+    export const getMeRemovePhotoUrl = () => {
+
+
+
+
+  return `/v1/me/photo`
+}
+
+/**
+ * @summary Quita mi foto de perfil.
+ */
+export const meRemovePhoto = async ( options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getMeRemovePhotoUrl(),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getMeRemovePhotoMutationKey = () => ['meRemovePhoto'] as const;
+
+export const getMeRemovePhotoMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRemovePhoto>>, TError,void, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof meRemovePhoto>>, TError,void, TContext> => {
+
+const mutationKey = getMeRemovePhotoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof meRemovePhoto>>, void> = () => {
+
+
+          return  meRemovePhoto(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MeRemovePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof meRemovePhoto>>>
+
+    export type MeRemovePhotoMutationError = ErrorType<ProblemDetailsDto>
+
+
+    /**
+ * @summary Quita mi foto de perfil.
+ */
+export const useMeRemovePhoto = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meRemovePhoto>>, TError,void, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof meRemovePhoto>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getMeRemovePhotoMutationOptions(options), queryClient);
     }

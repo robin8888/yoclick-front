@@ -50,6 +50,7 @@ export const MeRevokeSessionResponse = zod.void()
  * @summary Mi perfil.
  */
 export const meGetProfileResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meGetProfileResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meGetProfileResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meGetProfileResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meGetProfileResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -70,6 +71,11 @@ export const MeGetProfileResponse = zod.object({
   "membershipId": zod.uuid().regex(meGetProfileResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(meGetProfileResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -134,6 +140,7 @@ export const MeUpdateProfileBody = zod.object({
 })
 
 export const meUpdateProfileResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const meUpdateProfileResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meUpdateProfileResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meUpdateProfileResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const meUpdateProfileResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -154,6 +161,11 @@ export const MeUpdateProfileResponse = zod.object({
   "membershipId": zod.uuid().regex(meUpdateProfileResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(meUpdateProfileResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -229,6 +241,7 @@ export const MeListMembershipsResponse = zod.object({
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "joinedAt": zod.iso.datetime({"offset":true}).regex(meListMembershipsResponseMembershipsItemJoinedAtRegExp),
+  "photoUrl": zod.string().nullable(),
   "center": zod.object({
   "name": zod.string(),
   "slug": zod.string(),
@@ -322,6 +335,7 @@ export const MeExportDataResponse = zod.object({
   "phone": zod.string().nullable(),
   "birthDate": zod.iso.date().regex(meExportDataResponseProfileBirthDateRegExp).nullable(),
   "locale": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "isEmailVerified": zod.boolean(),
   "createdAt": zod.iso.datetime({"offset":true}).regex(meExportDataResponseProfileCreatedAtRegExp)
 }),
@@ -331,6 +345,7 @@ export const MeExportDataResponse = zod.object({
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "joinedAt": zod.iso.datetime({"offset":true}).regex(meExportDataResponseMembershipsItemJoinedAtRegExp),
+  "photoUrl": zod.string().nullable(),
   "center": zod.object({
   "name": zod.string(),
   "slug": zod.string(),
@@ -371,4 +386,16 @@ export const MeUnregisterPushDeviceBody = zod.object({
 })
 
 export const MeUnregisterPushDeviceResponse = zod.void()
+
+/**
+ * @summary Cambia mi foto de perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo). Sustituye a la anterior. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 429 RATE_LIMITED.
+ */
+export const MeSetPhotoResponse = zod.object({
+  "photoUrl": zod.string()
+})
+
+/**
+ * @summary Quita mi foto de perfil.
+ */
+export const MeRemovePhotoResponse = zod.void()
 

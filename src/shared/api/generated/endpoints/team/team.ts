@@ -879,3 +879,78 @@ export const useTeamRemoveAbsence = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getTeamRemoveAbsenceMutationOptions(options), queryClient);
     }
+    export const getMembersRemovePhotoUrl = (centerId: string,
+    membershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/members/${membershipId}/photo`
+}
+
+/**
+ * @summary Moderación: quita la foto de perfil de una persona del centro (cliente o equipo). 404 si no es del centro.
+ */
+export const membersRemovePhoto = async (centerId: string,
+    membershipId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getMembersRemovePhotoUrl(centerId,membershipId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getMembersRemovePhotoMutationKey = () => ['membersRemovePhoto'] as const;
+
+export const getMembersRemovePhotoMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof membersRemovePhoto>>, TError,MembersRemovePhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof membersRemovePhoto>>, TError,MembersRemovePhotoMutationVariables, TContext> => {
+
+const mutationKey = getMembersRemovePhotoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof membersRemovePhoto>>, MembersRemovePhotoMutationVariables> = (props) => {
+          const {centerId,membershipId} = props ?? {};
+
+          return  membersRemovePhoto(centerId,membershipId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MembersRemovePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof membersRemovePhoto>>>
+
+    export type MembersRemovePhotoMutationError = ErrorType<ProblemDetailsDto>
+    export type MembersRemovePhotoMutationVariables = {centerId: string;membershipId: string}
+
+    /**
+ * @summary Moderación: quita la foto de perfil de una persona del centro (cliente o equipo). 404 si no es del centro.
+ */
+export const useMembersRemovePhoto = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof membersRemovePhoto>>, TError,MembersRemovePhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof membersRemovePhoto>>,
+        TError,
+        MembersRemovePhotoMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMembersRemovePhotoMutationOptions(options), queryClient);
+    }

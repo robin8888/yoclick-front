@@ -28,6 +28,7 @@ import type {
   AddVideoContentRequestDto,
   AssignContentRequestDto,
   ContentAddDocumentParams,
+  ContentAddImageParams,
   ContentDetailResponseDto,
   ContentLibraryResponseDto,
   ContentResponseDto,
@@ -431,7 +432,7 @@ export const useContentAssign = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED.
+ * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
  */
 export const contentAddDocument = async (centerId: string,
     contentAddDocumentBody: Blob,
@@ -499,7 +500,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ContentAddDocumentMutationVariables = {centerId: string;data: Blob;params: ContentAddDocumentParams}
 
     /**
- * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED.
+ * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
  */
 export const useContentAddDocument = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentAddDocument>>, TError,ContentAddDocumentMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -510,6 +511,103 @@ export const useContentAddDocument = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getContentAddDocumentMutationOptions(options), queryClient);
+    }
+    export const getContentAddImageUrl = (centerId: string,
+    params: ContentAddImageParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/content/images?${stringifiedParams}` : `/v1/centers/${centerId}/content/images`
+}
+
+/**
+ * @summary Sube una imagen (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo) y la añade a la biblioteca. Cuenta en el mismo espacio que los PDF. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
+ */
+export const contentAddImage = async (centerId: string,
+    contentAddImageBody: Blob,
+    params: ContentAddImageParams, options?: Parameters<typeof apiMutator>[1]): Promise<ContentResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<ContentResponseDto>(getContentAddImageUrl(centerId,params),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'image/jpeg', ...getHeaders(options?.headers) },
+    body: contentAddImageBody
+  }
+);}
+
+
+
+
+
+export const getContentAddImageMutationKey = () => ['contentAddImage'] as const;
+
+export const getContentAddImageMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentAddImage>>, TError,ContentAddImageMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof contentAddImage>>, TError,ContentAddImageMutationVariables, TContext> => {
+
+const mutationKey = getContentAddImageMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof contentAddImage>>, ContentAddImageMutationVariables> = (props) => {
+          const {centerId,data,params} = props ?? {};
+
+          return  contentAddImage(centerId,data,params,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ContentAddImageMutationResult = NonNullable<Awaited<ReturnType<typeof contentAddImage>>>
+    export type ContentAddImageMutationBody = Blob
+    export type ContentAddImageMutationError = ErrorType<ProblemDetailsDto>
+    export type ContentAddImageMutationVariables = {centerId: string;data: Blob;params: ContentAddImageParams}
+
+    /**
+ * @summary Sube una imagen (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo) y la añade a la biblioteca. Cuenta en el mismo espacio que los PDF. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
+ */
+export const useContentAddImage = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof contentAddImage>>, TError,ContentAddImageMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof contentAddImage>>,
+        TError,
+        ContentAddImageMutationVariables,
+        TContext
+      > => {
+      return useMutation(getContentAddImageMutationOptions(options), queryClient);
     }
     export const getContentAddVideoUrl = (centerId: string,) => {
 

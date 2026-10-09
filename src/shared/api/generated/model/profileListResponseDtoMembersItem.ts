@@ -7,6 +7,7 @@
  */
 import type { ProfileListResponseDtoMembersItemCertificationsItem } from './profileListResponseDtoMembersItemCertificationsItem.ts';
 import type { ProfileListResponseDtoMembersItemIntroVideo } from './profileListResponseDtoMembersItemIntroVideo.ts';
+import type { ProfileListResponseDtoMembersItemPhotosItem } from './profileListResponseDtoMembersItemPhotosItem.ts';
 import type { ProfileListResponseDtoMembersItemRating } from './profileListResponseDtoMembersItemRating.ts';
 import type { ProfileListResponseDtoMembersItemStatus } from './profileListResponseDtoMembersItemStatus.ts';
 import type { ProfileListResponseDtoMembersItemTechniqueVideosItem } from './profileListResponseDtoMembersItemTechniqueVideosItem.ts';
@@ -16,6 +17,9 @@ export type ProfileListResponseDtoMembersItem = {
   membershipId: string;
   isMe: boolean;
   fullName: string;
+  /** @nullable */
+  photoUrl: string | null;
+  photos: ProfileListResponseDtoMembersItemPhotosItem[];
   /** @nullable */
   staffTitle: string | null;
   /** @nullable */

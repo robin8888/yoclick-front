@@ -33,6 +33,7 @@ export const TeamListResponse = zod.object({
   "userId": zod.uuid().regex(teamListResponseMembersItemUserIdRegExp),
   "fullName": zod.string(),
   "email": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "staffTitle": zod.string().nullable(),
@@ -80,6 +81,7 @@ export const TeamUpdateMemberResponse = zod.object({
   "userId": zod.uuid().regex(teamUpdateMemberResponseUserIdRegExp),
   "fullName": zod.string(),
   "email": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client']),
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "staffTitle": zod.string().nullable(),
@@ -434,4 +436,22 @@ export const TeamRemoveAbsenceHeader = zod.object({
 })
 
 export const TeamRemoveAbsenceResponse = zod.void()
+
+/**
+ * @summary Moderación: quita la foto de perfil de una persona del centro (cliente o equipo). 404 si no es del centro.
+ */
+export const membersRemovePhotoPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const membersRemovePhotoPathMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const MembersRemovePhotoParams = zod.object({
+  "centerId": zod.uuid().regex(membersRemovePhotoPathCenterIdRegExp),
+  "membershipId": zod.uuid().regex(membersRemovePhotoPathMembershipIdRegExp)
+})
+
+export const MembersRemovePhotoHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const MembersRemovePhotoResponse = zod.void()
 

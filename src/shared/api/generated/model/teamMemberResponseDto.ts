@@ -16,6 +16,8 @@ export interface TeamMemberResponseDto {
   userId: string;
   fullName: string;
   email: string;
+  /** @nullable */
+  photoUrl: string | null;
   role: TeamMemberResponseDtoRole;
   status: TeamMemberResponseDtoStatus;
   /** @nullable */

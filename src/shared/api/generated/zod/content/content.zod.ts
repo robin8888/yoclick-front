@@ -47,7 +47,7 @@ export const contentListResponseStorageUsedBytesMax = 9007199254740991;
 export const ContentListResponse = zod.object({
   "items": zod.array(zod.object({
   "id": zod.uuid().regex(contentListResponseItemsItemIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -117,7 +117,7 @@ export const contentUpdateResponseAssignmentsItemClientMembershipIdRegExp = new 
 
 export const ContentUpdateResponse = zod.object({
   "id": zod.uuid().regex(contentUpdateResponseIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -207,7 +207,7 @@ export const contentAssignResponseAssignmentsItemClientMembershipIdRegExp = new 
 
 export const ContentAssignResponse = zod.object({
   "id": zod.uuid().regex(contentAssignResponseIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -227,7 +227,7 @@ export const ContentAssignResponse = zod.object({
 })
 
 /**
- * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED.
+ * @summary Sube un PDF (cuerpo `application/pdf`, hasta 50 MB) y lo añade a la biblioteca. 400 DOCUMENT_NOT_PDF, 413 DOCUMENT_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
  */
 export const contentAddDocumentPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -270,7 +270,7 @@ export const contentAddDocumentResponseAssignmentsItemClientMembershipIdRegExp =
 
 export const ContentAddDocumentResponse = zod.object({
   "id": zod.uuid().regex(contentAddDocumentResponseIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -285,6 +285,69 @@ export const ContentAddDocumentResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentAddDocumentResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentAddDocumentResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "label": zod.string().nullable()
+}))
+})
+
+/**
+ * @summary Sube una imagen (cuerpo JPEG, PNG o WebP, hasta 5 MB; se reconoce por su contenido, no por el tipo) y la añade a la biblioteca. Cuenta en el mismo espacio que los PDF. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 DOCUMENT_QUOTA_EXCEEDED, 429 RATE_LIMITED.
+ */
+export const contentAddImagePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ContentAddImageParams = zod.object({
+  "centerId": zod.uuid().regex(contentAddImagePathCenterIdRegExp)
+})
+
+export const contentAddImageQueryTitleMax = 120;
+
+export const contentAddImageQueryNeedMax = 40;
+
+
+
+export const ContentAddImageQueryParams = zod.object({
+  "title": zod.string().min(1).max(contentAddImageQueryTitleMax),
+  "need": zod.string().min(1).max(contentAddImageQueryNeedMax).optional(),
+  "level": zod.enum(['beginner', 'intermediate', 'advanced']).optional()
+})
+
+export const ContentAddImageHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const contentAddImageResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const contentAddImageResponseSizeBytesMin = 0;
+export const contentAddImageResponseSizeBytesMax = 9007199254740991;
+
+export const contentAddImageResponsePageCountMin = -9007199254740991;
+export const contentAddImageResponsePageCountMax = 9007199254740991;
+
+export const contentAddImageResponseDurationSecondsMin = -9007199254740991;
+export const contentAddImageResponseDurationSecondsMax = 9007199254740991;
+
+export const contentAddImageResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const contentAddImageResponseAssignmentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const contentAddImageResponseAssignmentsItemGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const contentAddImageResponseAssignmentsItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ContentAddImageResponse = zod.object({
+  "id": zod.uuid().regex(contentAddImageResponseIdRegExp),
+  "kind": zod.enum(['video', 'pdf', 'image']),
+  "title": zod.string(),
+  "need": zod.string().nullable(),
+  "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
+  "sizeBytes": zod.int().min(contentAddImageResponseSizeBytesMin).max(contentAddImageResponseSizeBytesMax),
+  "pageCount": zod.int().min(contentAddImageResponsePageCountMin).max(contentAddImageResponsePageCountMax).nullable(),
+  "durationSeconds": zod.int().min(contentAddImageResponseDurationSecondsMin).max(contentAddImageResponseDurationSecondsMax).nullable(),
+  "isReady": zod.boolean(),
+  "thumbnailUrl": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(contentAddImageResponseCreatedAtRegExp),
+  "assignments": zod.array(zod.object({
+  "id": zod.uuid().regex(contentAddImageResponseAssignmentsItemIdRegExp),
+  "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
+  "groupId": zod.uuid().regex(contentAddImageResponseAssignmentsItemGroupIdRegExp).nullable(),
+  "clientMembershipId": zod.uuid().regex(contentAddImageResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
   "label": zod.string().nullable()
 }))
 })
@@ -335,7 +398,7 @@ export const contentAddVideoResponseAssignmentsItemClientMembershipIdRegExp = ne
 
 export const ContentAddVideoResponse = zod.object({
   "id": zod.uuid().regex(contentAddVideoResponseIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -387,7 +450,7 @@ export const contentListMineResponseItemsItemAssignmentsItemClientMembershipIdRe
 export const ContentListMineResponse = zod.object({
   "items": zod.array(zod.object({
   "id": zod.uuid().regex(contentListMineResponseItemsItemIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -439,11 +502,12 @@ export const contentGetMineResponseAssignmentsItemGroupIdRegExp = new RegExp('^(
 export const contentGetMineResponseAssignmentsItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const contentGetMineResponsePlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const contentGetMineResponseDocumentExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const contentGetMineResponseImageExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const ContentGetMineResponse = zod.object({
   "id": zod.uuid().regex(contentGetMineResponseIdRegExp),
-  "kind": zod.enum(['video', 'pdf']),
+  "kind": zod.enum(['video', 'pdf', 'image']),
   "title": zod.string(),
   "need": zod.string().nullable(),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
@@ -468,6 +532,10 @@ export const ContentGetMineResponse = zod.object({
   "document": zod.object({
   "url": zod.string(),
   "expiresAt": zod.iso.datetime({"offset":true}).regex(contentGetMineResponseDocumentExpiresAtRegExp)
+}).nullable(),
+  "image": zod.object({
+  "url": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(contentGetMineResponseImageExpiresAtRegExp)
 }).nullable()
 })
 

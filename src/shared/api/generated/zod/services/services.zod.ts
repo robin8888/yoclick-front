@@ -37,6 +37,7 @@ export const servicesListResponseServicesItemMinNoticeMinutesMax = 9007199254740
 
 export const servicesListResponseServicesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesListResponseServicesItemStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListResponseServicesItemStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const ServicesListResponse = zod.object({
@@ -58,7 +59,12 @@ export const ServicesListResponse = zod.object({
 }).nullable(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesListResponseServicesItemStaffItemMembershipIdRegExp),
-  "fullName": zod.string()
+  "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesListResponseServicesItemStaffItemPhotosItemIdRegExp),
+  "url": zod.string()
+}))
 }))
 }))
 })
@@ -128,6 +134,7 @@ export const servicesCreateResponseMinNoticeMinutesMax = 9007199254740991;
 
 export const servicesCreateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateResponseStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesCreateResponseStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const ServicesCreateResponse = zod.object({
@@ -148,7 +155,12 @@ export const ServicesCreateResponse = zod.object({
 }).nullable(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesCreateResponseStaffItemMembershipIdRegExp),
-  "fullName": zod.string()
+  "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesCreateResponseStaffItemPhotosItemIdRegExp),
+  "url": zod.string()
+}))
 }))
 })
 
@@ -219,6 +231,7 @@ export const servicesUpdateResponseMinNoticeMinutesMax = 9007199254740991;
 
 export const servicesUpdateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateResponseStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesUpdateResponseStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const ServicesUpdateResponse = zod.object({
@@ -239,7 +252,12 @@ export const ServicesUpdateResponse = zod.object({
 }).nullable(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesUpdateResponseStaffItemMembershipIdRegExp),
-  "fullName": zod.string()
+  "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesUpdateResponseStaffItemPhotosItemIdRegExp),
+  "url": zod.string()
+}))
 }))
 })
 

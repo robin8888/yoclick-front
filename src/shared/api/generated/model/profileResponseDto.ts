@@ -7,6 +7,7 @@
  */
 import type { ProfileResponseDtoCertificationsItem } from './profileResponseDtoCertificationsItem.ts';
 import type { ProfileResponseDtoIntroVideo } from './profileResponseDtoIntroVideo.ts';
+import type { ProfileResponseDtoPhotosItem } from './profileResponseDtoPhotosItem.ts';
 import type { ProfileResponseDtoRating } from './profileResponseDtoRating.ts';
 import type { ProfileResponseDtoStatus } from './profileResponseDtoStatus.ts';
 import type { ProfileResponseDtoTechniqueVideosItem } from './profileResponseDtoTechniqueVideosItem.ts';
@@ -16,6 +17,9 @@ export interface ProfileResponseDto {
   membershipId: string;
   isMe: boolean;
   fullName: string;
+  /** @nullable */
+  photoUrl: string | null;
+  photos: ProfileResponseDtoPhotosItem[];
   /** @nullable */
   staffTitle: string | null;
   /** @nullable */

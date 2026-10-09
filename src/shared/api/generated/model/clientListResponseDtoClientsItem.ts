@@ -15,6 +15,8 @@ export type ClientListResponseDtoClientsItem = {
   membershipId: string;
   fullName: string;
   email: string;
+  /** @nullable */
+  photoUrl: string | null;
   status: ClientListResponseDtoClientsItemStatus;
   activity: ClientListResponseDtoClientsItemActivity;
   /** @nullable */

@@ -12,4 +12,5 @@ export type ContentLibraryResponseDtoItemsItemKind = typeof ContentLibraryRespon
 export const ContentLibraryResponseDtoItemsItemKind = {
   video: 'video',
   pdf: 'pdf',
+  image: 'image',
 } as const;

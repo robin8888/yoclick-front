@@ -12,4 +12,5 @@ export type ContentDetailResponseDtoKind = typeof ContentDetailResponseDtoKind[k
 export const ContentDetailResponseDtoKind = {
   video: 'video',
   pdf: 'pdf',
+  image: 'image',
 } as const;

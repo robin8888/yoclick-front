@@ -9,7 +9,7 @@ import * as zod from 'zod';
 
 
 /**
- * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe.
+ * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe; 409 VIDEO_UPLOADS_IN_PROGRESS si ya hay 5 vídeos subiéndose; 429 RATE_LIMITED.
  */
 export const videosStartUploadPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 

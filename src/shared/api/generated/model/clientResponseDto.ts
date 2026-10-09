@@ -15,6 +15,8 @@ export interface ClientResponseDto {
   membershipId: string;
   fullName: string;
   email: string;
+  /** @nullable */
+  photoUrl: string | null;
   status: ClientResponseDtoStatus;
   activity: ClientResponseDtoActivity;
   /** @nullable */

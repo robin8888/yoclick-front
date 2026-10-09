@@ -12,4 +12,5 @@ export type MyContentListResponseDtoItemsItemKind = typeof MyContentListResponse
 export const MyContentListResponseDtoItemsItemKind = {
   video: 'video',
   pdf: 'pdf',
+  image: 'image',
 } as const;

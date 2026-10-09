@@ -27,6 +27,7 @@ import {
   getStaffReviewsListResponseMock,
   getStaffReviewsModerateResponseMock,
   getTeamProfilesAddCertificationResponseMock,
+  getTeamProfilesAddPhotoResponseMock,
   getTeamProfilesGetResponseMock,
   getTeamProfilesListResponseMock,
   getTeamProfilesReviewResponseMock,
@@ -37,7 +38,7 @@ import {
   getTeamSettingsSaveResponseMock
 } from './team-profiles.faker.ts';
 
-export { getTeamProfilesSaveMineResponseMock, getTeamProfilesSubmitMineResponseMock, getTeamProfilesAddCertificationResponseMock, getTeamSettingsGetResponseMock, getTeamSettingsSaveResponseMock, getStaffReviewsCreateResponseMock, getStaffReviewsListResponseMock, getStaffReviewsListPendingResponseMock, getStaffReviewsModerateResponseMock, getTeamProfilesReviewResponseMock, getTeamProfilesVerifyCertificationResponseMock, getTeamProfilesListResponseMock, getTeamProfilesGetResponseMock } from './team-profiles.faker.ts';
+export { getTeamProfilesSaveMineResponseMock, getTeamProfilesSubmitMineResponseMock, getTeamProfilesAddCertificationResponseMock, getTeamProfilesAddPhotoResponseMock, getTeamSettingsGetResponseMock, getTeamSettingsSaveResponseMock, getStaffReviewsCreateResponseMock, getStaffReviewsListResponseMock, getStaffReviewsListPendingResponseMock, getStaffReviewsModerateResponseMock, getTeamProfilesReviewResponseMock, getTeamProfilesVerifyCertificationResponseMock, getTeamProfilesListResponseMock, getTeamProfilesGetResponseMock } from './team-profiles.faker.ts';
 
 
 export const getTeamProfilesSaveMineMockHandler = (overrideResponse?: ProfileResponseDto | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<ProfileResponseDto> | ProfileResponseDto), options?: RequestHandlerOptions) => {
@@ -78,6 +79,28 @@ export const getTeamProfilesAddCertificationMockHandler = (overrideResponse?: Pr
 
 export const getTeamProfilesRemoveCertificationMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
   return http.delete('*/v1/centers/:centerId/team-profiles/me/certifications/:certificationId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
+export const getTeamProfilesAddPhotoMockHandler = (overrideResponse?: ProfileResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ProfileResponseDto> | ProfileResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/team-profiles/me/photos', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getTeamProfilesAddPhotoResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getTeamProfilesRemovePhotoMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/team-profiles/me/photos/:photoId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
 
     return new HttpResponse(null,
@@ -210,6 +233,8 @@ export const getTeamProfilesMock = () => [
   getTeamProfilesSubmitMineMockHandler(),
   getTeamProfilesAddCertificationMockHandler(),
   getTeamProfilesRemoveCertificationMockHandler(),
+  getTeamProfilesAddPhotoMockHandler(),
+  getTeamProfilesRemovePhotoMockHandler(),
   getTeamSettingsGetMockHandler(),
   getTeamSettingsSaveMockHandler(),
   getStaffReviewsCreateMockHandler(),

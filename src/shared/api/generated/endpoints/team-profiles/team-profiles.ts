@@ -386,6 +386,169 @@ export const useTeamProfilesRemoveCertification = <TError = ErrorType<ProblemDet
       > => {
       return useMutation(getTeamProfilesRemoveCertificationMutationOptions(options), queryClient);
     }
+    export const getTeamProfilesAddPhotoUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team-profiles/me/photos`
+}
+
+/**
+ * @summary Añade una foto al final de la galería de mi perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; máximo 6 fotos). El perfil vuelve a borrador. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 PROFILE_PHOTO_LIMIT_REACHED, 409 PHOTO_QUOTA_EXCEEDED (el centro llenó su espacio de fotos), 429 RATE_LIMITED.
+ */
+export const teamProfilesAddPhoto = async (centerId: string,
+    teamProfilesAddPhotoBody: Blob, options?: Parameters<typeof apiMutator>[1]): Promise<ProfileResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<ProfileResponseDto>(getTeamProfilesAddPhotoUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'image/jpeg', ...getHeaders(options?.headers) },
+    body: teamProfilesAddPhotoBody
+  }
+);}
+
+
+
+
+
+export const getTeamProfilesAddPhotoMutationKey = () => ['teamProfilesAddPhoto'] as const;
+
+export const getTeamProfilesAddPhotoMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamProfilesAddPhoto>>, TError,TeamProfilesAddPhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof teamProfilesAddPhoto>>, TError,TeamProfilesAddPhotoMutationVariables, TContext> => {
+
+const mutationKey = getTeamProfilesAddPhotoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof teamProfilesAddPhoto>>, TeamProfilesAddPhotoMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  teamProfilesAddPhoto(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TeamProfilesAddPhotoMutationResult = NonNullable<Awaited<ReturnType<typeof teamProfilesAddPhoto>>>
+    export type TeamProfilesAddPhotoMutationBody = Blob
+    export type TeamProfilesAddPhotoMutationError = ErrorType<ProblemDetailsDto>
+    export type TeamProfilesAddPhotoMutationVariables = {centerId: string;data: Blob}
+
+    /**
+ * @summary Añade una foto al final de la galería de mi perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; máximo 6 fotos). El perfil vuelve a borrador. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 PROFILE_PHOTO_LIMIT_REACHED, 409 PHOTO_QUOTA_EXCEEDED (el centro llenó su espacio de fotos), 429 RATE_LIMITED.
+ */
+export const useTeamProfilesAddPhoto = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamProfilesAddPhoto>>, TError,TeamProfilesAddPhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof teamProfilesAddPhoto>>,
+        TError,
+        TeamProfilesAddPhotoMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTeamProfilesAddPhotoMutationOptions(options), queryClient);
+    }
+    export const getTeamProfilesRemovePhotoUrl = (centerId: string,
+    photoId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/team-profiles/me/photos/${photoId}`
+}
+
+/**
+ * @summary Quita una foto de la galería de mi perfil. El perfil vuelve a borrador.
+ */
+export const teamProfilesRemovePhoto = async (centerId: string,
+    photoId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getTeamProfilesRemovePhotoUrl(centerId,photoId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getTeamProfilesRemovePhotoMutationKey = () => ['teamProfilesRemovePhoto'] as const;
+
+export const getTeamProfilesRemovePhotoMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamProfilesRemovePhoto>>, TError,TeamProfilesRemovePhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof teamProfilesRemovePhoto>>, TError,TeamProfilesRemovePhotoMutationVariables, TContext> => {
+
+const mutationKey = getTeamProfilesRemovePhotoMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof teamProfilesRemovePhoto>>, TeamProfilesRemovePhotoMutationVariables> = (props) => {
+          const {centerId,photoId} = props ?? {};
+
+          return  teamProfilesRemovePhoto(centerId,photoId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type TeamProfilesRemovePhotoMutationResult = NonNullable<Awaited<ReturnType<typeof teamProfilesRemovePhoto>>>
+
+    export type TeamProfilesRemovePhotoMutationError = ErrorType<ProblemDetailsDto>
+    export type TeamProfilesRemovePhotoMutationVariables = {centerId: string;photoId: string}
+
+    /**
+ * @summary Quita una foto de la galería de mi perfil. El perfil vuelve a borrador.
+ */
+export const useTeamProfilesRemovePhoto = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof teamProfilesRemovePhoto>>, TError,TeamProfilesRemovePhotoMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof teamProfilesRemovePhoto>>,
+        TError,
+        TeamProfilesRemovePhotoMutationVariables,
+        TContext
+      > => {
+      return useMutation(getTeamProfilesRemovePhotoMutationOptions(options), queryClient);
+    }
     export const getTeamSettingsGetUrl = (centerId: string,) => {
 
 

@@ -49,6 +49,7 @@ export const TeamProfilesSaveMineBody = zod.object({
 })
 
 export const teamProfilesSaveMineResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesSaveMineResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSaveMineResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSaveMineResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSaveMineResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -69,6 +70,11 @@ export const TeamProfilesSaveMineResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesSaveMineResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesSaveMineResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -130,6 +136,7 @@ export const TeamProfilesSubmitMineHeader = zod.object({
 })
 
 export const teamProfilesSubmitMineResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesSubmitMineResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSubmitMineResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSubmitMineResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesSubmitMineResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -150,6 +157,11 @@ export const TeamProfilesSubmitMineResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesSubmitMineResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesSubmitMineResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -223,6 +235,7 @@ export const TeamProfilesAddCertificationBody = zod.object({
 })
 
 export const teamProfilesAddCertificationResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddCertificationResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesAddCertificationResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesAddCertificationResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesAddCertificationResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -243,6 +256,11 @@ export const TeamProfilesAddCertificationResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesAddCertificationResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesAddCertificationResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -306,6 +324,111 @@ export const TeamProfilesRemoveCertificationHeader = zod.object({
 })
 
 export const TeamProfilesRemoveCertificationResponse = zod.void()
+
+/**
+ * @summary Añade una foto al final de la galería de mi perfil (cuerpo JPEG, PNG o WebP, hasta 5 MB; máximo 6 fotos). El perfil vuelve a borrador. 400 PHOTO_NOT_IMAGE, 413 PHOTO_TOO_LARGE, 409 PROFILE_PHOTO_LIMIT_REACHED, 409 PHOTO_QUOTA_EXCEEDED (el centro llenó su espacio de fotos), 429 RATE_LIMITED.
+ */
+export const teamProfilesAddPhotoPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamProfilesAddPhotoParams = zod.object({
+  "centerId": zod.uuid().regex(teamProfilesAddPhotoPathCenterIdRegExp)
+})
+
+export const TeamProfilesAddPhotoHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const teamProfilesAddPhotoResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddPhotoResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddPhotoResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddPhotoResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddPhotoResponseIntroVideoDurationSecondsMin = -9007199254740991;
+export const teamProfilesAddPhotoResponseIntroVideoDurationSecondsMax = 9007199254740991;
+
+export const teamProfilesAddPhotoResponseIntroVideoPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const teamProfilesAddPhotoResponseTechniqueVideosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesAddPhotoResponseTechniqueVideosItemDurationSecondsMin = -9007199254740991;
+export const teamProfilesAddPhotoResponseTechniqueVideosItemDurationSecondsMax = 9007199254740991;
+
+export const teamProfilesAddPhotoResponseTechniqueVideosItemPlaybackExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const teamProfilesAddPhotoResponseRatingCountMin = -9007199254740991;
+export const teamProfilesAddPhotoResponseRatingCountMax = 9007199254740991;
+
+
+
+export const TeamProfilesAddPhotoResponse = zod.object({
+  "membershipId": zod.uuid().regex(teamProfilesAddPhotoResponseMembershipIdRegExp),
+  "isMe": zod.boolean(),
+  "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesAddPhotoResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
+  "staffTitle": zod.string().nullable(),
+  "headline": zod.string().nullable(),
+  "bio": zod.string().nullable(),
+  "specialties": zod.array(zod.string()),
+  "languages": zod.array(zod.string()),
+  "status": zod.enum(['draft', 'pending', 'published', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "hasPublishConsent": zod.boolean(),
+  "certifications": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesAddPhotoResponseCertificationsItemIdRegExp),
+  "name": zod.string(),
+  "detail": zod.string().nullable(),
+  "isVerified": zod.boolean()
+})),
+  "introVideo": zod.object({
+  "id": zod.uuid().regex(teamProfilesAddPhotoResponseIntroVideoIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(teamProfilesAddPhotoResponseIntroVideoDurationSecondsMin).max(teamProfilesAddPhotoResponseIntroVideoDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(teamProfilesAddPhotoResponseIntroVideoPlaybackExpiresAtRegExp)
+}).nullable()
+}).nullable(),
+  "techniqueVideos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesAddPhotoResponseTechniqueVideosItemIdRegExp),
+  "title": zod.string(),
+  "status": zod.enum(['uploading', 'processing', 'ready', 'failed']),
+  "reviewStatus": zod.enum(['approved', 'pending', 'changes_requested']),
+  "reviewNote": zod.string().nullable(),
+  "durationSeconds": zod.int().min(teamProfilesAddPhotoResponseTechniqueVideosItemDurationSecondsMin).max(teamProfilesAddPhotoResponseTechniqueVideosItemDurationSecondsMax).nullable(),
+  "playback": zod.object({
+  "streamUrl": zod.string(),
+  "thumbnailUrl": zod.string(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(teamProfilesAddPhotoResponseTechniqueVideosItemPlaybackExpiresAtRegExp)
+}).nullable()
+})),
+  "rating": zod.object({
+  "average": zod.number(),
+  "count": zod.int().min(teamProfilesAddPhotoResponseRatingCountMin).max(teamProfilesAddPhotoResponseRatingCountMax)
+}).nullable()
+})
+
+/**
+ * @summary Quita una foto de la galería de mi perfil. El perfil vuelve a borrador.
+ */
+export const teamProfilesRemovePhotoPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesRemovePhotoPathPhotoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const TeamProfilesRemovePhotoParams = zod.object({
+  "centerId": zod.uuid().regex(teamProfilesRemovePhotoPathCenterIdRegExp),
+  "photoId": zod.uuid().regex(teamProfilesRemovePhotoPathPhotoIdRegExp)
+})
+
+export const TeamProfilesRemovePhotoHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const TeamProfilesRemovePhotoResponse = zod.void()
 
 /**
  * @summary Si el equipo se enseña en la web de reservas y si las opiniones se revisan antes de publicarse.
@@ -535,6 +658,7 @@ export const TeamProfilesReviewBody = zod.object({
 })
 
 export const teamProfilesReviewResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesReviewResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesReviewResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesReviewResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesReviewResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -555,6 +679,11 @@ export const TeamProfilesReviewResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesReviewResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesReviewResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -620,6 +749,7 @@ export const TeamProfilesVerifyCertificationHeader = zod.object({
 })
 
 export const teamProfilesVerifyCertificationResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesVerifyCertificationResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesVerifyCertificationResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesVerifyCertificationResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesVerifyCertificationResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -640,6 +770,11 @@ export const TeamProfilesVerifyCertificationResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesVerifyCertificationResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesVerifyCertificationResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -701,6 +836,7 @@ export const TeamProfilesListHeader = zod.object({
 })
 
 export const teamProfilesListResponseMembersItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesListResponseMembersItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesListResponseMembersItemCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesListResponseMembersItemIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesListResponseMembersItemIntroVideoDurationSecondsMin = -9007199254740991;
@@ -722,6 +858,11 @@ export const TeamProfilesListResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesListResponseMembersItemMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesListResponseMembersItemPhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),
@@ -786,6 +927,7 @@ export const TeamProfilesGetHeader = zod.object({
 })
 
 export const teamProfilesGetResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamProfilesGetResponsePhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesGetResponseCertificationsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesGetResponseIntroVideoIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamProfilesGetResponseIntroVideoDurationSecondsMin = -9007199254740991;
@@ -806,6 +948,11 @@ export const TeamProfilesGetResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesGetResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "id": zod.uuid().regex(teamProfilesGetResponsePhotosItemIdRegExp),
+  "url": zod.string()
+})),
   "staffTitle": zod.string().nullable(),
   "headline": zod.string().nullable(),
   "bio": zod.string().nullable(),

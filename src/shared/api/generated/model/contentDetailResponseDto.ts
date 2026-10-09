@@ -7,6 +7,7 @@
  */
 import type { ContentDetailResponseDtoAssignmentsItem } from './contentDetailResponseDtoAssignmentsItem.ts';
 import type { ContentDetailResponseDtoDocument } from './contentDetailResponseDtoDocument.ts';
+import type { ContentDetailResponseDtoImage } from './contentDetailResponseDtoImage.ts';
 import type { ContentDetailResponseDtoKind } from './contentDetailResponseDtoKind.ts';
 import type { ContentDetailResponseDtoLevel } from './contentDetailResponseDtoLevel.ts';
 import type { ContentDetailResponseDtoPlayback } from './contentDetailResponseDtoPlayback.ts';
@@ -47,4 +48,6 @@ export interface ContentDetailResponseDto {
   playback: ContentDetailResponseDtoPlayback;
   /** @nullable */
   document: ContentDetailResponseDtoDocument;
+  /** @nullable */
+  image: ContentDetailResponseDtoImage;
 }

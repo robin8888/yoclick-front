@@ -138,6 +138,16 @@ export const getTeamRemoveAbsenceMockHandler = (overrideResponse?: void | ((info
       })
   }, options)
 }
+
+export const getMembersRemovePhotoMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/members/:membershipId/photo', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getTeamMock = () => [
   getTeamListMockHandler(),
   getTeamUpdateMemberMockHandler(),
@@ -147,5 +157,6 @@ export const getTeamMock = () => [
   getTeamGetAvailabilityMockHandler(),
   getTeamSaveAvailabilityMockHandler(),
   getTeamAddAbsenceMockHandler(),
-  getTeamRemoveAbsenceMockHandler()
+  getTeamRemoveAbsenceMockHandler(),
+  getMembersRemovePhotoMockHandler()
 ]

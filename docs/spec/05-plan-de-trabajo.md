@@ -4,6 +4,20 @@ Un ticket = una rama (`feat/API-012-bookings-create`) = un PR pequeño (< 400 l�
 
 Orden recomendado: **API-0 → API-1 → APP-0 en paralelo con API-2 → …** La app trabaja con mocks MSW generados del contrato hasta que el endpoint real existe.
 
+## Actualización (9 oct 2026, cierre del día)
+
+Front: lint, typecheck y 1744 tests en verde. Back: lint, tsc, 971 unitarios y 811 e2e en verde.
+
+- ✅ **Biblioteca de contenido** (vídeo, PDF e **imagen**) con nombre, etiqueta y nivel; asignación por nivel, grupo o persona (también el instructor); aviso push al asignar. Bunny Storage (`yoclick-files`) en marcha.
+- ✅ **Foto de perfil** (equipo y alumnado, una por persona, cámara o galería, reducida a 512 px, se puede quitar) y **galería de hasta 6 fotos** en «Mi perfil profesional». Se guardan en Bunny, no en la base de datos.
+- ✅ **Límites contra abusos**: espacio de fotos por centro (100 MB), PDF e imágenes (1 GB), tamaño real de los vídeos comprobado con el que informa Bunny, máximo 5 vídeos subiéndose a la vez, límite de subidas por minuto/hora (por IP).
+- ✅ **«Mi perfil profesional» como el prototipo** (`iprof`), «Mis alumnos» en tarjetas, agenda del instructor con el color del centro y un solo QR, campana de avisos en la agenda del propietario, botones solos a ancho completo, vídeos verticales y pausa al salir de la pantalla.
+- ✅ **Selector de color** (cuadrado + barra de tono + hexadecimal) como único selector del «Color principal» de «Tu marca».
+- ✅ **Arreglo del alta con QR**: al iniciar sesión la unión al centro no se completaba si la pantalla de login ya se había cerrado (alumno `letialumno` quedaba en «Sin centro todavía»). Ruta nueva `/j/[code]` (enlace del QR y de WhatsApp).
+- 🟡 Pendiente de probar en móvil: cámara y galería de fotos, selector de color con el dedo, vídeo vertical, `/j/[code]` (necesita `yoclick.app` con los ficheros de asociación para abrir la app desde la cámara del móvil).
+- ⬜ **Siguiente: Premium** — fondo de pantalla liso o degradado (dos colores) y color de la colmena, elegidos con el selector de color; el color del texto se queda como hoy (calculado por el motor de marca). Hace falta: campos del centro en el servidor (solo plan Premium), llegada a la app con los datos del centro, sección «Personalización Premium» en «Tu marca» con vista previa y contraste.
+- ⬜ Resto: foto del propietario desde Más, moderar fotos de otras personas desde la app, pantalla completa al tocar una foto, el paso de color del alta de centro sigue con colores de muestra, limpiar fotos de galería al borrar una cuenta, límite de subidas por usuario (hoy por IP), subir imágenes como instructor (hoy solo propietario/administrador), correo a personas importadas, textos legales, claves push Apple/FCM y compilar de nuevo para probar el aviso real.
+
 ## Actualización (8 oct 2026, cierre del día)
 
 Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2e en verde; front: 1630 tests, lint y typecheck en verde.

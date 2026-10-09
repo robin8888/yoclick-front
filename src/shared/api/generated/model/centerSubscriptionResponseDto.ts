@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { CenterSubscriptionResponseDtoPhotoStorage } from './centerSubscriptionResponseDtoPhotoStorage.ts';
 import type { CenterSubscriptionResponseDtoStatus } from './centerSubscriptionResponseDtoStatus.ts';
 
 export interface CenterSubscriptionResponseDto {
@@ -36,4 +37,5 @@ export interface CenterSubscriptionResponseDto {
      * @maximum 9007199254740991
      */
   videoStorageUsedBytes: number;
+  photoStorage: CenterSubscriptionResponseDtoPhotoStorage;
 }

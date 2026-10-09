@@ -22,6 +22,7 @@ import type {
 
 import {
   getContentAddDocumentResponseMock,
+  getContentAddImageResponseMock,
   getContentAddVideoResponseMock,
   getContentAssignResponseMock,
   getContentGetMineResponseMock,
@@ -30,7 +31,7 @@ import {
   getContentUpdateResponseMock
 } from './content.faker.ts';
 
-export { getContentListResponseMock, getContentUpdateResponseMock, getContentAssignResponseMock, getContentAddDocumentResponseMock, getContentAddVideoResponseMock, getContentListMineResponseMock, getContentGetMineResponseMock } from './content.faker.ts';
+export { getContentListResponseMock, getContentUpdateResponseMock, getContentAssignResponseMock, getContentAddDocumentResponseMock, getContentAddImageResponseMock, getContentAddVideoResponseMock, getContentListMineResponseMock, getContentGetMineResponseMock } from './content.faker.ts';
 
 
 export const getContentListMockHandler = (overrideResponse?: ContentLibraryResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ContentLibraryResponseDto> | ContentLibraryResponseDto), options?: RequestHandlerOptions) => {
@@ -91,6 +92,18 @@ export const getContentAddDocumentMockHandler = (overrideResponse?: ContentRespo
   }, options)
 }
 
+export const getContentAddImageMockHandler = (overrideResponse?: ContentResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ContentResponseDto> | ContentResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/content/images', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getContentAddImageResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
 export const getContentAddVideoMockHandler = (overrideResponse?: ContentResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ContentResponseDto> | ContentResponseDto), options?: RequestHandlerOptions) => {
   return http.post('*/v1/centers/:centerId/content/videos', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
@@ -132,6 +145,7 @@ export const getContentMock = () => [
   getContentDeleteMockHandler(),
   getContentAssignMockHandler(),
   getContentAddDocumentMockHandler(),
+  getContentAddImageMockHandler(),
   getContentAddVideoMockHandler(),
   getContentListMineMockHandler(),
   getContentGetMineMockHandler()

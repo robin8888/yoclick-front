@@ -30,6 +30,7 @@ export function buildMembership(
     role: 'client',
     status: 'active',
     joinedAt: '2026-01-10T10:00:00.000Z',
+    photoUrl: null,
     center: {
       name: 'Studio Norte',
       slug: 'studio-norte',

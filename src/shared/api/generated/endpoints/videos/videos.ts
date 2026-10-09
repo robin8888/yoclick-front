@@ -64,7 +64,7 @@ export const getVideosStartUploadUrl = (centerId: string,) => {
 }
 
 /**
- * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe.
+ * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe; 409 VIDEO_UPLOADS_IN_PROGRESS si ya hay 5 vídeos subiéndose; 429 RATE_LIMITED.
  */
 export const videosStartUpload = async (centerId: string,
     startVideoUploadRequestDto: StartVideoUploadRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<StartVideoUploadResponseDto> => {
@@ -131,7 +131,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type VideosStartUploadMutationVariables = {centerId: string;data: StartVideoUploadRequestDto}
 
     /**
- * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe.
+ * @summary Reserva un vídeo y devuelve la firma para subirlo directamente al servicio de vídeo. 403 VIDEO_NOT_INCLUDED si el plan no incluye vídeo; 409 VIDEO_QUOTA_EXCEEDED si no cabe; 409 VIDEO_UPLOADS_IN_PROGRESS si ya hay 5 vídeos subiéndose; 429 RATE_LIMITED.
  */
 export const useVideosStartUpload = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof videosStartUpload>>, TError,VideosStartUploadMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
