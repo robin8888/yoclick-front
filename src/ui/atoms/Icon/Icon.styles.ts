@@ -6,5 +6,6 @@ export const ICON_STROKE_WIDTH = 1.8;
 export const ICON_PIXEL_SIZES: Readonly<Record<IconSize, number>> = {
   inline: 18,
   navigation: 22,
+  header: 28,
   large: 32,
 };

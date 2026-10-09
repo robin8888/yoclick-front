@@ -5,19 +5,14 @@ import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
-import {
-  BUTTON_ROW_ITEM_STYLE,
-  createButtonRowStyle,
-  createLinkStyle,
-  LINK_ROW_STYLE,
-} from './AppointmentCard.styles';
+import { createButtonRowStyle, createLinkStyle, LINK_ROW_STYLE } from './AppointmentCard.styles';
 import type { AppointmentButtonAction, AppointmentLinkAction } from './AppointmentCard.types';
 
 interface AppointmentButtonRowProps {
   actions: readonly AppointmentButtonAction[];
 }
 
-/** Los botones de la cita (reprogramar, cancelar) repartidos a partes iguales. */
+/** Los botones de la cita (reprogramar, cancelar), uno debajo de otro y a todo el ancho: así el texto cabe en una línea. */
 export function AppointmentButtonRow({
   actions,
 }: Readonly<AppointmentButtonRowProps>): React.JSX.Element {
@@ -26,19 +21,17 @@ export function AppointmentButtonRow({
   return (
     <View style={createButtonRowStyle(theme)}>
       {actions.map((action) => (
-        <View key={action.label} style={BUTTON_ROW_ITEM_STYLE}>
-          <Button
-            variant={action.variant}
-            size="sm"
-            label={action.label}
-            {...(action.accessibilityLabel === undefined
-              ? {}
-              : { accessibilityLabel: action.accessibilityLabel })}
-            {...(action.iconName === undefined ? {} : { leadingIconName: action.iconName })}
-            isFullWidth
-            onPress={action.onPress}
-          />
-        </View>
+        <Button
+          key={action.label}
+          variant={action.variant}
+          label={action.label}
+          {...(action.accessibilityLabel === undefined
+            ? {}
+            : { accessibilityLabel: action.accessibilityLabel })}
+          {...(action.iconName === undefined ? {} : { leadingIconName: action.iconName })}
+          isFullWidth
+          onPress={action.onPress}
+        />
       ))}
     </View>
   );

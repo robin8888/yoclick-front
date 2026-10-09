@@ -8,6 +8,7 @@ export const ICON_NAMES = [
   'chevronDown',
   'chevronUp',
   'arrowLeft',
+  'image',
   'plus',
   'upload',
   'minus',
@@ -48,7 +49,7 @@ export const ICON_NAMES = [
 export type IconName = (typeof ICON_NAMES)[number];
 
 /** `navigation` 22 px y `inline` 18 px salen de docs/design/sistema-de-diseno.md. */
-export type IconSize = 'inline' | 'navigation' | 'large';
+export type IconSize = 'inline' | 'navigation' | 'header' | 'large';
 
 /** Colores de contenido permitidos: `brand` es un relleno, nunca un color de icono. */
 export type IconColor = Extract<

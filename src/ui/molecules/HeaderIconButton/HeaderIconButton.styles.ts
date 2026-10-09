@@ -2,7 +2,7 @@ import type { ViewStyle } from 'react-native';
 
 import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
-const BUTTON_SIZE = 48;
+const BUTTON_SIZE = 52;
 
 export function createHeaderIconButtonStyle(theme: Theme): ViewStyle {
   return {

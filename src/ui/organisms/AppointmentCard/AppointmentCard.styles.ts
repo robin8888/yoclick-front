@@ -36,10 +36,8 @@ export function createStatusBadgeRowStyle(theme: Theme): ViewStyle {
 }
 
 export function createButtonRowStyle(theme: Theme): ViewStyle {
-  return { flexDirection: 'row', gap: theme.space[3] };
+  return { gap: theme.space[2] };
 }
-
-export const BUTTON_ROW_ITEM_STYLE: ViewStyle = { flex: 1 };
 
 export const LINK_ROW_STYLE: ViewStyle = { flexDirection: 'row', justifyContent: 'space-around' };
 

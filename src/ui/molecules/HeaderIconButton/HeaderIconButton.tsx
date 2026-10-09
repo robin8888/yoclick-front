@@ -31,7 +31,7 @@ export function HeaderIconButton({
       onPress={onPress}
       style={createHeaderIconButtonStyle(theme)}
     >
-      <Icon name={iconName} size="navigation" color="ink" />
+      <Icon name={iconName} size="header" color="ink" />
       <CountBadge count={badgeCount} />
     </Pressable>
   );
