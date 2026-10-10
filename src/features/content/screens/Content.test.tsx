@@ -191,6 +191,26 @@ describe('ContentLibraryScreen', () => {
     expect(screen.getByRole('checkbox', { name: 'Inicio', checked: false })).toBeOnTheScreen();
   });
 
+  it('marks the person chosen in the list and unmarks it when pressed again', async () => {
+    mockApi({
+      'GET /v1/me/memberships': MEMBERSHIPS('owner'),
+      [`GET ${BASE}/content`]: LIBRARY,
+      [`GET ${BASE}/groups`]: { groups: [] },
+      [`GET ${BASE}/clients`]: {
+        clients: [{ membershipId: 'membership-laura', fullName: 'Laura Pérez', photoUrl: null }],
+        nextCursor: null,
+      },
+    });
+    renderScreen(<ContentLibraryScreen />);
+    fireEvent.press(await screen.findByRole('button', { name: 'Asignar Sentadilla explicada' }));
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Laura Pérez' }));
+    expect(screen.getByRole('button', { name: 'Laura Pérez', selected: true })).toBeOnTheScreen();
+
+    fireEvent.press(screen.getByRole('button', { name: 'Laura Pérez', selected: true }));
+    expect(screen.getByRole('button', { name: 'Laura Pérez', selected: false })).toBeOnTheScreen();
+  });
+
   it('changes the title, the level and the need of a piece', async () => {
     mockApi({
       'GET /v1/me/memberships': MEMBERSHIPS('owner'),

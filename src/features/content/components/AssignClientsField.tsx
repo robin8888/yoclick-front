@@ -42,8 +42,13 @@ export function AssignClientsField({
         </View>
       )}
       <ClientPicker
+        selectedMembershipIds={draft.clients.map((client) => client.membershipId)}
         onClientSelect={(client) => {
-          onClientAdd({ membershipId: client.membershipId, name: client.fullName });
+          const isAlreadyChosen = draft.clients.some(
+            ({ membershipId }) => membershipId === client.membershipId,
+          );
+          if (isAlreadyChosen) onClientRemove(client.membershipId);
+          else onClientAdd({ membershipId: client.membershipId, name: client.fullName });
         }}
       />
     </View>
