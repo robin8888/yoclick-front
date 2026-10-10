@@ -32,11 +32,11 @@ import type {
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
   MyPhotoResponseDto,
+  MyProfileResponseDto,
   OpenSessionsResponseDto,
   PasswordChangedResponseDto,
   PersonalDataExportResponseDto,
   ProblemDetailsDto,
-  ProfileResponseDto,
   RegisterPushDeviceRequestDto,
   SetConsentRequestDto,
   UnregisterPushDeviceRequestDto,
@@ -237,9 +237,9 @@ export const useMeRevokeSession = <TError = ErrorType<ProblemDetailsDto>,
 /**
  * @summary Mi perfil.
  */
-export const meGetProfile = async ( options?: Parameters<typeof apiMutator>[1]): Promise<ProfileResponseDto> => {
+export const meGetProfile = async ( options?: Parameters<typeof apiMutator>[1]): Promise<MyProfileResponseDto> => {
 
-  return apiMutator<ProfileResponseDto>(getMeGetProfileUrl(),
+  return apiMutator<MyProfileResponseDto>(getMeGetProfileUrl(),
   {
     ...options,
     method: 'GET'
@@ -337,7 +337,7 @@ export const getMeUpdateProfileUrl = () => {
 /**
  * @summary Cambia mi nombre, teléfono, fecha de nacimiento o idioma. El correo no se cambia aquí.
  */
-export const meUpdateProfile = async (updateProfileRequestDto: UpdateProfileRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<ProfileResponseDto> => {
+export const meUpdateProfile = async (updateProfileRequestDto: UpdateProfileRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<MyProfileResponseDto> => {
 
     const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
     if (!h) return {};
@@ -353,7 +353,7 @@ export const meUpdateProfile = async (updateProfileRequestDto: UpdateProfileRequ
     }
     return headers;
   };
-return apiMutator<ProfileResponseDto>(getMeUpdateProfileUrl(),
+return apiMutator<MyProfileResponseDto>(getMeUpdateProfileUrl(),
   {
     ...options,
     method: 'PATCH',

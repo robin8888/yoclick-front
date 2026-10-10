@@ -55,7 +55,11 @@ function AgendaEntries({
           onPress={() => {
             router.push({
               pathname: '/(staff)/sessions/[bookingId]',
-              params: { bookingId: entry.booking.id, date: agenda.date },
+              params: {
+                bookingId: entry.booking.id,
+                date: agenda.date,
+                ...(isCenterWide ? { isCenterWide: 'true' } : {}),
+              },
             });
           }}
         />

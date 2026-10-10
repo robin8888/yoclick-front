@@ -17,10 +17,10 @@ import type {
   MyConsentsResponseDto,
   MyMembershipsResponseDto,
   MyPhotoResponseDto,
+  MyProfileResponseDto,
   OpenSessionsResponseDto,
   PasswordChangedResponseDto,
-  PersonalDataExportResponseDto,
-  ProfileResponseDto
+  PersonalDataExportResponseDto
 } from '../../model';
 
 import {
@@ -60,7 +60,7 @@ export const getMeRevokeSessionMockHandler = (overrideResponse?: void | ((info: 
   }, options)
 }
 
-export const getMeGetProfileMockHandler = (overrideResponse?: ProfileResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ProfileResponseDto> | ProfileResponseDto), options?: RequestHandlerOptions) => {
+export const getMeGetProfileMockHandler = (overrideResponse?: MyProfileResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MyProfileResponseDto> | MyProfileResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/me', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
 
@@ -72,7 +72,7 @@ export const getMeGetProfileMockHandler = (overrideResponse?: ProfileResponseDto
   }, options)
 }
 
-export const getMeUpdateProfileMockHandler = (overrideResponse?: ProfileResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<ProfileResponseDto> | ProfileResponseDto), options?: RequestHandlerOptions) => {
+export const getMeUpdateProfileMockHandler = (overrideResponse?: MyProfileResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<MyProfileResponseDto> | MyProfileResponseDto), options?: RequestHandlerOptions) => {
   return http.patch('*/v1/me', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
 
 

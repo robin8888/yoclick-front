@@ -62,6 +62,7 @@ export const ContentListResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentListResponseItemsItemAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentListResponseItemsItemAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })),
@@ -132,6 +133,7 @@ export const ContentUpdateResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentUpdateResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentUpdateResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })
@@ -186,6 +188,8 @@ export const ContentAssignBody = zod.object({
 }),zod.object({
   "kind": zod.enum(['client']),
   "membershipId": zod.uuid().regex(contentAssignBodyTargetsItemThreeMembershipIdRegExp)
+}),zod.object({
+  "kind": zod.enum(['everyone'])
 })])).max(contentAssignBodyTargetsMax)
 })
 
@@ -222,6 +226,7 @@ export const ContentAssignResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentAssignResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentAssignResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })
@@ -285,6 +290,7 @@ export const ContentAddDocumentResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentAddDocumentResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentAddDocumentResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })
@@ -348,6 +354,7 @@ export const ContentAddImageResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentAddImageResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentAddImageResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })
@@ -413,6 +420,7 @@ export const ContentAddVideoResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentAddVideoResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentAddVideoResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 })
@@ -465,6 +473,7 @@ export const ContentListMineResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentListMineResponseItemsItemAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentListMineResponseItemsItemAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 }))
 }))
@@ -522,6 +531,7 @@ export const ContentGetMineResponse = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
   "groupId": zod.uuid().regex(contentGetMineResponseAssignmentsItemGroupIdRegExp).nullable(),
   "clientMembershipId": zod.uuid().regex(contentGetMineResponseAssignmentsItemClientMembershipIdRegExp).nullable(),
+  "isForEveryone": zod.boolean(),
   "label": zod.string().nullable()
 })),
   "playback": zod.object({

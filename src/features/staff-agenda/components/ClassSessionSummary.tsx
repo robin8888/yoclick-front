@@ -25,6 +25,28 @@ function SummaryRow({ label, value }: Readonly<SummaryRowProps>): React.JSX.Elem
   );
 }
 
+/** La sala y, en un grupo, las plazas ocupadas del aforo. */
+function RoomRows({
+  booking,
+}: Readonly<{ booking: AgendaResponseDtoEntriesItemBooking }>): React.JSX.Element {
+  return (
+    <>
+      {booking.room === null ? null : (
+        <SummaryRow label={i18n.t('staffAgenda.session.roomLabel')} value={booking.room.name} />
+      )}
+      {booking.session.mode === 'group' ? (
+        <SummaryRow
+          label={i18n.t('staffAgenda.session.seatsLabel')}
+          value={i18n.t('staffAgenda.session.seatsValue', {
+            booked: booking.session.bookedCount,
+            capacity: booking.session.capacity,
+          })}
+        />
+      ) : null}
+    </>
+  );
+}
+
 interface ClassSessionSummaryProps {
   booking: AgendaResponseDtoEntriesItemBooking;
   timeZone: string;
@@ -40,6 +62,7 @@ export function ClassSessionSummary({
 
   return (
     <View style={createSummaryStyle(theme)}>
+      <RoomRows booking={booking} />
       <SummaryRow
         label={i18n.t('staffAgenda.session.plannedLabel')}
         value={`${formatTime24h(booking.startsAt, timeZone)}–${formatTime24h(booking.endsAt, timeZone)}`}

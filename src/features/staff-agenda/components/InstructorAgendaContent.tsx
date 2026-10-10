@@ -31,12 +31,6 @@ export function InstructorAgendaContent({
             params: { bookingId, date: agenda.date },
           });
         }}
-        onFreeSlotPress={(hourLabel) => {
-          router.push({
-            pathname: '/(staff)/new-appointment',
-            params: { date: agenda.date, time: hourLabel },
-          });
-        }}
       />
     </>
   );

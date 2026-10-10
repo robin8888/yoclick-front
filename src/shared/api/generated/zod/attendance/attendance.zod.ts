@@ -61,6 +61,14 @@ export const attendanceCheckInResponseBookingServiceDurationMinutesMin = -900719
 export const attendanceCheckInResponseBookingServiceDurationMinutesMax = 9007199254740991;
 
 export const attendanceCheckInResponseBookingStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseBookingRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseBookingSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseBookingSessionCapacityMin = -9007199254740991;
+export const attendanceCheckInResponseBookingSessionCapacityMax = 9007199254740991;
+
+export const attendanceCheckInResponseBookingSessionBookedCountMin = -9007199254740991;
+export const attendanceCheckInResponseBookingSessionBookedCountMax = 9007199254740991;
+
 export const attendanceCheckInResponseBookingCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const attendanceCheckInResponseBookingStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const attendanceCheckInResponseBookingEndedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -68,6 +76,7 @@ export const attendanceCheckInResponseBookingActualDurationSecondsMin = -9007199
 export const attendanceCheckInResponseBookingActualDurationSecondsMax = 9007199254740991;
 
 export const attendanceCheckInResponseBookingCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseBookingCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
 export const AttendanceCheckInResponse = zod.object({
@@ -89,12 +98,27 @@ export const AttendanceCheckInResponse = zod.object({
   "membershipId": zod.uuid().regex(attendanceCheckInResponseBookingStaffMembershipIdRegExp),
   "fullName": zod.string()
 }),
+  "room": zod.object({
+  "id": zod.uuid().regex(attendanceCheckInResponseBookingRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "session": zod.object({
+  "id": zod.uuid().regex(attendanceCheckInResponseBookingSessionIdRegExp),
+  "mode": zod.enum(['private', 'group']),
+  "capacity": zod.int().min(attendanceCheckInResponseBookingSessionCapacityMin).max(attendanceCheckInResponseBookingSessionCapacityMax),
+  "bookedCount": zod.int().min(attendanceCheckInResponseBookingSessionBookedCountMin).max(attendanceCheckInResponseBookingSessionBookedCountMax)
+}),
   "cancelledAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingCancelledAtRegExp).nullable(),
   "cancelWithinPolicy": zod.boolean().nullable(),
   "startedAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(attendanceCheckInResponseBookingActualDurationSecondsMin).max(attendanceCheckInResponseBookingActualDurationSecondsMax).nullable(),
-  "createdAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingCreatedAtRegExp)
+  "createdAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingCreatedAtRegExp),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(attendanceCheckInResponseBookingCreatedByMembershipIdRegExp),
+  "fullName": zod.string(),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client'])
+}).nullable()
 })
 })
 

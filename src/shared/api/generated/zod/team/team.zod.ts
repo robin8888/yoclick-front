@@ -24,6 +24,7 @@ export const TeamListHeader = zod.object({
 
 export const teamListResponseMembersItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamListResponseMembersItemUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamListResponseMembersItemServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamListResponseMembersItemJoinedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
@@ -38,6 +39,10 @@ export const TeamListResponse = zod.object({
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "staffTitle": zod.string().nullable(),
   "permissions": zod.array(zod.enum(['health:read', 'clients:manage', 'services:manage', 'agenda:manage', 'payments:view', 'reports:view'])),
+  "services": zod.array(zod.object({
+  "id": zod.uuid().regex(teamListResponseMembersItemServicesItemIdRegExp),
+  "name": zod.string()
+})),
   "joinedAt": zod.iso.datetime({"offset":true}).regex(teamListResponseMembersItemJoinedAtRegExp)
 }))
 })
@@ -62,17 +67,22 @@ export const teamUpdateMemberBodyPermissionsMax = 6;
 
 export const teamUpdateMemberBodyStaffTitleMax = 80;
 
+export const teamUpdateMemberBodyServiceIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamUpdateMemberBodyServiceIdsMax = 100;
+
 
 
 export const TeamUpdateMemberBody = zod.object({
   "role": zod.enum(['admin', 'staff']).optional(),
   "status": zod.enum(['active', 'blocked', 'left']).optional(),
   "permissions": zod.array(zod.enum(['health:read', 'clients:manage', 'services:manage', 'agenda:manage', 'payments:view', 'reports:view'])).max(teamUpdateMemberBodyPermissionsMax).optional(),
-  "staffTitle": zod.string().min(1).max(teamUpdateMemberBodyStaffTitleMax).nullish()
+  "staffTitle": zod.string().min(1).max(teamUpdateMemberBodyStaffTitleMax).nullish(),
+  "serviceIds": zod.array(zod.uuid().regex(teamUpdateMemberBodyServiceIdsItemRegExp)).max(teamUpdateMemberBodyServiceIdsMax).optional()
 })
 
 export const teamUpdateMemberResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamUpdateMemberResponseUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const teamUpdateMemberResponseServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const teamUpdateMemberResponseJoinedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
@@ -86,6 +96,10 @@ export const TeamUpdateMemberResponse = zod.object({
   "status": zod.enum(['invited', 'active', 'blocked', 'left']),
   "staffTitle": zod.string().nullable(),
   "permissions": zod.array(zod.enum(['health:read', 'clients:manage', 'services:manage', 'agenda:manage', 'payments:view', 'reports:view'])),
+  "services": zod.array(zod.object({
+  "id": zod.uuid().regex(teamUpdateMemberResponseServicesItemIdRegExp),
+  "name": zod.string()
+})),
   "joinedAt": zod.iso.datetime({"offset":true}).regex(teamUpdateMemberResponseJoinedAtRegExp)
 })
 

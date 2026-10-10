@@ -5,6 +5,7 @@ import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 
+import { ServiceSelectionField } from './ServiceSelectionField';
 import { TeamPermissionsSection } from './TeamPermissionsSection';
 import { MAX_STAFF_TITLE_LENGTH, type TeamMemberDraft } from '../model/team-member-changes';
 import type { EditableTeamRole } from '../model/team-roster';
@@ -53,7 +54,56 @@ function TeamRoleField({
   );
 }
 
-/** Rol (administración o quien da las sesiones) y cargo que ve la clientela. */
+interface TeamServicesFieldProps {
+  staffWord: string;
+  serviceIds: string[];
+  onServiceIdsChange: (serviceIds: string[]) => void;
+}
+
+/** Los servicios de la academia que da esta persona. */
+function TeamServicesField({
+  staffWord,
+  serviceIds,
+  onServiceIdsChange,
+}: Readonly<TeamServicesFieldProps>): React.JSX.Element {
+  return (
+    <ServiceSelectionField
+      title={i18n.t('centerAdmin.team.servicesLabel', { staffWord })}
+      helperText={i18n.t('centerAdmin.team.servicesHelper')}
+      selectedServiceIds={serviceIds}
+      onSelectedServiceIdsChange={onServiceIdsChange}
+    />
+  );
+}
+
+/** Lo que solo aplica a quien da las sesiones: permisos extra y servicios que da. */
+function StaffOnlyFields({
+  draft,
+  staffWord,
+  clientWord,
+  onDraftChange,
+}: Readonly<TeamMemberFieldsProps>): React.JSX.Element {
+  return (
+    <>
+      <TeamPermissionsSection
+        grantedPermissions={draft.grantedPermissions}
+        clientWord={clientWord}
+        onGrantedPermissionsChange={(grantedPermissions) => {
+          onDraftChange({ grantedPermissions });
+        }}
+      />
+      <TeamServicesField
+        staffWord={staffWord}
+        serviceIds={draft.serviceIds}
+        onServiceIdsChange={(serviceIds) => {
+          onDraftChange({ serviceIds });
+        }}
+      />
+    </>
+  );
+}
+
+/** Rol (administración o quien da las sesiones), servicios que da y cargo que ve la clientela. */
 export function TeamMemberFields({
   draft,
   staffWord,
@@ -70,12 +120,11 @@ export function TeamMemberFields({
         }}
       />
       {draft.role === 'staff' ? (
-        <TeamPermissionsSection
-          grantedPermissions={draft.grantedPermissions}
+        <StaffOnlyFields
+          draft={draft}
+          staffWord={staffWord}
           clientWord={clientWord}
-          onGrantedPermissionsChange={(grantedPermissions) => {
-            onDraftChange({ grantedPermissions });
-          }}
+          onDraftChange={onDraftChange}
         />
       ) : null}
       <FormField

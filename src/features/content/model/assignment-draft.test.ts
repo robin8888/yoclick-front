@@ -51,17 +51,53 @@ describe('assignment draft', () => {
 
   it('reopens with what is already assigned marked', () => {
     const draft = buildDraftFromAssignments([
-      { id: 'a1', level: 'advanced', groupId: null, clientMembershipId: null, label: null },
-      { id: 'a2', level: null, groupId: 'group-1', clientMembershipId: null, label: 'Mañanas' },
+      {
+        id: 'a1',
+        level: 'advanced',
+        groupId: null,
+        clientMembershipId: null,
+        isForEveryone: false,
+        label: null,
+      },
+      {
+        id: 'a2',
+        level: null,
+        groupId: 'group-1',
+        clientMembershipId: null,
+        isForEveryone: false,
+        label: 'Mañanas',
+      },
       {
         id: 'a3',
         level: null,
         groupId: null,
         clientMembershipId: IRENE.membershipId,
+        isForEveryone: false,
         label: IRENE.name,
       },
     ]);
 
-    expect(draft).toEqual({ levels: ['advanced'], groupIds: ['group-1'], clients: [IRENE] });
+    expect(draft).toEqual({
+      isForEveryone: false,
+      levels: ['advanced'],
+      groupIds: ['group-1'],
+      clients: [IRENE],
+    });
+  });
+
+  it('marks everyone and sends it as its own target', () => {
+    const draft = buildDraftFromAssignments([
+      {
+        id: 'a1',
+        level: null,
+        groupId: null,
+        clientMembershipId: null,
+        isForEveryone: true,
+        label: null,
+      },
+    ]);
+
+    expect(draft.isForEveryone).toBe(true);
+    expect(buildAssignmentTargets(draft)).toEqual([{ kind: 'everyone' }]);
   });
 });

@@ -2,7 +2,7 @@ import { i18n } from '@/shared/i18n';
 
 import { useContentVocabulary } from '../hooks/useContentVocabulary';
 import type { ContentFilter } from '../model/content-filter';
-import { buildLevelFilterOptions, buildNeedFilterOptions } from '../model/content-filter-options';
+import { buildNeedFilterOptions } from '../model/content-filter-options';
 import { SingleChoiceChips } from './SingleChoiceChips';
 
 interface ContentFilterChipsProps {
@@ -10,7 +10,7 @@ interface ContentFilterChipsProps {
   onFilterChange: (filter: ContentFilter) => void;
 }
 
-/** Las dos filas de chips del cliente: el nivel y la necesidad. */
+/** La fila de chips del cliente: la necesidad. El nivel no se elige: solo ve lo que le corresponde. */
 export function ContentFilterChips({
   filter,
   onFilterChange,
@@ -18,25 +18,14 @@ export function ContentFilterChips({
   const vocabulary = useContentVocabulary();
 
   return (
-    <>
-      <SingleChoiceChips
-        title={i18n.t('content.client.levelsGroupLabel')}
-        isTitleHidden
-        options={buildLevelFilterOptions(vocabulary.levelWords)}
-        selectedValue={filter.level}
-        onSelect={(level) => {
-          onFilterChange({ ...filter, level });
-        }}
-      />
-      <SingleChoiceChips
-        title={i18n.t('content.client.needsGroupLabel')}
-        isTitleHidden
-        options={buildNeedFilterOptions(vocabulary.needs)}
-        selectedValue={filter.need}
-        onSelect={(need) => {
-          onFilterChange({ ...filter, need });
-        }}
-      />
-    </>
+    <SingleChoiceChips
+      title={i18n.t('content.client.needsGroupLabel')}
+      isTitleHidden
+      options={buildNeedFilterOptions(vocabulary.needs)}
+      selectedValue={filter.need}
+      onSelect={(need) => {
+        onFilterChange({ ...filter, need });
+      }}
+    />
   );
 }

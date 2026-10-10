@@ -7,6 +7,7 @@ import type {
 export const SERVICE_ID = '0191d6a0-0000-7000-8000-0000000000a1';
 export const STAFF_MEMBERSHIP_ID = '0191d6a0-0000-7000-8000-0000000000b1';
 export const BOOKING_ID = '0191d6a0-0000-7000-8000-0000000000c1';
+export const SESSION_ID = '0191d6a0-0000-7000-8000-0000000000d1';
 
 export function buildService(
   overrides: Partial<ServiceListResponseDtoServicesItem> = {},
@@ -39,12 +40,15 @@ export function buildBooking(overrides: Partial<BookingResponseDto> = {}): Booki
     endsAt: '2026-10-08T17:00:00.000Z',
     service: { id: SERVICE_ID, name: 'Entrenamiento personal', durationMinutes: 60, color: null },
     staff: { membershipId: STAFF_MEMBERSHIP_ID, fullName: 'Álex Moreno' },
+    room: null,
+    session: { id: SESSION_ID, mode: 'private', capacity: 1, bookedCount: 1 },
     cancelledAt: null,
     cancelWithinPolicy: null,
     startedAt: null,
     endedAt: null,
     actualDurationSeconds: null,
     createdAt: '2026-10-05T10:00:00.000Z',
+    createdBy: null,
     ...overrides,
   };
 }

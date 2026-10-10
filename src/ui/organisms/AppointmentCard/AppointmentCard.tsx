@@ -34,6 +34,23 @@ function AppointmentDateBlock({
   );
 }
 
+/** Líneas secundarias opcionales (sala, quién la asignó); las que no hay no se pintan. */
+function AppointmentCaptions({
+  labels,
+}: Readonly<{ labels: readonly (string | null | undefined)[] }>): React.JSX.Element {
+  return (
+    <>
+      {labels.map((label) =>
+        label === null || label === undefined ? null : (
+          <Text key={label} variant="caption" color="ink2">
+            {label}
+          </Text>
+        ),
+      )}
+    </>
+  );
+}
+
 /**
  * Una cita como en el prototipo `appts`: bloque de fecha, servicio, detalle, estado (siempre con
  * palabra) y sus acciones. Recibe datos y callbacks por props; no sabe nada de la API.
@@ -42,6 +59,8 @@ export function AppointmentCard({
   dateTile,
   serviceName,
   detailsLabel,
+  roomLabel,
+  assignedByLabel,
   statusLabel,
   statusTone,
   buttonActions,
@@ -58,6 +77,7 @@ export function AppointmentCard({
           <Text variant="caption" color="ink2">
             {detailsLabel}
           </Text>
+          <AppointmentCaptions labels={[roomLabel, assignedByLabel]} />
           <View style={createStatusBadgeRowStyle(theme)}>
             <Badge label={statusLabel} tone={statusTone} />
           </View>

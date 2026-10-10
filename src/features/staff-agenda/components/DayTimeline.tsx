@@ -23,7 +23,8 @@ interface DayTimelineProps {
   rows: readonly TimelineRow[];
   timeZone: string;
   onEntryPress: (bookingId: string) => void;
-  onFreeSlotPress: (hourLabel: string) => void;
+  /** Sin él, el hueco solo informa: asignar citas es cosa del centro, no del profesional. */
+  onFreeSlotPress?: ((hourLabel: string) => void) | undefined;
 }
 
 function countHoursSpanned(entry: AgendaResponseDtoEntriesItem): number {
@@ -67,9 +68,16 @@ function AppointmentBlock({
   );
 }
 
-function FreeSlot({ onPress }: Readonly<{ onPress: () => void }>): React.JSX.Element {
+function FreeSlot({ onPress }: Readonly<{ onPress: (() => void) | undefined }>): React.JSX.Element {
   const theme = useTheme();
 
+  if (onPress === undefined) {
+    return (
+      <View style={createFreeSlotStyle(theme)}>
+        <Text color="ink2">{i18n.t('staffAgenda.instructor.freeSlotLabel')}</Text>
+      </View>
+    );
+  }
   return (
     <Pressable
       role="button"
@@ -98,9 +106,13 @@ function renderRowContent(row: TimelineRow, props: DayTimelineProps): React.JSX.
   if (row.kind === 'free') {
     return (
       <FreeSlot
-        onPress={() => {
-          props.onFreeSlotPress(row.label);
-        }}
+        onPress={
+          props.onFreeSlotPress === undefined
+            ? undefined
+            : () => {
+                props.onFreeSlotPress?.(row.label);
+              }
+        }
       />
     );
   }

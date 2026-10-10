@@ -10,9 +10,30 @@ describe('describeAssignments', () => {
   it('names each target with its kind, using the words of the sector', () => {
     const caption = describeAssignments(
       [
-        { id: 'a1', level: 'intermediate', groupId: null, clientMembershipId: null, label: null },
-        { id: 'a2', level: null, groupId: 'g1', clientMembershipId: null, label: 'Fuerza 50+' },
-        { id: 'a3', level: null, groupId: null, clientMembershipId: 'm1', label: 'Irene Castro' },
+        {
+          id: 'a1',
+          level: 'intermediate',
+          groupId: null,
+          clientMembershipId: null,
+          isForEveryone: false,
+          label: null,
+        },
+        {
+          id: 'a2',
+          level: null,
+          groupId: 'g1',
+          clientMembershipId: null,
+          isForEveryone: false,
+          label: 'Fuerza 50+',
+        },
+        {
+          id: 'a3',
+          level: null,
+          groupId: null,
+          clientMembershipId: 'm1',
+          isForEveryone: false,
+          label: 'Irene Castro',
+        },
       ],
       WORDS,
     );

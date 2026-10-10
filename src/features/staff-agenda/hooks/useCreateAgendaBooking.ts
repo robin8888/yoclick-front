@@ -4,16 +4,29 @@ import { useRef } from 'react';
 import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   agendaCreateBooking,
+  agendaJoinGroupSession,
   getAgendaGetDayQueryKey,
 } from '@/shared/api/generated/endpoints/bookings/bookings';
-import type { CreateAgendaBookingRequestDto } from '@/shared/api/generated/model';
+import type {
+  CreateAgendaBookingRequestDto,
+  JoinGroupSessionRequestDto,
+} from '@/shared/api/generated/model';
 import { createIdempotencyIntention, type IdempotencyIntention } from '@/shared/api/idempotency';
 import { useSessionStore } from '@/shared/auth/session-store';
 
 interface CreateAgendaBooking {
   createBooking: (request: CreateAgendaBookingRequestDto, onCreated: () => void) => void;
+  /** Apunta al cliente a una clase grupal que ya existe. */
+  joinGroup: (request: JoinGroupSessionRequestDto, onJoined: () => void) => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+}
+
+function describeFailure(
+  ...mutations: readonly { isError: boolean; error: unknown }[]
+): string | null {
+  const failed = mutations.find((mutation) => mutation.isError);
+  return failed === undefined ? null : getApiErrorMessage(failed.error);
 }
 
 /**
@@ -31,7 +44,20 @@ export function useCreateAgendaBooking(): CreateAgendaBooking {
     },
   });
 
+  const joinMutation = useMutation({
+    mutationFn: (request: JoinGroupSessionRequestDto) => agendaJoinGroupSession(centerId, request),
+  });
+
   return {
+    joinGroup: (request, onJoined) => {
+      joinMutation.mutate(request, {
+        onSuccess: () => {
+          void queryClient
+            .invalidateQueries({ queryKey: getAgendaGetDayQueryKey(centerId) })
+            .then(onJoined);
+        },
+      });
+    },
     createBooking: (request, onCreated) => {
       createMutation.mutate(request, {
         onSuccess: () => {
@@ -44,7 +70,7 @@ export function useCreateAgendaBooking(): CreateAgendaBooking {
         },
       });
     },
-    isCreating: createMutation.isPending,
-    createErrorMessage: createMutation.isError ? getApiErrorMessage(createMutation.error) : null,
+    isCreating: createMutation.isPending || joinMutation.isPending,
+    createErrorMessage: describeFailure(createMutation, joinMutation),
   };
 }

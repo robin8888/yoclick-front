@@ -6,4 +6,6 @@ const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export const classSessionRouteParamsSchema = z.object({
   bookingId: z.uuid(),
   date: z.string().regex(ISO_DATE_PATTERN),
+  /** La abre el centro: solo él puede apuntar a más gente a un grupo. */
+  isCenterWide: z.literal('true').optional(),
 });

@@ -11,6 +11,8 @@ interface ServiceOptionListProps {
   selectedServiceId: string | null;
   onServiceSelect: (serviceId: string) => void;
   onRetry: () => void;
+  /** No escribe «Individual»: el centro elige aparte si la cita es privada o grupal. */
+  isKindHidden?: boolean;
 }
 
 /** Los servicios reservables como opciones a elegir, o el vacío con reintento. */
@@ -19,6 +21,7 @@ export function ServiceOptionList({
   selectedServiceId,
   onServiceSelect,
   onRetry,
+  isKindHidden = false,
 }: Readonly<ServiceOptionListProps>): React.JSX.Element {
   if (services.length === 0) {
     return (
@@ -37,7 +40,7 @@ export function ServiceOptionList({
         <OptionCard
           key={service.id}
           title={service.name}
-          meta={buildServiceMetaLabel(service)}
+          meta={buildServiceMetaLabel(service, { isKindHidden })}
           description={service.description ?? undefined}
           isSelected={service.id === selectedServiceId}
           onPress={() => {

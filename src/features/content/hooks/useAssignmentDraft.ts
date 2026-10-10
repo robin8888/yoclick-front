@@ -6,6 +6,7 @@ import {
   addClient,
   buildDraftFromAssignments,
   removeClient,
+  toggleEveryone,
   toggleGroup,
   toggleLevel,
   type AssignmentDraft,
@@ -15,6 +16,7 @@ import type { ContentLevel } from '../model/content-levels';
 
 interface AssignmentDraftState {
   draft: AssignmentDraft;
+  onEveryoneToggle: () => void;
   onLevelToggle: (level: ContentLevel) => void;
   onGroupToggle: (groupId: string) => void;
   onClientAdd: (client: DraftClient) => void;
@@ -29,6 +31,9 @@ export function useAssignmentDraft(
 
   return {
     draft,
+    onEveryoneToggle: () => {
+      setDraft((current) => toggleEveryone(current));
+    },
     onLevelToggle: (level) => {
       setDraft((current) => toggleLevel(current, level));
     },

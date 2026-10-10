@@ -19,9 +19,13 @@ function capitalize(word: string): string {
 
 interface ProfileLink {
   label: string;
-  iconName: 'play' | 'file' | 'calendar';
+  iconName: 'play' | 'file' | 'calendar' | 'user';
   route:
-    '/(staff)/routines' | '/(staff)/content' | '/(staff)/public-profile' | '/(staff)/availability';
+    | '/(staff)/routines'
+    | '/(staff)/content'
+    | '/(staff)/public-profile'
+    | '/(staff)/availability'
+    | '/(staff)/my-data';
 }
 
 /** Los accesos del perfil del equipo: sus rutinas (o prácticas, tareas…), los contenidos y su disponibilidad. */
@@ -30,6 +34,7 @@ function StaffProfileLinks({
 }: Readonly<{ routineWordPlural: string }>): React.JSX.Element {
   const router = useRouter();
   const links: readonly ProfileLink[] = [
+    { label: i18n.t('session.myData.title'), iconName: 'user', route: '/(staff)/my-data' },
     { label: capitalize(routineWordPlural), iconName: 'play', route: '/(staff)/routines' },
     { label: i18n.t('content.admin.title'), iconName: 'file', route: '/(staff)/content' },
     {

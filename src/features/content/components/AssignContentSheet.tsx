@@ -10,11 +10,44 @@ import { useAssignmentDraft } from '../hooks/useAssignmentDraft';
 import { useContentVocabulary } from '../hooks/useContentVocabulary';
 import { buildAssignmentTargets } from '../model/assignment-draft';
 import { AssignClientsField } from './AssignClientsField';
-import { GroupChips, LevelChips } from './AssignTargetChips';
+import { EveryoneChip, GroupChips, LevelChips } from './AssignTargetChips';
 
 interface AssignContentFormProps {
   content: ContentResponseDto;
   onDone: () => void;
+}
+
+interface AssignTargetFieldsProps {
+  marked: ReturnType<typeof useAssignmentDraft>;
+  vocabulary: ReturnType<typeof useContentVocabulary>;
+}
+
+/** Los cuatro destinos: todos, nivel, grupo y persona. */
+function AssignTargetFields({
+  marked,
+  vocabulary,
+}: Readonly<AssignTargetFieldsProps>): React.JSX.Element {
+  return (
+    <>
+      <EveryoneChip
+        draft={marked.draft}
+        clientWord={vocabulary.clientWordPlural}
+        onEveryoneToggle={marked.onEveryoneToggle}
+      />
+      <LevelChips
+        draft={marked.draft}
+        levelWords={vocabulary.levelWords}
+        onLevelToggle={marked.onLevelToggle}
+      />
+      <GroupChips draft={marked.draft} onGroupToggle={marked.onGroupToggle} />
+      <AssignClientsField
+        draft={marked.draft}
+        clientWord={vocabulary.clientWord}
+        onClientAdd={marked.onClientAdd}
+        onClientRemove={marked.onClientRemove}
+      />
+    </>
+  );
 }
 
 function AssignContentForm({
@@ -30,18 +63,7 @@ function AssignContentForm({
       <Text variant="bodyStrong" numberOfLines={2}>
         {i18n.t('content.assign.pieceLabel', { title: content.title })}
       </Text>
-      <LevelChips
-        draft={marked.draft}
-        levelWords={vocabulary.levelWords}
-        onLevelToggle={marked.onLevelToggle}
-      />
-      <GroupChips draft={marked.draft} onGroupToggle={marked.onGroupToggle} />
-      <AssignClientsField
-        draft={marked.draft}
-        clientWord={vocabulary.clientWord}
-        onClientAdd={marked.onClientAdd}
-        onClientRemove={marked.onClientRemove}
-      />
+      <AssignTargetFields marked={marked} vocabulary={vocabulary} />
       {assignment.errorMessage === null ? null : (
         <FormErrorBanner message={assignment.errorMessage} />
       )}

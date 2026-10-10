@@ -5,7 +5,10 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { SessionRecordsResponseDtoRecordsItemBookingCreatedBy } from './sessionRecordsResponseDtoRecordsItemBookingCreatedBy.ts';
+import type { SessionRecordsResponseDtoRecordsItemBookingRoom } from './sessionRecordsResponseDtoRecordsItemBookingRoom.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingService } from './sessionRecordsResponseDtoRecordsItemBookingService.ts';
+import type { SessionRecordsResponseDtoRecordsItemBookingSession } from './sessionRecordsResponseDtoRecordsItemBookingSession.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingStaff } from './sessionRecordsResponseDtoRecordsItemBookingStaff.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingStatus } from './sessionRecordsResponseDtoRecordsItemBookingStatus.ts';
 
@@ -19,6 +22,9 @@ export type SessionRecordsResponseDtoRecordsItemBooking = {
   endsAt: string;
   service: SessionRecordsResponseDtoRecordsItemBookingService;
   staff: SessionRecordsResponseDtoRecordsItemBookingStaff;
+  /** @nullable */
+  room: SessionRecordsResponseDtoRecordsItemBookingRoom;
+  session: SessionRecordsResponseDtoRecordsItemBookingSession;
   /**
      * @nullable
      * @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
@@ -44,4 +50,6 @@ export type SessionRecordsResponseDtoRecordsItemBooking = {
   actualDurationSeconds: number | null;
   /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
   createdAt: string;
+  /** @nullable */
+  createdBy: SessionRecordsResponseDtoRecordsItemBookingCreatedBy;
 };

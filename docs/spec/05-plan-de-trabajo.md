@@ -4,6 +4,24 @@ Un ticket = una rama (`feat/API-012-bookings-create`) = un PR pequeño (< 400 l�
 
 Orden recomendado: **API-0 → API-1 → APP-0 en paralelo con API-2 → …** La app trabaja con mocks MSW generados del contrato hasta que el endpoint real existe.
 
+## Actualización (10 oct 2026, cierre del día)
+
+Front: lint, typecheck y 1870 tests en verde. Back: lint, tsc, 971 unitarios y 841 e2e en verde.
+
+> ### ⭐ PRIORIDAD PARA MAÑANA
+> **Ajustar la vista de la agenda del centro** (cómo se quiere ver). Hoy es una línea temporal del día (filas por hora de apertura, cada sala reservada con servicio, profesor y «Faltan N» en rojo; al pulsar, detalle de la sala). Hay que sentarse a decidir cómo debe verse de verdad (por ejemplo, salas en columnas frente a una lista por horas, qué mostrar en cada bloque, duración de las clases a escala, colores por servicio) y probarla en el móvil con datos reales.
+
+- ✅ **Premium**: fondo de pantalla (liso o degradado) y colmena elegidos en «Tu marca», con contraste seguro; pantalla de bienvenida tras el QR como el prototipo (`welcome`).
+- ✅ **Contenido «Practicar» personalizado**: solo lo asignado a todos, su nivel, su grupo o la persona; destino nuevo «Para todos»; se marca a quién se asigna.
+- ✅ **Perfil del alumno** como el prototipo (`profile`) y **«Mis datos»** (alumno y profesor) con teléfono y dirección opcionales.
+- ✅ **Quién asignó cada cita** (`created_by`) y diseño de citas recurrentes (`07-citas-recurrentes.md`, sin construir las fases B y C).
+- ✅ **Solo el centro asigna y mueve citas**; el profesor puede cancelar las suyas. Botón «Nueva cita» en la agenda del centro.
+- ✅ **Salas, profesor por sala y citas privadas o grupales** (`08-salas-y-citas-grupales.md`): pestaña «Gestión» en academias (academia, baile, marciales, música, cocina), salas con aforo, profesor fijo opcional y servicios; servicios asignados a cada profesor desde su ficha; «Nueva cita» con tipo privada/grupal, salas y profesores disponibles, apuntarse a un grupo con plazas; reglas de no solape de profesor, sala y alumno y de aforo en servidor.
+- ✅ **Agenda del centro por sala** (línea temporal por horas y detalle de cada sala con alumnos), pendiente de ajustar (ver prioridad).
+- 🟡 Pendiente de probar en móvil: todo lo anterior.
+- ⬜ Límites conocidos de salas: mover una clase grupal (hoy se cancela y se vuelve a asignar), disponibilidad del alumno que descuente salas ocupadas, registro de clase (iniciar/terminar) por grupo, push con el nombre de la sala, solicitudes del alumno y aprobación del centro (fase C de `07`).
+- ⬜ Datos de prueba: se cancelaron todas las citas de «Academia Ninja Mortal» (29 reservas, 42 sesiones) el 10 oct; el script para sembrar citas de hoy quedó preparado pero sin ejecutar.
+
 ## Actualización (9 oct 2026, cierre del día)
 
 Front: lint, typecheck y 1744 tests en verde. Back: lint, tsc, 971 unitarios y 811 e2e en verde.

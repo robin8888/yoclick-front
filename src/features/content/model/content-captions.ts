@@ -15,6 +15,9 @@ function describeAssignment(
   assignment: ContentResponseDto['assignments'][number],
   words: CaptionWords,
 ): string {
+  if (assignment.isForEveryone) {
+    return i18n.t('content.assignment.everyone', { kind: words.clientWord });
+  }
   if (assignment.level !== null) {
     return i18n.t('content.assignment.level', {
       level: describeContentLevel(assignment.level, words.levelWords),

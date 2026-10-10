@@ -2,6 +2,8 @@ import { Pressable, View } from 'react-native';
 
 import type { AgendaResponseDtoEntriesItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { describeBookingAssigner } from '@/shared/lib/booking-assigner';
+import { describeBookingRoom } from '@/shared/lib/booking-room';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 import { useTheme } from '@/shared/theme';
 import { Badge, type BadgeTone } from '@/ui/atoms/Badge';
@@ -23,6 +25,36 @@ interface AgendaEntryCardProps {
   /** El profesional solo se nombra en la agenda del centro (la de administración). */
   shouldShowStaffName: boolean;
   onPress: () => void;
+}
+
+interface AgendaEntryCaptionsProps {
+  booking: AgendaResponseDtoEntriesItem['booking'];
+  shouldShowStaffName: boolean;
+}
+
+/** Líneas secundarias de la cita: quién la asignó y, en la agenda del centro, quién la atiende. */
+function AgendaEntryCaptions({
+  booking,
+  shouldShowStaffName,
+}: Readonly<AgendaEntryCaptionsProps>): React.JSX.Element {
+  const assignedByLabel = describeBookingAssigner(booking.createdBy);
+  const roomLabel = describeBookingRoom(booking, { shouldShowSeats: true });
+
+  return (
+    <>
+      {roomLabel === null ? null : <Text variant="caption">{roomLabel}</Text>}
+      {assignedByLabel === null ? null : (
+        <Text variant="caption" color="ink2">
+          {assignedByLabel}
+        </Text>
+      )}
+      {shouldShowStaffName ? (
+        <Text variant="caption" color="ink2">
+          {i18n.t('staffAgenda.agenda.professional', { staffName: booking.staff.fullName })}
+        </Text>
+      ) : null}
+    </>
+  );
 }
 
 /** Una cita de la agenda: hora, servicio, cliente y en qué punto está la clase. */
@@ -57,11 +89,7 @@ export function AgendaEntryCard({
       <Text color="ink2">
         {i18n.t('staffAgenda.agenda.withClient', { clientName: client.fullName })}
       </Text>
-      {shouldShowStaffName ? (
-        <Text variant="caption" color="ink2">
-          {i18n.t('staffAgenda.agenda.professional', { staffName: booking.staff.fullName })}
-        </Text>
-      ) : null}
+      <AgendaEntryCaptions booking={booking} shouldShowStaffName={shouldShowStaffName} />
     </Pressable>
   );
 }

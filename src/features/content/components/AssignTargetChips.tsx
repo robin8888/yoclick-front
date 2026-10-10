@@ -9,6 +9,33 @@ import type { AssignmentDraft } from '../model/assignment-draft';
 import { describeContentLevel, CONTENT_LEVELS, type ContentLevel } from '../model/content-levels';
 import { STACK_STYLE, WRAP_ROW_STYLE } from './Content.styles';
 
+interface EveryoneChipProps {
+  draft: AssignmentDraft;
+  clientWord: string;
+  onEveryoneToggle: () => void;
+}
+
+/** «Para todos»: lo ve todo el alumnado del centro, sin elegir nivel, grupo ni persona. */
+export function EveryoneChip({
+  draft,
+  clientWord,
+  onEveryoneToggle,
+}: Readonly<EveryoneChipProps>): React.JSX.Element {
+  return (
+    <View style={STACK_STYLE}>
+      <Text variant="bodyStrong">{i18n.t('content.assign.byEveryone')}</Text>
+      <View style={WRAP_ROW_STYLE}>
+        <Chip
+          selectionRole="checkbox"
+          label={i18n.t('content.assign.everyone', { client: clientWord })}
+          isSelected={draft.isForEveryone}
+          onPress={onEveryoneToggle}
+        />
+      </View>
+    </View>
+  );
+}
+
 interface LevelChipsProps {
   draft: AssignmentDraft;
   levelWords: readonly string[];

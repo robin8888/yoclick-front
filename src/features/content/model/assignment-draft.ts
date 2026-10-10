@@ -12,17 +12,28 @@ export interface DraftClient {
 
 /** Lo que la administración ha marcado en «Asignar contenido» antes de guardar. */
 export interface AssignmentDraft {
+  /** «Para todos»: lo ve todo el alumnado del centro. */
+  isForEveryone: boolean;
   levels: readonly ContentLevel[];
   groupIds: readonly string[];
   clients: readonly DraftClient[];
 }
 
-export const EMPTY_ASSIGNMENT_DRAFT: AssignmentDraft = { levels: [], groupIds: [], clients: [] };
+export const EMPTY_ASSIGNMENT_DRAFT: AssignmentDraft = {
+  isForEveryone: false,
+  levels: [],
+  groupIds: [],
+  clients: [],
+};
 
 function toggleValue<TValue>(values: readonly TValue[], value: TValue): TValue[] {
   return values.includes(value)
     ? values.filter((existing) => existing !== value)
     : [...values, value];
+}
+
+export function toggleEveryone(draft: AssignmentDraft): AssignmentDraft {
+  return { ...draft, isForEveryone: !draft.isForEveryone };
 }
 
 export function toggleLevel(draft: AssignmentDraft, level: ContentLevel): AssignmentDraft {
@@ -52,6 +63,7 @@ export function buildDraftFromAssignments(
   assignments: ContentResponseDto['assignments'],
 ): AssignmentDraft {
   return assignments.reduce<AssignmentDraft>((draft, assignment) => {
+    if (assignment.isForEveryone) return { ...draft, isForEveryone: true };
     if (assignment.level !== null) return toggleLevel(draft, assignment.level);
     if (assignment.groupId !== null) return toggleGroup(draft, assignment.groupId);
     if (assignment.clientMembershipId === null) return draft;
@@ -67,6 +79,7 @@ export function buildAssignmentTargets(
   draft: AssignmentDraft,
 ): AssignContentRequestDtoTargetsItem[] {
   return [
+    ...(draft.isForEveryone ? [{ kind: 'everyone' } as const] : []),
     ...draft.levels.map((level) => ({ kind: 'level', level }) as const),
     ...draft.groupIds.map((groupId) => ({ kind: 'group', groupId }) as const),
     ...draft.clients.map(({ membershipId }) => ({ kind: 'client', membershipId }) as const),

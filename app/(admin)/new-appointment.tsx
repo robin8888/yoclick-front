@@ -1,5 +1,5 @@
 import { NewAppointmentScreen } from '@/features/staff-agenda';
 
-export default function NewAppointmentRoute(): React.JSX.Element {
+export default function AdminNewAppointmentRoute(): React.JSX.Element {
   return <NewAppointmentScreen />;
 }

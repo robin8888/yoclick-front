@@ -13,6 +13,7 @@ function buildMember(overrides: Partial<TeamResponseDtoMembersItem>): TeamRespon
     status: 'active',
     staffTitle: null,
     permissions: [],
+    services: [],
     joinedAt: '2026-01-01T09:00:00.000Z',
     ...overrides,
   };

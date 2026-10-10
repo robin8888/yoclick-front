@@ -18,12 +18,14 @@ interface ClassSessionDetailProps {
   entry: AgendaResponseDtoEntriesItem;
   timeZone: string;
   isoDate: string;
+  canAddPeople: boolean;
 }
 
 function ClassSessionDetail({
   entry,
   timeZone,
   isoDate,
+  canAddPeople,
 }: Readonly<ClassSessionDetailProps>): React.JSX.Element {
   const router = useRouter();
   const { booking, client } = entry;
@@ -43,6 +45,7 @@ function ClassSessionDetail({
           isStarting={actions.isStarting}
           isEnding={actions.isEnding}
           clientName={client.fullName}
+          canReschedule={canAddPeople}
           isCancelling={actions.isCancelling}
           onStart={actions.startClass}
           onEnd={actions.endClass}
@@ -53,7 +56,7 @@ function ClassSessionDetail({
       {actions.actionErrorMessage === null ? null : (
         <FormErrorBanner message={actions.actionErrorMessage} />
       )}
-      <ClassSessionBody booking={booking} timeZone={timeZone} />
+      <ClassSessionBody {...{ booking, timeZone, isoDate, canAddPeople }} />
     </ScreenTemplate>
   );
 }
@@ -75,11 +78,13 @@ function SessionNotFound({ onBack }: Readonly<{ onBack: () => void }>): React.JS
 interface ClassSessionContentProps {
   bookingId: string;
   isoDate: string;
+  canAddPeople: boolean;
 }
 
 function ClassSessionContent({
   bookingId,
   isoDate,
+  canAddPeople,
 }: Readonly<ClassSessionContentProps>): React.JSX.Element {
   const router = useRouter();
   const agenda = useDayAgenda(isoDate);
@@ -89,7 +94,14 @@ function ClassSessionContent({
   if (entry === undefined || agenda.data === undefined) {
     return <SessionNotFound onBack={router.back} />;
   }
-  return <ClassSessionDetail entry={entry} timeZone={agenda.data.timezone} isoDate={isoDate} />;
+  return (
+    <ClassSessionDetail
+      entry={entry}
+      timeZone={agenda.data.timezone}
+      isoDate={isoDate}
+      canAddPeople={canAddPeople}
+    />
+  );
 }
 
 /** Iniciar y terminar una clase con temporizador; queda registrado para el propietario. */
@@ -97,5 +109,11 @@ export function ClassSessionScreen(): React.JSX.Element {
   const params = classSessionRouteParamsSchema.safeParse(useLocalSearchParams());
 
   if (!params.success) return <Redirect href="/" />;
-  return <ClassSessionContent bookingId={params.data.bookingId} isoDate={params.data.date} />;
+  return (
+    <ClassSessionContent
+      bookingId={params.data.bookingId}
+      isoDate={params.data.date}
+      canAddPeople={params.data.isCenterWide === 'true'}
+    />
+  );
 }

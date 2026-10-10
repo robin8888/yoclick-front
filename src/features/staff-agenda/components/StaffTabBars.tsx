@@ -2,7 +2,7 @@ import { usePathname, useRouter, type Href } from 'expo-router';
 
 import { useActiveCenterSectorId } from '@/features/join';
 import { useUnreadNotificationCount } from '@/features/notifications';
-import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
 
 interface StaffTabsRequest {
@@ -18,7 +18,7 @@ function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): r
       label: i18n.t('staffAgenda.tabs.agenda'),
       iconName: 'calendar',
       href: '/(staff)/(tabs)/agenda',
-      activePaths: ['/agenda', '/sessions', '/scan', '/new-appointment'],
+      activePaths: ['/agenda', '/sessions', '/scan'],
     },
     {
       id: 'clients',
@@ -45,8 +45,27 @@ function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): r
   ];
 }
 
-/** Prototipo `aagenda`: Agenda, Clientes, Contenido, Marca y Más, con las pantallas de cada una. */
-function listAdminTabs(clientsLabel: string): readonly PathTab[] {
+interface AdminTabsRequest {
+  clientsLabel: string;
+  /** Las academias llevan «Gestión» (salas y profesores) entre Contenido y Marca. */
+  hasManagementTab: boolean;
+}
+
+const MANAGEMENT_TAB: PathTab = {
+  id: 'management',
+  label: i18n.t('centerAdmin.tabs.management'),
+  iconName: 'settings',
+  href: '/(admin)/(tabs)/management',
+  activePaths: ['/management', '/rooms'],
+};
+
+/** Las pantallas de «Servicios y horario» cuelgan de «Marca» (prototipo); las salas, de «Gestión» si existe. */
+function listBrandTabPaths(hasManagementTab: boolean): string[] {
+  const paths = ['/brand', '/services', '/hours', '/team'];
+  return hasManagementTab ? paths : [...paths, '/rooms'];
+}
+
+function listMainAdminTabs(clientsLabel: string): readonly PathTab[] {
   return [
     {
       id: 'agenda',
@@ -69,13 +88,20 @@ function listAdminTabs(clientsLabel: string): readonly PathTab[] {
       href: '/(admin)/(tabs)/content',
       activePaths: ['/content'],
     },
+  ];
+}
+
+/** Prototipo `aagenda`: Agenda, Clientes, Contenido, (Gestión), Marca y Más. */
+function listAdminTabs({ clientsLabel, hasManagementTab }: AdminTabsRequest): readonly PathTab[] {
+  return [
+    ...listMainAdminTabs(clientsLabel),
+    ...(hasManagementTab ? [MANAGEMENT_TAB] : []),
     {
       id: 'brand',
       label: i18n.t('centerAdmin.tabs.brand'),
       iconName: 'palette',
       href: '/(admin)/(tabs)/brand',
-      // En el prototipo «Servicios y horario» cuelga de «Marca».
-      activePaths: ['/brand', '/services', '/hours', '/rooms', '/team'],
+      activePaths: listBrandTabPaths(hasManagementTab),
     },
     {
       id: 'more',
@@ -111,11 +137,12 @@ export function StaffTabBar(): React.JSX.Element {
 /** La barra de administración, visible en todas sus pantallas. */
 export function AdminTabBar(): React.JSX.Element {
   const router = useRouter();
-  const clientsLabel = capitalize(getSectorVocabulary(useActiveCenterSectorId()).client.plural);
+  const sectorId = useActiveCenterSectorId();
+  const clientsLabel = capitalize(getSectorVocabulary(sectorId).client.plural);
 
   return (
     <PathTabBar
-      tabs={listAdminTabs(clientsLabel)}
+      tabs={listAdminTabs({ clientsLabel, hasManagementTab: hasRoomManagement(sectorId) })}
       currentPath={usePathname()}
       onTabPress={(href) => {
         router.navigate(href as Href);

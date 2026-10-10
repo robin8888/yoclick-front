@@ -17,7 +17,10 @@ import type {
   AgendaResponseDto,
   BookingResponseDto,
   CancelBookingResponseDto,
+  GroupOptionsResponseDto,
   MyBookingsResponseDto,
+  PlacementOptionsResponseDto,
+  RoomAgendaResponseDto,
   SessionRecordsResponseDto
 } from '../../model';
 
@@ -25,6 +28,10 @@ import {
   getAgendaCancelBookingResponseMock,
   getAgendaCreateBookingResponseMock,
   getAgendaGetDayResponseMock,
+  getAgendaGetGroupOptionsResponseMock,
+  getAgendaGetPlacementOptionsResponseMock,
+  getAgendaGetRoomDayResponseMock,
+  getAgendaJoinGroupSessionResponseMock,
   getAgendaRescheduleBookingResponseMock,
   getBookingsCancelResponseMock,
   getBookingsCreateResponseMock,
@@ -35,7 +42,7 @@ import {
   getSessionRecordsListResponseMock
 } from './bookings.faker.ts';
 
-export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsRescheduleResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getAgendaCreateBookingResponseMock, getAgendaCancelBookingResponseMock, getAgendaRescheduleBookingResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
+export { getBookingsCreateResponseMock, getBookingsListMineResponseMock, getBookingsCancelResponseMock, getBookingsRescheduleResponseMock, getBookingsStartResponseMock, getBookingsEndResponseMock, getAgendaGetDayResponseMock, getAgendaCreateBookingResponseMock, getAgendaCancelBookingResponseMock, getAgendaJoinGroupSessionResponseMock, getAgendaGetPlacementOptionsResponseMock, getAgendaGetGroupOptionsResponseMock, getAgendaGetRoomDayResponseMock, getAgendaRescheduleBookingResponseMock, getSessionRecordsListResponseMock } from './bookings.faker.ts';
 
 
 export const getBookingsCreateMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
@@ -146,6 +153,54 @@ export const getAgendaCancelBookingMockHandler = (overrideResponse?: BookingResp
   }, options)
 }
 
+export const getAgendaJoinGroupSessionMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/agenda/bookings/join-group', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAgendaJoinGroupSessionResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getAgendaGetPlacementOptionsMockHandler = (overrideResponse?: PlacementOptionsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlacementOptionsResponseDto> | PlacementOptionsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/agenda/placement-options', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAgendaGetPlacementOptionsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getAgendaGetGroupOptionsMockHandler = (overrideResponse?: GroupOptionsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<GroupOptionsResponseDto> | GroupOptionsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/agenda/group-options', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAgendaGetGroupOptionsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getAgendaGetRoomDayMockHandler = (overrideResponse?: RoomAgendaResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomAgendaResponseDto> | RoomAgendaResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/agenda/rooms', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getAgendaGetRoomDayResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getAgendaRescheduleBookingMockHandler = (overrideResponse?: BookingResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BookingResponseDto> | BookingResponseDto), options?: RequestHandlerOptions) => {
   return http.post('*/v1/centers/:centerId/agenda/bookings/:bookingId/reschedule', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
 
@@ -179,6 +234,10 @@ export const getBookingsMock = () => [
   getAgendaGetDayMockHandler(),
   getAgendaCreateBookingMockHandler(),
   getAgendaCancelBookingMockHandler(),
+  getAgendaJoinGroupSessionMockHandler(),
+  getAgendaGetPlacementOptionsMockHandler(),
+  getAgendaGetGroupOptionsMockHandler(),
+  getAgendaGetRoomDayMockHandler(),
   getAgendaRescheduleBookingMockHandler(),
   getSessionRecordsListMockHandler()
 ]

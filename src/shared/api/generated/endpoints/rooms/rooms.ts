@@ -28,7 +28,8 @@ import type {
   CreateRoomRequestDto,
   ProblemDetailsDto,
   RoomListResponseDto,
-  RoomResponseDto
+  RoomResponseDto,
+  UpdateRoomRequestDto
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -241,6 +242,96 @@ export const useRoomsCreate = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getRoomsCreateMutationOptions(options), queryClient);
+    }
+    export const getRoomsUpdateUrl = (centerId: string,
+    roomId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/rooms/${roomId}`
+}
+
+/**
+ * @summary Cambia el nombre, el aforo o el profesor de una sala. Las citas ya puestas conservan su sala.
+ */
+export const roomsUpdate = async (centerId: string,
+    roomId: string,
+    updateRoomRequestDto: UpdateRoomRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RoomResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<RoomResponseDto>(getRoomsUpdateUrl(centerId,roomId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(updateRoomRequestDto)
+  }
+);}
+
+
+
+
+
+export const getRoomsUpdateMutationKey = () => ['roomsUpdate'] as const;
+
+export const getRoomsUpdateMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomsUpdate>>, TError,RoomsUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof roomsUpdate>>, TError,RoomsUpdateMutationVariables, TContext> => {
+
+const mutationKey = getRoomsUpdateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof roomsUpdate>>, RoomsUpdateMutationVariables> = (props) => {
+          const {centerId,roomId,data} = props ?? {};
+
+          return  roomsUpdate(centerId,roomId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RoomsUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof roomsUpdate>>>
+    export type RoomsUpdateMutationBody = UpdateRoomRequestDto
+    export type RoomsUpdateMutationError = ErrorType<ProblemDetailsDto>
+    export type RoomsUpdateMutationVariables = {centerId: string;roomId: string;data: UpdateRoomRequestDto}
+
+    /**
+ * @summary Cambia el nombre, el aforo o el profesor de una sala. Las citas ya puestas conservan su sala.
+ */
+export const useRoomsUpdate = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomsUpdate>>, TError,RoomsUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof roomsUpdate>>,
+        TError,
+        RoomsUpdateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRoomsUpdateMutationOptions(options), queryClient);
     }
     export const getRoomsArchiveUrl = (centerId: string,
     roomId: string,) => {

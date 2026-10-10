@@ -30,6 +30,7 @@ function buildDraft(
     role: member.role,
     staffTitle: member.staffTitle ?? '',
     grantedPermissions: pickGrantedPermissions(member.permissions),
+    serviceIds: member.services.map(({ id }) => id),
     ...edits,
   };
 }

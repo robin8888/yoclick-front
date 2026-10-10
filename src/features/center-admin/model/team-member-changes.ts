@@ -1,5 +1,6 @@
 import type { UpdateTeamMemberRequestDto } from '@/shared/api/generated/model';
 
+import { haveSameServices } from './service-selection';
 import { buildPermissionChange, type GrantablePermission } from './team-permissions';
 import type { EditableTeamRole, RosterMember } from './team-roster';
 
@@ -10,6 +11,8 @@ export interface TeamMemberDraft {
   staffTitle: string;
   /** Solo cuentan para quien da las sesiones: administración ya lo ve todo. */
   grantedPermissions: GrantablePermission[];
+  /** Los servicios que da la persona (los que presta la academia). */
+  serviceIds: string[];
 }
 
 /** Solo lo que cambia: el servidor rechaza campos que no se pueden tocar. `null` si no hay cambios. */
@@ -28,5 +31,7 @@ export function buildTeamMemberChanges(
       ? buildPermissionChange(member.permissions, draft.grantedPermissions)
       : null;
   if (permissionChange !== null) changes.permissions = permissionChange;
+  const currentServiceIds = member.services.map(({ id }) => id);
+  if (!haveSameServices(draft.serviceIds, currentServiceIds)) changes.serviceIds = draft.serviceIds;
   return Object.keys(changes).length === 0 ? null : changes;
 }

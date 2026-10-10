@@ -5,7 +5,10 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { MyBookingsResponseDtoBookingsItemCreatedBy } from './myBookingsResponseDtoBookingsItemCreatedBy.ts';
+import type { MyBookingsResponseDtoBookingsItemRoom } from './myBookingsResponseDtoBookingsItemRoom.ts';
 import type { MyBookingsResponseDtoBookingsItemService } from './myBookingsResponseDtoBookingsItemService.ts';
+import type { MyBookingsResponseDtoBookingsItemSession } from './myBookingsResponseDtoBookingsItemSession.ts';
 import type { MyBookingsResponseDtoBookingsItemStaff } from './myBookingsResponseDtoBookingsItemStaff.ts';
 import type { MyBookingsResponseDtoBookingsItemStatus } from './myBookingsResponseDtoBookingsItemStatus.ts';
 
@@ -19,6 +22,9 @@ export type MyBookingsResponseDtoBookingsItem = {
   endsAt: string;
   service: MyBookingsResponseDtoBookingsItemService;
   staff: MyBookingsResponseDtoBookingsItemStaff;
+  /** @nullable */
+  room: MyBookingsResponseDtoBookingsItemRoom;
+  session: MyBookingsResponseDtoBookingsItemSession;
   /**
      * @nullable
      * @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
@@ -44,4 +50,6 @@ export type MyBookingsResponseDtoBookingsItem = {
   actualDurationSeconds: number | null;
   /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
   createdAt: string;
+  /** @nullable */
+  createdBy: MyBookingsResponseDtoBookingsItemCreatedBy;
 };

@@ -59,14 +59,16 @@ interface ServiceMetaInput {
 }
 
 /** «60 min · Individual · 35 €» (o «Gratis» / «Precio a consultar»), la línea de datos del servicio. */
-export function buildServiceMetaLabel(service: ServiceMetaInput): string {
+export function buildServiceMetaLabel(
+  service: ServiceMetaInput,
+  options: { isKindHidden?: boolean } = {},
+): string {
   const priceLabel =
     service.priceCents === 0
       ? i18n.t('booking.book.free')
       : (formatServicePrice(service.priceCents) ?? i18n.t('booking.book.priceOnRequest'));
-  return [
-    `${String(service.durationMinutes)} min`,
-    i18n.t(`booking.book.kind.${service.kind}`),
-    priceLabel,
-  ].join(' · ');
+  // «Individual» no es el tipo de la cita: en «Nueva cita» del centro se elige privada o grupal aparte.
+  const kindLabel =
+    options.isKindHidden === true ? [] : [i18n.t(`booking.book.kind.${service.kind}`)];
+  return [`${String(service.durationMinutes)} min`, ...kindLabel, priceLabel].join(' · ');
 }

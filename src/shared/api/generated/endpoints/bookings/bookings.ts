@@ -26,6 +26,9 @@ import type {
 
 import type {
   AgendaGetDayParams,
+  AgendaGetGroupOptionsParams,
+  AgendaGetPlacementOptionsParams,
+  AgendaGetRoomDayParams,
   AgendaResponseDto,
   BookingResponseDto,
   BookingsListMineParams,
@@ -33,10 +36,14 @@ import type {
   CreateAgendaBookingRequestDto,
   CreateBookingRequestDto,
   EndSessionRequestDto,
+  GroupOptionsResponseDto,
+  JoinGroupSessionRequestDto,
   MyBookingsResponseDto,
+  PlacementOptionsResponseDto,
   ProblemDetailsDto,
   RescheduleAgendaBookingRequestDto,
   RescheduleBookingRequestDto,
+  RoomAgendaResponseDto,
   SessionRecordsListParams,
   SessionRecordsResponseDto
 } from '../../model';
@@ -721,7 +728,7 @@ export const getAgendaCreateBookingUrl = (centerId: string,) => {
 }
 
 /**
- * @summary Crea una cita para un cliente desde la agenda. Mismas reglas de hueco que la reserva del cliente. El personal solo puede ponerla en su propia agenda.
+ * @summary Asigna una cita a un cliente desde la agenda. Solo el centro (propietario o administración) asigna citas; el equipo no. Mismas reglas de hueco que la reserva del cliente.
  */
 export const agendaCreateBooking = async (centerId: string,
     createAgendaBookingRequestDto: CreateAgendaBookingRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
@@ -788,7 +795,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AgendaCreateBookingMutationVariables = {centerId: string;data: CreateAgendaBookingRequestDto}
 
     /**
- * @summary Crea una cita para un cliente desde la agenda. Mismas reglas de hueco que la reserva del cliente. El personal solo puede ponerla en su propia agenda.
+ * @summary Asigna una cita a un cliente desde la agenda. Solo el centro (propietario o administración) asigna citas; el equipo no. Mismas reglas de hueco que la reserva del cliente.
  */
 export const useAgendaCreateBooking = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaCreateBooking>>, TError,AgendaCreateBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -875,7 +882,440 @@ export const useAgendaCancelBooking = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getAgendaCancelBookingMutationOptions(options), queryClient);
     }
-    export const getAgendaRescheduleBookingUrl = (centerId: string,
+    export const getAgendaJoinGroupSessionUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/agenda/bookings/join-group`
+}
+
+/**
+ * @summary Apunta a un cliente a una clase grupal que ya existe (misma hora, profesional y sala). 409 SESSION_FULL si ya no quedan plazas, ALREADY_BOOKED si el cliente tiene otra cita a esa hora.
+ */
+export const agendaJoinGroupSession = async (centerId: string,
+    joinGroupSessionRequestDto: JoinGroupSessionRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getAgendaJoinGroupSessionUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(joinGroupSessionRequestDto)
+  }
+);}
+
+
+
+
+
+export const getAgendaJoinGroupSessionMutationKey = () => ['agendaJoinGroupSession'] as const;
+
+export const getAgendaJoinGroupSessionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaJoinGroupSession>>, TError,AgendaJoinGroupSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof agendaJoinGroupSession>>, TError,AgendaJoinGroupSessionMutationVariables, TContext> => {
+
+const mutationKey = getAgendaJoinGroupSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof agendaJoinGroupSession>>, AgendaJoinGroupSessionMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  agendaJoinGroupSession(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AgendaJoinGroupSessionMutationResult = NonNullable<Awaited<ReturnType<typeof agendaJoinGroupSession>>>
+    export type AgendaJoinGroupSessionMutationBody = JoinGroupSessionRequestDto
+    export type AgendaJoinGroupSessionMutationError = ErrorType<ProblemDetailsDto>
+    export type AgendaJoinGroupSessionMutationVariables = {centerId: string;data: JoinGroupSessionRequestDto}
+
+    /**
+ * @summary Apunta a un cliente a una clase grupal que ya existe (misma hora, profesional y sala). 409 SESSION_FULL si ya no quedan plazas, ALREADY_BOOKED si el cliente tiene otra cita a esa hora.
+ */
+export const useAgendaJoinGroupSession = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaJoinGroupSession>>, TError,AgendaJoinGroupSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof agendaJoinGroupSession>>,
+        TError,
+        AgendaJoinGroupSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAgendaJoinGroupSessionMutationOptions(options), queryClient);
+    }
+    export const getAgendaGetPlacementOptionsUrl = (centerId: string,
+    params: AgendaGetPlacementOptionsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/agenda/placement-options?${stringifiedParams}` : `/v1/centers/${centerId}/agenda/placement-options`
+}
+
+/**
+ * @summary Para poner una cita: las horas libres de una profesional un día (cada cuarto de hora) con las salas libres que puede usar, y las clases grupales suyas a las que aún caben más personas.
+ */
+export const agendaGetPlacementOptions = async (centerId: string,
+    params: AgendaGetPlacementOptionsParams, options?: Parameters<typeof apiMutator>[1]): Promise<PlacementOptionsResponseDto> => {
+
+  return apiMutator<PlacementOptionsResponseDto>(getAgendaGetPlacementOptionsUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAgendaGetPlacementOptionsQueryKey = (centerId: string,
+    params?: AgendaGetPlacementOptionsParams,) => {
+    return [
+    `/v1/centers/${centerId}/agenda/placement-options`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getAgendaGetPlacementOptionsQueryOptions = <TData = Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params: AgendaGetPlacementOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAgendaGetPlacementOptionsQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof agendaGetPlacementOptions>>> = ({ signal }) => agendaGetPlacementOptions(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AgendaGetPlacementOptionsQueryResult = NonNullable<Awaited<ReturnType<typeof agendaGetPlacementOptions>>>
+export type AgendaGetPlacementOptionsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useAgendaGetPlacementOptions<TData = Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetPlacementOptionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetPlacementOptions>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetPlacementOptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetPlacementOptions<TData = Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetPlacementOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetPlacementOptions>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetPlacementOptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetPlacementOptions<TData = Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetPlacementOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Para poner una cita: las horas libres de una profesional un día (cada cuarto de hora) con las salas libres que puede usar, y las clases grupales suyas a las que aún caben más personas.
+ */
+
+export function useAgendaGetPlacementOptions<TData = Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetPlacementOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetPlacementOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAgendaGetPlacementOptionsQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getAgendaGetGroupOptionsUrl = (centerId: string,
+    params: AgendaGetGroupOptionsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/agenda/group-options?${stringifiedParams}` : `/v1/centers/${centerId}/agenda/group-options`
+}
+
+/**
+ * @summary Para una cita grupal: cada sala con profesor que da el servicio, con sus horas libres ese día (profesor y sala libres) y sus grupos con plazas. En una cita grupal el profesor lo define la sala.
+ */
+export const agendaGetGroupOptions = async (centerId: string,
+    params: AgendaGetGroupOptionsParams, options?: Parameters<typeof apiMutator>[1]): Promise<GroupOptionsResponseDto> => {
+
+  return apiMutator<GroupOptionsResponseDto>(getAgendaGetGroupOptionsUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAgendaGetGroupOptionsQueryKey = (centerId: string,
+    params?: AgendaGetGroupOptionsParams,) => {
+    return [
+    `/v1/centers/${centerId}/agenda/group-options`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getAgendaGetGroupOptionsQueryOptions = <TData = Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params: AgendaGetGroupOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAgendaGetGroupOptionsQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof agendaGetGroupOptions>>> = ({ signal }) => agendaGetGroupOptions(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AgendaGetGroupOptionsQueryResult = NonNullable<Awaited<ReturnType<typeof agendaGetGroupOptions>>>
+export type AgendaGetGroupOptionsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useAgendaGetGroupOptions<TData = Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetGroupOptionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetGroupOptions>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetGroupOptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetGroupOptions<TData = Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetGroupOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetGroupOptions>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetGroupOptions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetGroupOptions<TData = Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetGroupOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Para una cita grupal: cada sala con profesor que da el servicio, con sus horas libres ese día (profesor y sala libres) y sus grupos con plazas. En una cita grupal el profesor lo define la sala.
+ */
+
+export function useAgendaGetGroupOptions<TData = Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetGroupOptionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetGroupOptions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAgendaGetGroupOptionsQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getAgendaGetRoomDayUrl = (centerId: string,
+    params: AgendaGetRoomDayParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/agenda/rooms?${stringifiedParams}` : `/v1/centers/${centerId}/agenda/rooms`
+}
+
+/**
+ * @summary La agenda del centro por sala: cada sala con su aforo, su profesor y lo que la ocupa ese día (clase, profesor, de qué hora a qué hora, plazas y alumnos apuntados). Las citas sin sala salen aparte.
+ */
+export const agendaGetRoomDay = async (centerId: string,
+    params: AgendaGetRoomDayParams, options?: Parameters<typeof apiMutator>[1]): Promise<RoomAgendaResponseDto> => {
+
+  return apiMutator<RoomAgendaResponseDto>(getAgendaGetRoomDayUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAgendaGetRoomDayQueryKey = (centerId: string,
+    params?: AgendaGetRoomDayParams,) => {
+    return [
+    `/v1/centers/${centerId}/agenda/rooms`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getAgendaGetRoomDayQueryOptions = <TData = Awaited<ReturnType<typeof agendaGetRoomDay>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params: AgendaGetRoomDayParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAgendaGetRoomDayQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof agendaGetRoomDay>>> = ({ signal }) => agendaGetRoomDay(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type AgendaGetRoomDayQueryResult = NonNullable<Awaited<ReturnType<typeof agendaGetRoomDay>>>
+export type AgendaGetRoomDayQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useAgendaGetRoomDay<TData = Awaited<ReturnType<typeof agendaGetRoomDay>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetRoomDayParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetRoomDay>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetRoomDay>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetRoomDay<TData = Awaited<ReturnType<typeof agendaGetRoomDay>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetRoomDayParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof agendaGetRoomDay>>,
+          TError,
+          Awaited<ReturnType<typeof agendaGetRoomDay>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useAgendaGetRoomDay<TData = Awaited<ReturnType<typeof agendaGetRoomDay>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetRoomDayParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary La agenda del centro por sala: cada sala con su aforo, su profesor y lo que la ocupa ese día (clase, profesor, de qué hora a qué hora, plazas y alumnos apuntados). Las citas sin sala salen aparte.
+ */
+
+export function useAgendaGetRoomDay<TData = Awaited<ReturnType<typeof agendaGetRoomDay>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: AgendaGetRoomDayParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof agendaGetRoomDay>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getAgendaGetRoomDayQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getAgendaRescheduleBookingUrl = (centerId: string,
     bookingId: string,) => {
 
 
@@ -885,7 +1325,7 @@ export const useAgendaCancelBooking = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. La administración mueve cualquiera; el personal, solo las suyas y a su propia agenda. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
+ * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. Solo el centro (propietario o administración) mueve citas; el personal puede cancelarlas pero no moverlas. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
  */
 export const agendaRescheduleBooking = async (centerId: string,
     bookingId: string,
@@ -953,7 +1393,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AgendaRescheduleBookingMutationVariables = {centerId: string;bookingId: string;data: RescheduleAgendaBookingRequestDto}
 
     /**
- * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. La administración mueve cualquiera; el personal, solo las suyas y a su propia agenda. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
+ * @summary Mueve una cita futura a otra hora desde la agenda, con el mismo servicio. Solo el centro (propietario o administración) mueve citas; el personal puede cancelarlas pero no moverlas. Sin antelación mínima. El cliente recibe un aviso push. Una cancelada, empezada o pasada responde 409 BOOKING_NOT_RESCHEDULABLE.
  */
 export const useAgendaRescheduleBooking = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof agendaRescheduleBooking>>, TError,AgendaRescheduleBookingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

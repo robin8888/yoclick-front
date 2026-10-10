@@ -27,7 +27,8 @@
     "SESSION_INVALID": "Tu sesión ha caducado. Inicia sesión de nuevo",
     "INTERNAL_ERROR": "Algo ha fallado de nuestro lado. Inténtalo de nuevo",
     "SLOT_UNAVAILABLE": "Esa hora ya no está disponible. Elige otra",
-    "SESSION_FULL": "Ya no quedan plazas. Puedes apuntarte a la lista de espera",
+    "SESSION_FULL": "Este grupo ya no tiene plazas libres",
+    "ROOM_UNAVAILABLE": "Esa sala no está libre a esa hora o no la da ese profesional. Elige otra",
     "ALREADY_BOOKED": "Ya tienes una reserva en ese horario",
     "OUTSIDE_BOOKING_WINDOW": "Ese horario queda fuera del plazo de reserva",
     "CANCEL_OUT_OF_POLICY": "Esta reserva ya no se puede cancelar sin coste",
@@ -474,6 +475,12 @@
     }
   },
   "booking": {
+    "assignedBy": {
+      "client": "Reservada por {{name}}",
+      "staff": "Asignada por {{name}} (equipo)",
+      "admin": "Asignada por {{name}} (administración)",
+      "owner": "Asignada por {{name}} (administración)"
+    },
     "tabs": {
       "home": "Inicio",
       "book": "Reservar",
@@ -588,6 +595,10 @@
       "weekGoalReached": "¡Objetivo semanal cumplido!",
       "passTitle": "Bono",
       "passEmpty": "Sin bono activo. Pregunta en tu centro."
+    },
+    "room": {
+      "label": "Sala {{name}}",
+      "seats": "{{booked}} de {{capacity}} plazas"
     }
   },
   "routines": {
@@ -687,7 +698,29 @@
     "profile": {
       "availabilityAction": "Mi disponibilidad",
       "title": "Perfil",
-      "roleAtCenter": "{{role}} en {{centerName}}"
+      "roleAtCenter": "{{role}} en {{centerName}}",
+      "centersSubtitle_one": "{{count}} centro · actual: {{centerName}}",
+      "centersSubtitle_other": "{{count}} centros · actual: {{centerName}}",
+      "darkTheme": "Tema oscuro",
+      "myDataSubtitle": "Teléfono, dirección y lo que tu centro sabe de ti",
+      "version": "Versión {{version}}"
+    },
+    "myData": {
+      "title": "Mis datos",
+      "subtitle": "Esto es lo que {{centerName}} tiene de ti",
+      "loadError": "No hemos podido cargar tus datos",
+      "nameLabel": "Nombre",
+      "emailLabel": "Correo electrónico",
+      "birthDateLabel": "Fecha de nacimiento",
+      "notProvided": "Sin indicar",
+      "contactTitle": "Contacto",
+      "optionalHelper": "Opcional. Solo lo ve tu centro.",
+      "phoneLabel": "Teléfono",
+      "phoneInvalid": "Escribe un teléfono válido, como +34 600 123 456",
+      "addressLabel": "Dirección",
+      "addressTooLong": "La dirección admite hasta {{max}} caracteres",
+      "saveAction": "Guardar",
+      "savedMessage": "Datos guardados"
     }
   },
   "staffAgenda": {
@@ -702,11 +735,44 @@
       "title": "Nueva cita",
       "saveAction": "Guardar cita",
       "clientLabel": "Cliente",
+      "staffLabel": "{{staffWord}}",
       "changeClient": "Cambiar",
       "serviceLabel": "Servicio",
       "timeLabel": "Hora",
       "hourLabel": "Hora",
-      "minuteLabel": "Minutos"
+      "minuteLabel": "Minutos",
+      "modeLabel": "Tipo de cita",
+      "modePrivate": "Privada",
+      "modePrivateHelper": "Una sola persona con el profesor.",
+      "modeGroup": "Grupal",
+      "modeGroupHelper": "Varias personas a la vez, hasta el aforo de la sala.",
+      "roomLabel": "Sala",
+      "noFreeRoom": "No hay ninguna sala libre a esa hora para este profesional.",
+      "roomOption": "{{name}} · aforo {{capacity}}",
+      "joinTitle": "Grupos de este día con plazas",
+      "joinOption": "{{time}} · {{room}}",
+      "joinSeats": "{{booked}} de {{capacity}} plazas ocupadas · {{service}}",
+      "joinNone": "Ese día no hay grupos con plazas libres. Abre uno nuevo eligiendo hora y sala.",
+      "openNewGroup": "O abre un grupo nuevo",
+      "chooseStaffFirst": "Elige primero al profesional: verás sus servicios y su disponibilidad.",
+      "noServicesForStaff": "{{name}} todavía no tiene servicios asignados. Elige el servicio y asígnaselo en «Servicios y horario» para darle citas.",
+      "dayLabel": "Día",
+      "availabilityTitle": "Disponibilidad de {{name}}",
+      "availabilityHelper": "Solo salen las horas en las que está libre y hay alguna sala libre.",
+      "summaryTitle": "Resumen de la cita",
+      "summaryPrivate": "Cita privada · {{service}} · {{time}}",
+      "summaryGroup": "Cita grupal · {{service}} · {{time}}",
+      "summaryJoin": "Se apunta al grupo de las {{time}} · {{room}}",
+      "summaryRoom": "Sala {{name}}",
+      "staffDoesNotGive": "{{name}} no da este servicio. Asígnaselo en «Servicios y horario» o elige otro profesional.",
+      "notGivenByStaff": "No lo da {{name}}",
+      "groupRoomsTitle": "Salas y profesores disponibles",
+      "groupRoomsHelper": "Cada sala con los profesores que dan este servicio. Elige la hora de la persona que quieras.",
+      "groupRoomTeacher": "{{room}} · con {{teacher}}",
+      "groupRoomSeats": "Aforo {{capacity}}",
+      "groupRoomNoSlots": "Sin horas libres este día",
+      "groupRoomsEmpty": "Ninguna sala da este servicio. Asigna el servicio a una sala en «Gestión».",
+      "chooseServiceFirst": "Elige primero el servicio para ver las salas y los profesores que lo dan."
     },
     "reschedule": {
       "title": "Cambiar hora",
@@ -760,7 +826,8 @@
       "byStaffTitle": "Por {{staffWord}}",
       "noAppointments": "Sin citas este día",
       "appointmentCount_one": "{{count}} cita",
-      "appointmentCount_other": "{{count}} citas"
+      "appointmentCount_other": "{{count}} citas",
+      "byRoomTitle": "Por sala"
     },
     "session": {
       "title": "Clase",
@@ -789,7 +856,12 @@
       "endConfirmMessage": "Se guardará la hora de fin y la duración real para el centro.",
       "endConfirmAction": "Sí, terminar",
       "keepGoingAction": "Seguir",
-      "finishedSummary": "Clase registrada: {{actual}} de {{planned}} previstos."
+      "finishedSummary": "Clase registrada: {{actual}} de {{planned}} previstos.",
+      "roomLabel": "Sala",
+      "seatsLabel": "Plazas",
+      "seatsValue": "{{booked}} de {{capacity}} ocupadas",
+      "addPeopleAction": "Apuntar a alguien a este grupo",
+      "groupFull": "El grupo está completo: no quedan plazas."
     },
     "records": {
       "title": "Registro de clases",
@@ -808,6 +880,28 @@
       "statusMissing": "No registrada",
       "realVersusPlanned": "Real {{actual}} · previsto {{planned}}",
       "plannedOnly": "Previsto {{planned}}"
+    },
+    "rooms": {
+      "roomTitle": "Sala",
+      "roomSummary": "Aforo {{capacity}}",
+      "teachers": "Da clase {{names}}",
+      "freeAllDay": "Libre todo el día",
+      "hasSeats": "Con plazas",
+      "isFull": "Completa",
+      "classAndTeacher": "{{service}} · con {{teacher}}",
+      "teacherLine": "Da la clase {{teacher}}",
+      "seats": "{{booked}} de {{capacity}} plazas ocupadas",
+      "attendeesTitle": "Alumnos apuntados",
+      "noAttendees": "Nadie apuntado todavía",
+      "openRoomLabel": "{{name}}, aforo {{capacity}}. Ver el detalle de la sala",
+      "withoutRoomTitle": "Citas sin sala",
+      "roomNotFound": "Esa sala ya no existe",
+      "blockLabel": "{{room}}, {{service}}, {{time}}. Ver el detalle de la sala",
+      "privateClass": "Cita privada",
+      "missing": "Faltan {{count}} para el aforo ({{booked}} de {{capacity}})",
+      "completeRoom": "Aforo completo ({{capacity}})",
+      "noClassesThisHour": "Sin clases",
+      "closedDay": "El centro está cerrado este día"
     }
   },
   "notifications": {
@@ -1059,7 +1153,8 @@
     "tabs": {
       "content": "Contenido",
       "brand": "Marca",
-      "more": "Más"
+      "more": "Más",
+      "management": "Gestión"
     },
     "comingSoon": {
       "clientsTitle": "Clientes y grupos",
@@ -1440,7 +1535,16 @@
       "nameRequired": "Escribe un nombre",
       "nameTooLong": "El nombre no puede pasar de 80 caracteres",
       "capacityInvalid": "Escribe un número entre 1 y 500",
-      "duplicateName": "Ya hay una sala con ese nombre"
+      "duplicateName": "Ya hay una sala con ese nombre",
+      "teacherLabel": "Profesor fijo de esta sala (opcional)",
+      "teacherHelper": "Sin elegir, la sala la puede usar cualquier profesor que dé sus servicios.",
+      "teacherAnyone": "Cualquiera del equipo",
+      "editTitle": "Editar sala",
+      "updateAction": "Guardar cambios",
+      "removeAction": "Quitar sala",
+      "notFound": "Esa sala ya no existe",
+      "servicesLabel": "Servicios que se dan en esta sala",
+      "servicesHelper": "Con estos servicios, al asignar una cita saldrá esta sala y los profesores que los dan."
     },
     "hoursEditor": {
       "title": "Horario de apertura",
@@ -1516,7 +1620,9 @@
       "resendAction": "Reenviar",
       "resendLabel": "Reenviar la invitación a {{recipient}} con un código nuevo",
       "revokeAction": "Anular",
-      "revokeLabel": "Anular la invitación a {{recipient}}"
+      "revokeLabel": "Anular la invitación a {{recipient}}",
+      "servicesLabel": "Servicios que da este {{staffWord}}",
+      "servicesHelper": "Los servicios de la academia que puede dar. Solo podrás asignarle citas de esos servicios."
     },
     "inviteClients": {
       "title": "Invita a tus {{clientWord}}",
@@ -1560,6 +1666,20 @@
       "passwordLabel": "Tu contraseña",
       "confirmAction": "Exportar",
       "shareTitle": "Datos de {{name}}"
+    },
+    "management": {
+      "title": "Gestión",
+      "subtitle": "Las salas donde se dan las clases y quién da clase en cada una",
+      "addAction": "Nueva sala",
+      "emptyTitle": "Aún no hay salas",
+      "emptyMessage": "Crea una sala con su nombre, su aforo y el profesor que da clase en ella. Con ellas podrás asignar citas privadas o grupales.",
+      "roomSubtitle": "Aforo {{capacity}} · Da clase {{teacher}}",
+      "roomSubtitleAnyone": "Aforo {{capacity}} · Cualquiera del equipo",
+      "roomLabel": "{{name}}, aforo {{capacity}}. Editar sala",
+      "loadError": "No hemos podido cargar las salas"
+    },
+    "serviceSelection": {
+      "empty": "Aún no hay servicios. Créalos en «Servicios y horario»."
     }
   },
   "practice": {
@@ -1845,6 +1965,8 @@
     },
     "assign": {
       "title": "Asignar contenido",
+      "byEveryone": "Para todos",
+      "everyone": "Todos los {{client}}",
       "byLevel": "Por nivel",
       "byGroup": "Por grupo",
       "byClient": "Por {{client}}",
@@ -1872,7 +1994,8 @@
     "assignment": {
       "level": "Nivel: {{level}}",
       "group": "Grupo: {{name}}",
-      "client": "{{kind}}: {{name}}"
+      "client": "{{kind}}: {{name}}",
+      "everyone": "Para todos"
     },
     "client": {
       "title": "Vídeos y guías",

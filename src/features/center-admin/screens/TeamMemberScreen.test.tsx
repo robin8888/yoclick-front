@@ -23,6 +23,7 @@ function buildMember(role: 'staff' | 'admin', permissions: string[]): object {
     status: 'active',
     staffTitle: 'Entrenadora',
     permissions,
+    services: [],
     joinedAt: '2026-09-01T10:00:00.000Z',
   };
 }
@@ -31,6 +32,7 @@ function mockTeam(member: object): void {
   mockApi({
     'GET /v1/me/memberships': { memberships: [] },
     [`GET ${TEAM_PATH}`]: { members: [member] },
+    [`GET /v1/centers/${NORTE_CENTER_ID}/services`]: { services: [] },
     [`PATCH ${TEAM_PATH}/${MEMBERSHIP_ID}`]: member,
   });
 }

@@ -20,10 +20,11 @@ import type {
 
 import {
   getRoomsCreateResponseMock,
-  getRoomsListResponseMock
+  getRoomsListResponseMock,
+  getRoomsUpdateResponseMock
 } from './rooms.faker.ts';
 
-export { getRoomsListResponseMock, getRoomsCreateResponseMock } from './rooms.faker.ts';
+export { getRoomsListResponseMock, getRoomsCreateResponseMock, getRoomsUpdateResponseMock } from './rooms.faker.ts';
 
 
 export const getRoomsListMockHandler = (overrideResponse?: RoomListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomListResponseDto> | RoomListResponseDto), options?: RequestHandlerOptions) => {
@@ -50,6 +51,18 @@ export const getRoomsCreateMockHandler = (overrideResponse?: RoomResponseDto | (
   }, options)
 }
 
+export const getRoomsUpdateMockHandler = (overrideResponse?: RoomResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<RoomResponseDto> | RoomResponseDto), options?: RequestHandlerOptions) => {
+  return http.patch('*/v1/centers/:centerId/rooms/:roomId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRoomsUpdateResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getRoomsArchiveMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
   return http.delete('*/v1/centers/:centerId/rooms/:roomId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
@@ -62,5 +75,6 @@ export const getRoomsArchiveMockHandler = (overrideResponse?: void | ((info: Par
 export const getRoomsMock = () => [
   getRoomsListMockHandler(),
   getRoomsCreateMockHandler(),
+  getRoomsUpdateMockHandler(),
   getRoomsArchiveMockHandler()
 ]

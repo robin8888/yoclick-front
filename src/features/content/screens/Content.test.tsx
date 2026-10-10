@@ -445,7 +445,7 @@ describe('ClientContentSection', () => {
     expect(screen.getByText('2 resultados')).toBeOnTheScreen();
   });
 
-  it('filters by level and by need, and says when nothing matches', async () => {
+  it('filters only by need: the client does not pick a level', async () => {
     mockApi({
       'GET /v1/me/memberships': MEMBERSHIPS('client'),
       [`GET ${BASE}/my-content`]: { items: [PDF_CONTENT, VIDEO_CONTENT] },
@@ -453,12 +453,11 @@ describe('ClientContentSection', () => {
     renderScreen(<ClientContentSection />);
     await screen.findByText('Sentadilla explicada');
 
-    fireEvent.press(await screen.findByRole('radio', { name: 'Inicio' }));
-    expect(screen.getByText('1 resultado')).toBeOnTheScreen();
-    expect(screen.queryByText('Sentadilla explicada')).toBeNull();
+    expect(screen.queryByRole('radio', { name: 'Inicio' })).toBeNull();
+    expect(screen.queryByRole('radio', { name: 'Avanzado' })).toBeNull();
 
     fireEvent.press(await screen.findByRole('radio', { name: 'Fuerza' }));
-    expect(screen.getByText('Sin resultados')).toBeOnTheScreen();
+    expect(screen.getByText('1 resultado')).toBeOnTheScreen();
   });
 
   it('opens a piece when its card is pressed', async () => {

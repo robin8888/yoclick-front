@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-import type { CreateRoomRequestDto } from '@/shared/api/generated/model';
+import type {
+  CreateRoomRequestDto,
+  RoomListResponseDtoRoomsItem,
+  UpdateRoomRequestDto,
+} from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 
 // Mismos límites que `CreateRoomRequestDto` (docs/api/openapi.yaml).
@@ -9,6 +13,8 @@ const MAX_NAME_LENGTH = 80;
 const MIN_CAPACITY = 1;
 const MAX_CAPACITY = 500;
 export const DEFAULT_ROOM_CAPACITY_TEXT = '10';
+/** El texto de «ningún profesor fijo»: cualquiera del equipo puede usar la sala. */
+export const ANY_TEACHER_VALUE = '';
 
 export const roomFormSchema = z.object({
   name: z
@@ -26,13 +32,44 @@ export const roomFormSchema = z.object({
       },
       { error: () => i18n.t('centerAdmin.rooms.capacityInvalid') },
     ),
+  /** Quien da clase en la sala; `ANY_TEACHER_VALUE` si la puede usar cualquiera. */
+  staffMembershipId: z.string(),
+  /** Los servicios que se dan en la sala. */
+  serviceIds: z.array(z.string()),
 });
 export type RoomFormValues = z.infer<typeof roomFormSchema>;
 
 export function buildEmptyRoomForm(): RoomFormValues {
-  return { name: '', capacity: DEFAULT_ROOM_CAPACITY_TEXT };
+  return {
+    name: '',
+    capacity: DEFAULT_ROOM_CAPACITY_TEXT,
+    staffMembershipId: ANY_TEACHER_VALUE,
+    serviceIds: [],
+  };
+}
+
+export function buildRoomForm(room: RoomListResponseDtoRoomsItem): RoomFormValues {
+  return {
+    name: room.name,
+    capacity: String(room.capacity),
+    staffMembershipId: room.staff?.membershipId ?? ANY_TEACHER_VALUE,
+    serviceIds: room.services.map(({ id }) => id),
+  };
+}
+
+function toStaffMembershipId(formValue: string): string | null {
+  return formValue === ANY_TEACHER_VALUE ? null : formValue;
 }
 
 export function mapRoomFormToCreateRequest(formValues: RoomFormValues): CreateRoomRequestDto {
-  return { name: formValues.name.trim(), capacity: Number(formValues.capacity) };
+  return {
+    name: formValues.name.trim(),
+    capacity: Number(formValues.capacity),
+    staffMembershipId: toStaffMembershipId(formValues.staffMembershipId),
+    serviceIds: formValues.serviceIds,
+  };
+}
+
+export function mapRoomFormToUpdateRequest(formValues: RoomFormValues): UpdateRoomRequestDto {
+  return mapRoomFormToCreateRequest(formValues);
 }

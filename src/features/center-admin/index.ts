@@ -18,6 +18,8 @@ export { useServiceCatalog } from './hooks/useServiceCatalog';
 export { TeamMemberScreen } from './screens/TeamMemberScreen';
 export { OpeningHoursEditorScreen } from './screens/OpeningHoursEditorScreen';
 export { NewRoomScreen } from './screens/NewRoomScreen';
+export { EditRoomScreen } from './screens/EditRoomScreen';
+export { ManagementScreen } from './screens/ManagementScreen';
 export { CenterDetailsScreen } from './screens/CenterDetailsScreen';
 export { ReceptionPosterScreen } from './screens/ReceptionPosterScreen';
 export { AccountSecurityScreen } from './screens/AccountSecurityScreen';

@@ -4,5 +4,6 @@ export {
   SECTOR_VOCABULARY,
   capitalizeFirstLetter,
   getSectorVocabulary,
+  hasRoomManagement,
 } from './sector-vocabulary';
 export type { SectorId, SectorVocabulary, WordForms } from './sector-vocabulary';

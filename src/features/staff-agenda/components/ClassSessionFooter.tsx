@@ -9,6 +9,7 @@ interface ClassSessionFooterProps {
   /** El día de la agenda desde el que se abrió la cita. */
   isoDate: string;
   clientName: string;
+  canReschedule: boolean;
   isStarting: boolean;
   isEnding: boolean;
   isCancelling: boolean;
@@ -27,6 +28,7 @@ export function ClassSessionFooter({
   booking,
   isoDate,
   clientName,
+  canReschedule,
   isStarting,
   isEnding,
   isCancelling,
@@ -51,6 +53,7 @@ export function ClassSessionFooter({
           booking={booking}
           isoDate={isoDate}
           clientName={clientName}
+          canReschedule={canReschedule}
           isCancelling={isCancelling}
           onCancel={onCancel}
         />

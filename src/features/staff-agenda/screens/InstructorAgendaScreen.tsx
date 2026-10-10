@@ -40,19 +40,7 @@ export function InstructorAgendaScreen(): React.JSX.Element {
   const agenda = useDayAgenda(day.isoDate);
 
   return (
-    <ScreenTemplate
-      isHeaderHidden
-      title={i18n.t('staffAgenda.agenda.staffTitle')}
-      floatingAction={
-        <Button
-          leadingIconName="plus"
-          label={i18n.t('staffAgenda.instructor.newAppointmentAction')}
-          onPress={() => {
-            router.push({ pathname: '/(staff)/new-appointment', params: { date: day.isoDate } });
-          }}
-        />
-      }
-    >
+    <ScreenTemplate isHeaderHidden title={i18n.t('staffAgenda.agenda.staffTitle')}>
       <InstructorAgendaHeader />
       <AgendaDayStrip
         days={buildAgendaDays(day.todayIsoDate)}

@@ -6,4 +6,5 @@ export { ClassSessionScreen } from './screens/ClassSessionScreen';
 export { AdminTabBar, StaffTabBar } from './components/StaffTabBars';
 export { SessionRecordsScreen } from './screens/SessionRecordsScreen';
 export { NewAppointmentScreen } from './screens/NewAppointmentScreen';
+export { RoomDayScreen } from './screens/RoomDayScreen';
 export { RescheduleAppointmentScreen } from './screens/RescheduleAppointmentScreen';

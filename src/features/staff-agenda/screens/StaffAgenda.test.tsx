@@ -15,6 +15,7 @@ import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { AgendaScreen } from './AgendaScreen';
+import { CenterAgendaScreen } from './CenterAgendaScreen';
 import { InstructorAgendaScreen } from './InstructorAgendaScreen';
 import { ClassSessionScreen } from './ClassSessionScreen';
 import { SessionRecordsScreen } from './SessionRecordsScreen';
@@ -115,21 +116,42 @@ describe('InstructorAgendaScreen', () => {
 
     expect(await screen.findByText('Disponible 08:00–20:00')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: /Entrenamiento personal/ })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Nueva cita' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Nueva cita' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Escanear QR de asistencia' })).toBeOnTheScreen();
   });
 
-  it('opens the new appointment screen from the floating button', async () => {
+  it('does not let the professional assign appointments: free hours only inform', async () => {
     mockApi({
       [AGENDA_PATH]: buildAgenda([]),
       [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
     });
     renderScreen(<InstructorAgendaScreen />);
 
+    await screen.findByText('Disponible 08:00–20:00');
+
+    expect(screen.queryByRole('button', { name: 'Nueva cita' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Hueco libre' })).toBeNull();
+  });
+});
+
+describe('CenterAgendaScreen', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signInToCenter();
+  });
+
+  it('lets the center assign an appointment from the floating button', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([]),
+      [`GET /v1/centers/${NORTE_CENTER_ID}/team`]: { members: [] },
+      [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
+    });
+    renderScreen(<CenterAgendaScreen />);
+
     fireEvent.press(await screen.findByRole('button', { name: 'Nueva cita' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith(
-      expect.objectContaining({ pathname: '/(staff)/new-appointment' }),
+      expect.objectContaining({ pathname: '/(admin)/new-appointment' }),
     );
   });
 });
@@ -235,7 +257,18 @@ describe('ClassSessionScreen', () => {
     });
   });
 
+  it('does not let the professional change the hour: only the center moves appointments', async () => {
+    mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]) });
+    renderScreen(<ClassSessionScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Cancelar cita' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Cambiar hora' })).not.toBeOnTheScreen();
+  });
+
   it('opens the reschedule screen for the same service and person', async () => {
+    jest
+      .mocked(useLocalSearchParams)
+      .mockReturnValue({ bookingId: BOOKING_ID, date: '2026-10-08', isCenterWide: 'true' });
     mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]) });
     renderScreen(<ClassSessionScreen />);
 

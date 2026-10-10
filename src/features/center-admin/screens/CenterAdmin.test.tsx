@@ -38,6 +38,7 @@ const TEAM_MEMBERS = [
     status: 'active',
     staffTitle: 'Entrenador',
     permissions: [],
+    services: [],
     joinedAt: '2026-01-01T09:00:00.000Z',
   },
   {
@@ -49,6 +50,7 @@ const TEAM_MEMBERS = [
     status: 'active',
     staffTitle: null,
     permissions: [],
+    services: [],
     joinedAt: '2026-02-01T09:00:00.000Z',
   },
 ];

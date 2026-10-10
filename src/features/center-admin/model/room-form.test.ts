@@ -1,7 +1,7 @@
 import { buildEmptyRoomForm, mapRoomFormToCreateRequest, roomFormSchema } from './room-form';
 
 describe('roomFormSchema', () => {
-  const validForm = { name: 'Sala 1', capacity: '12' };
+  const validForm = { name: 'Sala 1', capacity: '12', staffMembershipId: '', serviceIds: [] };
 
   it('accepts a named room with a capacity', () => {
     expect(roomFormSchema.safeParse(validForm).success).toBe(true);
@@ -21,13 +21,38 @@ describe('roomFormSchema', () => {
 
 describe('mapRoomFormToCreateRequest', () => {
   it('trims the name and sends the capacity as a number', () => {
-    expect(mapRoomFormToCreateRequest({ name: ' Tatami ', capacity: '8' })).toEqual({
-      name: 'Tatami',
+    expect(
+      mapRoomFormToCreateRequest({
+        name: ' Tatami ',
+        capacity: '8',
+        staffMembershipId: '',
+        serviceIds: [],
+      }),
+    ).toEqual({ name: 'Tatami', capacity: 8, staffMembershipId: null, serviceIds: [] });
+  });
+
+  it('sends the teacher of the room when one is chosen', () => {
+    expect(
+      mapRoomFormToCreateRequest({
+        name: 'Sala 1',
+        capacity: '8',
+        staffMembershipId: 'membership-ana',
+        serviceIds: ['service-1'],
+      }),
+    ).toEqual({
+      name: 'Sala 1',
       capacity: 8,
+      staffMembershipId: 'membership-ana',
+      serviceIds: ['service-1'],
     });
   });
 
   it('starts with an empty name and a ten-person capacity', () => {
-    expect(buildEmptyRoomForm()).toEqual({ name: '', capacity: '10' });
+    expect(buildEmptyRoomForm()).toEqual({
+      name: '',
+      capacity: '10',
+      staffMembershipId: '',
+      serviceIds: [],
+    });
   });
 });

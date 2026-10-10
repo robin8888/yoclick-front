@@ -33,6 +33,10 @@ export interface AppointmentCardProps {
   serviceName: string;
   /** «18:00 · 60 min · Lucía Ferrer». */
   detailsLabel: string;
+  /** «Sala Ana»: dónde se da la cita; sin ella no se muestra. */
+  roomLabel?: string | null | undefined;
+  /** «Asignada por Laura (equipo)»: quién puso la cita; sin él no se muestra. */
+  assignedByLabel?: string | null | undefined;
   /** «Confirmada», «Cancelada»: el estado siempre va con palabra. */
   statusLabel: string;
   statusTone: BadgeTone;

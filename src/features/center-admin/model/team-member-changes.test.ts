@@ -5,6 +5,7 @@ const MEMBER = {
   role: 'staff',
   staffTitle: 'Entrenadora',
   permissions: ['reports:view'],
+  services: [{ id: 'service-salsa', name: 'Salsa' }],
 } as unknown as RosterMember;
 
 describe('buildTeamMemberChanges', () => {
@@ -56,9 +57,26 @@ describe('buildTeamMemberChanges', () => {
   ] as const)('%s', (_caseName, draft, expectedChanges) => {
     expect(
       buildTeamMemberChanges(
-        { ...draft, grantedPermissions: [...draft.grantedPermissions] },
+        {
+          ...draft,
+          grantedPermissions: [...draft.grantedPermissions],
+          serviceIds: ['service-salsa'],
+        },
         MEMBER,
       ),
     ).toEqual(expectedChanges);
+  });
+
+  it('sends the services of the teacher when they change', () => {
+    const draft = {
+      role: 'staff' as const,
+      staffTitle: 'Entrenadora',
+      grantedPermissions: ['reports:view' as const],
+      serviceIds: ['service-salsa', 'service-bachata'],
+    };
+
+    expect(buildTeamMemberChanges(draft, MEMBER)).toEqual({
+      serviceIds: ['service-salsa', 'service-bachata'],
+    });
   });
 });

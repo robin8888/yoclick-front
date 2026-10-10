@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { useCheckInQrAvailability } from '@/features/attendance';
 import type { MyBookingsResponseDtoBookingsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { describeBookingAssigner } from '@/shared/lib/booking-assigner';
+import { describeBookingRoom } from '@/shared/lib/booking-room';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 import { AppointmentCard, type AppointmentButtonAction } from '@/ui/organisms/AppointmentCard';
 
@@ -88,6 +90,8 @@ export function BookingCard({
       dateTile={buildBookingDateTileLabels(booking.startsAt, DEFAULT_CENTER_TIME_ZONE)}
       serviceName={booking.service.name}
       detailsLabel={buildDetailsLabel(booking)}
+      roomLabel={describeBookingRoom(booking, { shouldShowSeats: false })}
+      assignedByLabel={describeBookingAssigner(booking.createdBy)}
       statusLabel={i18n.t(`booking.list.status.${booking.status}`)}
       statusTone={presentation.tone}
       buttonActions={requests !== null && isActionable ? buildButtonActions(booking, requests) : []}
