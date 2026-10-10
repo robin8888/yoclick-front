@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
-import { useTheme } from '@/shared/theme';
+import { motionTokens, usePressableStyle, useTheme } from '@/shared/theme';
 import { Icon, type IconName } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
@@ -24,18 +24,20 @@ function QuickAccessTile({
   onPress,
 }: Readonly<QuickAccessTileProps>): React.JSX.Element {
   const theme = useTheme();
+  const tileStyle = usePressableStyle({
+    baseStyle: createQuickAccessTileStyle(theme),
+    pressedScale: motionTokens.pressScaleButton,
+    isEnabled: true,
+  });
 
   return (
-    <Pressable
-      role="button"
-      accessibilityLabel={label}
-      onPress={onPress}
-      style={createQuickAccessTileStyle(theme)}
-    >
+    <Pressable role="button" accessibilityLabel={label} onPress={onPress} style={tileStyle}>
       <View style={createQuickAccessIconStyle(theme)}>
-        <Icon name={iconName} color="brandInk" />
+        <Icon name={iconName} size="navigation" color="brandInk" />
       </View>
-      <Text variant="bodyStrong">{label}</Text>
+      <Text variant="bodyStrong" align="center" numberOfLines={2}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
