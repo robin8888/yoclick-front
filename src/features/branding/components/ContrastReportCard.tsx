@@ -15,6 +15,7 @@ import {
 } from '../model/brand-contrast-report';
 import {
   CONTRAST_HEADER_STYLE,
+  CONTRAST_LABEL_STYLE,
   CONTRAST_RESULT_STYLE,
   CONTRAST_ROW_STYLE,
   createContrastCardStyle,
@@ -34,6 +35,7 @@ const ROW_TEXT_KEYS = {
   'on-button': 'branding.contrast.rows.on-button',
   'ink-light': 'branding.contrast.rows.ink-light',
   'ink-dark': 'branding.contrast.rows.ink-dark',
+  background: 'branding.contrast.rows.background',
 } as const satisfies Record<ContrastRowId, string>;
 
 function ContrastRowView({ row }: Readonly<{ row: ContrastRow }>): React.JSX.Element {
@@ -42,7 +44,9 @@ function ContrastRowView({ row }: Readonly<{ row: ContrastRow }>): React.JSX.Ele
 
   return (
     <View style={CONTRAST_ROW_STYLE}>
-      <Text>{i18n.t(ROW_TEXT_KEYS[row.id])}</Text>
+      <View style={CONTRAST_LABEL_STYLE}>
+        <Text>{i18n.t(ROW_TEXT_KEYS[row.id])}</Text>
+      </View>
       <View style={CONTRAST_RESULT_STYLE}>
         <Icon name={isPassing ? 'check' : 'alertTriangle'} size="inline" color={resultColor} />
         <Text variant="bodyStrong" color={resultColor}>

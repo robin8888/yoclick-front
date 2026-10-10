@@ -5,6 +5,9 @@ import type {
   MyMembershipsResponseDtoMembershipsItem,
 } from '@/shared/api/generated/model';
 
+/** Centro sin fondo ni colmena personalizados. */
+export const NO_APPEARANCE = { backgroundColor: null, backgroundColorEnd: null, hiveColor: null };
+
 export const NORTE_CENTER_ID = '0191d6a0-0000-7000-8000-000000000001';
 export const FORJA_CENTER_ID = '0191d6a0-0000-7000-8000-000000000002';
 
@@ -17,6 +20,7 @@ export function buildBranding(
     sectorId: 'estudio',
     brandColor: '#E4572E',
     logoUrl: null,
+    appearance: NO_APPEARANCE,
     ...overrides,
   };
 }
@@ -37,6 +41,7 @@ export function buildMembership(
       sectorId: 'estudio',
       brandColor: '#E4572E',
       logoUrl: null,
+      appearance: NO_APPEARANCE,
     },
     ...overrides,
   };

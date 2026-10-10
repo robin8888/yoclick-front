@@ -20,15 +20,21 @@ export const CONTRAST_HEADER_STYLE: ViewStyle = {
   gap: 8,
 };
 
+// Con textos largos («Texto sobre tu fondo · oscuro») el resultado baja a la línea siguiente en lugar de salirse de la caja.
 export const CONTRAST_ROW_STYLE: ViewStyle = {
   flexDirection: 'row',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 8,
+  columnGap: 8,
+  rowGap: 4,
 };
+
+export const CONTRAST_LABEL_STYLE: ViewStyle = { flexShrink: 1 };
 
 export const CONTRAST_RESULT_STYLE: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
+  flexShrink: 1,
   gap: 4,
 };

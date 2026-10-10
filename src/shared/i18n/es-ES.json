@@ -56,6 +56,7 @@
     "NETWORK_OFFLINE": "No hay conexión. Comprueba tu internet e inténtalo de nuevo",
     "NETWORK_TIMEOUT": "La conexión es lenta y no hemos podido terminar. Inténtalo de nuevo",
     "LOGO_INVALID": "Ese archivo no es un logo válido. Usa una imagen PNG, JPG o WebP",
+    "PREMIUM_APPEARANCE_NOT_INCLUDED": "Personalizar el fondo y la colmena es del plan Premium.",
     "VIDEO_NOT_INCLUDED": "El plan de tu centro no incluye vídeo.",
     "VIDEO_TOO_LARGE": "El vídeo es demasiado grande. El máximo son 500 MB.",
     "VIDEO_QUOTA_EXCEEDED": "Tu centro ha llenado su espacio de vídeo. Borra alguno para poder subir otro.",
@@ -1014,8 +1015,36 @@
       "rows": {
         "on-button": "Texto sobre botones",
         "ink-light": "Texto de marca · claro",
-        "ink-dark": "Texto de marca · oscuro"
+        "ink-dark": "Texto de marca · oscuro",
+        "background": "Texto sobre tu fondo"
       }
+    },
+    "premium": {
+      "title": "Personalización Premium",
+      "badge": "Premium",
+      "lockedMessage": "Elige el fondo y el color de la colmena de tu app con el plan Premium. Puedes cambiar de plan desde la web de Yoclick.",
+      "background": {
+        "title": "Fondo de las pantallas",
+        "kindLabel": "Tipo de fondo",
+        "theme": "Del tema",
+        "solid": "Liso",
+        "gradient": "Degradado",
+        "solidPickerLabel": "Selector del color de fondo",
+        "solidFieldLabel": "Color de fondo en hexadecimal",
+        "gradientStartPickerLabel": "Selector del color de arriba",
+        "gradientStartFieldLabel": "Color de arriba en hexadecimal",
+        "gradientEndPickerLabel": "Selector del color de abajo",
+        "gradientEndFieldLabel": "Color de abajo en hexadecimal"
+      },
+      "hive": {
+        "title": "Color de la colmena",
+        "kindLabel": "Color de la colmena",
+        "brand": "Color de marca",
+        "custom": "Otro color",
+        "pickerLabel": "Selector del color de la colmena",
+        "fieldLabel": "Color de la colmena en hexadecimal"
+      },
+      "textNote": "El texto se pone claro u oscuro solo, según tu fondo, para que siempre se lea. Revisa el contraste de abajo."
     },
     "name": {
       "label": "Nombre visible",

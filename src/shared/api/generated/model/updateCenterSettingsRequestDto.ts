@@ -78,4 +78,19 @@ export interface UpdateCenterSettingsRequestDto {
   /** @maxItems 100 */
   holidays?: UpdateCenterSettingsRequestDtoHolidaysItem[];
   cancelPolicy?: UpdateCenterSettingsRequestDtoCancelPolicy;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  backgroundColor?: string | null;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  backgroundColorEnd?: string | null;
+  /**
+     * @nullable
+     * @pattern ^#[0-9A-Fa-f]{6}$
+     */
+  hiveColor?: string | null;
 }

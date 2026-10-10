@@ -247,7 +247,12 @@ export const MeListMembershipsResponse = zod.object({
   "slug": zod.string(),
   "sectorId": zod.string(),
   "brandColor": zod.string(),
-  "logoUrl": zod.string().nullable()
+  "logoUrl": zod.string().nullable(),
+  "appearance": zod.object({
+  "backgroundColor": zod.string().nullable(),
+  "backgroundColorEnd": zod.string().nullable(),
+  "hiveColor": zod.string().nullable()
+})
 })
 }))
 })
@@ -351,7 +356,12 @@ export const MeExportDataResponse = zod.object({
   "slug": zod.string(),
   "sectorId": zod.string(),
   "brandColor": zod.string(),
-  "logoUrl": zod.string().nullable()
+  "logoUrl": zod.string().nullable(),
+  "appearance": zod.object({
+  "backgroundColor": zod.string().nullable(),
+  "backgroundColorEnd": zod.string().nullable(),
+  "hiveColor": zod.string().nullable()
+})
 })
 })),
   "consentHistory": zod.array(zod.object({

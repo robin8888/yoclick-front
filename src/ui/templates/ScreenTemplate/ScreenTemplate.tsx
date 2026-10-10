@@ -2,7 +2,12 @@ import type { ComponentProps, ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { platformHeroColorOverrides, ThemeProvider, useTheme } from '@/shared/theme';
+import {
+  platformHeroColorOverrides,
+  ThemeProvider,
+  useCenterAppearance,
+  useTheme,
+} from '@/shared/theme';
 
 import {
   createFooterStyle,
@@ -95,6 +100,7 @@ function FixedActions({
 
 interface ScreenFrameProps {
   hasPlatformHeroBackground: boolean;
+  backdrop: ReactNode;
   isLoading: boolean;
   loadingLabel: string | undefined;
   children: ReactNode;
@@ -103,15 +109,21 @@ interface ScreenFrameProps {
 /** El fondo (degradado de Yoclick o panal del centro) y, encima de todo, el velo de «cargando». */
 function ScreenFrame({
   hasPlatformHeroBackground,
+  backdrop,
   isLoading,
   loadingLabel,
   children,
 }: Readonly<ScreenFrameProps>): React.JSX.Element {
   const theme = useTheme();
+  const centerAppearance = useCenterAppearance();
 
   return (
-    <View style={createScreenStyle(theme, hasPlatformHeroBackground)}>
-      {hasPlatformHeroBackground ? <PlatformHeroBackground /> : <CenterHoneycombBackground />}
+    <View style={createScreenStyle(theme, hasPlatformHeroBackground, centerAppearance)}>
+      {hasPlatformHeroBackground ? (
+        <PlatformHeroBackground />
+      ) : (
+        (backdrop ?? <CenterHoneycombBackground />)
+      )}
       {children}
       {isLoading ? <BusyOverlay loadingLabel={loadingLabel} /> : null}
     </View>
@@ -134,7 +146,7 @@ function KeyboardAvoidingFrame({ children }: Readonly<{ children: ReactNode }>):
   );
 }
 
-type ScreenBodyProps = Omit<ScreenTemplateProps, 'isLoading' | 'loadingLabel'>;
+type ScreenBodyProps = Omit<ScreenTemplateProps, 'isLoading' | 'loadingLabel' | 'backdrop'>;
 
 /** Zona segura con el contenido que hace scroll y, encima, las acciones fijas. */
 function ScreenBody({
@@ -180,11 +192,13 @@ function ScreenBody({
 function ScreenTemplateContent({
   isLoading = false,
   loadingLabel,
+  backdrop,
   ...bodyProps
 }: Readonly<ScreenTemplateProps>): React.JSX.Element {
   return (
     <ScreenFrame
       hasPlatformHeroBackground={bodyProps.hasPlatformHeroBackground ?? false}
+      backdrop={backdrop}
       isLoading={isLoading}
       loadingLabel={loadingLabel}
     >

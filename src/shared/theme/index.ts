@@ -2,6 +2,16 @@ export { BackActionProvider, useBackAction } from './back-action';
 export { CenterIdentityProvider, useCenterIdentity } from './center-identity';
 export type { CenterIdentity } from './center-identity';
 export { centerHoneycomb } from './center-honeycomb';
+export {
+  DEFAULT_CENTER_APPEARANCE,
+  listAppearanceBackgroundColors,
+  resolveThemeModeForBackground,
+  resolveScreenBackgroundColor,
+  resolveScreenBackgroundPaint,
+  type CenterAppearance,
+  type ScreenBackgroundPaint,
+} from './center-appearance';
+export { CenterAppearanceProvider, useCenterAppearance } from './center-appearance-context';
 export { convertHexToHsv, convertHsvToHex, type HsvColor } from './color-conversion';
 export { buildHoneycombTile } from './honeycomb-tile';
 export { buildTheme } from './build-theme';

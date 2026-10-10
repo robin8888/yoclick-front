@@ -2,8 +2,14 @@ import { useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
+import { Text } from '@/ui/atoms/Text';
 
-export function WelcomeActions(): React.JSX.Element {
+interface WelcomeActionsProps {
+  /** «Reserva tus clases y sigue tu progreso en …», bajo los botones. */
+  pitch: string;
+}
+
+export function WelcomeActions({ pitch }: Readonly<WelcomeActionsProps>): React.JSX.Element {
   const router = useRouter();
 
   return (
@@ -23,14 +29,9 @@ export function WelcomeActions(): React.JSX.Element {
           router.push('/(auth)/login');
         }}
       />
-      <Button
-        variant="ghost"
-        label={i18n.t('join.welcome.changeCenterAction')}
-        isFullWidth
-        onPress={() => {
-          router.replace('/join');
-        }}
-      />
+      <Text variant="caption" color="ink2" align="center">
+        {pitch}
+      </Text>
     </>
   );
 }

@@ -1,11 +1,19 @@
 import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
-import { ThemeProvider, useTheme } from '@/shared/theme';
+import {
+  CenterAppearanceProvider,
+  resolveScreenBackgroundColor,
+  ThemeProvider,
+  useCenterAppearance,
+  useTheme,
+  type CenterAppearance,
+} from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { ProgressRing } from '@/ui/molecules/ProgressRing';
+import { CenterHoneycombBackground } from '@/ui/templates/ScreenTemplate';
 
 import {
   createAppFrameStyle,
@@ -21,6 +29,7 @@ interface LiveAppPreviewProps {
   centerName: string;
   centerLogoUrl: string | null;
   brandHexColor: string;
+  appearance: CenterAppearance;
 }
 
 const MINI_TAB_IDS = ['home', 'book', 'appointments', 'profile'] as const;
@@ -78,11 +87,18 @@ function MiniShortcuts(): React.JSX.Element {
 function MiniClientHome({
   centerName,
   centerLogoUrl,
-}: Readonly<Omit<LiveAppPreviewProps, 'brandHexColor'>>): React.JSX.Element {
+}: Readonly<Pick<LiveAppPreviewProps, 'centerName' | 'centerLogoUrl'>>): React.JSX.Element {
   const theme = useTheme();
+  const appearance = useCenterAppearance();
 
   return (
-    <View style={createFullSizeAppStyle(theme)}>
+    <View
+      style={createFullSizeAppStyle(
+        theme,
+        resolveScreenBackgroundColor(appearance, theme.colors.bg),
+      )}
+    >
+      <CenterHoneycombBackground />
       <View style={MINI_ROW_STYLE}>
         <Avatar name={centerName} photoUrl={centerLogoUrl} size="md" isDecorative />
         <Text variant="bodyStrong">{centerName}</Text>
@@ -113,6 +129,7 @@ export function LiveAppPreview({
   centerName,
   centerLogoUrl,
   brandHexColor,
+  appearance,
 }: Readonly<LiveAppPreviewProps>): React.JSX.Element {
   const outerTheme = useTheme();
 
@@ -123,8 +140,14 @@ export function LiveAppPreview({
       pointerEvents="none"
       style={createAppFrameStyle(outerTheme)}
     >
-      <ThemeProvider brandHexColor={brandHexColor} initialPreference={outerTheme.mode}>
-        <MiniClientHome centerName={centerName} centerLogoUrl={centerLogoUrl} />
+      <ThemeProvider
+        brandHexColor={brandHexColor}
+        centerAppearance={appearance}
+        initialPreference={outerTheme.mode}
+      >
+        <CenterAppearanceProvider centerAppearance={appearance}>
+          <MiniClientHome centerName={centerName} centerLogoUrl={centerLogoUrl} />
+        </CenterAppearanceProvider>
       </ThemeProvider>
     </View>
   );

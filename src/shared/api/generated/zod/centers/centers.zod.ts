@@ -26,7 +26,12 @@ export const CentersGetBrandingResponse = zod.object({
   "name": zod.string(),
   "sectorId": zod.string(),
   "brandColor": zod.string(),
-  "logoUrl": zod.string().nullable()
+  "logoUrl": zod.string().nullable(),
+  "appearance": zod.object({
+  "backgroundColor": zod.string().nullable(),
+  "backgroundColorEnd": zod.string().nullable(),
+  "hiveColor": zod.string().nullable()
+})
 })
 
 /**
@@ -127,6 +132,10 @@ export const CentersGetSettingsResponse = zod.object({
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable(),
+  "backgroundColor": zod.string().nullable(),
+  "backgroundColorEnd": zod.string().nullable(),
+  "hiveColor": zod.string().nullable(),
+  "canCustomizeAppearance": zod.boolean(),
   "version": zod.string()
 })
 
@@ -193,6 +202,9 @@ export const centersUpdateSettingsBodyHolidaysMax = 100;
 export const centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMin = 0;
 export const centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax = 168;
 
+export const centersUpdateSettingsBodyBackgroundColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const centersUpdateSettingsBodyBackgroundColorEndRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
+export const centersUpdateSettingsBodyHiveColorRegExp = new RegExp('^#[0-9A-Fa-f]{6}$');
 
 
 export const CentersUpdateSettingsBody = zod.object({
@@ -247,7 +259,10 @@ export const CentersUpdateSettingsBody = zod.object({
   "cancelPolicy": zod.object({
   "freeCancellationHours": zod.int().min(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
-}).optional()
+}).optional(),
+  "backgroundColor": zod.string().regex(centersUpdateSettingsBodyBackgroundColorRegExp).nullish(),
+  "backgroundColorEnd": zod.string().regex(centersUpdateSettingsBodyBackgroundColorEndRegExp).nullish(),
+  "hiveColor": zod.string().regex(centersUpdateSettingsBodyHiveColorRegExp).nullish()
 })
 
 export const centersUpdateSettingsResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -334,6 +349,10 @@ export const CentersUpdateSettingsResponse = zod.object({
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable(),
+  "backgroundColor": zod.string().nullable(),
+  "backgroundColorEnd": zod.string().nullable(),
+  "hiveColor": zod.string().nullable(),
+  "canCustomizeAppearance": zod.boolean(),
   "version": zod.string()
 })
 

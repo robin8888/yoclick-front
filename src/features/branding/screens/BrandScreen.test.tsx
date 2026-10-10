@@ -29,6 +29,10 @@ const SETTINGS = {
   holidays: null,
   cancelPolicy: null,
   trialEndsAt: null,
+  backgroundColor: null,
+  backgroundColorEnd: null,
+  hiveColor: null,
+  canCustomizeAppearance: true,
   version: 'W/"version-1"',
 };
 
@@ -89,6 +93,46 @@ describe('BrandScreen', () => {
     expect(
       await screen.findByText('Publicado. Tus clientes ya ven la nueva marca.'),
     ).toBeOnTheScreen();
+  });
+
+  it('publishes a gradient background and a hive color for a Premium center', async () => {
+    mockBrandApi();
+    await renderLoadedBrandScreen();
+
+    fireEvent.press(screen.getByRole('tab', { name: 'Degradado' }));
+    fireEvent.changeText(screen.getByLabelText('Color de arriba en hexadecimal'), '#1B1F3B');
+    fireEvent.changeText(screen.getByLabelText('Color de abajo en hexadecimal'), '#3A2A6B');
+    fireEvent.press(screen.getByRole('tab', { name: 'Otro color' }));
+    fireEvent.changeText(screen.getByLabelText('Color de la colmena en hexadecimal'), '#F2C94C');
+    fireEvent.press(screen.getByRole('button', { name: 'Publicar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', CENTER_PATH)?.body).toEqual({
+        backgroundColor: '#1B1F3B',
+        backgroundColorEnd: '#3A2A6B',
+        hiveColor: '#F2C94C',
+      });
+    });
+  });
+
+  it('reports how the text reads over the chosen background', async () => {
+    mockBrandApi({
+      [`GET ${CENTER_PATH}`]: { ...SETTINGS, backgroundColor: '#1B1F3B' },
+    });
+    await renderLoadedBrandScreen();
+
+    expect(screen.getByText('Texto sobre tu fondo')).toBeOnTheScreen();
+  });
+
+  it('explains that the background and the hive are Premium when the plan is not', async () => {
+    mockBrandApi({
+      [`GET ${CENTER_PATH}`]: { ...SETTINGS, canCustomizeAppearance: false },
+    });
+    await renderLoadedBrandScreen();
+
+    expect(screen.getByRole('heading', { name: 'Personalización Premium' })).toBeOnTheScreen();
+    expect(screen.getByText(/con el plan Premium/)).toBeOnTheScreen();
+    expect(screen.queryByRole('tab', { name: 'Degradado' })).not.toBeOnTheScreen();
   });
 
   it('does not let a one-letter name be published', async () => {

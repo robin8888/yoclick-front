@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { CenterIdentityProvider, ThemeProvider } from '@/shared/theme';
+import { CenterAppearanceProvider, CenterIdentityProvider, ThemeProvider } from '@/shared/theme';
 
+import { useActiveCenterAppearance } from '../hooks/useActiveCenterAppearance';
 import { useActiveCenterIdentity } from '../hooks/useActiveCenterIdentity';
 import { useAppBrandHexColor } from '../hooks/useAppBrandHexColor';
 
@@ -16,10 +17,13 @@ interface AppThemeProviderProps {
 export function AppThemeProvider({ children }: Readonly<AppThemeProviderProps>): React.JSX.Element {
   const brandHexColor = useAppBrandHexColor();
   const centerIdentity = useActiveCenterIdentity();
+  const centerAppearance = useActiveCenterAppearance();
 
   return (
-    <ThemeProvider brandHexColor={brandHexColor}>
-      <CenterIdentityProvider centerIdentity={centerIdentity}>{children}</CenterIdentityProvider>
+    <ThemeProvider brandHexColor={brandHexColor} centerAppearance={centerAppearance}>
+      <CenterAppearanceProvider centerAppearance={centerAppearance}>
+        <CenterIdentityProvider centerIdentity={centerIdentity}>{children}</CenterIdentityProvider>
+      </CenterAppearanceProvider>
     </ThemeProvider>
   );
 }

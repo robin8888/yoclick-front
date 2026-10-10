@@ -11,6 +11,9 @@ interface BrandCustomColorPanelProps {
   selectedColor: string;
   hasColorProblem: boolean;
   onColorChange: (hexColor: string) => void;
+  /** Etiquetas propias cuando hay varios selectores en la pantalla; por defecto las del color principal. */
+  pickerLabel?: string;
+  fieldLabel?: string;
 }
 
 const HEX_COLOR_LENGTH = 7;
@@ -20,6 +23,8 @@ export function BrandCustomColorPanel({
   selectedColor,
   hasColorProblem,
   onColorChange,
+  pickerLabel = i18n.t('branding.color.pickerLabel'),
+  fieldLabel = i18n.t('branding.color.customFieldLabel'),
 }: Readonly<BrandCustomColorPanelProps>): React.JSX.Element {
   return (
     <View style={BRAND_SWATCH_SECTION_STYLE}>
@@ -29,10 +34,10 @@ export function BrandCustomColorPanel({
       <ColorPicker
         value={selectedColor}
         onValueChange={onColorChange}
-        accessibilityLabel={i18n.t('branding.color.pickerLabel')}
+        accessibilityLabel={pickerLabel}
       />
       <FormField
-        label={i18n.t('branding.color.customFieldLabel')}
+        label={fieldLabel}
         helperText={i18n.t('branding.color.customFieldHelper')}
         errorMessage={hasColorProblem ? i18n.t('branding.color.invalid') : undefined}
         value={selectedColor}

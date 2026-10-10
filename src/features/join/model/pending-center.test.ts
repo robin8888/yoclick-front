@@ -58,6 +58,7 @@ describe('pending center mappers', () => {
         sectorId: 'estudio',
         brandColor: '#E4572E',
         logoUrl: null,
+        appearance: { backgroundColor: null, backgroundColorEnd: null, hiveColor: null },
       },
       'NORTE7',
     );

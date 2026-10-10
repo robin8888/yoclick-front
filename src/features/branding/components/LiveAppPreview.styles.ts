@@ -23,13 +23,13 @@ export function createAppFrameStyle(theme: Theme): ViewStyle {
   };
 }
 
-export function createFullSizeAppStyle(theme: Theme): ViewStyle {
+export function createFullSizeAppStyle(theme: Theme, backgroundColor: string): ViewStyle {
   return {
     width: FULL_APP_WIDTH,
     height: FULL_APP_HEIGHT,
     gap: theme.space[3],
     padding: theme.space[4],
-    backgroundColor: theme.colors.bg,
+    backgroundColor,
     transform: [{ scale: PREVIEW_SCALE }],
     transformOrigin: 'top left',
   };

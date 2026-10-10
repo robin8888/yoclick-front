@@ -1,14 +1,24 @@
 import { useState } from 'react';
 
 import { useCenterSettings } from '@/features/center-admin';
+import { DEFAULT_CENTER_APPEARANCE, type CenterAppearance } from '@/shared/theme';
 
 import {
   buildBrandPatch,
+  mapSettingsToBrandDraft,
   findBrandDraftProblems,
   type BrandDraft,
   type BrandDraftProblem,
   type BrandPatch,
 } from '../model/brand-draft';
+
+function buildBrandPatchOrNull(
+  draft: BrandDraft | null,
+  published: BrandDraft | null,
+): BrandPatch | null {
+  if (draft === null || published === null) return null;
+  return buildBrandPatch(draft, published);
+}
 
 export interface BrandDraftState {
   isLoading: boolean;
@@ -25,15 +35,48 @@ export interface BrandDraftState {
   patch: BrandPatch | null;
   changeName: (name: string) => void;
   changeColor: (color: string) => void;
+  /** Cambia solo los colores indicados del fondo y la colmena Premium. */
+  changeAppearance: (changes: Partial<CenterAppearance>) => void;
+  /** Solo el plan Premium puede cambiar el fondo y la colmena. */
+  canCustomizeAppearance: boolean;
+}
+
+interface BrandEdits {
+  edits: Partial<BrandDraft>;
+  changeName: (name: string) => void;
+  changeColor: (color: string) => void;
+  changeAppearance: (changes: Partial<CenterAppearance>) => void;
+}
+
+/** Lo que la persona ha tocado encima de lo publicado; el fondo y la colmena se mezclan color a color. */
+function useBrandEdits(published: BrandDraft | null): BrandEdits {
+  const [edits, setEdits] = useState<Partial<BrandDraft>>({});
+
+  return {
+    edits,
+    changeName: (name) => {
+      setEdits((current) => ({ ...current, name }));
+    },
+    changeColor: (color) => {
+      setEdits((current) => ({ ...current, color }));
+    },
+    changeAppearance: (changes) => {
+      setEdits((current) => ({
+        ...current,
+        appearance: {
+          ...(current.appearance ?? published?.appearance ?? DEFAULT_CENTER_APPEARANCE),
+          ...changes,
+        },
+      }));
+    },
+  };
 }
 
 /** El borrador de marca: lo publicado más lo que la persona va cambiando, sin copiar el servidor a estado. */
 export function useBrandDraft(): BrandDraftState {
   const settings = useCenterSettings();
-  const [edits, setEdits] = useState<Partial<BrandDraft>>({});
-  const published: BrandDraft | null = settings.data
-    ? { name: settings.data.name, color: settings.data.brandColor }
-    : null;
+  const published = settings.data ? mapSettingsToBrandDraft(settings.data) : null;
+  const { edits, ...changers } = useBrandEdits(published);
   const draft: BrandDraft | null = published === null ? null : { ...published, ...edits };
   const problems = draft === null ? [] : findBrandDraftProblems(draft);
 
@@ -46,15 +89,8 @@ export function useBrandDraft(): BrandDraftState {
     settingsVersion: settings.data?.version ?? null,
     draft,
     problems,
-    patch:
-      draft === null || published === null || problems.length > 0
-        ? null
-        : buildBrandPatch(draft, published),
-    changeName: (name) => {
-      setEdits((current) => ({ ...current, name }));
-    },
-    changeColor: (color) => {
-      setEdits((current) => ({ ...current, color }));
-    },
+    patch: problems.length > 0 ? null : buildBrandPatchOrNull(draft, published),
+    ...changers,
+    canCustomizeAppearance: settings.data?.canCustomizeAppearance ?? false,
   };
 }

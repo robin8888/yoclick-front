@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { MyMembershipsResponseDtoMembershipsItemCenterAppearance } from './myMembershipsResponseDtoMembershipsItemCenterAppearance.ts';
 
 export type MyMembershipsResponseDtoMembershipsItemCenter = {
   name: string;
@@ -13,4 +14,5 @@ export type MyMembershipsResponseDtoMembershipsItemCenter = {
   brandColor: string;
   /** @nullable */
   logoUrl: string | null;
+  appearance: MyMembershipsResponseDtoMembershipsItemCenterAppearance;
 };

@@ -38,3 +38,25 @@ describe('buildBrandContrastReport', () => {
     expect(buildBrandContrastReport('#C8F031').wasInkAdjusted).toBe(true);
   });
 });
+
+describe('buildBrandContrastReport with a Premium background', () => {
+  it.each(['#1B1F3B', '#FDE9E3', '#E4572E', '#7A3FE0'])(
+    'keeps the text readable over %s because the app picks light or dark text',
+    (backgroundColor) => {
+      const report = buildBrandContrastReport('#2446C7', {
+        backgroundColor,
+        backgroundColorEnd: null,
+        hiveColor: null,
+      });
+
+      const backgroundRow = report.rows.find((row) => row.id === 'background');
+      expect(backgroundRow?.ratio).toBeGreaterThanOrEqual(4.5);
+    },
+  );
+
+  it('has no background row without a chosen background', () => {
+    const report = buildBrandContrastReport('#2446C7');
+
+    expect(report.rows.some((row) => row.id === 'background')).toBe(false);
+  });
+});

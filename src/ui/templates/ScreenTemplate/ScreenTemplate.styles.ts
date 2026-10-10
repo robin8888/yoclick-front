@@ -1,11 +1,21 @@
 import type { ViewStyle } from 'react-native';
 
-import { MIN_TOUCH_TARGET_SIZE, platformHeroGradient, type Theme } from '@/shared/theme';
+import {
+  MIN_TOUCH_TARGET_SIZE,
+  platformHeroGradient,
+  resolveScreenBackgroundColor,
+  type CenterAppearance,
+  type Theme,
+} from '@/shared/theme';
 
-export function createScreenStyle(theme: Theme, hasPlatformHeroBackground: boolean): ViewStyle {
+export function createScreenStyle(
+  theme: Theme,
+  hasPlatformHeroBackground: boolean,
+  appearance: CenterAppearance,
+): ViewStyle {
   const backgroundColor = hasPlatformHeroBackground
     ? platformHeroGradient.fallbackColor
-    : theme.colors.bg;
+    : resolveScreenBackgroundColor(appearance, theme.colors.bg);
   return { flex: 1, backgroundColor };
 }
 
@@ -70,3 +80,21 @@ export const FLOATING_ACTION_STYLE: ViewStyle = {
   right: 16,
   bottom: 16,
 };
+
+/** El panel tintado de la bienvenida deja libre el 30 % de abajo, donde van los botones. */
+const WELCOME_PANEL_BOTTOM_SHARE = '30%';
+const WELCOME_PANEL_BOTTOM_RADIUS = 48;
+
+export function createWelcomePanelStyle(theme: Theme): ViewStyle {
+  return {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: WELCOME_PANEL_BOTTOM_SHARE,
+    overflow: 'hidden',
+    backgroundColor: theme.colors.brandSoft,
+    borderBottomLeftRadius: WELCOME_PANEL_BOTTOM_RADIUS,
+    borderBottomRightRadius: WELCOME_PANEL_BOTTOM_RADIUS,
+  };
+}

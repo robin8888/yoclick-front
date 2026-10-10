@@ -8,6 +8,8 @@ type RgbChannels = readonly [red: number, green: number, blue: number];
 export interface ThemeNeutrals {
   backgroundColor: string;
   surfaceColor: string;
+  /** Otros fondos sobre los que también irá el texto de marca (el 2.º color de un degradado). */
+  additionalBackgroundColors?: readonly string[];
 }
 
 export interface BrandTokens {
@@ -161,7 +163,12 @@ export function deriveBrandTokens(
   const brandInk = findAccessibleBrandInk({
     brandHexColor: brand,
     themeMode,
-    backgroundsToPass: [themeNeutrals.surfaceColor, themeNeutrals.backgroundColor, brandSoft],
+    backgroundsToPass: [
+      themeNeutrals.surfaceColor,
+      themeNeutrals.backgroundColor,
+      brandSoft,
+      ...(themeNeutrals.additionalBackgroundColors ?? []),
+    ],
   });
   return { brand, onBrand: pickReadableTextColorOnBrand(brand), brandInk, brandSoft };
 }
