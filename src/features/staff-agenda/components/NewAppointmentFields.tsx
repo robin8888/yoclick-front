@@ -1,14 +1,13 @@
 import { ServiceOptionList } from '@/features/booking';
-import { ClientPicker } from '@/features/clients';
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
-import { ListItem } from '@/ui/molecules/ListItem';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
 import { formatShortDate } from '@/shared/lib/format/format-short-date';
 
 import { AppointmentModeFields, RoomChoices } from './AppointmentModeFields';
+import { ClientChoiceField } from './ClientChoiceField';
 import { DateNavigator } from './DateNavigator';
 import { AppointmentSummary } from './AppointmentSummary';
 import { GroupRoomOptionsList } from './GroupRoomOptionsList';
@@ -34,19 +33,11 @@ function StaffChoices({ form }: Readonly<{ form: NewAppointmentForm }>): React.J
 
 function ClientChoice({ form }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
   return (
-    <>
-      <Text variant="titleMd">{i18n.t('staffAgenda.newAppointment.clientLabel')}</Text>
-      {form.client === null ? (
-        <ClientPicker onClientSelect={form.selectClient} />
-      ) : (
-        <ListItem
-          title={form.client.fullName}
-          subtitle={i18n.t('staffAgenda.newAppointment.changeClient')}
-          leadingIconName="user"
-          onPress={form.clearClient}
-        />
-      )}
-    </>
+    <ClientChoiceField
+      client={form.client}
+      onClientSelect={form.selectClient}
+      onClientClear={form.clearClient}
+    />
   );
 }
 

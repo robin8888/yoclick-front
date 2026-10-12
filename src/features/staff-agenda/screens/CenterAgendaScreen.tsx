@@ -15,7 +15,8 @@ import { CenterKpiSection } from '../components/CenterKpiSection';
 import { CenterDayControl } from '../components/CenterDayControl';
 import { ScanAttendanceButton } from '../components/ScanAttendanceButton';
 import { RoomAgendaList } from '../components/RoomAgendaList';
-import { RoomTimeline } from '../components/RoomTimeline';
+import { RoomDayGrid } from '../components/RoomDayGrid';
+import { RoomWeekStrip } from '../components/RoomWeekStrip';
 import { StaffAgendaColumns } from '../components/StaffAgendaColumns';
 import { useAgendaDay, type AgendaDay } from '../hooks/useAgendaDay';
 import { useCenterStaff } from '../hooks/useCenterStaff';
@@ -31,15 +32,20 @@ interface CenterAgendaContentProps {
 }
 
 /** Cada sala con lo que la ocupa ese día; el centro necesita saber qué pasa en cada una. */
-function RoomAgendaSection({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.Element | null {
-  const roomAgenda = useRoomAgenda(isoDate);
+function RoomAgendaSection({ day }: Readonly<{ day: AgendaDay }>): React.JSX.Element | null {
+  const roomAgenda = useRoomAgenda(day.isoDate);
 
   if (roomAgenda.data === undefined) return null;
   return (
     <>
-      <RoomTimeline agenda={roomAgenda.data} isoDate={isoDate} />
+      <RoomWeekStrip
+        selectedIsoDate={day.isoDate}
+        agenda={roomAgenda.data}
+        onDaySelect={day.selectDate}
+      />
+      <RoomDayGrid agenda={roomAgenda.data} isoDate={day.isoDate} />
       {roomAgenda.data.sessionsWithoutRoom.length === 0 ? null : (
-        <RoomAgendaList agenda={{ ...roomAgenda.data, rooms: [] }} isoDate={isoDate} />
+        <RoomAgendaList agenda={{ ...roomAgenda.data, rooms: [] }} isoDate={day.isoDate} />
       )}
     </>
   );
@@ -68,7 +74,7 @@ function CenterAgendaContent({
         onNextDay={day.goToNextDay}
       />
       {hasRooms ? (
-        <RoomAgendaSection isoDate={day.isoDate} />
+        <RoomAgendaSection day={day} />
       ) : (
         <StaffAgendaColumns
           columns={buildStaffAgendaColumns(agenda.entries, teamStaff)}

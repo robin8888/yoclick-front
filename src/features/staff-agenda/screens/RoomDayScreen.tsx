@@ -1,111 +1,44 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { View } from 'react-native';
 
 import { LoadErrorState } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { formatTime24h } from '@/shared/lib/format/format-time';
-import { useTheme } from '@/shared/theme';
-import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { createEntryCardStyle } from '../components/AgendaEntryCard.styles';
+import { RoomBlockCard } from '../components/RoomBlockCard';
+import { RoomSessionDetail } from '../components/RoomSessionDetail';
 import { useRoomAgenda } from '../hooks/useRoomAgenda';
+import { type RoomDay } from '../model/room-agenda';
 import { roomDayRouteParamsSchema } from '../model/room-day-route-params';
-import { hasFreeSeats, type RoomDay, type RoomSession } from '../model/room-agenda';
 
-interface SessionDetailProps {
-  session: RoomSession;
+interface RoomDayBodyProps {
+  room: RoomDay | undefined;
   timeZone: string;
   isoDate: string;
 }
 
-function AttendeeList({ session }: Readonly<{ session: RoomSession }>): React.JSX.Element {
-  return (
-    <>
-      <Text variant="bodyStrong">{i18n.t('staffAgenda.rooms.attendeesTitle')}</Text>
-      {session.attendees.length === 0 ? (
-        <Text color="ink2">{i18n.t('staffAgenda.rooms.noAttendees')}</Text>
-      ) : null}
-      {session.attendees.map((attendee) => (
-        <Text key={attendee.bookingId}>{attendee.fullName}</Text>
-      ))}
-    </>
-  );
-}
-
-/** Apuntar a más alumnos a la misma clase: abre «Nueva cita» en ese día y hora. */
-function AddPeopleButton({
-  isoDate,
-  startTime,
-}: Readonly<{ isoDate: string; startTime: string }>): React.JSX.Element {
-  const router = useRouter();
-
-  return (
-    <Button
-      variant="outline"
-      isFullWidth
-      label={i18n.t('staffAgenda.session.addPeopleAction')}
-      onPress={() => {
-        router.push({
-          pathname: '/(admin)/new-appointment',
-          params: { date: isoDate, time: startTime },
-        });
-      }}
-    />
-  );
-}
-
-/** Una clase de la sala: horas, servicio, profesor, aforo y los alumnos apuntados. */
-function SessionDetail({
-  session,
-  timeZone,
-  isoDate,
-}: Readonly<SessionDetailProps>): React.JSX.Element {
-  const theme = useTheme();
-  const startTime = formatTime24h(session.startsAt, timeZone);
-
-  return (
-    <View style={createEntryCardStyle(theme)}>
-      <Text variant="titleMd" color="brandInk">
-        {i18n.t('staffAgenda.agenda.timeRange', {
-          startTime,
-          endTime: formatTime24h(session.endsAt, timeZone),
-        })}
-      </Text>
-      <Text variant="bodyStrong">{session.service.name}</Text>
-      <Text>{i18n.t('staffAgenda.rooms.teacherLine', { teacher: session.teacher.fullName })}</Text>
-      <Text color="ink2">
-        {i18n.t('staffAgenda.rooms.seats', {
-          booked: session.bookedCount,
-          capacity: session.capacity,
-        })}
-      </Text>
-      <AttendeeList session={session} />
-      {session.mode === 'group' && hasFreeSeats(session) ? (
-        <AddPeopleButton isoDate={isoDate} startTime={startTime} />
-      ) : null}
-    </View>
-  );
-}
-
-function RoomDayBody({
-  room,
-  timeZone,
-  isoDate,
-}: Readonly<{ room: RoomDay | undefined; timeZone: string; isoDate: string }>): React.JSX.Element {
+/** Los bloqueos y las clases de la sala ese día, por orden de hora. */
+function RoomDayBody({ room, timeZone, isoDate }: Readonly<RoomDayBodyProps>): React.JSX.Element {
   if (room === undefined) {
     return <Text color="ink2">{i18n.t('staffAgenda.rooms.roomNotFound')}</Text>;
   }
-  if (room.sessions.length === 0) {
+  if (room.sessions.length === 0 && room.blocks.length === 0) {
     return <Text color="ink2">{i18n.t('staffAgenda.rooms.freeAllDay')}</Text>;
   }
   return (
     <>
+      {room.blocks.map((block) => (
+        <RoomBlockCard key={block.id} block={block} timeZone={timeZone} />
+      ))}
       {room.sessions.map((session) => (
-        <SessionDetail key={session.id} session={session} timeZone={timeZone} isoDate={isoDate} />
+        <RoomSessionDetail
+          key={session.id}
+          session={session}
+          timeZone={timeZone}
+          isoDate={isoDate}
+        />
       ))}
     </>
   );
@@ -144,7 +77,7 @@ function RoomDayContent({
   );
 }
 
-/** Detalle de una sala un día: qué clase la ocupa, de qué hora a qué hora, aforo y alumnos. */
+/** Detalle de una sala un día: bloqueos, qué clase la ocupa, aforo, alumnos y cancelar un día. */
 export function RoomDayScreen(): React.JSX.Element {
   const params = roomDayRouteParamsSchema.safeParse(useLocalSearchParams());
 

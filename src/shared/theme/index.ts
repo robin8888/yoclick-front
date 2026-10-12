@@ -28,6 +28,8 @@ export type {
   TypeStyleName,
 } from './theme.types';
 export { colorTokens } from './tokens';
+export { pickRoomPaletteColor, ROOM_PALETTE_SIZE } from './room-palette';
+export type { RoomPaletteColor } from './room-palette';
 export { resolveFontFaceName } from './font-faces';
 export { useAppFonts } from './useAppFonts';
 export { useReducedMotion } from './useReducedMotion';

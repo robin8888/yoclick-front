@@ -1,4 +1,5 @@
 import type {
+  RoomAgendaResponseDto,
   RoomAgendaResponseDtoRoomsItem,
   RoomAgendaResponseDtoRoomsItemSessionsItem,
 } from '@/shared/api/generated/model';
@@ -20,4 +21,32 @@ export function countFreeSeats(session: Pick<RoomSession, 'capacity' | 'bookedCo
 export function listTeachersOfRoomDay(room: RoomDay): string[] {
   const names = room.sessions.map((session) => session.teacher.fullName);
   return [...new Set(names)];
+}
+
+export interface FoundSession {
+  session: RoomSession;
+  /** `null` si la sesión no tiene sala. */
+  roomName: string | null;
+}
+
+/** Una sesión del día por su id, esté en una sala o sin sala; `undefined` si no está. */
+export function findSessionInRoomAgenda(
+  agenda: RoomAgendaResponseDto,
+  sessionId: string,
+): FoundSession | undefined {
+  for (const room of agenda.rooms) {
+    const session = room.sessions.find((candidate) => candidate.id === sessionId);
+    if (session !== undefined) return { session, roomName: room.name };
+  }
+  const sessionWithoutRoom = agenda.sessionsWithoutRoom.find(
+    (candidate) => candidate.id === sessionId,
+  );
+  return sessionWithoutRoom === undefined
+    ? undefined
+    : { session: sessionWithoutRoom, roomName: null };
+}
+
+/** Se puede apuntar a alguien: es grupal, no está cancelada y quedan plazas. */
+export function canJoinSession(session: RoomSession): boolean {
+  return session.mode === 'group' && session.cancelledReason === null && hasFreeSeats(session);
 }

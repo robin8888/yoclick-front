@@ -8,7 +8,8 @@ import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { RoomAgendaList } from '../components/RoomAgendaList';
-import { RoomTimeline } from '../components/RoomTimeline';
+import { RoomDayGrid } from '../components/RoomDayGrid';
+import { RoomWeekStrip } from '../components/RoomWeekStrip';
 import { RoomDayScreen } from './RoomDayScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
@@ -25,18 +26,22 @@ const SESSION = {
   bookedCount: 2,
   service: { id: 'service-salsa', name: 'Salsa', color: null },
   teacher: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
+  schedule: null,
+  cancelledReason: null,
   attendees: [
     {
       bookingId: '0191d6a0-0000-7000-8000-0000000000c1',
       clientMembershipId: 'client-1',
       fullName: 'Lucía Torres',
       status: 'confirmed',
+      source: 'single',
     },
     {
       bookingId: '0191d6a0-0000-7000-8000-0000000000c2',
       clientMembershipId: 'client-2',
       fullName: 'Marcos Díaz',
       status: 'confirmed',
+      source: 'single',
     },
   ],
 };
@@ -52,8 +57,9 @@ const AGENDA = {
       capacity: 10,
       staff: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
       sessions: [SESSION],
+      blocks: [],
     },
-    { id: 'room-2', name: 'Aula común', capacity: 6, staff: null, sessions: [] },
+    { id: 'room-2', name: 'Aula común', capacity: 6, staff: null, sessions: [], blocks: [] },
   ],
   sessionsWithoutRoom: [],
 };
@@ -103,34 +109,26 @@ describe('RoomAgendaList', () => {
   });
 });
 
-describe('RoomTimeline', () => {
+const GRID_AGENDA = AGENDA as unknown as Parameters<typeof RoomDayGrid>[0]['agenda'];
+
+describe('RoomDayGrid', () => {
   beforeEach(() => {
     resetMockRouter();
     signInToCenter();
   });
 
-  it('shows the hours the center is open with the rooms booked and who is missing', () => {
-    renderScreen(
-      <RoomTimeline
-        agenda={AGENDA as unknown as Parameters<typeof RoomTimeline>[0]['agenda']}
-        isoDate="2026-10-12"
-      />,
-    );
+  it('shows the legend of rooms and a chip per class, with its seats, in the hour it starts', () => {
+    renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
 
     expect(screen.getByText('16:00')).toBeOnTheScreen();
     expect(screen.getByText('18:00')).toBeOnTheScreen();
-    expect(screen.getByText('Sala de baile')).toBeOnTheScreen();
-    expect(screen.getByText('Salsa · con Ana Ruiz')).toBeOnTheScreen();
-    expect(screen.getByText('Faltan 8 para el aforo (2 de 10)')).toBeOnTheScreen();
+    expect(screen.getByRole('radio', { name: 'A: Sala de baile' })).toBeOnTheScreen();
+    expect(screen.getByRole('radio', { name: 'B: Aula común' })).toBeOnTheScreen();
+    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
   });
 
-  it('opens the detail of the room when a booked hour is pressed', () => {
-    renderScreen(
-      <RoomTimeline
-        agenda={AGENDA as unknown as Parameters<typeof RoomTimeline>[0]['agenda']}
-        isoDate="2026-10-12"
-      />,
-    );
+  it('opens the detail of the room when a chip is pressed', () => {
+    renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
 
     fireEvent.press(screen.getByRole('button', { name: /Sala de baile, Salsa/ }));
 
@@ -138,6 +136,47 @@ describe('RoomTimeline', () => {
       pathname: '/(admin)/room-day/[roomId]',
       params: { roomId: ROOM_ID, date: '2026-10-12' },
     });
+  });
+
+  it('offers the services of the day as a filter and keeps only the chosen one', () => {
+    renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
+
+    expect(screen.getByRole('radio', { name: 'Todos los servicios' })).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('radio', { name: 'Salsa' }));
+
+    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
+  });
+
+  it('filters the grid to one room from the legend and back', () => {
+    renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
+
+    fireEvent.press(screen.getByRole('radio', { name: 'B: Aula común' }));
+    expect(screen.queryByText('Salsa · 2/10')).not.toBeOnTheScreen();
+
+    fireEvent.press(screen.getByRole('radio', { name: 'B: Aula común' }));
+    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
+  });
+});
+
+describe('RoomWeekStrip', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signInToCenter();
+  });
+
+  it('shows the week of the chosen day with a dot per busy room and lets you pick a day', async () => {
+    mockApi({ [ROOMS_PATH]: AGENDA });
+    const onDaySelect = jest.fn();
+    renderScreen(
+      <RoomWeekStrip selectedIsoDate="2026-10-14" agenda={GRID_AGENDA} onDaySelect={onDaySelect} />,
+    );
+
+    expect(
+      await screen.findByRole('button', { name: 'lunes 12 de octubre, 1 sala con clases' }),
+    ).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: /viernes 16 de octubre/ }));
+
+    expect(onDaySelect).toHaveBeenCalledWith('2026-10-16');
   });
 });
 
@@ -167,7 +206,7 @@ describe('RoomDayScreen', () => {
 
     expect(getMockRouter().push).toHaveBeenCalledWith({
       pathname: '/(admin)/new-appointment',
-      params: { date: '2026-10-12', time: '17:00' },
+      params: { date: '2026-10-12', sessionId: SESSION.id },
     });
   });
 });

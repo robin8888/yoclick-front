@@ -6,6 +6,7 @@ import {
   agendaCreateBooking,
   agendaJoinGroupSession,
   getAgendaGetDayQueryKey,
+  getAgendaGetRoomDayQueryKey,
 } from '@/shared/api/generated/endpoints/bookings/bookings';
 import type {
   CreateAgendaBookingRequestDto,
@@ -52,6 +53,7 @@ export function useCreateAgendaBooking(): CreateAgendaBooking {
     joinGroup: (request, onJoined) => {
       joinMutation.mutate(request, {
         onSuccess: () => {
+          void queryClient.invalidateQueries({ queryKey: getAgendaGetRoomDayQueryKey(centerId) });
           void queryClient
             .invalidateQueries({ queryKey: getAgendaGetDayQueryKey(centerId) })
             .then(onJoined);

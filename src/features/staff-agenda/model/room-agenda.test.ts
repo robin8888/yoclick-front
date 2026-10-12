@@ -1,5 +1,11 @@
-import type { RoomDay } from './room-agenda';
-import { countFreeSeats, hasFreeSeats, listTeachersOfRoomDay } from './room-agenda';
+import type { RoomDay, RoomSession } from './room-agenda';
+import {
+  canJoinSession,
+  countFreeSeats,
+  findSessionInRoomAgenda,
+  hasFreeSeats,
+  listTeachersOfRoomDay,
+} from './room-agenda';
 
 describe('seats of a class', () => {
   it.each([
@@ -23,5 +29,34 @@ describe('listTeachersOfRoomDay', () => {
     } as unknown as RoomDay;
 
     expect(listTeachersOfRoomDay(room)).toEqual(['Ana', 'Ben']);
+  });
+});
+
+describe('findSessionInRoomAgenda and canJoinSession', () => {
+  const session = {
+    id: 'session-1',
+    mode: 'group',
+    capacity: 10,
+    bookedCount: 3,
+    cancelledReason: null,
+  };
+  const agenda = {
+    rooms: [{ name: 'Sala 1', sessions: [session] }],
+    sessionsWithoutRoom: [{ ...session, id: 'session-2' }],
+  } as unknown as Parameters<typeof findSessionInRoomAgenda>[0];
+
+  it('finds a session in its room, or without room, and says when it is missing', () => {
+    expect(findSessionInRoomAgenda(agenda, 'session-1')?.roomName).toBe('Sala 1');
+    expect(findSessionInRoomAgenda(agenda, 'session-2')?.roomName).toBeNull();
+    expect(findSessionInRoomAgenda(agenda, 'session-3')).toBeUndefined();
+  });
+
+  it.each([
+    ['a group with seats', {}, true],
+    ['a full group', { bookedCount: 10 }, false],
+    ['a private appointment', { mode: 'private', capacity: 1, bookedCount: 1 }, false],
+    ['a cancelled day', { cancelledReason: 'Festivo' }, false],
+  ])('can join %s: %s', (_caseName, overrides, canJoin) => {
+    expect(canJoinSession({ ...session, ...overrides } as RoomSession)).toBe(canJoin);
   });
 });
