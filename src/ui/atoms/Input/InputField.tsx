@@ -1,6 +1,7 @@
 import { TextInput } from 'react-native';
 
 import { useTheme } from '@/shared/theme';
+import { useRevealFocusedInput } from '@/ui/hooks/keyboard-reveal';
 
 import { useTextStyle } from '../Text';
 import { createInputFieldStyle } from './Input.styles';
@@ -22,6 +23,8 @@ export function InputField(props: Readonly<InputFieldProps>): React.JSX.Element 
   const { isDisabled = false, isSecureTextHidden, onFocusChange, inputRef } = props;
   const theme = useTheme();
   const textStyle = useTextStyle({ variant: 'body', color: isDisabled ? 'ink2' : 'ink' });
+  // Al enfocar con el teclado ya abierto, el scroll de la pantalla desplaza hasta este campo.
+  const revealFocusedInput = useRevealFocusedInput();
 
   return (
     <TextInput
@@ -33,6 +36,7 @@ export function InputField(props: Readonly<InputFieldProps>): React.JSX.Element 
       secureTextEntry={isSecureTextHidden}
       onFocus={() => {
         onFocusChange(true);
+        revealFocusedInput();
         props.onFocus?.();
       }}
       onBlur={() => {

@@ -1,4 +1,4 @@
-import { Modal, Pressable, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Pressable, ScrollView, View } from 'react-native';
 
 import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
@@ -33,7 +33,8 @@ export function BottomSheet({
       onDismiss={onClosed}
       accessibilityViewIsModal
     >
-      <View style={SHEET_ANCHOR_STYLE}>
+      {/* Una hoja con un campo de texto sube con el teclado; el Modal no hereda el ajuste de la ventana. */}
+      <KeyboardAvoidingView style={SHEET_ANCHOR_STYLE} behavior="padding">
         <Pressable accessible={false} style={createBackdropStyle(theme)} onPress={onDismiss} />
         <View style={createSheetStyle(theme)}>
           <Text variant="titleMd">{title}</Text>
@@ -44,7 +45,7 @@ export function BottomSheet({
             {children}
           </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

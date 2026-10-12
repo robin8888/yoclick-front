@@ -1,9 +1,20 @@
-import type { ReactNode } from 'react';
-import { ScrollView } from 'react-native';
+import { useEffect, useRef, type ReactNode } from 'react';
+import {
+  Keyboard,
+  ScrollView,
+  TextInput,
+  type HostInstance,
+  type NativeScrollEvent,
+} from 'react-native';
 
 import { useTheme } from '@/shared/theme';
+import { calculateRevealOffset, KeyboardRevealContext } from '@/ui/hooks/keyboard-reveal';
 
 import { createContentStyle } from './ScreenTemplate.styles';
+
+/** Tras abrirse el teclado, la plantilla aún recoloca el pie: se mide después de ese cambio. */
+const REVEAL_DELAY_MS = 60;
+const SCROLL_EVENT_THROTTLE_MS = 16;
 
 interface KeyboardAwareScrollProps {
   isContentCentered: boolean;
@@ -12,10 +23,64 @@ interface KeyboardAwareScrollProps {
   children: ReactNode;
 }
 
+interface RevealTools {
+  scrollRef: React.RefObject<ScrollView | null>;
+  offsetYRef: React.RefObject<number>;
+  keyboardTopYRef: React.RefObject<number | null>;
+}
+
+/** Desplaza el scroll lo justo para que el campo con el foco quede por encima del teclado. */
+function revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef }: RevealTools): void {
+  const keyboardTopY = keyboardTopYRef.current;
+  // Los tipos lo dan por seguro, pero sin ningún campo enfocado devuelve null.
+  const focusedInput = TextInput.State.currentlyFocusedInput() as HostInstance | null;
+  if (keyboardTopY === null || focusedInput === null) return;
+  focusedInput.measureInWindow((...frame) => {
+    const [, top, , height] = frame;
+    const revealOffset = calculateRevealOffset({ inputBottomY: top + height, keyboardTopY });
+    if (revealOffset === 0) return;
+    scrollRef.current?.scrollTo({ y: offsetYRef.current + revealOffset, animated: true });
+  });
+}
+
+/** Escucha al teclado (sistema externo): guarda dónde empieza y, al abrirse, enseña el campo enfocado. */
+function useKeyboardReveal(): RevealTools & { reveal: () => void } {
+  const scrollRef = useRef<ScrollView | null>(null);
+  const offsetYRef = useRef(0);
+  const keyboardTopYRef = useRef<number | null>(null);
+  const tools = { scrollRef, offsetYRef, keyboardTopYRef };
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', (event) => {
+      keyboardTopYRef.current = event.endCoordinates.screenY;
+      setTimeout(() => {
+        revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef });
+      }, REVEAL_DELAY_MS);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      keyboardTopYRef.current = null;
+    });
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
+  return {
+    ...tools,
+    reveal: () => {
+      setTimeout(() => {
+        revealFocusedInput(tools);
+      }, REVEAL_DELAY_MS);
+    },
+  };
+}
+
 /**
- * El contenido con scroll de una pantalla. En iOS, `automaticallyAdjustKeyboardInsets` hace que el
- * sistema deje sitio al teclado y desplace hasta el campo que se escribe, sin que tape nada;
- * en Android lo hace el `KeyboardAvoidingView` de la plantilla. Arrastrar el contenido cierra el teclado.
+ * El contenido con scroll de una pantalla. iOS (`automaticallyAdjustKeyboardInsets`) y Android
+ * (el `KeyboardAvoidingView` de la plantilla) dejan sitio al teclado, pero ninguno desplaza hasta
+ * el campo que se escribe: eso se hace aquí, al abrirse el teclado y al cambiar de campo con él
+ * abierto. Arrastrar el contenido cierra el teclado.
  */
 export function KeyboardAwareScroll({
   isContentCentered,
@@ -23,16 +88,24 @@ export function KeyboardAwareScroll({
   children,
 }: Readonly<KeyboardAwareScrollProps>): React.JSX.Element {
   const theme = useTheme();
+  const { scrollRef, offsetYRef, reveal } = useKeyboardReveal();
 
   return (
-    <ScrollView
-      contentContainerStyle={createContentStyle(theme, isContentCentered)}
-      automaticallyAdjustKeyboardInsets
-      keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag"
-    >
-      {children}
-      {trailingContent}
-    </ScrollView>
+    <KeyboardRevealContext.Provider value={reveal}>
+      <ScrollView
+        ref={scrollRef}
+        contentContainerStyle={createContentStyle(theme, isContentCentered)}
+        automaticallyAdjustKeyboardInsets
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        scrollEventThrottle={SCROLL_EVENT_THROTTLE_MS}
+        onScroll={(event: { nativeEvent: NativeScrollEvent }) => {
+          offsetYRef.current = event.nativeEvent.contentOffset.y;
+        }}
+      >
+        {children}
+        {trailingContent}
+      </ScrollView>
+    </KeyboardRevealContext.Provider>
   );
 }
