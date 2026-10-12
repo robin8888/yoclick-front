@@ -64,6 +64,8 @@ export const serviceFormSchema = z.object({
       error: () => i18n.t('centerAdmin.serviceEditor.priceInvalid'),
     }),
   isVisible: z.boolean(),
+  /** Solo en privado, solo en grupo o de las dos formas; la clientela no elige el modo. */
+  mode: z.enum(['private', 'group', 'both']),
   /** Quién da el servicio; vacío en un alta = quien lo crea (lo decide el servidor). */
   staffMembershipIds: z.array(z.string()),
   /** Sala o recurso donde se da; vacío = sin sala fija. */
@@ -94,6 +96,7 @@ export function buildEmptyServiceForm(): ServiceFormValues {
     durationMinutes: String(DEFAULT_SERVICE_DURATION_MINUTES),
     priceInEuros: '',
     isVisible: true,
+    mode: 'private',
     staffMembershipIds: [],
     roomId: '',
   };
@@ -106,6 +109,7 @@ export function mapServiceToForm(service: ServiceListResponseDtoServicesItem): S
     durationMinutes: String(service.durationMinutes),
     priceInEuros: formatPriceForInput(service.priceCents),
     isVisible: service.isVisible,
+    mode: service.mode,
     staffMembershipIds: service.staff.map((staffMember) => staffMember.membershipId),
     roomId: service.room?.id ?? '',
   };
@@ -118,6 +122,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
   durationMinutes: number;
   priceCents: number | null;
   isVisible: boolean;
+  mode: ServiceFormValues['mode'];
   roomId: string | null;
   staffMembershipIds?: string[];
 } {
@@ -127,6 +132,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
     durationMinutes: Number(formValues.durationMinutes),
     priceCents: formValues.priceInEuros === '' ? null : parsePriceInCents(formValues.priceInEuros),
     isVisible: formValues.isVisible,
+    mode: formValues.mode,
     roomId: formValues.roomId === '' ? null : formValues.roomId,
     ...(formValues.staffMembershipIds.length === 0
       ? {}

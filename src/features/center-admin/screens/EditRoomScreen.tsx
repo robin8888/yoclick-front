@@ -26,13 +26,25 @@ const routeParamsSchema = z.object({ roomId: z.string().min(1) });
 
 interface EditRoomActionsProps {
   onSave: () => void;
+  onBlocksPress: () => void;
   onRemove: () => void;
 }
 
-function EditRoomActions({ onSave, onRemove }: Readonly<EditRoomActionsProps>): React.JSX.Element {
+function EditRoomActions({
+  onSave,
+  onBlocksPress,
+  onRemove,
+}: Readonly<EditRoomActionsProps>): React.JSX.Element {
   return (
     <>
       <Button isFullWidth label={i18n.t('centerAdmin.rooms.updateAction')} onPress={onSave} />
+      <Button
+        isFullWidth
+        variant="secondary"
+        leadingIconName="lock"
+        label={i18n.t('centerAdmin.rooms.blocksAction')}
+        onPress={onBlocksPress}
+      />
       <Button
         isFullWidth
         variant="outline"
@@ -79,6 +91,9 @@ function EditRoomForm({
       footer={
         <EditRoomActions
           onSave={save}
+          onBlocksPress={() => {
+            router.push({ pathname: '/(admin)/room-blocks/[roomId]', params: { roomId: room.id } });
+          }}
           onRemove={() => {
             setIsRemoving(true);
           }}
@@ -98,7 +113,7 @@ function EditRoomForm({
   );
 }
 
-/** Edita el nombre, el aforo y el profesor de una sala, o la quita. */
+/** Edita el nombre, el aforo, los servicios y el profesor de un espacio, abre sus bloqueos o lo quita. */
 export function EditRoomScreen(): React.JSX.Element {
   const router = useRouter();
   const params = routeParamsSchema.safeParse(useLocalSearchParams());

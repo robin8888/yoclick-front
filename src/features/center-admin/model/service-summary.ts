@@ -11,11 +11,20 @@ export function formatDurationInMinutes(durationMinutes: number): string {
   return minutes === 0 ? `${String(hours)} h` : `${String(hours)} h ${String(minutes)} min`;
 }
 
-/** «60 min · 35 €» o «45 min · Gratis»: la línea que describe un servicio en la lista. */
+/** «En grupo» o «Privado o en grupo»; un servicio privado (lo habitual) no añade nada. */
+function describeServiceMode(mode: ServiceListResponseDtoServicesItem['mode']): string | null {
+  if (mode === 'group') return i18n.t('centerAdmin.services.modeGroup');
+  if (mode === 'both') return i18n.t('centerAdmin.services.modeBoth');
+  return null;
+}
+
+/** «60 min · 35 €», «45 min · Gratis» o «1 h · 20 € · En grupo»: la línea de un servicio en la lista. */
 export function describeServiceMeta(service: ServiceListResponseDtoServicesItem): string {
   const priceLabel =
     service.priceCents === null
       ? i18n.t('centerAdmin.services.noPrice')
       : formatEuros(service.priceCents);
-  return `${formatDurationInMinutes(service.durationMinutes)} · ${priceLabel}`;
+  const modeLabel = describeServiceMode(service.mode);
+  const baseMeta = `${formatDurationInMinutes(service.durationMinutes)} · ${priceLabel}`;
+  return modeLabel === null ? baseMeta : `${baseMeta} · ${modeLabel}`;
 }

@@ -6,8 +6,9 @@ import { Text } from '@/ui/atoms/Text';
 
 interface SectionHeaderProps {
   title: string;
-  actionLabel?: string;
-  onActionPress?: () => void;
+  /** Sin etiqueta (o sin acción) la cabecera solo lleva el título. */
+  actionLabel?: string | undefined;
+  onActionPress?: (() => void) | undefined;
   actionIconName?: IconName;
 }
 

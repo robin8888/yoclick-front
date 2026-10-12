@@ -17,19 +17,12 @@ export const SECTOR_IDS = [
 
 export type SectorId = (typeof SECTOR_IDS)[number];
 
-/** Academias: dan sus clases en salas con aforo, así que su barra lleva la pestaña «Gestión». */
-const ROOM_MANAGEMENT_SECTOR_IDS: readonly string[] = [
-  'academia',
-  'baile',
-  'marciales',
-  'musica',
-  'cocina',
-];
-
+/**
+ * Todo centro puede tener espacios con aforo, horarios fijos y bloqueos (docs/spec/09): la pestaña
+ * «Gestión» sale en cualquier sector en cuanto se conoce el centro.
+ */
 export function hasRoomManagement(sectorId: string | null | undefined): boolean {
-  return (
-    sectorId !== null && sectorId !== undefined && ROOM_MANAGEMENT_SECTOR_IDS.includes(sectorId)
-  );
+  return sectorId !== null && sectorId !== undefined;
 }
 
 export interface WordForms {

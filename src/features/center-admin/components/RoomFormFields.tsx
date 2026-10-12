@@ -6,6 +6,7 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 import type { RoomFormValues } from '../model/room-form';
 import { Controller } from 'react-hook-form';
 
+import { RoomFixedServiceField } from './RoomFixedServiceField';
 import { RoomTeacherField } from './RoomTeacherField';
 import { ServiceSelectionField } from './ServiceSelectionField';
 
@@ -13,7 +14,7 @@ interface RoomFormFieldsProps {
   control: Control<RoomFormValues>;
 }
 
-/** Nombre, aforo máximo y profesor de una sala. */
+/** Nombre, aforo máximo, servicios, servicio fijo y profesor de un espacio. */
 export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): React.JSX.Element {
   return (
     <>
@@ -42,6 +43,7 @@ export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): Reac
           />
         )}
       />
+      <RoomFixedServiceField control={control} />
       <RoomTeacherField control={control} />
     </>
   );

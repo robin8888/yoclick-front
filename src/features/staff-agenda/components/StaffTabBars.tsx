@@ -47,7 +47,7 @@ function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): r
 
 interface AdminTabsRequest {
   clientsLabel: string;
-  /** Las academias llevan «Gestión» (salas y profesores) entre Contenido y Marca. */
+  /** «Gestión» (salas, horarios fijos y bloqueos) entre Contenido y Marca. */
   hasManagementTab: boolean;
 }
 
@@ -56,7 +56,7 @@ const MANAGEMENT_TAB: PathTab = {
   label: i18n.t('centerAdmin.tabs.management'),
   iconName: 'settings',
   href: '/(admin)/(tabs)/management',
-  activePaths: ['/management', '/rooms'],
+  activePaths: ['/management', '/rooms', '/schedules', '/room-blocks'],
 };
 
 /** Las pantallas de «Servicios y horario» cuelgan de «Marca» (prototipo); las salas, de «Gestión» si existe. */

@@ -160,6 +160,7 @@ describe('ServiceEditorScreen', () => {
       durationMinutes: 30,
       priceCents: 2550,
       isVisible: true,
+      mode: 'private',
     });
   });
 

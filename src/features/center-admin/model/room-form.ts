@@ -15,6 +15,8 @@ const MAX_CAPACITY = 500;
 export const DEFAULT_ROOM_CAPACITY_TEXT = '10';
 /** El texto de «ningún profesor fijo»: cualquiera del equipo puede usar la sala. */
 export const ANY_TEACHER_VALUE = '';
+/** El texto de «ningún servicio fijo»: en el espacio se programa cualquier servicio. */
+export const ANY_SERVICE_VALUE = '';
 
 export const roomFormSchema = z.object({
   name: z
@@ -36,6 +38,8 @@ export const roomFormSchema = z.object({
   staffMembershipId: z.string(),
   /** Los servicios que se dan en la sala. */
   serviceIds: z.array(z.string()),
+  /** El único servicio que admite el espacio; `ANY_SERVICE_VALUE` si admite cualquiera. */
+  fixedServiceId: z.string(),
 });
 export type RoomFormValues = z.infer<typeof roomFormSchema>;
 
@@ -45,6 +49,7 @@ export function buildEmptyRoomForm(): RoomFormValues {
     capacity: DEFAULT_ROOM_CAPACITY_TEXT,
     staffMembershipId: ANY_TEACHER_VALUE,
     serviceIds: [],
+    fixedServiceId: ANY_SERVICE_VALUE,
   };
 }
 
@@ -54,6 +59,7 @@ export function buildRoomForm(room: RoomListResponseDtoRoomsItem): RoomFormValue
     capacity: String(room.capacity),
     staffMembershipId: room.staff?.membershipId ?? ANY_TEACHER_VALUE,
     serviceIds: room.services.map(({ id }) => id),
+    fixedServiceId: room.fixedService?.id ?? ANY_SERVICE_VALUE,
   };
 }
 
@@ -67,6 +73,7 @@ export function mapRoomFormToCreateRequest(formValues: RoomFormValues): CreateRo
     capacity: Number(formValues.capacity),
     staffMembershipId: toStaffMembershipId(formValues.staffMembershipId),
     serviceIds: formValues.serviceIds,
+    serviceId: formValues.fixedServiceId === ANY_SERVICE_VALUE ? null : formValues.fixedServiceId,
   };
 }
 

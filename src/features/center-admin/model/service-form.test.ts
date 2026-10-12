@@ -60,6 +60,7 @@ describe('service form mapping', () => {
       durationMinutes: 60,
       priceCents: null,
       isVisible: true,
+      mode: 'private',
       roomId: null,
     });
   });
@@ -69,6 +70,7 @@ describe('service form mapping', () => {
       name: 'Valoración',
       durationMinutes: 60,
       isVisible: true,
+      mode: 'private',
     });
   });
 
@@ -80,6 +82,7 @@ describe('service form mapping', () => {
         durationMinutes: '30',
         priceInEuros: '25',
         isVisible: false,
+        mode: 'both',
         staffMembershipIds: [],
         roomId: '',
       }),
@@ -89,6 +92,7 @@ describe('service form mapping', () => {
       durationMinutes: 30,
       priceCents: 2500,
       isVisible: false,
+      mode: 'both',
     });
   });
 

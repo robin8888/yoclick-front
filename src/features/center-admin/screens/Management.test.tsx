@@ -26,9 +26,17 @@ const ROOMS = {
       name: 'Sala de baile',
       capacity: 12,
       staff: { membershipId: TEACHER_ANA_ID, fullName: 'Ana Ruiz' },
+      fixedService: { id: SALSA_ID, name: 'Salsa' },
       services: [{ id: SALSA_ID, name: 'Salsa' }],
     },
-    { id: ROOM_FREE_ID, name: 'Aula común', capacity: 6, staff: null, services: [] },
+    {
+      id: ROOM_FREE_ID,
+      name: 'Aula común',
+      capacity: 6,
+      staff: null,
+      fixedService: null,
+      services: [],
+    },
   ],
 };
 
@@ -67,7 +75,7 @@ describe('ManagementScreen', () => {
     renderScreen(<ManagementScreen />);
 
     expect(await screen.findByText('Sala de baile')).toBeOnTheScreen();
-    expect(screen.getByText('Aforo 12 · Da clase Ana Ruiz · Salsa')).toBeOnTheScreen();
+    expect(screen.getByText('Aforo 12 · Da clase Ana Ruiz · Solo Salsa')).toBeOnTheScreen();
     expect(screen.getByText('Aula común')).toBeOnTheScreen();
     expect(screen.getByText('Aforo 6 · Cualquiera del equipo')).toBeOnTheScreen();
   });
@@ -76,14 +84,14 @@ describe('ManagementScreen', () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: { rooms: [] } });
     renderScreen(<ManagementScreen />);
 
-    expect(await screen.findByText('Aún no hay salas')).toBeOnTheScreen();
+    expect(await screen.findByText('Aún no hay espacios')).toBeOnTheScreen();
   });
 
   it('opens the form to add a room', async () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Nueva sala' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Nuevo espacio' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/rooms/new');
   });
@@ -128,6 +136,7 @@ describe('EditRoomScreen', () => {
         capacity: 6,
         staffMembershipId: TEACHER_ANA_ID,
         serviceIds: [],
+        serviceId: null,
       });
     });
   });

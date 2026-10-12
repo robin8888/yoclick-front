@@ -8,6 +8,7 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { useServiceEditorForm } from '../hooks/useServiceEditorForm';
 import { DurationPresets } from './DurationPresets';
+import { ServiceModeField } from './ServiceModeField';
 import { ServiceRoomField } from './ServiceRoomField';
 import { ServiceStaffField } from './ServiceStaffField';
 
@@ -47,6 +48,7 @@ function VisibilityField({ form }: Readonly<ServiceEditorFieldsProps>): React.JS
 function ServiceAssignmentFields({ form }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
   return (
     <>
+      <ServiceModeField form={form} />
       <ServiceStaffField form={form} />
       <ServiceRoomField form={form} />
     </>

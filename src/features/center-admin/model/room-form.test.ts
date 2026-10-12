@@ -1,7 +1,13 @@
 import { buildEmptyRoomForm, mapRoomFormToCreateRequest, roomFormSchema } from './room-form';
 
 describe('roomFormSchema', () => {
-  const validForm = { name: 'Sala 1', capacity: '12', staffMembershipId: '', serviceIds: [] };
+  const validForm = {
+    name: 'Sala 1',
+    capacity: '12',
+    staffMembershipId: '',
+    serviceIds: [],
+    fixedServiceId: '',
+  };
 
   it('accepts a named room with a capacity', () => {
     expect(roomFormSchema.safeParse(validForm).success).toBe(true);
@@ -27,8 +33,15 @@ describe('mapRoomFormToCreateRequest', () => {
         capacity: '8',
         staffMembershipId: '',
         serviceIds: [],
+        fixedServiceId: '',
       }),
-    ).toEqual({ name: 'Tatami', capacity: 8, staffMembershipId: null, serviceIds: [] });
+    ).toEqual({
+      name: 'Tatami',
+      capacity: 8,
+      staffMembershipId: null,
+      serviceIds: [],
+      serviceId: null,
+    });
   });
 
   it('sends the teacher of the room when one is chosen', () => {
@@ -38,12 +51,14 @@ describe('mapRoomFormToCreateRequest', () => {
         capacity: '8',
         staffMembershipId: 'membership-ana',
         serviceIds: ['service-1'],
+        fixedServiceId: 'service-1',
       }),
     ).toEqual({
       name: 'Sala 1',
       capacity: 8,
       staffMembershipId: 'membership-ana',
       serviceIds: ['service-1'],
+      serviceId: 'service-1',
     });
   });
 
@@ -53,6 +68,7 @@ describe('mapRoomFormToCreateRequest', () => {
       capacity: '10',
       staffMembershipId: '',
       serviceIds: [],
+      fixedServiceId: '',
     });
   });
 });
