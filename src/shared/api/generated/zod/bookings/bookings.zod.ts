@@ -90,6 +90,7 @@ export const BookingsCreateResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsCreateResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsCreateResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsCreateResponseActualDurationSecondsMin).max(bookingsCreateResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsCreateResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsCreateResponseCreatedByMembershipIdRegExp),
@@ -180,6 +181,7 @@ export const BookingsListMineResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsListMineResponseBookingsItemStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsListMineResponseBookingsItemEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsListMineResponseBookingsItemActualDurationSecondsMin).max(bookingsListMineResponseBookingsItemActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsListMineResponseBookingsItemCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsListMineResponseBookingsItemCreatedByMembershipIdRegExp),
@@ -262,6 +264,7 @@ export const BookingsCancelResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsCancelResponseBookingStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsCancelResponseBookingEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsCancelResponseBookingActualDurationSecondsMin).max(bookingsCancelResponseBookingActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsCancelResponseBookingCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsCancelResponseBookingCreatedByMembershipIdRegExp),
@@ -351,6 +354,7 @@ export const BookingsRescheduleResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsRescheduleResponseActualDurationSecondsMin).max(bookingsRescheduleResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsRescheduleResponseCreatedByMembershipIdRegExp),
@@ -431,6 +435,7 @@ export const BookingsStartResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsStartResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsStartResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsStartResponseActualDurationSecondsMin).max(bookingsStartResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsStartResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsStartResponseCreatedByMembershipIdRegExp),
@@ -520,6 +525,7 @@ export const BookingsEndResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsEndResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsEndResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(bookingsEndResponseActualDurationSecondsMin).max(bookingsEndResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsEndResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsEndResponseCreatedByMembershipIdRegExp),
@@ -617,6 +623,7 @@ export const AgendaGetDayResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(agendaGetDayResponseEntriesItemBookingStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(agendaGetDayResponseEntriesItemBookingEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(agendaGetDayResponseEntriesItemBookingActualDurationSecondsMin).max(agendaGetDayResponseEntriesItemBookingActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaGetDayResponseEntriesItemBookingCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaGetDayResponseEntriesItemBookingCreatedByMembershipIdRegExp),
@@ -718,6 +725,7 @@ export const AgendaCreateBookingResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(agendaCreateBookingResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(agendaCreateBookingResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(agendaCreateBookingResponseActualDurationSecondsMin).max(agendaCreateBookingResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaCreateBookingResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaCreateBookingResponseCreatedByMembershipIdRegExp),
@@ -798,6 +806,7 @@ export const AgendaCancelBookingResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(agendaCancelBookingResponseActualDurationSecondsMin).max(agendaCancelBookingResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaCancelBookingResponseCreatedByMembershipIdRegExp),
@@ -885,6 +894,7 @@ export const AgendaJoinGroupSessionResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(agendaJoinGroupSessionResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(agendaJoinGroupSessionResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(agendaJoinGroupSessionResponseActualDurationSecondsMin).max(agendaJoinGroupSessionResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaJoinGroupSessionResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaJoinGroupSessionResponseCreatedByMembershipIdRegExp),
@@ -1073,8 +1083,12 @@ export const agendaGetRoomDayResponseRoomsItemSessionsItemBookedCountMax = 90071
 
 export const agendaGetRoomDayResponseRoomsItemSessionsItemServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseRoomsItemSessionsItemTeacherMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaGetRoomDayResponseRoomsItemSessionsItemScheduleSeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaGetRoomDayResponseRoomsItemBlocksItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaGetRoomDayResponseRoomsItemBlocksItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const agendaGetRoomDayResponseRoomsItemBlocksItemEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -1086,6 +1100,7 @@ export const agendaGetRoomDayResponseSessionsWithoutRoomItemBookedCountMax = 900
 
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemTeacherMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const agendaGetRoomDayResponseSessionsWithoutRoomItemScheduleSeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -1121,12 +1136,25 @@ export const AgendaGetRoomDayResponse = zod.object({
   "membershipId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemTeacherMembershipIdRegExp),
   "fullName": zod.string()
 }),
+  "schedule": zod.object({
+  "seriesId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemScheduleSeriesIdRegExp),
+  "label": zod.string().nullable()
+}).nullable(),
+  "cancelledReason": zod.string().nullable(),
   "attendees": zod.array(zod.object({
   "bookingId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemBookingIdRegExp),
   "clientMembershipId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemClientMembershipIdRegExp),
   "fullName": zod.string(),
-  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show'])
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "source": zod.enum(['single', 'enrollment'])
 }))
+})),
+  "blocks": zod.array(zod.object({
+  "id": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemBlocksItemIdRegExp),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(agendaGetRoomDayResponseRoomsItemBlocksItemStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(agendaGetRoomDayResponseRoomsItemBlocksItemEndsAtRegExp),
+  "reason": zod.enum(['rental', 'maintenance', 'event', 'other']),
+  "note": zod.string().nullable()
 }))
 })),
   "sessionsWithoutRoom": zod.array(zod.object({
@@ -1145,11 +1173,17 @@ export const AgendaGetRoomDayResponse = zod.object({
   "membershipId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemTeacherMembershipIdRegExp),
   "fullName": zod.string()
 }),
+  "schedule": zod.object({
+  "seriesId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemScheduleSeriesIdRegExp),
+  "label": zod.string().nullable()
+}).nullable(),
+  "cancelledReason": zod.string().nullable(),
   "attendees": zod.array(zod.object({
   "bookingId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemBookingIdRegExp),
   "clientMembershipId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemClientMembershipIdRegExp),
   "fullName": zod.string(),
-  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show'])
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "source": zod.enum(['single', 'enrollment'])
 }))
 }))
 })
@@ -1235,6 +1269,7 @@ export const AgendaRescheduleBookingResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(agendaRescheduleBookingResponseStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(agendaRescheduleBookingResponseEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(agendaRescheduleBookingResponseActualDurationSecondsMin).max(agendaRescheduleBookingResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaRescheduleBookingResponseCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaRescheduleBookingResponseCreatedByMembershipIdRegExp),
@@ -1348,6 +1383,7 @@ export const SessionRecordsListResponse = zod.object({
   "startedAt": zod.iso.datetime({"offset":true}).regex(sessionRecordsListResponseRecordsItemBookingStartedAtRegExp).nullable(),
   "endedAt": zod.iso.datetime({"offset":true}).regex(sessionRecordsListResponseRecordsItemBookingEndedAtRegExp).nullable(),
   "actualDurationSeconds": zod.int().min(sessionRecordsListResponseRecordsItemBookingActualDurationSecondsMin).max(sessionRecordsListResponseRecordsItemBookingActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(sessionRecordsListResponseRecordsItemBookingCreatedAtRegExp),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(sessionRecordsListResponseRecordsItemBookingCreatedByMembershipIdRegExp),

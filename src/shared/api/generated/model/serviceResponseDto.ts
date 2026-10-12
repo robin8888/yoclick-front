@@ -7,6 +7,7 @@
  */
 import type { ServiceResponseDtoCurrency } from './serviceResponseDtoCurrency.ts';
 import type { ServiceResponseDtoKind } from './serviceResponseDtoKind.ts';
+import type { ServiceResponseDtoMode } from './serviceResponseDtoMode.ts';
 import type { ServiceResponseDtoRoom } from './serviceResponseDtoRoom.ts';
 import type { ServiceResponseDtoStaffItem } from './serviceResponseDtoStaffItem.ts';
 
@@ -17,6 +18,7 @@ export interface ServiceResponseDto {
   /** @nullable */
   description: string | null;
   kind: ServiceResponseDtoKind;
+  mode: ServiceResponseDtoMode;
   /**
      * @minimum -9007199254740991
      * @maximum 9007199254740991

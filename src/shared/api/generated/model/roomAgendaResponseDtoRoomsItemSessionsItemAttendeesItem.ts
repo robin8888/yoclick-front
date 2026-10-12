@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemSource } from './roomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemSource.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemStatus } from './roomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemStatus.ts';
 
 export type RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem = {
@@ -14,4 +15,5 @@ export type RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem = {
   clientMembershipId: string;
   fullName: string;
   status: RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemStatus;
+  source: RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItemSource;
 };

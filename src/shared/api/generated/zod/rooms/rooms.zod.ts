@@ -27,6 +27,7 @@ export const roomsListResponseRoomsItemCapacityMin = -9007199254740991;
 export const roomsListResponseRoomsItemCapacityMax = 9007199254740991;
 
 export const roomsListResponseRoomsItemStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsListResponseRoomsItemFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsListResponseRoomsItemServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -38,6 +39,10 @@ export const RoomsListResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(roomsListResponseRoomsItemStaffMembershipIdRegExp),
   "fullName": zod.string()
+}).nullable(),
+  "fixedService": zod.object({
+  "id": zod.uuid().regex(roomsListResponseRoomsItemFixedServiceIdRegExp),
+  "name": zod.string()
 }).nullable(),
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsListResponseRoomsItemServicesItemIdRegExp),
@@ -67,6 +72,8 @@ export const roomsCreateBodyCapacityMax = 500;
 
 export const roomsCreateBodyStaffMembershipIdDefault = null;
 export const roomsCreateBodyStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsCreateBodyServiceIdDefault = null;
+export const roomsCreateBodyServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsCreateBodyServiceIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsCreateBodyServiceIdsDefault = [];
 export const roomsCreateBodyServiceIdsMax = 100;
@@ -77,6 +84,7 @@ export const RoomsCreateBody = zod.object({
   "name": zod.string().min(1).max(roomsCreateBodyNameMax),
   "capacity": zod.int().min(1).max(roomsCreateBodyCapacityMax).default(roomsCreateBodyCapacityDefault),
   "staffMembershipId": zod.uuid().regex(roomsCreateBodyStaffMembershipIdRegExp).nullish().default(roomsCreateBodyStaffMembershipIdDefault),
+  "serviceId": zod.uuid().regex(roomsCreateBodyServiceIdRegExp).nullish().default(roomsCreateBodyServiceIdDefault),
   "serviceIds": zod.array(zod.uuid().regex(roomsCreateBodyServiceIdsItemRegExp)).max(roomsCreateBodyServiceIdsMax).default(roomsCreateBodyServiceIdsDefault)
 })
 
@@ -85,6 +93,7 @@ export const roomsCreateResponseCapacityMin = -9007199254740991;
 export const roomsCreateResponseCapacityMax = 9007199254740991;
 
 export const roomsCreateResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsCreateResponseFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsCreateResponseServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -96,6 +105,10 @@ export const RoomsCreateResponse = zod.object({
   "membershipId": zod.uuid().regex(roomsCreateResponseStaffMembershipIdRegExp),
   "fullName": zod.string()
 }).nullable(),
+  "fixedService": zod.object({
+  "id": zod.uuid().regex(roomsCreateResponseFixedServiceIdRegExp),
+  "name": zod.string()
+}).nullable(),
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsCreateResponseServicesItemIdRegExp),
   "name": zod.string()
@@ -103,7 +116,7 @@ export const RoomsCreateResponse = zod.object({
 })
 
 /**
- * @summary Cambia el nombre, el aforo o el profesor de una sala. Las citas ya puestas conservan su sala.
+ * @summary Cambia el nombre, el aforo, el profesor o el servicio fijo de una sala. Las citas ya puestas conservan su sala.
  */
 export const roomsUpdatePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdatePathRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -123,6 +136,7 @@ export const roomsUpdateBodyNameMax = 80;
 export const roomsUpdateBodyCapacityMax = 500;
 
 export const roomsUpdateBodyStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsUpdateBodyServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateBodyServiceIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateBodyServiceIdsMax = 100;
 
@@ -132,6 +146,7 @@ export const RoomsUpdateBody = zod.object({
   "name": zod.string().min(1).max(roomsUpdateBodyNameMax).optional(),
   "capacity": zod.int().min(1).max(roomsUpdateBodyCapacityMax).optional(),
   "staffMembershipId": zod.uuid().regex(roomsUpdateBodyStaffMembershipIdRegExp).nullish(),
+  "serviceId": zod.uuid().regex(roomsUpdateBodyServiceIdRegExp).nullish(),
   "serviceIds": zod.array(zod.uuid().regex(roomsUpdateBodyServiceIdsItemRegExp)).max(roomsUpdateBodyServiceIdsMax).optional()
 })
 
@@ -140,6 +155,7 @@ export const roomsUpdateResponseCapacityMin = -9007199254740991;
 export const roomsUpdateResponseCapacityMax = 9007199254740991;
 
 export const roomsUpdateResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsUpdateResponseFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateResponseServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
 
@@ -150,6 +166,10 @@ export const RoomsUpdateResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(roomsUpdateResponseStaffMembershipIdRegExp),
   "fullName": zod.string()
+}).nullable(),
+  "fixedService": zod.object({
+  "id": zod.uuid().regex(roomsUpdateResponseFixedServiceIdRegExp),
+  "name": zod.string()
 }).nullable(),
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsUpdateResponseServicesItemIdRegExp),
@@ -174,4 +194,171 @@ export const RoomsArchiveHeader = zod.object({
 })
 
 export const RoomsArchiveResponse = zod.void()
+
+/**
+ * @summary Los bloqueos de todas las salas entre dos fechas (ambas incluidas).
+ */
+export const roomBlocksListPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksListParams = zod.object({
+  "centerId": zod.uuid().regex(roomBlocksListPathCenterIdRegExp)
+})
+
+export const roomBlocksListQueryFromRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const roomBlocksListQueryToRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const RoomBlocksListQueryParams = zod.object({
+  "from": zod.iso.date().regex(roomBlocksListQueryFromRegExp),
+  "to": zod.iso.date().regex(roomBlocksListQueryToRegExp)
+})
+
+export const RoomBlocksListHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const roomBlocksListResponseBlocksItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksListResponseBlocksItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksListResponseBlocksItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksListResponseBlocksItemEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksListResponseBlocksItemCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksListResponse = zod.object({
+  "blocks": zod.array(zod.object({
+  "id": zod.uuid().regex(roomBlocksListResponseBlocksItemIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksListResponseBlocksItemRoomIdRegExp),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksListResponseBlocksItemStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksListResponseBlocksItemEndsAtRegExp),
+  "reason": zod.enum(['rental', 'maintenance', 'event', 'other']),
+  "note": zod.string().nullable(),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(roomBlocksListResponseBlocksItemCreatedByMembershipIdRegExp),
+  "fullName": zod.string()
+})
+}))
+})
+
+/**
+ * @summary Los bloqueos de una sala entre dos fechas (ambas incluidas).
+ */
+export const roomBlocksListOfRoomPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksListOfRoomPathRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksListOfRoomParams = zod.object({
+  "centerId": zod.uuid().regex(roomBlocksListOfRoomPathCenterIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksListOfRoomPathRoomIdRegExp)
+})
+
+export const roomBlocksListOfRoomQueryFromRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const roomBlocksListOfRoomQueryToRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const RoomBlocksListOfRoomQueryParams = zod.object({
+  "from": zod.iso.date().regex(roomBlocksListOfRoomQueryFromRegExp),
+  "to": zod.iso.date().regex(roomBlocksListOfRoomQueryToRegExp)
+})
+
+export const RoomBlocksListOfRoomHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const roomBlocksListOfRoomResponseBlocksItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksListOfRoomResponseBlocksItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksListOfRoomResponseBlocksItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksListOfRoomResponseBlocksItemEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksListOfRoomResponseBlocksItemCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksListOfRoomResponse = zod.object({
+  "blocks": zod.array(zod.object({
+  "id": zod.uuid().regex(roomBlocksListOfRoomResponseBlocksItemIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksListOfRoomResponseBlocksItemRoomIdRegExp),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksListOfRoomResponseBlocksItemStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksListOfRoomResponseBlocksItemEndsAtRegExp),
+  "reason": zod.enum(['rental', 'maintenance', 'event', 'other']),
+  "note": zod.string().nullable(),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(roomBlocksListOfRoomResponseBlocksItemCreatedByMembershipIdRegExp),
+  "fullName": zod.string()
+})
+}))
+})
+
+/**
+ * @summary Bloquea la sala en un tramo (alquiler, mantenimiento, evento). Las sesiones de horario sin citas sueltas que caigan dentro se cancelan y se avisa a sus matriculados. 409 ROOM_HAS_BOOKINGS si hay citas sueltas en ese tramo; CONFLICT si se solapa con otro bloqueo.
+ */
+export const roomBlocksCreatePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksCreatePathRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksCreateParams = zod.object({
+  "centerId": zod.uuid().regex(roomBlocksCreatePathCenterIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksCreatePathRoomIdRegExp)
+})
+
+export const RoomBlocksCreateHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const roomBlocksCreateBodyStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksCreateBodyEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksCreateBodyNoteMax = 200;
+
+
+
+export const RoomBlocksCreateBody = zod.object({
+  "startsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksCreateBodyStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksCreateBodyEndsAtRegExp),
+  "reason": zod.enum(['rental', 'maintenance', 'event', 'other']),
+  "note": zod.string().min(1).max(roomBlocksCreateBodyNoteMax).optional()
+})
+
+export const roomBlocksCreateResponseBlockIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksCreateResponseBlockRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksCreateResponseBlockStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksCreateResponseBlockEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const roomBlocksCreateResponseBlockCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksCreateResponseCancelledSessionCountMin = -9007199254740991;
+export const roomBlocksCreateResponseCancelledSessionCountMax = 9007199254740991;
+
+
+
+export const RoomBlocksCreateResponse = zod.object({
+  "block": zod.object({
+  "id": zod.uuid().regex(roomBlocksCreateResponseBlockIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksCreateResponseBlockRoomIdRegExp),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksCreateResponseBlockStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(roomBlocksCreateResponseBlockEndsAtRegExp),
+  "reason": zod.enum(['rental', 'maintenance', 'event', 'other']),
+  "note": zod.string().nullable(),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(roomBlocksCreateResponseBlockCreatedByMembershipIdRegExp),
+  "fullName": zod.string()
+})
+}),
+  "cancelledSessionCount": zod.int().min(roomBlocksCreateResponseCancelledSessionCountMin).max(roomBlocksCreateResponseCancelledSessionCountMax)
+})
+
+/**
+ * @summary Quita un bloqueo: la sala vuelve a estar disponible en ese tramo.
+ */
+export const roomBlocksDeletePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksDeletePathRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomBlocksDeletePathBlockIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const RoomBlocksDeleteParams = zod.object({
+  "centerId": zod.uuid().regex(roomBlocksDeletePathCenterIdRegExp),
+  "roomId": zod.uuid().regex(roomBlocksDeletePathRoomIdRegExp),
+  "blockId": zod.uuid().regex(roomBlocksDeletePathBlockIdRegExp)
+})
+
+export const RoomBlocksDeleteHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const RoomBlocksDeleteResponse = zod.void()
 

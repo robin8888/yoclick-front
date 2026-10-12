@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { UpdateServiceRequestDtoMode } from './updateServiceRequestDtoMode.ts';
 
 export interface UpdateServiceRequestDto {
   /**
@@ -18,6 +19,7 @@ export interface UpdateServiceRequestDto {
      * @nullable
      */
   description?: string | null;
+  mode?: UpdateServiceRequestDtoMode;
   /**
      * @minimum -9007199254740991
      * @maximum 9007199254740991

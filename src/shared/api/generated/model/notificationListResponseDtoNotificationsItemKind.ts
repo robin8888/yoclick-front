@@ -29,4 +29,7 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   routine_updated: 'routine_updated',
   content_assigned: 'content_assigned',
   member_joined: 'member_joined',
+  session_cancelled: 'session_cancelled',
+  schedule_enrolled: 'schedule_enrolled',
+  schedule_unenrolled: 'schedule_unenrolled',
 } as const;

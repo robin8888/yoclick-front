@@ -18,17 +18,17 @@ import type { CenterSettingsResponseDtoOpeningHoursWedItem } from './centerSetti
  */
 export type CenterSettingsResponseDtoOpeningHours = {
   /** @maxItems 4 */
-  mon: CenterSettingsResponseDtoOpeningHoursMonItem[];
+  mon?: CenterSettingsResponseDtoOpeningHoursMonItem[];
   /** @maxItems 4 */
-  tue: CenterSettingsResponseDtoOpeningHoursTueItem[];
+  tue?: CenterSettingsResponseDtoOpeningHoursTueItem[];
   /** @maxItems 4 */
-  wed: CenterSettingsResponseDtoOpeningHoursWedItem[];
+  wed?: CenterSettingsResponseDtoOpeningHoursWedItem[];
   /** @maxItems 4 */
-  thu: CenterSettingsResponseDtoOpeningHoursThuItem[];
+  thu?: CenterSettingsResponseDtoOpeningHoursThuItem[];
   /** @maxItems 4 */
-  fri: CenterSettingsResponseDtoOpeningHoursFriItem[];
+  fri?: CenterSettingsResponseDtoOpeningHoursFriItem[];
   /** @maxItems 4 */
-  sat: CenterSettingsResponseDtoOpeningHoursSatItem[];
+  sat?: CenterSettingsResponseDtoOpeningHoursSatItem[];
   /** @maxItems 4 */
-  sun: CenterSettingsResponseDtoOpeningHoursSunItem[];
+  sun?: CenterSettingsResponseDtoOpeningHoursSunItem[];
 } | null;

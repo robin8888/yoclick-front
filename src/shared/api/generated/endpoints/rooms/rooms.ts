@@ -25,8 +25,13 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CreateRoomBlockRequestDto,
   CreateRoomRequestDto,
   ProblemDetailsDto,
+  RoomBlockListResponseDto,
+  RoomBlockResponseDto,
+  RoomBlocksListOfRoomParams,
+  RoomBlocksListParams,
   RoomListResponseDto,
   RoomResponseDto,
   UpdateRoomRequestDto
@@ -253,7 +258,7 @@ export const useRoomsCreate = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Cambia el nombre, el aforo o el profesor de una sala. Las citas ya puestas conservan su sala.
+ * @summary Cambia el nombre, el aforo, el profesor o el servicio fijo de una sala. Las citas ya puestas conservan su sala.
  */
 export const roomsUpdate = async (centerId: string,
     roomId: string,
@@ -321,7 +326,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RoomsUpdateMutationVariables = {centerId: string;roomId: string;data: UpdateRoomRequestDto}
 
     /**
- * @summary Cambia el nombre, el aforo o el profesor de una sala. Las citas ya puestas conservan su sala.
+ * @summary Cambia el nombre, el aforo, el profesor o el servicio fijo de una sala. Las citas ya puestas conservan su sala.
  */
 export const useRoomsUpdate = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomsUpdate>>, TError,RoomsUpdateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -407,4 +412,409 @@ export const useRoomsArchive = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getRoomsArchiveMutationOptions(options), queryClient);
+    }
+    export const getRoomBlocksListUrl = (centerId: string,
+    params: RoomBlocksListParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/room-blocks?${stringifiedParams}` : `/v1/centers/${centerId}/room-blocks`
+}
+
+/**
+ * @summary Los bloqueos de todas las salas entre dos fechas (ambas incluidas).
+ */
+export const roomBlocksList = async (centerId: string,
+    params: RoomBlocksListParams, options?: Parameters<typeof apiMutator>[1]): Promise<RoomBlockListResponseDto> => {
+
+  return apiMutator<RoomBlockListResponseDto>(getRoomBlocksListUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getRoomBlocksListQueryKey = (centerId: string,
+    params?: RoomBlocksListParams,) => {
+    return [
+    `/v1/centers/${centerId}/room-blocks`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getRoomBlocksListQueryOptions = <TData = Awaited<ReturnType<typeof roomBlocksList>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params: RoomBlocksListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRoomBlocksListQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof roomBlocksList>>> = ({ signal }) => roomBlocksList(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RoomBlocksListQueryResult = NonNullable<Awaited<ReturnType<typeof roomBlocksList>>>
+export type RoomBlocksListQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useRoomBlocksList<TData = Awaited<ReturnType<typeof roomBlocksList>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: RoomBlocksListParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomBlocksList>>,
+          TError,
+          Awaited<ReturnType<typeof roomBlocksList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomBlocksList<TData = Awaited<ReturnType<typeof roomBlocksList>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: RoomBlocksListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomBlocksList>>,
+          TError,
+          Awaited<ReturnType<typeof roomBlocksList>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomBlocksList<TData = Awaited<ReturnType<typeof roomBlocksList>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: RoomBlocksListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los bloqueos de todas las salas entre dos fechas (ambas incluidas).
+ */
+
+export function useRoomBlocksList<TData = Awaited<ReturnType<typeof roomBlocksList>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: RoomBlocksListParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksList>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRoomBlocksListQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getRoomBlocksListOfRoomUrl = (centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/rooms/${roomId}/blocks?${stringifiedParams}` : `/v1/centers/${centerId}/rooms/${roomId}/blocks`
+}
+
+/**
+ * @summary Los bloqueos de una sala entre dos fechas (ambas incluidas).
+ */
+export const roomBlocksListOfRoom = async (centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options?: Parameters<typeof apiMutator>[1]): Promise<RoomBlockListResponseDto> => {
+
+  return apiMutator<RoomBlockListResponseDto>(getRoomBlocksListOfRoomUrl(centerId,roomId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getRoomBlocksListOfRoomQueryKey = (centerId: string,
+    roomId: string,
+    params?: RoomBlocksListOfRoomParams,) => {
+    return [
+    `/v1/centers/${centerId}/rooms/${roomId}/blocks`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getRoomBlocksListOfRoomQueryOptions = <TData = Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRoomBlocksListOfRoomQueryKey(centerId,roomId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof roomBlocksListOfRoom>>> = ({ signal }) => roomBlocksListOfRoom(centerId,roomId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && roomId !== null && roomId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RoomBlocksListOfRoomQueryResult = NonNullable<Awaited<ReturnType<typeof roomBlocksListOfRoom>>>
+export type RoomBlocksListOfRoomQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useRoomBlocksListOfRoom<TData = Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomBlocksListOfRoom>>,
+          TError,
+          Awaited<ReturnType<typeof roomBlocksListOfRoom>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomBlocksListOfRoom<TData = Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomBlocksListOfRoom>>,
+          TError,
+          Awaited<ReturnType<typeof roomBlocksListOfRoom>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomBlocksListOfRoom<TData = Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los bloqueos de una sala entre dos fechas (ambas incluidas).
+ */
+
+export function useRoomBlocksListOfRoom<TData = Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    roomId: string,
+    params: RoomBlocksListOfRoomParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomBlocksListOfRoom>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRoomBlocksListOfRoomQueryOptions(centerId,roomId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getRoomBlocksCreateUrl = (centerId: string,
+    roomId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/rooms/${roomId}/blocks`
+}
+
+/**
+ * @summary Bloquea la sala en un tramo (alquiler, mantenimiento, evento). Las sesiones de horario sin citas sueltas que caigan dentro se cancelan y se avisa a sus matriculados. 409 ROOM_HAS_BOOKINGS si hay citas sueltas en ese tramo; CONFLICT si se solapa con otro bloqueo.
+ */
+export const roomBlocksCreate = async (centerId: string,
+    roomId: string,
+    createRoomBlockRequestDto: CreateRoomBlockRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RoomBlockResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<RoomBlockResponseDto>(getRoomBlocksCreateUrl(centerId,roomId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(createRoomBlockRequestDto)
+  }
+);}
+
+
+
+
+
+export const getRoomBlocksCreateMutationKey = () => ['roomBlocksCreate'] as const;
+
+export const getRoomBlocksCreateMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomBlocksCreate>>, TError,RoomBlocksCreateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof roomBlocksCreate>>, TError,RoomBlocksCreateMutationVariables, TContext> => {
+
+const mutationKey = getRoomBlocksCreateMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof roomBlocksCreate>>, RoomBlocksCreateMutationVariables> = (props) => {
+          const {centerId,roomId,data} = props ?? {};
+
+          return  roomBlocksCreate(centerId,roomId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RoomBlocksCreateMutationResult = NonNullable<Awaited<ReturnType<typeof roomBlocksCreate>>>
+    export type RoomBlocksCreateMutationBody = CreateRoomBlockRequestDto
+    export type RoomBlocksCreateMutationError = ErrorType<ProblemDetailsDto>
+    export type RoomBlocksCreateMutationVariables = {centerId: string;roomId: string;data: CreateRoomBlockRequestDto}
+
+    /**
+ * @summary Bloquea la sala en un tramo (alquiler, mantenimiento, evento). Las sesiones de horario sin citas sueltas que caigan dentro se cancelan y se avisa a sus matriculados. 409 ROOM_HAS_BOOKINGS si hay citas sueltas en ese tramo; CONFLICT si se solapa con otro bloqueo.
+ */
+export const useRoomBlocksCreate = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomBlocksCreate>>, TError,RoomBlocksCreateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof roomBlocksCreate>>,
+        TError,
+        RoomBlocksCreateMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRoomBlocksCreateMutationOptions(options), queryClient);
+    }
+    export const getRoomBlocksDeleteUrl = (centerId: string,
+    roomId: string,
+    blockId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/rooms/${roomId}/blocks/${blockId}`
+}
+
+/**
+ * @summary Quita un bloqueo: la sala vuelve a estar disponible en ese tramo.
+ */
+export const roomBlocksDelete = async (centerId: string,
+    roomId: string,
+    blockId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getRoomBlocksDeleteUrl(centerId,roomId,blockId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getRoomBlocksDeleteMutationKey = () => ['roomBlocksDelete'] as const;
+
+export const getRoomBlocksDeleteMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomBlocksDelete>>, TError,RoomBlocksDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof roomBlocksDelete>>, TError,RoomBlocksDeleteMutationVariables, TContext> => {
+
+const mutationKey = getRoomBlocksDeleteMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof roomBlocksDelete>>, RoomBlocksDeleteMutationVariables> = (props) => {
+          const {centerId,roomId,blockId} = props ?? {};
+
+          return  roomBlocksDelete(centerId,roomId,blockId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RoomBlocksDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof roomBlocksDelete>>>
+
+    export type RoomBlocksDeleteMutationError = ErrorType<ProblemDetailsDto>
+    export type RoomBlocksDeleteMutationVariables = {centerId: string;roomId: string;blockId: string}
+
+    /**
+ * @summary Quita un bloqueo: la sala vuelve a estar disponible en ese tramo.
+ */
+export const useRoomBlocksDelete = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomBlocksDelete>>, TError,RoomBlocksDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof roomBlocksDelete>>,
+        TError,
+        RoomBlocksDeleteMutationVariables,
+        TContext
+      > => {
+      return useMutation(getRoomBlocksDeleteMutationOptions(options), queryClient);
     }

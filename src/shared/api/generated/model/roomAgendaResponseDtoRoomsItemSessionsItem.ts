@@ -7,6 +7,7 @@
  */
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem } from './roomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemMode } from './roomAgendaResponseDtoRoomsItemSessionsItemMode.ts';
+import type { RoomAgendaResponseDtoRoomsItemSessionsItemSchedule } from './roomAgendaResponseDtoRoomsItemSessionsItemSchedule.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemService } from './roomAgendaResponseDtoRoomsItemSessionsItemService.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemTeacher } from './roomAgendaResponseDtoRoomsItemSessionsItemTeacher.ts';
 
@@ -30,5 +31,9 @@ export type RoomAgendaResponseDtoRoomsItemSessionsItem = {
   bookedCount: number;
   service: RoomAgendaResponseDtoRoomsItemSessionsItemService;
   teacher: RoomAgendaResponseDtoRoomsItemSessionsItemTeacher;
+  /** @nullable */
+  schedule: RoomAgendaResponseDtoRoomsItemSessionsItemSchedule;
+  /** @nullable */
+  cancelledReason: string | null;
   attendees: RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem[];
 };

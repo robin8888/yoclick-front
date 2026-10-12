@@ -17,6 +17,7 @@ export function buildService(
     name: 'Entrenamiento personal',
     description: null,
     kind: 'individual',
+    mode: 'private',
     durationMinutes: 60,
     priceCents: 3500,
     currency: 'EUR',
@@ -49,6 +50,7 @@ export function buildBooking(overrides: Partial<BookingResponseDto> = {}): Booki
     actualDurationSeconds: null,
     createdAt: '2026-10-05T10:00:00.000Z',
     createdBy: null,
+    source: 'single',
     ...overrides,
   };
 }

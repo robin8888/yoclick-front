@@ -97,31 +97,31 @@ export const CentersGetSettingsResponse = zod.object({
   "mon": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursMonMax),
+})).max(centersGetSettingsResponseOpeningHoursMonMax).optional(),
   "tue": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursTueMax),
+})).max(centersGetSettingsResponseOpeningHoursTueMax).optional(),
   "wed": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursWedMax),
+})).max(centersGetSettingsResponseOpeningHoursWedMax).optional(),
   "thu": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursThuMax),
+})).max(centersGetSettingsResponseOpeningHoursThuMax).optional(),
   "fri": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursFriMax),
+})).max(centersGetSettingsResponseOpeningHoursFriMax).optional(),
   "sat": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursSatMax),
+})).max(centersGetSettingsResponseOpeningHoursSatMax).optional(),
   "sun": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersGetSettingsResponseOpeningHoursSunMax)
+})).max(centersGetSettingsResponseOpeningHoursSunMax).optional()
 }).nullable(),
   "holidays": zod.array(zod.object({
   "date": zod.iso.date().regex(centersGetSettingsResponseHolidaysItemDateRegExp),
@@ -314,31 +314,31 @@ export const CentersUpdateSettingsResponse = zod.object({
   "mon": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursMonMax),
+})).max(centersUpdateSettingsResponseOpeningHoursMonMax).optional(),
   "tue": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursTueMax),
+})).max(centersUpdateSettingsResponseOpeningHoursTueMax).optional(),
   "wed": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursWedMax),
+})).max(centersUpdateSettingsResponseOpeningHoursWedMax).optional(),
   "thu": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursThuMax),
+})).max(centersUpdateSettingsResponseOpeningHoursThuMax).optional(),
   "fri": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursFriMax),
+})).max(centersUpdateSettingsResponseOpeningHoursFriMax).optional(),
   "sat": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursSatMax),
+})).max(centersUpdateSettingsResponseOpeningHoursSatMax).optional(),
   "sun": zod.array(zod.object({
   "opensAt": zod.string(),
   "closesAt": zod.string()
-})).max(centersUpdateSettingsResponseOpeningHoursSunMax)
+})).max(centersUpdateSettingsResponseOpeningHoursSunMax).optional()
 }).nullable(),
   "holidays": zod.array(zod.object({
   "date": zod.iso.date().regex(centersUpdateSettingsResponseHolidaysItemDateRegExp),

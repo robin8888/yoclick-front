@@ -11,5 +11,12 @@
     "paths": { "@/*": ["./src/*"] }
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
-  "exclude": ["node_modules", "coverage", "dist"]
+  // Los mocks de Orval (faker + MSW) no se usan en los tests y no cumplen `exactOptionalPropertyTypes`.
+  "exclude": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "src/shared/api/generated/**/*.faker.ts",
+    "src/shared/api/generated/**/*.msw.ts"
+  ]
 }

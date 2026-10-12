@@ -7,6 +7,7 @@
  */
 import type { ServiceListResponseDtoServicesItemCurrency } from './serviceListResponseDtoServicesItemCurrency.ts';
 import type { ServiceListResponseDtoServicesItemKind } from './serviceListResponseDtoServicesItemKind.ts';
+import type { ServiceListResponseDtoServicesItemMode } from './serviceListResponseDtoServicesItemMode.ts';
 import type { ServiceListResponseDtoServicesItemRoom } from './serviceListResponseDtoServicesItemRoom.ts';
 import type { ServiceListResponseDtoServicesItemStaffItem } from './serviceListResponseDtoServicesItemStaffItem.ts';
 
@@ -17,6 +18,7 @@ export type ServiceListResponseDtoServicesItem = {
   /** @nullable */
   description: string | null;
   kind: ServiceListResponseDtoServicesItemKind;
+  mode: ServiceListResponseDtoServicesItemMode;
   /**
      * @minimum -9007199254740991
      * @maximum 9007199254740991
