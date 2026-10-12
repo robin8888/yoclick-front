@@ -49,6 +49,32 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (12 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 5 oct en lo que cambia; lo que no aparece aquí sigue como se describe más abajo.
+
+### Hecho del 6 al 10 de octubre
+- ✅ Agenda del centro con resumen, «Tu marca», salas, horas y equipo en «Servicios y horario»; reprogramar (cliente y equipo); registro por código del centro; avisos push al unirse; escáner de QR y de código (Android incluido).
+- ✅ Importación de clientes, informes, push, rutinas (crear, editar, asignar, progreso), disponibilidad del equipo, vídeos (Bunny), solicitudes RGPD y perfil público completo.
+- ✅ Biblioteca de contenido (PDF, vídeo e imagen) y asignación por persona; foto de perfil y galería del profesional; límites de subida; selector de color de marca.
+- ✅ Apariencia Premium (fondo y color de colmena), pantalla de bienvenida como el prototipo.
+- ✅ Salas con profesor, citas privadas y grupales, «quién asignó» cada cita, pestaña Gestión, agenda por salas (`docs/spec/08`).
+
+### Hecho el 12 de octubre (`docs/spec/09`, fase 1)
+- ✅ **API**: horarios fijos semanales (`session_schedules`, materialización a 8 semanas), grupos fijos (`schedule_enrollments`, citas de matrícula sin consumir bono), bloqueos de espacio, cancelar un día, `services.mode` (privado / grupo / ambos), servicio fijo por espacio, avisos y errores nuevos. Migraciones `20261031090000` y `20261031090100`.
+- ✅ **App, Gestión**: espacios (aforo, profesor y servicio fijos), horario fijo por días de la semana, nuevo y editar horario, matricular y dar de baja, terminar horario, bloqueos por espacio, modo del servicio en el editor.
+- ✅ **App, agenda del centro**: franja de la semana con un punto de color por sala, leyenda de salas (letra y color) con filtro por sala y por servicio, fichas por hora con borde rojo (quedan plazas) o verde (completa), bloqueos y días cancelados, «Cancelar este día».
+- ✅ **App, citas**: «Apuntar a la clase» desde el detalle de una sala (solo se elige al alumno).
+- ✅ **Teclado**: las pantallas se desplazan hasta el campo enfocado y las hojas inferiores suben con el teclado (iOS y Android).
+- ✅ Los mocks de Orval ya no bloquean el typecheck (excluidos en `tsconfig.json`).
+
+### Pendiente
+1. **Fase 2 de `docs/spec/09` (alumno)**: disponibilidad por servicio que descuenta espacios y bloqueos, apuntarse a una sesión o reservar privada con espacio automático, anular con antelación, «Mi horario» (grupo fijo) y espacio y profesor en los push.
+2. **Fase 3**: lista de espera, reserva con aprobación del centro, registro de clase por grupo, solicitud de clase fija por el alumno.
+3. Probar en el móvil (iOS y Android) todo lo del 12 oct: Gestión, horarios, matrícula, bloqueos, agenda con filtros, teclado.
+4. Pendientes de antes: correo a las personas importadas, claves push (Apple/FCM), textos legales, recompilar el development build de Android si cambian módulos nativos, publicar `yoclick.app` con los ficheros de asociación.
+5. Subir los commits con `git push` en los dos repos (son locales hasta entonces).
+
 ## Estado de avance (5 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Basado en el historial de git de cada repo.
