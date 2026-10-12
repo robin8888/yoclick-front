@@ -229,3 +229,59 @@ describe('isCancellationNotification', () => {
     expect(isCancellationNotification(kind)).toBe(isCancellation);
   });
 });
+
+describe('describeNotification · fixed schedules', () => {
+  const SCHEDULE_DATA = {
+    serviceName: 'Inglés B1',
+    label: '',
+    staffName: 'Marta Gil',
+    roomName: 'Aula 2',
+    actorName: 'Carlos Núñez',
+  };
+
+  it('tells a cancelled day with its room and reason', () => {
+    const text = describeNotification(
+      buildNotification('session_cancelled', {
+        serviceName: 'Salsa',
+        startsAt: '2026-10-08T16:00:00.000Z',
+        roomName: 'Sala de baile',
+        reason: 'Profesora enferma',
+        actorName: 'Carlos Núñez',
+      }),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Han cancelado una clase');
+    expect(text.description).toBe(
+      'Carlos Núñez ha cancelado Salsa del jue 8 oct · 18:00 en Sala de baile. Motivo: Profesora enferma.',
+    );
+  });
+
+  it('names the schedule by its service when it has no label', () => {
+    const text = describeNotification(
+      buildNotification('schedule_enrolled', SCHEDULE_DATA),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Tienes un horario fijo nuevo');
+    expect(text.description).toBe(
+      'Carlos Núñez te ha apuntado a Inglés B1 con Marta Gil en Aula 2.',
+    );
+  });
+
+  it('uses the label of the schedule and skips the room when there is none', () => {
+    const text = describeNotification(
+      buildNotification('schedule_unenrolled', {
+        ...SCHEDULE_DATA,
+        label: 'Inglés B1 – grupo de tarde',
+        roomName: '',
+      }),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Cambio en tu horario fijo');
+    expect(text.description).toBe(
+      'Carlos Núñez te ha dado de baja de Inglés B1 – grupo de tarde con Marta Gil.',
+    );
+  });
+});

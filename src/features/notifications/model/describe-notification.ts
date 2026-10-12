@@ -40,6 +40,9 @@ const TITLE_KEYS = {
   staff_profile_submitted: 'notifications.staffProfileSubmittedTitle',
   staff_profile_reviewed: 'notifications.staffProfileReviewedTitle',
   staff_review_received: 'notifications.staffReviewReceivedTitle',
+  session_cancelled: 'notifications.sessionCancelledTitle',
+  schedule_enrolled: 'notifications.scheduleEnrolledTitle',
+  schedule_unenrolled: 'notifications.scheduleUnenrolledTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -62,6 +65,9 @@ const DESCRIPTION_KEYS = {
   staff_profile_submitted: 'notifications.staffProfileSubmittedDescription',
   staff_profile_reviewed: 'notifications.staffProfileApprovedDescription',
   staff_review_received: 'notifications.staffReviewReceivedDescription',
+  session_cancelled: 'notifications.sessionCancelledDescription',
+  schedule_enrolled: 'notifications.scheduleEnrolledDescription',
+  schedule_unenrolled: 'notifications.scheduleUnenrolledDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -96,7 +102,11 @@ function resolveDescriptionKey(
 
 /** Los avisos de cancelación llevan un icono de aviso en lugar del de calendario. */
 export function isCancellationNotification(kind: NotificationItem['kind']): boolean {
-  return kind === 'booking_cancelled' || kind === 'booking_cancelled_by_team';
+  return (
+    kind === 'booking_cancelled' ||
+    kind === 'booking_cancelled_by_team' ||
+    kind === 'session_cancelled'
+  );
 }
 
 function describeAbsence(details: NotificationItem['data']): string {
@@ -132,11 +142,21 @@ interface NoticeTexts {
   authorLabel: string;
   rating: string;
   when: string;
+  reason: string;
+  /** «Inglés B1 – grupo de tarde» o, sin etiqueta, el nombre del servicio. */
+  scheduleName: string;
+  /** « en Aula 2», o vacío si la clase no tiene sala. */
+  roomSuffix: string;
 }
 
 /** Un dato del aviso que puede faltar: sin él, el texto queda vacío. */
 function textOf(value: string | undefined): string {
   return value ?? '';
+}
+
+function describeRoomSuffix(roomName: string | undefined): string {
+  if (roomName === undefined || roomName === '') return '';
+  return i18n.t('notifications.sessionCancelledRoomSuffix', { roomName });
 }
 
 function buildNoticeTexts(notification: NotificationItem, timeZone: string): NoticeTexts {
@@ -154,6 +174,12 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
     authorLabel: textOf(noticeData.authorLabel),
     rating: textOf(noticeData.rating),
     when: formatWhen(noticeData.startsAt ?? notification.createdAt, timeZone),
+    reason: textOf(noticeData.reason),
+    scheduleName:
+      noticeData.label === undefined || noticeData.label === ''
+        ? textOf(noticeData.serviceName)
+        : noticeData.label,
+    roomSuffix: describeRoomSuffix(noticeData.roomName),
   };
 }
 
