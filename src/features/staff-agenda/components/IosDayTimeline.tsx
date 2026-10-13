@@ -33,40 +33,101 @@ function formatClock(totalMinutes: number): string {
 interface EventBlockProps {
   event: DayEvent;
   firstHour: number;
-  onPress: () => void;
+  onPress: (bookingId: string) => void;
 }
 
-/** Una clase: servicio en negrita, hora, sala y quién viene. */
-function EventBlock({ event, firstHour, onPress }: Readonly<EventBlockProps>): React.JSX.Element {
-  const theme = useTheme();
-  const timeRange = i18n.t('staffAgenda.agenda.timeRange', {
+/** «Sin alumnos todavía» o «N personas»: cuántos vienen, nunca quiénes (eso va en el detalle). */
+function describePeople(personCount: number): string {
+  if (personCount === 0) return i18n.t('staffAgenda.agenda.noPeopleYet');
+  return i18n.t('staffAgenda.attendance.peopleCount', { count: personCount });
+}
+
+interface EventBlockTextProps {
+  serviceName: string;
+  detailLine: string;
+  peopleLine: string;
+}
+
+/** Los tres renglones de un bloque: servicio en negrita, hora y sala, y cuántos vienen. */
+function EventBlockText({
+  serviceName,
+  detailLine,
+  peopleLine,
+}: Readonly<EventBlockTextProps>): React.JSX.Element {
+  return (
+    <>
+      <Text variant="bodyStrong" numberOfLines={1}>
+        {serviceName}
+      </Text>
+      <Text variant="caption" color="ink2" numberOfLines={1}>
+        {detailLine}
+      </Text>
+      <Text variant="caption" color="ink2" numberOfLines={1}>
+        {peopleLine}
+      </Text>
+    </>
+  );
+}
+
+/** «09:00 – 10:00» de una clase. */
+function describeTimeRange(event: DayEvent): string {
+  return i18n.t('staffAgenda.agenda.timeRange', {
     startTime: formatClock(event.startMinutes),
     endTime: formatClock(event.endMinutes),
   });
-  const people = event.clientNames.join(', ');
-  const place = event.roomName === null ? '' : ` · ${event.roomName}`;
+}
 
+/** Dónde se dibuja: por minutos desde la primera hora y por columna si se solapa con otras. */
+function toPlacement(
+  event: DayEvent,
+  firstHour: number,
+): { top: number; height: number; leftPercent: number; widthPercent: number } {
+  return {
+    top: toTop(event.startMinutes, firstHour),
+    height: ((event.endMinutes - event.startMinutes) / MINUTES_PER_HOUR) * IOS_HOUR_HEIGHT,
+    leftPercent: (event.column / event.columnCount) * PERCENT,
+    widthPercent: PERCENT / event.columnCount,
+  };
+}
+
+/** Una clase como bloque; con gente se abre al tocarla, sin alumnos solo informa. */
+function EventBlock({ event, firstHour, onPress }: Readonly<EventBlockProps>): React.JSX.Element {
+  const theme = useTheme();
+  const timeRange = describeTimeRange(event);
+  const place = event.roomName === null ? '' : ` · ${event.roomName}`;
+  const { bookingId } = event;
+  const people = describePeople(event.personCount);
+  const placement = toPlacement(event, firstHour);
+  const label = `${timeRange}. ${event.serviceName}. ${people}`;
+  const content = (
+    <EventBlockText
+      serviceName={event.serviceName}
+      detailLine={`${timeRange}${place}`}
+      peopleLine={people}
+    />
+  );
+
+  if (bookingId === null) {
+    return (
+      <View
+        accessible
+        accessibilityLabel={label}
+        style={createEventStyle(theme, { ...placement, isEmpty: true })}
+      >
+        {content}
+      </View>
+    );
+  }
   return (
     <Pressable
       role="button"
-      accessibilityLabel={`${timeRange}. ${event.serviceName}. ${people}`}
-      onPress={onPress}
-      style={createEventStyle(theme, {
-        top: toTop(event.startMinutes, firstHour),
-        height: ((event.endMinutes - event.startMinutes) / MINUTES_PER_HOUR) * IOS_HOUR_HEIGHT,
-        leftPercent: (event.column / event.columnCount) * PERCENT,
-        widthPercent: PERCENT / event.columnCount,
-      })}
+      accessibilityLabel={label}
+      onPress={() => {
+        onPress(bookingId);
+      }}
+      style={createEventStyle(theme, { ...placement, isEmpty: false })}
     >
-      <Text variant="bodyStrong" numberOfLines={1}>
-        {event.serviceName}
-      </Text>
-      <Text variant="caption" color="ink2" numberOfLines={1}>
-        {`${timeRange}${place}`}
-      </Text>
-      <Text variant="caption" color="ink2" numberOfLines={2}>
-        {people}
-      </Text>
+      {content}
     </Pressable>
   );
 }
@@ -130,9 +191,7 @@ export function IosDayTimeline({
             key={event.sessionId}
             event={event}
             firstHour={layout.firstHour}
-            onPress={() => {
-              onEventPress(event.bookingId);
-            }}
+            onPress={onEventPress}
           />
         ))}
       </View>

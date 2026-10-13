@@ -9,6 +9,8 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ClassSessionBody } from '../components/ClassSessionBody';
+import { SessionAttendanceSection } from '../components/SessionAttendanceSection';
+import { listSessionAttendees, type SessionAttendee } from '../model/attendance';
 import { ClassSessionFooter } from '../components/ClassSessionFooter';
 import { useClassSessionActions } from '../hooks/useClassSessionActions';
 import { useDayAgenda } from '../hooks/useDayAgenda';
@@ -16,13 +18,57 @@ import { classSessionRouteParamsSchema } from '../model/session-route-params';
 
 interface ClassSessionDetailProps {
   entry: AgendaResponseDtoEntriesItem;
+  /** Todas las citas del día, para listar a las personas de la misma clase. */
+  dayEntries: readonly AgendaResponseDtoEntriesItem[];
   timeZone: string;
   isoDate: string;
   canAddPeople: boolean;
 }
 
+/** «Una persona» o «N personas»: lo que dice el subtítulo de la clase. */
+function describeSessionPeople(
+  attendees: readonly SessionAttendee[],
+  fallbackName: string,
+): string {
+  if (attendees.length <= 1) return fallbackName;
+  return i18n.t('staffAgenda.attendance.peopleCount', { count: attendees.length });
+}
+
+interface ClassSessionMainProps {
+  booking: AgendaResponseDtoEntriesItem['booking'];
+  attendees: readonly SessionAttendee[];
+  timeZone: string;
+  isoDate: string;
+  canAddPeople: boolean;
+}
+
+/** La asistencia (check por persona y QR) y, debajo, el reloj y el resumen de la clase. */
+function ClassSessionMain({
+  booking,
+  attendees,
+  timeZone,
+  isoDate,
+  canAddPeople,
+}: Readonly<ClassSessionMainProps>): React.JSX.Element {
+  const hasAttendance = booking.status !== 'cancelled' && attendees.length > 0;
+
+  return (
+    <>
+      {hasAttendance ? (
+        <SessionAttendanceSection
+          attendees={attendees}
+          startsAt={booking.startsAt}
+          isCenterWide={canAddPeople}
+        />
+      ) : null}
+      <ClassSessionBody {...{ booking, timeZone, isoDate, canAddPeople }} />
+    </>
+  );
+}
+
 function ClassSessionDetail({
   entry,
+  dayEntries,
   timeZone,
   isoDate,
   canAddPeople,
@@ -30,11 +76,12 @@ function ClassSessionDetail({
   const router = useRouter();
   const { booking, client } = entry;
   const actions = useClassSessionActions(booking.id, isoDate);
+  const attendees = listSessionAttendees(dayEntries, booking.session.id);
 
   return (
     <ScreenTemplate
       title={booking.service.name}
-      subtitle={client.fullName}
+      subtitle={describeSessionPeople(attendees, client.fullName)}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
       isLoading={actions.isStarting || actions.isEnding || actions.isCancelling}
@@ -56,7 +103,7 @@ function ClassSessionDetail({
       {actions.actionErrorMessage === null ? null : (
         <FormErrorBanner message={actions.actionErrorMessage} />
       )}
-      <ClassSessionBody {...{ booking, timeZone, isoDate, canAddPeople }} />
+      <ClassSessionMain {...{ booking, attendees, timeZone, isoDate, canAddPeople }} />
     </ScreenTemplate>
   );
 }
@@ -97,6 +144,7 @@ function ClassSessionContent({
   return (
     <ClassSessionDetail
       entry={entry}
+      dayEntries={agenda.data.entries}
       timeZone={agenda.data.timezone}
       isoDate={isoDate}
       canAddPeople={canAddPeople}

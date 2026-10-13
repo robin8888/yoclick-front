@@ -40,6 +40,7 @@ describe('buildIosDayLayout', () => {
           endsAt: '2026-10-14T10:30:00.000Z',
         }),
       ],
+      emptySessions: [],
       openingRanges: OPENING,
       timeZone: TIME_ZONE,
     });
@@ -53,7 +54,7 @@ describe('buildIosDayLayout', () => {
     });
   });
 
-  it('shows one block for a group class with everyone who is in it', () => {
+  it('shows one block for a group class and only counts who is in it', () => {
     const layout = buildIosDayLayout({
       entries: [
         buildEntry({
@@ -71,12 +72,13 @@ describe('buildIosDayLayout', () => {
           clientName: 'Luis',
         }),
       ],
+      emptySessions: [],
       openingRanges: OPENING,
       timeZone: TIME_ZONE,
     });
 
     expect(layout.events).toHaveLength(1);
-    expect(layout.events[0]?.clientNames).toEqual(['Ana', 'Luis']);
+    expect(layout.events[0]?.personCount).toBe(2);
   });
 
   it('puts classes that overlap side by side and leaves the rest full width', () => {
@@ -101,14 +103,16 @@ describe('buildIosDayLayout', () => {
           endsAt: '2026-10-14T11:00:00.000Z',
         }),
       ],
+      emptySessions: [],
       openingRanges: OPENING,
       timeZone: TIME_ZONE,
     });
 
-    const byBooking = Object.fromEntries(layout.events.map((event) => [event.bookingId, event]));
-    expect(byBooking.b1).toMatchObject({ column: 0, columnCount: 2 });
-    expect(byBooking.b2).toMatchObject({ column: 1, columnCount: 2 });
-    expect(byBooking.b3).toMatchObject({ column: 0, columnCount: 1 });
+    const byBooking = (bookingId: string) =>
+      layout.events.find((event) => event.bookingId === bookingId);
+    expect(byBooking('b1')).toMatchObject({ column: 0, columnCount: 2 });
+    expect(byBooking('b2')).toMatchObject({ column: 1, columnCount: 2 });
+    expect(byBooking('b3')).toMatchObject({ column: 0, columnCount: 1 });
   });
 
   it('ignores cancelled bookings', () => {
@@ -122,6 +126,7 @@ describe('buildIosDayLayout', () => {
           status: 'cancelled',
         }),
       ],
+      emptySessions: [],
       openingRanges: OPENING,
       timeZone: TIME_ZONE,
     });
@@ -130,7 +135,12 @@ describe('buildIosDayLayout', () => {
   });
 
   it('draws the opening hours, widened when a class falls outside them', () => {
-    const empty = buildIosDayLayout({ entries: [], openingRanges: OPENING, timeZone: TIME_ZONE });
+    const empty = buildIosDayLayout({
+      entries: [],
+      emptySessions: [],
+      openingRanges: OPENING,
+      timeZone: TIME_ZONE,
+    });
     expect(empty).toMatchObject({ firstHour: 9, lastHour: 14 });
 
     const wide = buildIosDayLayout({
@@ -142,9 +152,39 @@ describe('buildIosDayLayout', () => {
           endsAt: '2026-10-14T17:00:00.000Z',
         }),
       ],
+      emptySessions: [],
       openingRanges: OPENING,
       timeZone: TIME_ZONE,
     });
     expect(wide).toMatchObject({ firstHour: 9, lastHour: 19 });
+  });
+
+  it('adds the classes nobody has joined yet, without a booking to open', () => {
+    const layout = buildIosDayLayout({
+      entries: [],
+      emptySessions: [
+        {
+          id: 'empty-1',
+          startsAt: '2026-10-14T07:00:00.000Z',
+          endsAt: '2026-10-14T08:00:00.000Z',
+          mode: 'group',
+          capacity: 10,
+          service: { id: 'service-1', name: 'Kickboxing' },
+          room: { id: 'room-1', name: 'Sala C' },
+          staff: { membershipId: 'staff-1', fullName: 'Maestro Tres' },
+        },
+      ],
+      openingRanges: OPENING,
+      timeZone: TIME_ZONE,
+    });
+
+    expect(layout.events).toHaveLength(1);
+    expect(layout.events[0]).toMatchObject({
+      bookingId: null,
+      personCount: 0,
+      serviceName: 'Kickboxing',
+      startMinutes: 540,
+      endMinutes: 600,
+    });
   });
 });

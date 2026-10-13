@@ -85,6 +85,7 @@ export function JoinSessionFields({
       <ClientChoiceField
         clients={clients}
         canChooseSeveral
+        requiredPassServiceId={found.session.service.id}
         onClientToggle={onClientToggle}
         onClientsClear={onClientsClear}
       />

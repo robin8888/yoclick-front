@@ -6,6 +6,7 @@ import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 
 import type { ChosenClient } from '../hooks/useNewAppointmentForm';
+import { EligibleClientPicker } from './EligibleClientPicker';
 
 interface ClientChoiceFieldProps {
   clients: readonly ChosenClient[];
@@ -13,6 +14,11 @@ interface ClientChoiceFieldProps {
   canChooseSeveral: boolean;
   onClientToggle: (client: ChosenClient) => void;
   onClientsClear: () => void;
+  /**
+   * Al apuntar a una clase de este servicio solo se ofrece a quien tiene un bono en vigor con
+   * clases; sin él, se puede elegir a cualquier persona del centro.
+   */
+  requiredPassServiceId?: string | undefined;
 }
 
 const FIELD_GAP_STYLE = { gap: 12 } as const;
@@ -33,6 +39,32 @@ function ChosenClientsSummary({
   );
 }
 
+/** El buscador de todo el centro o, al apuntar a una clase, solo las personas con bono y clases. */
+function ClientSearch({
+  requiredPassServiceId,
+  clients,
+  onClientToggle,
+}: Readonly<{
+  requiredPassServiceId: string | undefined;
+  clients: readonly ChosenClient[];
+  onClientToggle: (client: ChosenClient) => void;
+}>): React.JSX.Element {
+  const selectedMembershipIds = clients.map((client) => client.membershipId);
+
+  if (requiredPassServiceId === undefined) {
+    return (
+      <ClientPicker onClientSelect={onClientToggle} selectedMembershipIds={selectedMembershipIds} />
+    );
+  }
+  return (
+    <EligibleClientPicker
+      serviceId={requiredPassServiceId}
+      selectedMembershipIds={selectedMembershipIds}
+      onClientToggle={onClientToggle}
+    />
+  );
+}
+
 /**
  * A quién se le pone la cita. Con una sola persona permitida, el buscador hasta elegir y después
  * la persona con «Cambiar». Con varias, el buscador sigue visible para marcar y desmarcar, y
@@ -43,6 +75,7 @@ export function ClientChoiceField({
   canChooseSeveral,
   onClientToggle,
   onClientsClear,
+  requiredPassServiceId,
 }: Readonly<ClientChoiceFieldProps>): React.JSX.Element {
   const [firstClient] = clients;
   const labelKey = canChooseSeveral
@@ -63,9 +96,10 @@ export function ClientChoiceField({
         <>
           {canChooseSeveral ? <ChosenClientsSummary clients={clients} /> : null}
           <View style={FIELD_GAP_STYLE}>
-            <ClientPicker
-              onClientSelect={onClientToggle}
-              selectedMembershipIds={clients.map((client) => client.membershipId)}
+            <ClientSearch
+              requiredPassServiceId={requiredPassServiceId}
+              clients={clients}
+              onClientToggle={onClientToggle}
             />
           </View>
         </>

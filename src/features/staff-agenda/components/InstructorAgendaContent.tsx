@@ -26,6 +26,7 @@ export function InstructorAgendaContent({
   }).totals;
   const layout = buildIosDayLayout({
     entries: agenda.entries,
+    emptySessions: agenda.emptySessions,
     openingRanges: agenda.openingRanges,
     timeZone: agenda.timezone,
   });

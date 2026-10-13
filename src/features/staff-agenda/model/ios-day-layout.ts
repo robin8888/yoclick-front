@@ -1,4 +1,5 @@
 import type {
+  AgendaResponseDtoEmptySessionsItem,
   AgendaResponseDtoEntriesItem,
   AgendaResponseDtoOpeningRangesItem,
 } from '@/shared/api/generated/model';
@@ -17,12 +18,12 @@ const MIN_EVENT_MINUTES = 30;
 export interface DayEvent {
   /** Id de la clase (sesión): agrupa a las personas de un grupo. */
   sessionId: string;
-  /** La reserva que se abre al tocar el bloque. */
-  bookingId: string;
+  /** La reserva que se abre al tocar el bloque; `null` si aún no hay nadie apuntado. */
+  bookingId: string | null;
   serviceName: string;
   roomName: string | null;
-  /** Nombres de las personas apuntadas. */
-  clientNames: string[];
+  /** Cuántas personas hay apuntadas: la agenda no enseña quiénes, eso es del detalle. */
+  personCount: number;
   /** Minutos desde las 00:00 en la zona del centro. */
   startMinutes: number;
   endMinutes: number;
@@ -57,11 +58,11 @@ function groupBySession(
   timeZone: string,
 ): Omit<DayEvent, 'column' | 'columnCount'>[] {
   const bySession = new Map<string, Omit<DayEvent, 'column' | 'columnCount'>>();
-  for (const { booking, client } of entries) {
+  for (const { booking } of entries) {
     if (booking.status === 'cancelled') continue;
     const existing = bySession.get(booking.session.id);
     if (existing !== undefined) {
-      existing.clientNames.push(client.fullName);
+      existing.personCount += 1;
       continue;
     }
     const startMinutes = readLocalMinutes(booking.startsAt, timeZone);
@@ -74,7 +75,7 @@ function groupBySession(
       bookingId: booking.id,
       serviceName: booking.service.name,
       roomName: booking.room?.name ?? null,
-      clientNames: [client.fullName],
+      personCount: 1,
       startMinutes,
       endMinutes: startMinutes + durationMinutes,
     });
@@ -82,6 +83,27 @@ function groupBySession(
   return [...bySession.values()].sort(
     (left, right) => left.startMinutes - right.startMinutes || left.endMinutes - right.endMinutes,
   );
+}
+
+/** Una clase del horario sin nadie apuntado: ocupa su hueco pero no se puede abrir. */
+function toEmptyEvent(
+  session: AgendaResponseDtoEmptySessionsItem,
+  timeZone: string,
+): Omit<DayEvent, 'column' | 'columnCount'> {
+  const startMinutes = readLocalMinutes(session.startsAt, timeZone);
+  const durationMinutes = Math.max(
+    readDurationMinutes(session.startsAt, session.endsAt),
+    MIN_EVENT_MINUTES,
+  );
+  return {
+    sessionId: session.id,
+    bookingId: null,
+    serviceName: session.service.name,
+    roomName: session.room?.name ?? null,
+    personCount: 0,
+    startMinutes,
+    endMinutes: startMinutes + durationMinutes,
+  };
 }
 
 /**
@@ -137,10 +159,16 @@ function resolveHourRange(
 /** La agenda de un día como el calendario de iOS: horas a lo largo y cada clase un bloque. */
 export function buildIosDayLayout(input: {
   entries: readonly AgendaResponseDtoEntriesItem[];
+  emptySessions: readonly AgendaResponseDtoEmptySessionsItem[];
   openingRanges: readonly AgendaResponseDtoOpeningRangesItem[];
   timeZone: string;
 }): IosDayLayout {
-  const events = assignColumns(groupBySession(input.entries, input.timeZone));
+  const booked = groupBySession(input.entries, input.timeZone);
+  const empty = input.emptySessions.map((session) => toEmptyEvent(session, input.timeZone));
+  const sorted = [...booked, ...empty].sort(
+    (left, right) => left.startMinutes - right.startMinutes || left.endMinutes - right.endMinutes,
+  );
+  const events = assignColumns(sorted);
   return { ...resolveHourRange(input.openingRanges, events), events };
 }
 

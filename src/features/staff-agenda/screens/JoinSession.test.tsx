@@ -14,7 +14,7 @@ jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 
 const CENTER_PATH = `/v1/centers/${NORTE_CENTER_ID}`;
 const ROOMS_PATH = `GET ${CENTER_PATH}/agenda/rooms`;
-const CLIENTS_PATH = `GET ${CENTER_PATH}/clients`;
+const ELIGIBLE_PATH = `GET ${CENTER_PATH}/passes/eligible`;
 const JOIN_PATH = `${CENTER_PATH}/agenda/bookings/join-group`;
 const SESSION_ID = '0191d6a0-0000-7000-8000-0000000000e1';
 const MARTA_ID = '0191d6a0-0000-7000-8000-0000000000d1';
@@ -44,29 +44,12 @@ const AGENDA = {
   sessionsWithoutRoom: [],
 };
 
-const MARTA = {
-  membershipId: MARTA_ID,
-  fullName: 'Marta Ruiz',
-  email: 'marta@example.com',
-  status: 'active',
-  activity: 'active',
-  level: null,
-  group: null,
-  joinedAt: '2026-01-10T09:00:00.000Z',
-  bookingCount: 2,
-  lastBookingAt: null,
-};
+const ELIGIBLE_MARTA = { membershipId: MARTA_ID, fullName: 'Marta Ruiz', bookableSessions: 4 };
+const ELIGIBLE_LUIS = { membershipId: LUIS_ID, fullName: 'Luis Gil', bookableSessions: 1 };
 
-const CLIENTS = { totalClientCount: 1, matchingCount: 1, clients: [MARTA] };
+const ELIGIBLE = { clients: [ELIGIBLE_MARTA] };
 
-const TWO_CLIENTS = {
-  totalClientCount: 2,
-  matchingCount: 2,
-  clients: [
-    MARTA,
-    { ...MARTA, membershipId: LUIS_ID, fullName: 'Luis Gil', email: 'luis@example.com' },
-  ],
-};
+const TWO_ELIGIBLE = { clients: [ELIGIBLE_MARTA, ELIGIBLE_LUIS] };
 
 function signInToCenter(): void {
   act(() => {
@@ -94,7 +77,7 @@ describe('NewAppointmentScreen · joining a class of a room', () => {
   });
 
   it('shows the class as decided and only asks for the person', async () => {
-    mockApi({ [ROOMS_PATH]: AGENDA, [CLIENTS_PATH]: CLIENTS, [`POST ${JOIN_PATH}`]: {} });
+    mockApi({ [ROOMS_PATH]: AGENDA, [ELIGIBLE_PATH]: ELIGIBLE, [`POST ${JOIN_PATH}`]: {} });
     renderScreen(<NewAppointmentScreen />);
 
     expect(await screen.findByText('Inglés B1')).toBeOnTheScreen();
@@ -117,7 +100,7 @@ describe('NewAppointmentScreen · joining a class of a room', () => {
   });
 
   it('joins several people to the same class with one save', async () => {
-    mockApi({ [ROOMS_PATH]: AGENDA, [CLIENTS_PATH]: TWO_CLIENTS, [`POST ${JOIN_PATH}`]: {} });
+    mockApi({ [ROOMS_PATH]: AGENDA, [ELIGIBLE_PATH]: TWO_ELIGIBLE, [`POST ${JOIN_PATH}`]: {} });
     renderScreen(<NewAppointmentScreen />);
 
     fireEvent.press(await screen.findByText('Marta Ruiz'));
@@ -135,13 +118,32 @@ describe('NewAppointmentScreen · joining a class of a room', () => {
     expect(joinedClientIds).toEqual([MARTA_ID, LUIS_ID]);
   });
 
+  it('only offers the people who have a pass with classes, and says how many they can still book', async () => {
+    mockApi({ [ROOMS_PATH]: AGENDA, [ELIGIBLE_PATH]: TWO_ELIGIBLE });
+    renderScreen(<NewAppointmentScreen />);
+
+    expect(await screen.findByText('Marta Ruiz')).toBeOnTheScreen();
+    expect(screen.getByText('4 clases por agendar')).toBeOnTheScreen();
+    expect(screen.getByText('1 clase por agendar')).toBeOnTheScreen();
+    expect(findApiCall('GET', `${CENTER_PATH}/passes/eligible`)).toBeDefined();
+  });
+
+  it('explains that nobody can be added when nobody has a pass in force', async () => {
+    mockApi({ [ROOMS_PATH]: AGENDA, [ELIGIBLE_PATH]: { clients: [] } });
+    renderScreen(<NewAppointmentScreen />);
+
+    expect(
+      await screen.findByText(/Ninguna persona tiene un bono en vigor con clases/),
+    ).toBeOnTheScreen();
+  });
+
   it('does not let anyone join a full class', async () => {
     mockApi({
       [ROOMS_PATH]: {
         ...AGENDA,
         rooms: [{ ...AGENDA.rooms[0], sessions: [{ ...SESSION, bookedCount: 12 }] }],
       },
-      [CLIENTS_PATH]: CLIENTS,
+      [ELIGIBLE_PATH]: ELIGIBLE,
     });
     renderScreen(<NewAppointmentScreen />);
 

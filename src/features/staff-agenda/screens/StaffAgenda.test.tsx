@@ -218,6 +218,41 @@ describe('ClassSessionScreen', () => {
     ).toBeDefined();
   });
 
+  it('shows the person with a check and confirms the attendance on the server', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([buildAgendaEntry(-5)]),
+      [`POST /v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/attendance`]: buildBooking({
+        checkedInAt: new Date().toISOString(),
+      }),
+    });
+    renderScreen(<ClassSessionScreen />);
+
+    expect(await screen.findByText('Pendiente de confirmar')).toBeOnTheScreen();
+    expect(screen.getAllByText('Lucía Torres').length).toBeGreaterThan(0);
+    fireEvent.press(screen.getByRole('checkbox', { name: 'Confirmar asistencia de Lucía Torres' }));
+
+    await waitFor(() => {
+      expect(
+        findApiCall('POST', `/v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/attendance`),
+      ).toBeDefined();
+    });
+  });
+
+  it('shows the attendance as confirmed and opens the QR reader from the class', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([buildAgendaEntry(-5, { checkedInAt: new Date().toISOString() })]),
+    });
+    renderScreen(<ClassSessionScreen />);
+
+    expect(await screen.findByText('Asistió')).toBeOnTheScreen();
+    expect(
+      screen.getByRole('checkbox', { name: 'Asistencia confirmada de Lucía Torres' }),
+    ).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: 'Confirmar asistencia con QR' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(staff)/scan');
+  });
+
   it('does not let the class start too early and says when it will be possible', async () => {
     mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(120)]) });
     renderScreen(<ClassSessionScreen />);

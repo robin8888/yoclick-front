@@ -51,7 +51,14 @@ export const EVENTS_AREA_STYLE: ViewStyle = {
 /** Cada clase: bloque suave con una barra de color a la izquierda, fijado por minutos y columna. */
 export function createEventStyle(
   theme: Theme,
-  placement: { top: number; height: number; leftPercent: number; widthPercent: number },
+  placement: {
+    top: number;
+    height: number;
+    leftPercent: number;
+    widthPercent: number;
+    /** Sin nadie apuntado: borde discontinuo y sin relleno, para distinguirlo de una clase con gente. */
+    isEmpty: boolean;
+  },
 ): ViewStyle {
   return {
     position: 'absolute',
@@ -65,7 +72,12 @@ export function createEventStyle(
     borderRadius: theme.radius.sm,
     borderStartWidth: EVENT_ACCENT_WIDTH,
     borderStartColor: theme.colors.brand,
-    backgroundColor: theme.colors.brandSoft,
+    backgroundColor: placement.isEmpty ? theme.colors.surface : theme.colors.brandSoft,
+    ...(placement.isEmpty && {
+      borderWidth: 1,
+      borderStyle: 'dashed' as const,
+      borderColor: theme.colors.lineStrong,
+    }),
   };
 }
 
