@@ -2,7 +2,8 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
-import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { RescheduleSlotPicker } from '../components/RescheduleSlotPicker';
@@ -18,6 +19,12 @@ interface RescheduleAppointmentFormProps {
   serviceId: string;
   staffMembershipId: string;
   initialIsoDate: string;
+}
+
+function ConfirmButton(
+  props: Readonly<{ isDisabled: boolean; onPress: () => void }>,
+): React.JSX.Element {
+  return <Button label={i18n.t('staffAgenda.reschedule.confirmAction')} isFullWidth {...props} />;
 }
 
 function RescheduleAppointmentForm({
@@ -45,19 +52,14 @@ function RescheduleAppointmentForm({
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
       isLoading={reschedule.isRescheduling}
-      footer={
-        <Button
-          label={i18n.t('staffAgenda.reschedule.confirmAction')}
-          isFullWidth
-          isDisabled={selectedStartsAt === null}
-          onPress={handleConfirm}
-        />
-      }
+      footer={<ConfirmButton isDisabled={selectedStartsAt === null} onPress={handleConfirm} />}
     >
       <RescheduleSlotPicker day={day} />
-      {reschedule.rescheduleErrorMessage === null ? null : (
-        <FormErrorBanner message={reschedule.rescheduleErrorMessage} />
-      )}
+      <ProblemModal
+        message={reschedule.rescheduleErrorMessage}
+        onDismiss={reschedule.clearError}
+        {...getProblemModalCopy()}
+      />
     </ScreenTemplate>
   );
 }

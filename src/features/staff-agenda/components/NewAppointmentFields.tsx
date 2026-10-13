@@ -4,14 +4,14 @@ import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
-import { formatShortDate } from '@/shared/lib/format/format-short-date';
-
 import { AppointmentModeFields, RoomChoices } from './AppointmentModeFields';
 import { ClientChoiceField } from './ClientChoiceField';
-import { DateNavigator } from './DateNavigator';
+import { AppointmentDayCalendar } from './AppointmentDayCalendar';
 import { AppointmentSummary } from './AppointmentSummary';
 import { GroupRoomOptionsList } from './GroupRoomOptionsList';
 import { AppointmentTimePicker } from './AppointmentTimePicker';
+import { ScheduledServiceFields } from './ScheduledServiceFields';
+import { useServiceSessions } from '@/features/booking';
 import type { NewAppointmentForm } from '../hooks/useNewAppointmentForm';
 
 function StaffChoices({ form }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
@@ -31,26 +31,28 @@ function StaffChoices({ form }: Readonly<{ form: NewAppointmentForm }>): React.J
   );
 }
 
-function ClientChoice({ form }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
+function ClientChoice({
+  form,
+  canChooseSeveral,
+}: Readonly<{ form: NewAppointmentForm; canChooseSeveral: boolean }>): React.JSX.Element {
   return (
     <ClientChoiceField
-      client={form.client}
-      onClientSelect={form.selectClient}
-      onClientClear={form.clearClient}
+      clients={form.clients}
+      canChooseSeveral={canChooseSeveral}
+      onClientToggle={(client) => {
+        form.toggleClient(client, { canChooseSeveral });
+      }}
+      onClientsClear={form.clearClients}
     />
   );
 }
 
-/** El día en el que se busca disponibilidad, con flechas como en la agenda. */
+/** El día en el que se busca disponibilidad, en un calendario como el del iPhone. */
 function DayChoice({ form }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
   return (
     <>
       <Text variant="titleMd">{i18n.t('staffAgenda.newAppointment.dayLabel')}</Text>
-      <DateNavigator
-        dateLabel={formatShortDate(`${form.isoDate}T12:00:00.000Z`, 'UTC')}
-        onPreviousDay={form.goToPreviousDay}
-        onNextDay={form.goToNextDay}
-      />
+      <AppointmentDayCalendar selectedIsoDate={form.isoDate} onDateSelect={form.selectDate} />
     </>
   );
 }
@@ -114,30 +116,24 @@ function WhenAndWhere({ form }: Readonly<{ form: NewAppointmentForm }>): React.J
   );
 }
 
-/** Cita grupal: servicio, día y las salas con sus profesores; el profesor no se elige aparte. */
+/** Cita grupal sin horario de sala: el día y las salas con sus profesores. */
 function GroupAppointmentFields({
   form,
 }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
   return (
     <>
-      <ServiceChoice form={form} />
-      {form.serviceId === null ? (
-        <Text color="ink2">{i18n.t('staffAgenda.newAppointment.chooseServiceFirst')}</Text>
-      ) : (
-        <>
-          <DayChoice form={form} />
-          <GroupRoomOptionsList form={form} />
-        </>
-      )}
+      <DayChoice form={form} />
+      <GroupRoomOptionsList form={form} />
     </>
   );
 }
 
-/** Cita privada: el profesional, su servicio, el día y sus horas libres con sala. */
+/** Cita privada sin horario de sala: el profesional, el día y sus horas libres con sala. */
 function PrivateAppointmentFields({
   form,
 }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
   const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.singular;
+  const isServiceGivenByStaff = form.staffServices.some((service) => service.id === form.serviceId);
 
   return (
     <>
@@ -145,32 +141,64 @@ function PrivateAppointmentFields({
         {i18n.t('staffAgenda.newAppointment.staffLabel', { staffWord })}
       </Text>
       <StaffChoices form={form} />
-      <ServiceChoice form={form} />
-      {form.serviceId === null ||
-      form.staffMembershipId === null ||
-      !form.staffServices.some((service) => service.id === form.serviceId) ? null : (
+      {form.staffMembershipId === null || !isServiceGivenByStaff ? null : (
         <WhenAndWhere form={form} />
       )}
     </>
   );
 }
 
-/**
- * «Nueva cita» en una sola pantalla: alumno y tipo (privada o grupal si el centro tiene salas).
- * En privada se elige el profesional; en grupal la sala y sus profesores salen del servicio.
- */
-export function NewAppointmentFields({
+/** Un servicio sin horario de sala: privada o grupal y, como siempre, la hora libre del profesional. */
+function FreeAppointmentFields({
   form,
 }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
   return (
     <>
-      <ClientChoice form={form} />
       {form.hasCenterRooms ? <AppointmentModeFields form={form} /> : null}
       {form.mode === 'group' ? (
         <GroupAppointmentFields form={form} />
       ) : (
         <PrivateAppointmentFields form={form} />
       )}
+    </>
+  );
+}
+
+/** Qué se pide después de elegir el servicio: sus clases, o la hora libre si no tiene horario. */
+function AfterService({
+  form,
+  serviceSessions,
+}: Readonly<{
+  form: NewAppointmentForm;
+  serviceSessions: ReturnType<typeof useServiceSessions>;
+}>): React.JSX.Element | null {
+  if (form.serviceId === null) {
+    return <Text color="ink2">{i18n.t('staffAgenda.newAppointment.chooseServiceFirst')}</Text>;
+  }
+  if (serviceSessions.isLoading) {
+    return <Text color="ink2">{i18n.t('staffAgenda.newAppointment.loadingClasses')}</Text>;
+  }
+  if (serviceSessions.data?.isScheduled === true) {
+    return <ScheduledServiceFields form={form} sessions={serviceSessions.data} />;
+  }
+  return <FreeAppointmentFields form={form} />;
+}
+
+/**
+ * «Nueva cita» en una sola pantalla: primero a quién y el servicio. Si el servicio tiene horario
+ * de sala se elige entre sus clases con plazas; si no, como siempre: tipo, profesional y hora libre.
+ */
+export function NewAppointmentFields({
+  form,
+}: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
+  const serviceSessions = useServiceSessions(form.serviceId);
+  const isScheduledService = serviceSessions.data?.isScheduled === true;
+
+  return (
+    <>
+      <ClientChoice form={form} canChooseSeveral={form.mode === 'group' || isScheduledService} />
+      <ServiceChoice form={form} />
+      <AfterService form={form} serviceSessions={serviceSessions} />
       <AppointmentSummary form={form} />
     </>
   );

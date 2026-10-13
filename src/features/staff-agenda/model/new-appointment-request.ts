@@ -1,7 +1,4 @@
-import type {
-  CreateAgendaBookingRequestDto,
-  JoinGroupSessionRequestDto,
-} from '@/shared/api/generated/model';
+import type { CreateAgendaBookingRequestDto } from '@/shared/api/generated/model';
 
 import type { AppointmentMode } from './placement-options';
 
@@ -40,14 +37,4 @@ export function buildNewAppointmentRequest(
     ...(mode === 'group' ? { mode } : {}),
     ...(roomId === null ? {} : { roomId }),
   };
-}
-
-/** Apuntar a un cliente a una clase grupal que ya existe; `null` mientras falte cliente o grupo. */
-export function buildJoinGroupRequest(chosen: {
-  clientMembershipId: string | null;
-  joinSessionId: string | null;
-}): JoinGroupSessionRequestDto | null {
-  const { clientMembershipId, joinSessionId } = chosen;
-  if (clientMembershipId === null || joinSessionId === null) return null;
-  return { clientMembershipId, classSessionId: joinSessionId };
 }

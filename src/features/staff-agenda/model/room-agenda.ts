@@ -46,7 +46,14 @@ export function findSessionInRoomAgenda(
     : { session: sessionWithoutRoom, roomName: null };
 }
 
-/** Se puede apuntar a alguien: es grupal, no está cancelada y quedan plazas. */
-export function canJoinSession(session: RoomSession): boolean {
-  return session.mode === 'group' && session.cancelledReason === null && hasFreeSeats(session);
+/** La clase ya terminó: su hora de fin quedó atrás. */
+export function hasSessionEnded(session: Pick<RoomSession, 'endsAt'>, now: Date): boolean {
+  return new Date(session.endsAt).getTime() <= now.getTime();
+}
+
+/** Se puede apuntar a alguien: no está cancelada ni terminada y quedan plazas (también la privada vacía). */
+export function canJoinSession(session: RoomSession, now: Date): boolean {
+  return (
+    session.cancelledReason === null && !hasSessionEnded(session, now) && hasFreeSeats(session)
+  );
 }

@@ -96,11 +96,13 @@ export function AbsenceAddForm({
         value={startsOn}
         onValueChange={setStartsOn}
         accessibilityLabel={i18n.t('centerAdmin.availability.fromLabel')}
+        isInitiallyOpen={false}
       />
       <SpanishDateField
         value={endsOn}
         onValueChange={setEndsOn}
         accessibilityLabel={i18n.t('centerAdmin.availability.untilLabel')}
+        isInitiallyOpen={false}
       />
       <ReasonChoices selectedReason={reason} onReasonChange={setReason} />
       <Button

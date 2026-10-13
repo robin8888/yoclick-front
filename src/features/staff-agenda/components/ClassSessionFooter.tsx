@@ -1,5 +1,5 @@
 import type { AgendaResponseDtoEntriesItemBooking } from '@/shared/api/generated/model';
-import { useTickingNow } from '../hooks/useTickingNow';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { canCancelAppointment } from '../model/session-phase';
 import { AppointmentChangeActions } from './AppointmentChangeActions';
 import { ClassProgressControls } from './ClassProgressControls';

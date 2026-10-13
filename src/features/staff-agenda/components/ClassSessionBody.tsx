@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import type { AgendaResponseDtoEntriesItemBooking } from '@/shared/api/generated/model';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { i18n } from '@/shared/i18n';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 import { Button } from '@/ui/atoms/Button';
@@ -9,6 +10,9 @@ import { Text } from '@/ui/atoms/Text';
 import { resolveSessionPhase } from '../model/session-phase';
 import { ClassSessionSummary } from './ClassSessionSummary';
 import { ClassTimerPanel } from './ClassTimerPanel';
+
+/** El botón de apuntar desaparece al terminar la cita; con refrescar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
 
 interface ClassSessionBodyProps {
   booking: AgendaResponseDtoEntriesItemBooking;
@@ -52,6 +56,7 @@ export function ClassSessionBody({
   isoDate,
   canAddPeople,
 }: Readonly<ClassSessionBodyProps>): React.JSX.Element {
+  const now = useTickingNow(NOW_REFRESH_MS);
   const isInProgress = resolveSessionPhase(booking) === 'in-progress';
 
   return (
@@ -63,7 +68,10 @@ export function ClassSessionBody({
         />
       ) : null}
       <ClassSessionSummary booking={booking} timeZone={timeZone} />
-      {canAddPeople && booking.session.mode === 'group' && booking.status === 'confirmed' ? (
+      {canAddPeople &&
+      booking.session.mode === 'group' &&
+      booking.status === 'confirmed' &&
+      new Date(booking.endsAt).getTime() > now.getTime() ? (
         <AddPeopleToGroup booking={booking} timeZone={timeZone} isoDate={isoDate} />
       ) : null}
     </>

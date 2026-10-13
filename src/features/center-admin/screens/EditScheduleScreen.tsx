@@ -4,7 +4,8 @@ import { useFormState } from 'react-hook-form';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
-import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -15,7 +16,7 @@ import { TimeRangeStepFields } from '../components/TimeRangeStepFields';
 import { useEditScheduleForm, type EditScheduleForm } from '../hooks/useEditScheduleForm';
 import { useScheduleFormOptions } from '../hooks/useScheduleFormOptions';
 import { useScheduleSeriesList } from '../hooks/useScheduleSeriesList';
-import { NO_ROOM_VALUE, stepTime } from '../model/schedule-form';
+import { NO_ROOM_VALUE } from '../model/schedule-form';
 import { scheduleRouteParamsSchema } from '../model/schedule-route-params';
 import { describeSeriesName, type ScheduleSeries } from '../model/schedule-summary';
 
@@ -86,11 +87,11 @@ function EditTimingFields({ form }: Readonly<Pick<EditFieldsProps, 'form'>>): Re
         startsAtTime={form.values.startsAtTime}
         endsAtTime={form.values.endsAtTime}
         errorMessage={errors.endsAtTime?.message}
-        onStartStep={(direction) => {
-          form.setValue('startsAtTime', stepTime(form.values.startsAtTime, direction));
+        onStartTimeChange={(time) => {
+          form.setValue('startsAtTime', time);
         }}
-        onEndStep={(direction) => {
-          form.setValue('endsAtTime', stepTime(form.values.endsAtTime, direction));
+        onEndTimeChange={(time) => {
+          form.setValue('endsAtTime', time);
         }}
       />
       <SchedulePeriodFields
@@ -125,7 +126,11 @@ function EditScheduleContent({ series }: Readonly<{ series: ScheduleSeries }>): 
     >
       <EditTimingFields form={form} />
       <EditPlaceFields form={form} series={series} />
-      {form.errorMessage === null ? null : <FormErrorBanner message={form.errorMessage} />}
+      <ProblemModal
+        message={form.errorMessage}
+        onDismiss={form.clearError}
+        {...getProblemModalCopy()}
+      />
       <SkippedOccurrencesSheet
         title={i18n.t('centerAdmin.schedules.updatedTitle')}
         skipped={form.skipped}

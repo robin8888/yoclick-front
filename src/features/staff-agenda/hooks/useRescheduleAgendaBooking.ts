@@ -12,6 +12,8 @@ interface RescheduleAgendaBooking {
   rescheduleBooking: (request: RescheduleAgendaBookingRequestDto, onMoved: () => void) => void;
   isRescheduling: boolean;
   rescheduleErrorMessage: string | null;
+  /** Cierra el aviso del error para poder volver a intentarlo. */
+  clearError: () => void;
 }
 
 /**
@@ -40,5 +42,6 @@ export function useRescheduleAgendaBooking(bookingId: string): RescheduleAgendaB
     rescheduleErrorMessage: rescheduleMutation.isError
       ? getApiErrorMessage(rescheduleMutation.error)
       : null,
+    clearError: rescheduleMutation.reset,
   };
 }

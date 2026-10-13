@@ -1,7 +1,7 @@
 import { i18n } from '@/shared/i18n';
 import { SessionTimerDisplay } from '@/ui/organisms/SessionTimerDisplay';
 
-import { useTickingNow } from '../hooks/useTickingNow';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { computeSessionTimer, formatTimerDuration } from '../model/session-timer';
 
 const SECONDS_PER_MINUTE = 60;

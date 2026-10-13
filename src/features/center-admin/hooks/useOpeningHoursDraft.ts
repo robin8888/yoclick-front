@@ -5,16 +5,17 @@ import {
   findDaysWithProblems,
   removeRangeFromDay,
   setDayOpen,
-  stepRangeTime,
+  setRangeTime,
   type OpeningHoursDraft,
   type TimeField,
 } from '../model/opening-hours-draft';
 import type { WeekDay } from '../model/opening-hours-summary';
 
-export interface TimeStepChange {
+export interface TimeChange {
   rangeIndex: number;
   field: TimeField;
-  direction: 1 | -1;
+  /** `HH:MM`. */
+  time: string;
 }
 
 export interface OpeningHoursDraftEditing {
@@ -23,7 +24,7 @@ export interface OpeningHoursDraftEditing {
   changeDayOpen: (day: WeekDay, isOpen: boolean) => void;
   addRange: (day: WeekDay) => void;
   removeRange: (day: WeekDay, rangeIndex: number) => void;
-  stepTime: (day: WeekDay, change: TimeStepChange) => void;
+  changeTime: (day: WeekDay, change: TimeChange) => void;
   /** Descarta lo editado y vuelve a lo publicado. */
   discardChanges: () => void;
 }
@@ -57,8 +58,8 @@ export function useOpeningHoursDraft(
     removeRange: (day, rangeIndex) => {
       change((current) => removeRangeFromDay(current, day, rangeIndex));
     },
-    stepTime: (day, { rangeIndex, field, direction }) => {
-      change((current) => stepRangeTime({ draft: current, day, rangeIndex, field, direction }));
+    changeTime: (day, { rangeIndex, field, time }) => {
+      change((current) => setRangeTime({ draft: current, day, rangeIndex, field, time }));
     },
     discardChanges: () => {
       setEdited(null);

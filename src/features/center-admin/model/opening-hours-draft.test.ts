@@ -5,7 +5,7 @@ import {
   isOpeningHoursChanged,
   removeRangeFromDay,
   setDayOpen,
-  stepRangeTime,
+  setRangeTime,
   type OpeningHoursDraft,
 } from './opening-hours-draft';
 
@@ -52,42 +52,13 @@ describe('opening hours draft', () => {
   });
 
   it.each([
-    ['opensAt', 1, '09:30'],
-    ['opensAt', -1, '08:30'],
-    ['closesAt', 1, '14:30'],
-  ] as const)('steps %s by %i half hour', (field, direction, expectedTime) => {
-    const stepped = stepRangeTime({
-      draft: PUBLISHED,
-      day: 'mon',
-      rangeIndex: 0,
-      field,
-      direction,
-    });
+    ['opensAt', '08:30'],
+    ['closesAt', '14:45'],
+  ] as const)('sets the %s of a range', (field, time) => {
+    const changed = setRangeTime({ draft: PUBLISHED, day: 'mon', rangeIndex: 0, field, time });
 
-    expect(stepped.mon[0]?.[field]).toBe(expectedTime);
-  });
-
-  it('never steps before 00:00 or after 23:30', () => {
-    const atMidnight = { ...PUBLISHED, mon: [{ opensAt: '00:00', closesAt: '23:30' }] };
-
-    expect(
-      stepRangeTime({
-        draft: atMidnight,
-        day: 'mon',
-        rangeIndex: 0,
-        field: 'opensAt',
-        direction: -1,
-      }).mon[0]?.opensAt,
-    ).toBe('00:00');
-    expect(
-      stepRangeTime({
-        draft: atMidnight,
-        day: 'mon',
-        rangeIndex: 0,
-        field: 'closesAt',
-        direction: 1,
-      }).mon[0]?.closesAt,
-    ).toBe('23:30');
+    expect(changed.mon[0]?.[field]).toBe(time);
+    expect(PUBLISHED.mon[0]?.[field]).not.toBe(time);
   });
 
   it.each([

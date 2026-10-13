@@ -32,7 +32,7 @@ export function SectionHeader({
       </Text>
       {actionLabel === undefined || onActionPress === undefined ? null : (
         <Button
-          variant="ghost"
+          variant="primary"
           size="sm"
           leadingIconName={actionIconName}
           label={actionLabel}

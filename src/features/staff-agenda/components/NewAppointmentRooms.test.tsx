@@ -1,5 +1,6 @@
 import { fireEvent, screen } from '@testing-library/react-native';
 
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import type { NewAppointmentForm } from '../hooks/useNewAppointmentForm';
@@ -32,6 +33,15 @@ function buildForm(overrides: Partial<NewAppointmentForm> = {}): NewAppointmentF
     ...overrides,
   } as unknown as NewAppointmentForm;
 }
+
+// Las citas de prueba son de octubre de 2026: «ahora» es antes, para que no cuenten como pasadas.
+beforeEach(() => {
+  freezeClockAt('2026-10-12T06:00:00.000Z');
+});
+
+afterEach(() => {
+  restoreClock();
+});
 
 describe('AppointmentModeFields', () => {
   it('lets the center choose a private or a group appointment', () => {

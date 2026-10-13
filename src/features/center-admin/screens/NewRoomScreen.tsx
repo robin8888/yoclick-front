@@ -16,14 +16,20 @@ import {
   type RoomFormValues,
 } from '../model/room-form';
 
-/** Prototipo `asvc`, «Nueva sala o recurso»: nombre y aforo máximo. */
+/** Prototipo `asvc`, «Nueva sala o recurso»: nombre y aforo; al guardar pide su servicio y horario. */
 export function NewRoomScreen(): React.JSX.Element {
   const router = useRouter();
   const { control, handleSubmit } = useForm<RoomFormValues>({
     resolver: zodResolver(roomFormSchema),
     defaultValues: buildEmptyRoomForm(),
   });
-  const creation = useCreateRoom(router.back);
+  // Una sala sin horario no sirve para asignar citas: se sigue directo a ponerle servicio y horario.
+  const creation = useCreateRoom((room) => {
+    router.replace({
+      pathname: '/(admin)/schedules/new',
+      params: { roomId: room.id, isNewRoom: 'true' },
+    });
+  });
 
   return (
     <ScreenTemplate

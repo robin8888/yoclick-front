@@ -22,6 +22,19 @@ export function resolveSessionPhase({
   return startedAt === null ? 'not-started' : 'in-progress';
 }
 
+/** Lo que se ve en la agenda: la fase de la clase o «ya pasada» si su hora quedó atrás sin registrarse. */
+export type AgendaPhase = SessionPhase | 'past';
+
+/** Una cita que nadie empezó y cuya hora de fin ya pasó no está «pendiente»: ya pasó. */
+export function resolveAgendaPhase(
+  booking: SessionPhaseInput & { endsAt: string },
+  now: Date,
+): AgendaPhase {
+  const phase = resolveSessionPhase(booking);
+  const hasEnded = new Date(booking.endsAt).getTime() <= now.getTime();
+  return phase === 'not-started' && hasEnded ? 'past' : phase;
+}
+
 interface StartWindowInput {
   startsAt: string;
   endsAt: string;

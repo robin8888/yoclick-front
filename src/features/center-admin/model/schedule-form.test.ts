@@ -10,7 +10,6 @@ import {
   listCompatibleRooms,
   mapScheduleFormToCreateRequest,
   scheduleFormSchema,
-  stepTime,
   toggleWeekday,
 } from './schedule-form';
 
@@ -131,19 +130,10 @@ describe('mapScheduleFormToCreateRequest', () => {
   });
 });
 
-describe('toggleWeekday and stepTime', () => {
+describe('toggleWeekday', () => {
   it('adds a weekday that was not chosen and removes one that was', () => {
     expect(toggleWeekday([1, 4], 2)).toEqual([1, 4, 2]);
     expect(toggleWeekday([1, 4], 4)).toEqual([1]);
-  });
-
-  it.each([
-    ['18:00', 1, '18:30'],
-    ['18:00', -1, '17:30'],
-    ['23:30', 1, '23:30'],
-    ['00:00', -1, '00:00'],
-  ])('moves %s by %i step to %s', (time, direction, expected) => {
-    expect(stepTime(time, direction as 1 | -1)).toBe(expected);
   });
 });
 

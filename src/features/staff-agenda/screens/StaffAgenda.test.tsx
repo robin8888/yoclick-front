@@ -16,6 +16,7 @@ import { renderScreen } from '@/test/render-screen';
 
 import { AgendaScreen } from './AgendaScreen';
 import { CenterAgendaScreen } from './CenterAgendaScreen';
+import { CenterDayAgendaScreen } from './CenterDayAgendaScreen';
 import { InstructorAgendaScreen } from './InstructorAgendaScreen';
 import { ClassSessionScreen } from './ClassSessionScreen';
 import { SessionRecordsScreen } from './SessionRecordsScreen';
@@ -140,19 +141,56 @@ describe('CenterAgendaScreen', () => {
     signInToCenter();
   });
 
-  it('lets the center assign an appointment from the floating button', async () => {
+  it('offers the buttons of the center and no longer the summary cards or the floating button', async () => {
     mockApi({
-      [AGENDA_PATH]: buildAgenda([]),
-      [`GET /v1/centers/${NORTE_CENTER_ID}/team`]: { members: [] },
       [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
     });
     renderScreen(<CenterAgendaScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Nueva cita' }));
+    expect(await screen.findByRole('button', { name: 'Agenda' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Asignar citas' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Servicios' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Nueva cita' })).toBeNull();
+    expect(screen.queryByText('Citas hoy')).toBeNull();
+  });
 
-    expect(getMockRouter().push).toHaveBeenCalledWith(
+  it('opens the agenda in its own screen, the assignment, the services and the passes', async () => {
+    mockApi({
+      [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 0, notifications: [] },
+    });
+    renderScreen(<CenterAgendaScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Agenda' }));
+    expect(getMockRouter().push).toHaveBeenLastCalledWith('/(admin)/day-agenda');
+
+    fireEvent.press(screen.getByRole('button', { name: 'Asignar citas' }));
+    expect(getMockRouter().push).toHaveBeenLastCalledWith(
       expect.objectContaining({ pathname: '/(admin)/new-appointment' }),
     );
+
+    fireEvent.press(screen.getByRole('button', { name: 'Servicios' }));
+    expect(getMockRouter().push).toHaveBeenLastCalledWith('/(admin)/services');
+
+    fireEvent.press(screen.getByRole('button', { name: 'Bonos' }));
+    expect(getMockRouter().push).toHaveBeenLastCalledWith('/(admin)/passes');
+  });
+});
+
+describe('CenterDayAgendaScreen', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signInToCenter();
+  });
+
+  it('shows the day of the center with its team in a screen of its own', async () => {
+    mockApi({
+      [AGENDA_PATH]: buildAgenda([]),
+      [`GET /v1/centers/${NORTE_CENTER_ID}/team`]: { members: [] },
+    });
+    renderScreen(<CenterDayAgendaScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Volver' })).toBeOnTheScreen();
+    expect(await screen.findByText('Hoy')).toBeOnTheScreen();
   });
 });
 
@@ -192,8 +230,8 @@ describe('ClassSessionScreen', () => {
     mockApi({ [AGENDA_PATH]: buildAgenda([buildAgendaEntry(-180)]) });
     renderScreen(<ClassSessionScreen />);
 
-    expect(await screen.findByRole('button', { name: 'Iniciar clase' })).toBeDisabled();
-    expect(screen.getByText(/ya terminó y no se registró/)).toBeOnTheScreen();
+    expect(await screen.findByText(/ya terminó y no se registró/)).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Iniciar clase' })).not.toBeOnTheScreen();
   });
 
   it('shows the timer while the class is in progress and counts down from the server start', async () => {

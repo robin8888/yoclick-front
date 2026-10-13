@@ -1,6 +1,7 @@
 import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { RoomBlocksManagementSection } from '../components/RoomBlocksManagementSection';
 import { RoomsManagementSection } from '../components/RoomsManagementSection';
 import { ScheduleWeekSection } from '../components/ScheduleWeekSection';
 
@@ -15,6 +16,7 @@ export function ManagementScreen(): React.JSX.Element {
       subtitle={i18n.t('centerAdmin.management.subtitle')}
     >
       <RoomsManagementSection />
+      <RoomBlocksManagementSection />
       <ScheduleWeekSection />
     </ScreenTemplate>
   );

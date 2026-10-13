@@ -12,6 +12,7 @@ export type MoreMenuTextKey =
   | 'importClients'
   | 'routines'
   | 'reports'
+  | 'passes'
   | 'subscription'
   | 'inviteStudent'
   | 'inviteInstructor'
@@ -53,7 +54,8 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
   {
     id: 'money',
     entries: [
-      { textKey: 'reports', route: '/(admin)/reports', iconName: 'creditCard' },
+      { textKey: 'passes', route: '/(admin)/passes', iconName: 'creditCard' },
+      { textKey: 'reports', route: '/(admin)/reports', iconName: 'file' },
       { textKey: 'subscription', route: '/(admin)/subscription', iconName: 'settings' },
     ],
   },

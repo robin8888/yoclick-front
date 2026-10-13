@@ -14,6 +14,8 @@ interface CreateRoomBlock {
   createBlock: (request: CreateRoomBlockRequestDto, onDone: () => void) => void;
   isCreating: boolean;
   errorMessage: string | null;
+  /** Cierra el aviso del error para poder volver a intentarlo. */
+  clearError: () => void;
 }
 
 /** Bloquea un espacio en un tramo; el servidor rechaza tramos con citas (`ROOM_HAS_BOOKINGS`). */
@@ -36,5 +38,6 @@ export function useCreateRoomBlock(roomId: string): CreateRoomBlock {
     },
     isCreating: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
+    clearError: mutation.reset,
   };
 }

@@ -74,9 +74,9 @@ describe('ManagementScreen', () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    expect(await screen.findByText('Sala de baile')).toBeOnTheScreen();
+    expect(await screen.findAllByText('Sala de baile')).toHaveLength(2);
     expect(screen.getByText('Aforo 12 · Da clase Ana Ruiz · Solo Salsa')).toBeOnTheScreen();
-    expect(screen.getByText('Aula común')).toBeOnTheScreen();
+    expect(screen.getAllByText('Aula común')).toHaveLength(2);
     expect(screen.getByText('Aforo 6 · Cualquiera del equipo')).toBeOnTheScreen();
   });
 
@@ -94,6 +94,21 @@ describe('ManagementScreen', () => {
     fireEvent.press(await screen.findByRole('button', { name: 'Nuevo espacio' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/rooms/new');
+  });
+
+  it('offers to block a room for rental or maintenance from this screen', async () => {
+    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
+    renderScreen(<ManagementScreen />);
+
+    expect(await screen.findByText('Alquiler y mantenimiento')).toBeOnTheScreen();
+    fireEvent.press(
+      screen.getByRole('button', { name: /Sala de baile\. Bloquear horas por alquiler/ }),
+    );
+
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(admin)/room-blocks/[roomId]',
+      params: { roomId: ROOM_ANA_ID },
+    });
   });
 
   it('opens a room to edit it', async () => {

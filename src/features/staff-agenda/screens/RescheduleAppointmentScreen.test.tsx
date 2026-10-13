@@ -12,6 +12,7 @@ import {
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { RescheduleAppointmentScreen } from './RescheduleAppointmentScreen';
@@ -34,6 +35,15 @@ async function chooseEveningSlot(): Promise<void> {
   fireEvent.press(await screen.findByRole('button', { name: '18 h' }));
   fireEvent.press(screen.getByRole('button', { name: '18:00' }));
 }
+
+// Las citas de prueba son de octubre de 2026: «ahora» es antes, para que no cuenten como pasadas.
+beforeEach(() => {
+  freezeClockAt('2026-10-08T05:00:00.000Z');
+});
+
+afterEach(() => {
+  restoreClock();
+});
 
 describe('RescheduleAppointmentScreen', () => {
   beforeEach(() => {
@@ -96,7 +106,7 @@ describe('RescheduleAppointmentScreen', () => {
     renderScreen(<RescheduleAppointmentScreen />);
     await chooseEveningSlot();
 
-    fireEvent.press(screen.getByRole('button', { name: 'Día siguiente' }));
+    fireEvent.press(screen.getByRole('button', { name: '9 de octubre de 2026' }));
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Confirmar nueva hora' })).toBeDisabled();

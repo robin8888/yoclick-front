@@ -18,7 +18,7 @@ interface OpeningDayCardProps {
   onOpenChange: (isOpen: boolean) => void;
   onRangeAdd: () => void;
   onRangeRemove: (rangeIndex: number) => void;
-  onTimeStep: (change: { rangeIndex: number; field: TimeField; direction: 1 | -1 }) => void;
+  onTimeChange: (change: { rangeIndex: number; field: TimeField; time: string }) => void;
 }
 
 interface OpeningDayHeaderProps {
@@ -90,7 +90,7 @@ export function OpeningDayCard({
   onOpenChange,
   onRangeAdd,
   onRangeRemove,
-  onTimeStep,
+  onTimeChange,
 }: Readonly<OpeningDayCardProps>): React.JSX.Element {
   const theme = useTheme();
   const dayName = i18n.t(`centerAdmin.weekDays.${day}`);
@@ -108,8 +108,8 @@ export function OpeningDayCard({
           onRemove={() => {
             onRangeRemove(rangeIndex);
           }}
-          onTimeStep={(field, direction) => {
-            onTimeStep({ rangeIndex, field, direction });
+          onTimeChange={(field, time) => {
+            onTimeChange({ rangeIndex, field, time });
           }}
         />
       ))}

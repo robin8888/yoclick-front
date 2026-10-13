@@ -4,6 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { findApiCall, mockApi } from '@/test/mock-api';
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { TeamMemberAvailabilityScreen } from './StaffAvailabilityScreen';
@@ -34,6 +35,14 @@ function mockAvailability(availability: object, extra: Record<string, unknown> =
     ...extra,
   });
 }
+
+beforeEach(() => {
+  freezeClockAt('2026-10-13T08:00:00.000Z');
+});
+
+afterEach(() => {
+  restoreClock();
+});
 
 describe('TeamMemberAvailabilityScreen', () => {
   beforeEach(() => {
@@ -118,7 +127,9 @@ describe('TeamMemberAvailabilityScreen', () => {
     renderScreen(<TeamMemberAvailabilityScreen />);
     fireEvent.press(await screen.findByRole('button', { name: 'Añadir ausencia' }));
 
-    fireEvent.changeText(screen.getByLabelText('Desde'), '23/11/2026');
+    fireEvent.press(screen.getByRole('button', { name: /^Desde: / }));
+    fireEvent.press(screen.getByRole('button', { name: 'Mes siguiente' }));
+    fireEvent.press(screen.getByRole('button', { name: '23 de noviembre de 2026' }));
     fireEvent.press(screen.getByRole('radio', { name: 'Formación' }));
     fireEvent.press(screen.getByRole('button', { name: 'Guardar ausencia' }));
 
@@ -132,14 +143,22 @@ describe('TeamMemberAvailabilityScreen', () => {
     expect(await screen.findByText(/Hay 2 citas en esos días/)).toBeOnTheScreen();
   });
 
-  it('does not let the person save an absence with wrong dates', async () => {
+  it('does not let the person save an absence until a date is chosen', async () => {
     mockAvailability({ weeklyHours: null, absences: [] });
     renderScreen(<TeamMemberAvailabilityScreen />);
     fireEvent.press(await screen.findByRole('button', { name: 'Añadir ausencia' }));
 
-    fireEvent.changeText(screen.getByLabelText('Desde'), '23/11');
-
     expect(screen.getByRole('button', { name: 'Guardar ausencia' })).toBeDisabled();
+  });
+
+  it('does not offer days that already passed', async () => {
+    mockAvailability({ weeklyHours: null, absences: [] });
+    renderScreen(<TeamMemberAvailabilityScreen />);
+    fireEvent.press(await screen.findByRole('button', { name: 'Añadir ausencia' }));
+
+    fireEvent.press(screen.getByRole('button', { name: /^Desde: / }));
+
+    expect(screen.getByRole('button', { name: '5 de octubre de 2026' })).toBeDisabled();
   });
 
   it('shows an error when the availability cannot be loaded', async () => {

@@ -7,7 +7,7 @@ import type {
 } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 
-import { minutesToTime, timeToMinutes, TIME_STEP_MINUTES } from './opening-hours-draft';
+import { timeToMinutes } from './opening-hours-draft';
 import type { WeekDay } from './opening-hours-summary';
 
 export type ScheduleMode = 'private' | 'group';
@@ -47,11 +47,6 @@ const MIN_CAPACITY = 1;
 const MAX_CAPACITY = 500;
 const MIN_WEEKDAY = MONDAY;
 const MAX_WEEKDAY = SUNDAY;
-const LAST_HOUR_OF_DAY = 23;
-const LAST_STEP_MINUTES = 30;
-const MINUTES_PER_HOUR = 60;
-/** El servidor solo admite horas de 00:00 a 23:59: el último paso es 23:30. */
-const LAST_TIME_MINUTES = LAST_HOUR_OF_DAY * MINUTES_PER_HOUR + LAST_STEP_MINUTES;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_PATTERN = /^\d{2}:\d{2}$/;
 const DEFAULT_STARTS_AT_TIME = '18:00';
@@ -133,13 +128,17 @@ export const scheduleFormSchema = z
   });
 export type ScheduleFormValues = z.infer<typeof scheduleFormSchema>;
 
-export function buildEmptyScheduleForm(todayIsoDate: string): ScheduleFormValues {
+/** El formulario vacío; con una sala ya elegida (recién creada, o desde su ficha) sale marcada. */
+export function buildEmptyScheduleForm(
+  todayIsoDate: string,
+  presetRoomId: string = NO_ROOM_VALUE,
+): ScheduleFormValues {
   return {
     serviceId: '',
     weekdays: [],
     startsAtTime: DEFAULT_STARTS_AT_TIME,
     endsAtTime: DEFAULT_ENDS_AT_TIME,
-    roomId: NO_ROOM_VALUE,
+    roomId: presetRoomId,
     staffMembershipId: ROOM_TEACHER_VALUE,
     mode: 'group',
     capacity: ROOM_CAPACITY_VALUE,
@@ -175,12 +174,6 @@ export function toggleWeekday(weekdays: readonly number[], weekday: ScheduleWeek
   return weekdays.includes(weekday)
     ? weekdays.filter((candidate) => candidate !== weekday)
     : [...weekdays, weekday];
-}
-
-/** La hora movida 30 minutos adelante (`1`) o atrás (`-1`), sin salir del día. */
-export function stepTime(time: string, direction: 1 | -1): string {
-  const steppedMinutes = timeToMinutes(time) + direction * TIME_STEP_MINUTES;
-  return minutesToTime(Math.min(Math.max(steppedMinutes, 0), LAST_TIME_MINUTES));
 }
 
 /** Los modos que admite el servicio: solo privado, solo grupo, o los dos (por defecto, los dos). */

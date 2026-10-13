@@ -18,9 +18,9 @@ interface JoinSessionFieldsProps {
   agenda: ReturnType<typeof useRoomAgenda>;
   /** La sesión a la que se apunta, ya localizada en la agenda; `undefined` si no está. */
   found: FoundSession | undefined;
-  client: ChosenClient | null;
-  onClientSelect: (client: ChosenClient) => void;
-  onClientClear: () => void;
+  clients: readonly ChosenClient[];
+  onClientToggle: (client: ChosenClient) => void;
+  onClientsClear: () => void;
 }
 
 /** Lo que ya se sabe de la clase: servicio, profesor, sala, hora y plazas. */
@@ -30,7 +30,7 @@ function SessionSummary({
 }: Readonly<{ found: FoundSession; timeZone: string }>): React.JSX.Element {
   const theme = useTheme();
   const { session, roomName } = found;
-  const isJoinable = canJoinSession(session);
+  const isJoinable = canJoinSession(session, new Date());
   const timeRange = i18n.t('staffAgenda.agenda.timeRange', {
     startTime: formatTime24h(session.startsAt, timeZone),
     endTime: formatTime24h(session.endsAt, timeZone),
@@ -60,9 +60,9 @@ function SessionSummary({
 export function JoinSessionFields({
   agenda,
   found,
-  client,
-  onClientSelect,
-  onClientClear,
+  clients,
+  onClientToggle,
+  onClientsClear,
 }: Readonly<JoinSessionFieldsProps>): React.JSX.Element {
   if (agenda.isPending) return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
   if (agenda.isError) {
@@ -83,9 +83,10 @@ export function JoinSessionFields({
       <Text variant="titleMd">{i18n.t('staffAgenda.newAppointment.joinSessionLabel')}</Text>
       <SessionSummary found={found} timeZone={agenda.data.timezone} />
       <ClientChoiceField
-        client={client}
-        onClientSelect={onClientSelect}
-        onClientClear={onClientClear}
+        clients={clients}
+        canChooseSeveral
+        onClientToggle={onClientToggle}
+        onClientsClear={onClientsClear}
       />
     </>
   );

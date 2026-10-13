@@ -6,6 +6,7 @@ import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { assignRoomMarks, findRoomMark, type RoomMark } from '../model/room-marks';
 import {
   buildRoomTimeline,
@@ -16,26 +17,38 @@ import {
 } from '../model/room-timeline';
 import { RoomBlockChip } from './RoomBlockChip';
 import {
-  createEmptyHourLineStyle,
+  createEmptyHourStyle,
+  createHourCardsStyle,
   createHourLabelStyle,
-  HOUR_CHIPS_STYLE,
   HOUR_ROW_STYLE,
 } from './RoomDayGrid.styles';
 import { RoomLegend } from './RoomLegend';
 import { ServiceFilter } from './ServiceFilter';
 import { RoomSessionChip } from './RoomSessionChip';
 
+/** Las fichas pasan a «Terminada» solas; con refrescar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
+
 interface HourRowProps {
   hour: TimelineHour;
   marks: readonly RoomMark[];
   timeZone: string;
   isoDate: string;
+  now: Date;
 }
 
 /** Una ficha por clase y por bloqueo de esa hora, en línea y envueltas si no caben. */
-function HourChips({ hour, marks, timeZone, isoDate }: Readonly<HourRowProps>): React.JSX.Element {
+function HourChips({
+  hour,
+  marks,
+  timeZone,
+  isoDate,
+  now,
+}: Readonly<HourRowProps>): React.JSX.Element {
+  const theme = useTheme();
+
   return (
-    <View style={HOUR_CHIPS_STYLE}>
+    <View style={createHourCardsStyle(theme)}>
       {hour.blocks.map((block) => {
         const mark = findRoomMark(marks, block.roomId);
         return mark === undefined ? null : (
@@ -45,6 +58,7 @@ function HourChips({ hour, marks, timeZone, isoDate }: Readonly<HourRowProps>): 
             mark={mark}
             timeZone={timeZone}
             isoDate={isoDate}
+            now={now}
           />
         );
       })}
@@ -76,7 +90,7 @@ function HourRow(props: Readonly<HourRowProps>): React.JSX.Element {
           {hour.label}
         </Text>
       </View>
-      {isEmpty ? <View style={createEmptyHourLineStyle(theme)} /> : <HourChips {...props} />}
+      {isEmpty ? <View style={createEmptyHourStyle(theme)} /> : <HourChips {...props} />}
     </View>
   );
 }
@@ -94,6 +108,7 @@ interface RoomDayGridProps {
 export function RoomDayGrid({ agenda, isoDate }: Readonly<RoomDayGridProps>): React.JSX.Element {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const marks = assignRoomMarks(agenda.rooms);
+  const now = useTickingNow(NOW_REFRESH_MS);
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
   const allHours = buildRoomTimeline(agenda);
   const hours = filterTimelineByService(
@@ -119,6 +134,7 @@ export function RoomDayGrid({ agenda, isoDate }: Readonly<RoomDayGridProps>): Re
           marks={marks}
           timeZone={agenda.timezone}
           isoDate={isoDate}
+          now={now}
         />
       ))}
     </>

@@ -10,17 +10,27 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { RoomBlockCard } from '../components/RoomBlockCard';
 import { RoomSessionDetail } from '../components/RoomSessionDetail';
 import { useRoomAgenda } from '../hooks/useRoomAgenda';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { type RoomDay } from '../model/room-agenda';
 import { roomDayRouteParamsSchema } from '../model/room-day-route-params';
+
+/** «Terminada» aparece sola al pasar la hora; con refrescar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
 
 interface RoomDayBodyProps {
   room: RoomDay | undefined;
   timeZone: string;
   isoDate: string;
+  now: Date;
 }
 
 /** Los bloqueos y las clases de la sala ese día, por orden de hora. */
-function RoomDayBody({ room, timeZone, isoDate }: Readonly<RoomDayBodyProps>): React.JSX.Element {
+function RoomDayBody({
+  room,
+  timeZone,
+  isoDate,
+  now,
+}: Readonly<RoomDayBodyProps>): React.JSX.Element {
   if (room === undefined) {
     return <Text color="ink2">{i18n.t('staffAgenda.rooms.roomNotFound')}</Text>;
   }
@@ -38,6 +48,7 @@ function RoomDayBody({ room, timeZone, isoDate }: Readonly<RoomDayBodyProps>): R
           session={session}
           timeZone={timeZone}
           isoDate={isoDate}
+          now={now}
         />
       ))}
     </>
@@ -50,6 +61,7 @@ function RoomDayContent({
 }: Readonly<{ roomId: string; isoDate: string }>): React.JSX.Element {
   const router = useRouter();
   const agenda = useRoomAgenda(isoDate);
+  const now = useTickingNow(NOW_REFRESH_MS);
   const room = agenda.data?.rooms.find((candidate) => candidate.id === roomId);
 
   return (
@@ -71,7 +83,7 @@ function RoomDayContent({
         />
       ) : null}
       {agenda.data === undefined ? null : (
-        <RoomDayBody room={room} timeZone={agenda.data.timezone} isoDate={isoDate} />
+        <RoomDayBody room={room} timeZone={agenda.data.timezone} isoDate={isoDate} now={now} />
       )}
     </ScreenTemplate>
   );

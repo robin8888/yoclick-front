@@ -3,49 +3,44 @@ import { useState } from 'react';
 
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
-import { Text } from '@/ui/atoms/Text';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { JoinSessionFields } from '../components/JoinSessionFields';
 import { NewAppointmentFields } from '../components/NewAppointmentFields';
-import { useCreateAgendaBooking } from '../hooks/useCreateAgendaBooking';
+import { useBookClients } from '../hooks/useBookClients';
 import {
+  toggleChosenClient,
   useNewAppointmentForm,
   type ChosenClient,
   type NewAppointmentForm,
 } from '../hooks/useNewAppointmentForm';
 import { useRoomAgenda } from '../hooks/useRoomAgenda';
-import {
-  buildJoinGroupRequest,
-  buildNewAppointmentRequest,
-} from '../model/new-appointment-request';
+import { buildBookingPlan, type BookingPlan } from '../model/booking-plan';
 import { newAppointmentRouteParamsSchema } from '../model/new-appointment-route-params';
 import { canJoinSession, findSessionInRoomAgenda } from '../model/room-agenda';
 
-/** Lo que se envía al guardar: apuntar a un grupo que ya existe o crear la cita. */
+/** Lo que se envía al guardar: apuntar a un grupo que ya existe o crear la cita, para 1 o varias personas. */
 function useAppointmentSubmission(form: NewAppointmentForm, onDone: () => void) {
-  const creation = useCreateAgendaBooking();
-  const clientMembershipId = form.client?.membershipId ?? null;
-  const request = buildNewAppointmentRequest({
-    clientMembershipId,
+  const booking = useBookClients(form.clients);
+  const plan = buildBookingPlan({
+    clientMembershipIds: form.clients.map((client) => client.membershipId),
     staffMembershipId: form.staffMembershipId,
     serviceId: form.serviceId,
     startsAt: form.selectedStartsAt,
     mode: form.mode,
     roomId: form.roomId,
-  });
-  const joinRequest = buildJoinGroupRequest({
-    clientMembershipId,
     joinSessionId: form.joinSessionId,
   });
 
   return {
-    isLoading: creation.isCreating,
-    errorMessage: creation.createErrorMessage,
-    canSave: joinRequest !== null || request !== null,
+    isLoading: booking.isBooking,
+    errorMessage: booking.errorMessage,
+    clearError: booking.clearError,
+    canSave: plan !== null,
     save: () => {
-      if (joinRequest !== null) creation.joinGroup(joinRequest, onDone);
-      else if (request !== null) creation.createBooking(request, onDone);
+      if (plan !== null) booking.bookClients(plan, onDone);
     },
   };
 }
@@ -56,6 +51,7 @@ interface AppointmentScreenFrameProps {
   canSave: boolean;
   isLoading: boolean;
   errorMessage: string | null;
+  onErrorDismiss: () => void;
   onSave: () => void;
   children: React.ReactNode;
 }
@@ -66,6 +62,7 @@ function AppointmentScreenFrame({
   canSave,
   isLoading,
   errorMessage,
+  onErrorDismiss,
   onSave,
   children,
 }: Readonly<AppointmentScreenFrameProps>): React.JSX.Element {
@@ -80,13 +77,25 @@ function AppointmentScreenFrame({
       footer={<Button label={saveLabel} isFullWidth isDisabled={!canSave} onPress={onSave} />}
     >
       {children}
-      {errorMessage === null ? null : (
-        <Text color="danger" role="alert">
-          {errorMessage}
-        </Text>
-      )}
+      <ProblemModal message={errorMessage} onDismiss={onErrorDismiss} {...getProblemModalCopy()} />
     </ScreenTemplate>
   );
+}
+
+/** Apuntar a varias personas a una clase que ya existe: no hay nada más que decidir. */
+function buildJoinPlan(
+  clients: readonly ChosenClient[],
+  joinSessionId: string | null,
+): BookingPlan | null {
+  return buildBookingPlan({
+    clientMembershipIds: clients.map((client) => client.membershipId),
+    staffMembershipId: null,
+    serviceId: null,
+    startsAt: null,
+    mode: 'group',
+    roomId: null,
+    joinSessionId,
+  });
 }
 
 /**
@@ -99,33 +108,35 @@ function JoinSessionContent({
 }: Readonly<{ isoDate: string; sessionId: string }>): React.JSX.Element {
   const router = useRouter();
   const agenda = useRoomAgenda(isoDate);
-  const creation = useCreateAgendaBooking();
-  const [client, setClient] = useState<ChosenClient | null>(null);
+  const [clients, setClients] = useState<ChosenClient[]>([]);
+  const booking = useBookClients(clients);
   const found =
     agenda.data === undefined ? undefined : findSessionInRoomAgenda(agenda.data, sessionId);
-  const joinRequest = buildJoinGroupRequest({
-    clientMembershipId: client?.membershipId ?? null,
-    joinSessionId: found !== undefined && canJoinSession(found.session) ? sessionId : null,
-  });
+  const joinableSessionId =
+    found !== undefined && canJoinSession(found.session, new Date()) ? sessionId : null;
+  const plan = buildJoinPlan(clients, joinableSessionId);
 
   return (
     <AppointmentScreenFrame
       title={i18n.t('staffAgenda.newAppointment.joinSessionTitle')}
       saveLabel={i18n.t('staffAgenda.newAppointment.joinSaveAction')}
-      canSave={joinRequest !== null}
-      isLoading={creation.isCreating}
-      errorMessage={creation.createErrorMessage}
+      canSave={plan !== null}
+      isLoading={booking.isBooking}
+      errorMessage={booking.errorMessage}
+      onErrorDismiss={booking.clearError}
       onSave={() => {
-        if (joinRequest !== null) creation.joinGroup(joinRequest, router.back);
+        if (plan !== null) booking.bookClients(plan, router.back);
       }}
     >
       <JoinSessionFields
         agenda={agenda}
         found={found}
-        client={client}
-        onClientSelect={setClient}
-        onClientClear={() => {
-          setClient(null);
+        clients={clients}
+        onClientToggle={(chosen) => {
+          setClients((current) => toggleChosenClient(current, chosen, true));
+        }}
+        onClientsClear={() => {
+          setClients([]);
         }}
       />
     </AppointmentScreenFrame>
@@ -151,6 +162,7 @@ function NewAppointmentContent({
       canSave={submission.canSave}
       isLoading={submission.isLoading}
       errorMessage={submission.errorMessage}
+      onErrorDismiss={submission.clearError}
       onSave={submission.save}
     >
       <NewAppointmentFields form={form} />

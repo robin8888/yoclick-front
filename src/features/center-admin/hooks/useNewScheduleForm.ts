@@ -22,19 +22,23 @@ export interface NewScheduleForm {
   submit: () => void;
   isSaving: boolean;
   errorMessage: string | null;
+  clearError: () => void;
   /** Sesiones que el servidor no pudo crear; `null` hasta que se guarda. */
   skipped: ScheduleSeriesWriteResponseDtoSkippedItem[] | null;
   finish: () => void;
 }
 
 /** El formulario de un horario nuevo: al guardar vuelve atrás o enseña lo que no se pudo crear. */
-export function useNewScheduleForm(): NewScheduleForm {
+export function useNewScheduleForm(presetRoomId?: string): NewScheduleForm {
   const router = useRouter();
   const creation = useCreateScheduleSeries();
   const [skipped, setSkipped] = useState<ScheduleSeriesWriteResponseDtoSkippedItem[] | null>(null);
   const { control, handleSubmit, setValue, watch } = useForm<ScheduleFormValues>({
     resolver: zodResolver(scheduleFormSchema),
-    defaultValues: buildEmptyScheduleForm(getTodayIsoDate(new Date(), getDeviceTimeZone())),
+    defaultValues: buildEmptyScheduleForm(
+      getTodayIsoDate(new Date(), getDeviceTimeZone()),
+      presetRoomId,
+    ),
   });
 
   return {
@@ -51,6 +55,7 @@ export function useNewScheduleForm(): NewScheduleForm {
     },
     isSaving: creation.isCreating,
     errorMessage: creation.errorMessage,
+    clearError: creation.clearError,
     skipped,
     finish: router.back,
   };

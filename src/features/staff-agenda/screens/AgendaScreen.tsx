@@ -14,6 +14,10 @@ import { DateNavigator } from '../components/DateNavigator';
 import { ScanAttendanceButton } from '../components/ScanAttendanceButton';
 import { useAgendaDay } from '../hooks/useAgendaDay';
 import { useDayAgenda } from '../hooks/useDayAgenda';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
+
+/** «Ya pasada» aparece sola al cumplirse la hora; con refrescar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
 
 interface AgendaScreenProps {
   /** La agenda del centro (administración) nombra al profesional en cada cita. */
@@ -26,24 +30,27 @@ interface AgendaEntriesProps {
   onRefresh: () => void;
 }
 
+function EmptyAgendaDay({ onRefresh }: Readonly<{ onRefresh: () => void }>): React.JSX.Element {
+  return (
+    <EmptyState
+      iconName="calendar"
+      title={i18n.t('staffAgenda.agenda.emptyTitle')}
+      description={i18n.t('staffAgenda.agenda.emptyDescription')}
+      actionLabel={getSharedStateCopy().retryLabel}
+      onActionPress={onRefresh}
+    />
+  );
+}
+
 function AgendaEntries({
   agenda,
   isCenterWide,
   onRefresh,
 }: Readonly<AgendaEntriesProps>): React.JSX.Element {
   const router = useRouter();
+  const now = useTickingNow(NOW_REFRESH_MS);
 
-  if (agenda.entries.length === 0) {
-    return (
-      <EmptyState
-        iconName="calendar"
-        title={i18n.t('staffAgenda.agenda.emptyTitle')}
-        description={i18n.t('staffAgenda.agenda.emptyDescription')}
-        actionLabel={getSharedStateCopy().retryLabel}
-        onActionPress={onRefresh}
-      />
-    );
-  }
+  if (agenda.entries.length === 0) return <EmptyAgendaDay onRefresh={onRefresh} />;
   return (
     <>
       {agenda.entries.map((entry) => (
@@ -52,6 +59,7 @@ function AgendaEntries({
           entry={entry}
           timeZone={agenda.timezone}
           shouldShowStaffName={isCenterWide}
+          now={now}
           onPress={() => {
             router.push({
               pathname: '/(staff)/sessions/[bookingId]',

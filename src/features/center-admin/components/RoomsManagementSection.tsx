@@ -4,9 +4,9 @@ import { View } from 'react-native';
 import type { RoomListResponseDtoRoomsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
-import { ListItem } from '@/ui/molecules/ListItem';
 
 import { useRoomList } from '../hooks/useRoomList';
+import { RoomCard } from './RoomCard';
 import { SectionHeader } from './SectionHeader';
 
 const SECTION_STYLE = { gap: 12 } as const;
@@ -37,12 +37,12 @@ function RoomItems({
 
   return (
     <>
-      {rooms.map((room) => (
-        <ListItem
+      {rooms.map((room, position) => (
+        <RoomCard
           key={room.id}
-          title={room.name}
+          name={room.name}
+          position={position}
           subtitle={describeRoom(room)}
-          leadingIconName="home"
           accessibilityLabel={i18n.t('centerAdmin.management.roomLabel', {
             name: room.name,
             capacity: room.capacity,

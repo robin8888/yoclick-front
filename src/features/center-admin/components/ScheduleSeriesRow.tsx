@@ -1,37 +1,77 @@
 import { useRouter } from 'expo-router';
+import { Pressable, View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
-import { ListItem } from '@/ui/molecules/ListItem';
+import { useTheme } from '@/shared/theme';
+import { Icon } from '@/ui/atoms/Icon';
+import { IconButton } from '@/ui/atoms/IconButton';
+import { Text } from '@/ui/atoms/Text';
 
 import {
   describeSeriesName,
   describeSeriesPlace,
   type SeriesOfDay,
 } from '../model/schedule-summary';
+import {
+  createScheduleCardStyle,
+  createScheduleContentStyle,
+  createScheduleTimePillStyle,
+} from './ScheduleSeriesRow.styles';
 
 interface ScheduleSeriesRowProps {
   entry: SeriesOfDay;
 }
 
-/** Un horario en la semana: «18:00–19:30 · Inglés B1» y dónde, con quién y cuántos matriculados. */
-export function ScheduleSeriesRow({ entry }: Readonly<ScheduleSeriesRowProps>): React.JSX.Element {
+/** Abrir el detalle del horario o su edición directa. */
+function useOpenSeries(seriesId: string) {
   const router = useRouter();
+
+  return {
+    openDetail: () => {
+      router.push({ pathname: '/(admin)/schedules/[seriesId]', params: { seriesId } });
+    },
+    openEditor: () => {
+      router.push({ pathname: '/(admin)/schedules/edit/[seriesId]', params: { seriesId } });
+    },
+  };
+}
+
+/**
+ * Un horario en la semana: la franja horaria entera, el nombre y el sitio; tocarlo abre el detalle
+ * (matriculados, terminar) y el lápiz de al lado lo edita directamente (hora, sala, profesor, fechas).
+ */
+export function ScheduleSeriesRow({ entry }: Readonly<ScheduleSeriesRowProps>): React.JSX.Element {
+  const theme = useTheme();
   const { series, day } = entry;
-  const timeRange = `${day.startsAtTime}–${day.endsAtTime}`;
+  const open = useOpenSeries(series.seriesId);
   const name = describeSeriesName(series);
+  const timeRange = `${day.startsAtTime}–${day.endsAtTime}`;
 
   return (
-    <ListItem
-      title={`${timeRange} · ${name}`}
-      subtitle={describeSeriesPlace(series)}
-      leadingIconName="calendar"
-      accessibilityLabel={i18n.t('centerAdmin.schedules.rowLabel', { time: timeRange, name })}
-      onPress={() => {
-        router.push({
-          pathname: '/(admin)/schedules/[seriesId]',
-          params: { seriesId: series.seriesId },
-        });
-      }}
-    />
+    <View style={createScheduleCardStyle(theme)}>
+      <Pressable
+        role="button"
+        accessibilityLabel={i18n.t('centerAdmin.schedules.rowLabel', { time: timeRange, name })}
+        onPress={open.openDetail}
+        style={createScheduleContentStyle(theme)}
+      >
+        <View style={createScheduleTimePillStyle(theme)}>
+          <Icon name="clock" size="inline" color="brandInk" />
+          <Text variant="bodyStrong" color="brandInk">
+            {`${day.startsAtTime} – ${day.endsAtTime}`}
+          </Text>
+        </View>
+        <Text variant="bodyStrong">{name}</Text>
+        <Text variant="caption" color="ink2">
+          {describeSeriesPlace(series)}
+        </Text>
+      </Pressable>
+      <IconButton
+        iconName="edit"
+        variant="tonal"
+        accessibilityLabel={i18n.t('centerAdmin.schedules.editRowLabel', { time: timeRange, name })}
+        onPress={open.openEditor}
+      />
+    </View>
   );
 }

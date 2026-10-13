@@ -7,7 +7,8 @@ import { i18n } from '@/shared/i18n';
 import { getTodayIsoDate } from '@/shared/lib/format';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
-import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -25,7 +26,6 @@ import {
   type RoomBlockFormValues,
 } from '../model/room-block-form';
 import { roomBlocksRouteParamsSchema } from '../model/room-blocks-route-params';
-import { stepTime } from '../model/schedule-form';
 
 type RoomBlockForm = UseFormReturn<RoomBlockFormValues>;
 
@@ -70,11 +70,11 @@ function BlockTimeAndReasonFields({ form }: Readonly<{ form: RoomBlockForm }>): 
         startsAtTime={values.startsAtTime}
         endsAtTime={values.endsAtTime}
         errorMessage={errors.endsAtTime?.message}
-        onStartStep={(direction) => {
-          form.setValue('startsAtTime', stepTime(values.startsAtTime, direction));
+        onStartTimeChange={(time) => {
+          form.setValue('startsAtTime', time);
         }}
-        onEndStep={(direction) => {
-          form.setValue('endsAtTime', stepTime(values.endsAtTime, direction));
+        onEndTimeChange={(time) => {
+          form.setValue('endsAtTime', time);
         }}
       />
       <ChoiceChipsField
@@ -93,14 +93,26 @@ function BlockTimeAndReasonFields({ form }: Readonly<{ form: RoomBlockForm }>): 
   );
 }
 
+/** Sin la zona del centro no se puede convertir la hora local a UTC: el botón espera. */
+function SaveBlockButton(
+  props: Readonly<{ isDisabled: boolean; onPress: () => void }>,
+): React.JSX.Element {
+  return <Button isFullWidth label={i18n.t('centerAdmin.roomBlocks.saveAction')} {...props} />;
+}
+
+/** El formulario de un bloqueo: vacío, con hoy como día, validado con zod. */
+function useRoomBlockForm() {
+  return useForm<RoomBlockFormValues>({
+    resolver: zodResolver(roomBlockFormSchema),
+    defaultValues: buildEmptyRoomBlockForm(getTodayIsoDate(new Date(), getDeviceTimeZone())),
+  });
+}
+
 function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JSX.Element {
   const router = useRouter();
   const timeZone = useCenterTimeZone();
   const creation = useCreateRoomBlock(roomId);
-  const form = useForm<RoomBlockFormValues>({
-    resolver: zodResolver(roomBlockFormSchema),
-    defaultValues: buildEmptyRoomBlockForm(getTodayIsoDate(new Date(), getDeviceTimeZone())),
-  });
+  const form = useRoomBlockForm();
 
   return (
     <ScreenTemplate
@@ -109,10 +121,7 @@ function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JS
       backLabel={i18n.t('actions.back')}
       isLoading={creation.isCreating}
       footer={
-        <Button
-          isFullWidth
-          label={i18n.t('centerAdmin.roomBlocks.saveAction')}
-          // Sin la zona del centro no se puede convertir la hora local a UTC.
+        <SaveBlockButton
           isDisabled={timeZone === null}
           onPress={() => {
             if (timeZone === null) return;
@@ -131,7 +140,11 @@ function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JS
         label={i18n.t('centerAdmin.roomBlocks.noteLabel')}
         placeholder={i18n.t('centerAdmin.roomBlocks.notePlaceholder')}
       />
-      {creation.errorMessage === null ? null : <FormErrorBanner message={creation.errorMessage} />}
+      <ProblemModal
+        message={creation.errorMessage}
+        onDismiss={creation.clearError}
+        {...getProblemModalCopy()}
+      />
     </ScreenTemplate>
   );
 }

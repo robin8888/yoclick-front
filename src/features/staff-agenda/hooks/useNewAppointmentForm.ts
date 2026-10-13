@@ -18,7 +18,7 @@ import { useHasCenterRooms } from './useHasCenterRooms';
 import { useGroupOptions } from './useGroupOptions';
 import { usePlacementOptions } from './usePlacementOptions';
 import type { AgendaStaffMember } from '../model/center-agenda-summary';
-import { getTodayIsoDate, shiftIsoDate } from '../model/agenda-date';
+import { getTodayIsoDate } from '../model/agenda-date';
 import { listServicesOfStaff, resolveServiceId } from '../model/staff-services';
 import {
   findFreeRooms,
@@ -44,7 +44,8 @@ interface NewAppointmentRequest {
 }
 
 export interface NewAppointmentForm {
-  client: ChosenClient | null;
+  /** A quiénes se les pone la cita: varias solo en grupal (o al apuntarse a una clase). */
+  clients: ChosenClient[];
   staff: AgendaStaffMember[];
   staffMembershipId: string | null;
   serviceId: string | null;
@@ -53,8 +54,8 @@ export interface NewAppointmentForm {
   staffServices: ServiceListResponseDtoServicesItem[];
   /** El día para el que se busca disponibilidad. */
   isoDate: string;
-  goToPreviousDay: () => void;
-  goToNextDay: () => void;
+  /** Elige el día de la cita (desde el calendario). */
+  selectDate: (isoDate: string) => void;
   /** El centro tiene salas: se elige si la cita es privada o grupal. */
   hasCenterRooms: boolean;
   slots: SlotOption[];
@@ -68,8 +69,9 @@ export interface NewAppointmentForm {
   /** Grupos de ese día con plazas libres, a los que se puede apuntar a más gente. */
   joinableGroups: readonly JoinableGroup[];
   joinSessionId: string | null;
-  selectClient: (client: ChosenClient) => void;
-  clearClient: () => void;
+  /** Marca o desmarca a una persona; si no caben varias, elegir a otra sustituye a la anterior. */
+  toggleClient: (client: ChosenClient, options: { canChooseSeveral: boolean }) => void;
+  clearClients: () => void;
   selectStaff: (staffMembershipId: string) => void;
   selectService: (serviceId: string) => void;
   selectSlot: (slot: SlotOption) => void;
@@ -156,9 +158,20 @@ function useWhenChoices() {
   };
 }
 
+/** Marca o desmarca a una persona; sin varias personas permitidas, la elegida sustituye a la anterior. */
+export function toggleChosenClient(
+  current: readonly ChosenClient[],
+  chosen: ChosenClient,
+  canChooseSeveral: boolean,
+): ChosenClient[] {
+  const isChosen = current.some((client) => client.membershipId === chosen.membershipId);
+  if (isChosen) return current.filter((client) => client.membershipId !== chosen.membershipId);
+  return canChooseSeveral ? [...current, chosen] : [chosen];
+}
+
 /** Lo elegido a mano; la hora, la sala y el grupo se calculan a partir de ello. */
 function useChoices() {
-  const [client, setClient] = useState<ChosenClient | null>(null);
+  const [clients, setClients] = useState<ChosenClient[]>([]);
   const [staffMembershipId, setStaffMembershipId] = useState<string | null>(null);
   const [serviceId, setServiceId] = useState<string | null>(null);
   const { clearWhen, selectGroupSlot, selectMode, ...when } = useWhenChoices();
@@ -168,17 +181,21 @@ function useChoices() {
     selectMode: (nextMode: AppointmentMode) => {
       selectMode(nextMode);
       setStaffMembershipId(null);
+      // Una cita privada es de una sola persona: se queda la primera.
+      if (nextMode === 'private') setClients((current) => current.slice(0, 1));
     },
     selectGroupSlot: (pick: GroupSlotPick) => {
       setStaffMembershipId(pick.staffMembershipId);
       selectGroupSlot(pick.startsAt, pick.roomId);
     },
-    client,
+    clients,
     staffMembershipId,
     serviceId,
-    selectClient: setClient,
-    clearClient: () => {
-      setClient(null);
+    toggleClient: (chosen: ChosenClient, options: { canChooseSeveral: boolean }) => {
+      setClients((current) => toggleChosenClient(current, chosen, options.canChooseSeveral));
+    },
+    clearClients: () => {
+      setClients([]);
     },
     selectStaff: (nextStaffMembershipId: string) => {
       setStaffMembershipId(nextStaffMembershipId);
@@ -217,20 +234,16 @@ function useRoomPlacement(request: {
 
 /** El día elegido: empieza en el de la agenda desde la que se abrió, o en hoy. */
 function useAppointmentDay(initialIsoDate: string) {
-  const [isoDate, setIsoDate] = useState(
-    () => initialIsoDate || getTodayIsoDate(new Date(), DEFAULT_CENTER_TIME_ZONE),
+  const [todayIsoDate] = useState(() => getTodayIsoDate(new Date(), DEFAULT_CENTER_TIME_ZONE));
+  // Un día que ya pasó no vale: si se abre desde una agenda antigua, se empieza hoy.
+  const [isoDate, setIsoDate] = useState(() =>
+    initialIsoDate !== '' && initialIsoDate >= todayIsoDate ? initialIsoDate : todayIsoDate,
   );
-  const move = (dayOffset: number): void => {
-    setIsoDate((currentDate) => shiftIsoDate(currentDate, dayOffset) ?? currentDate);
-  };
 
   return {
     isoDate,
-    goToPreviousDay: () => {
-      move(-1);
-    },
-    goToNextDay: () => {
-      move(1);
+    selectDate: (nextIsoDate: string) => {
+      if (nextIsoDate >= todayIsoDate) setIsoDate(nextIsoDate);
     },
   };
 }

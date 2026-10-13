@@ -1,5 +1,6 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
+import { ClientPassesSection } from '@/features/passes';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
@@ -45,6 +46,7 @@ function ClientEditorContent({
         onGroupChoose={editor.chooseGroup}
       />
       {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
+      <ClientPassesSection clientMembershipId={membershipId} />
       <ClientDataExportSection membershipId={membershipId} />
     </ScreenTemplate>
   );

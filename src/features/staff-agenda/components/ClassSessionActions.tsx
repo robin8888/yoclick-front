@@ -8,19 +8,11 @@ interface ClassSessionActionsProps {
   phase: SessionPhase;
   /** Dentro de la ventana de inicio (15 min antes hasta el fin de la cita). */
   canStartNow: boolean;
-  /** Antes de la ventana: se explica que aún es pronto; después, que ya terminó sin registrarse. */
+  /** Pasada la ventana la cita ya terminó sin registrarse: se explica y no se ofrece iniciarla. */
   isStartWindowPast: boolean;
   isStarting: boolean;
   onStart: () => void;
   onEndRequest: () => void;
-}
-
-function describeBlockedStart(isStartWindowPast: boolean): string {
-  return i18n.t(
-    isStartWindowPast
-      ? 'staffAgenda.session.startTooLateHint'
-      : 'staffAgenda.session.startTooEarlyHint',
-  );
 }
 
 /** El botón (o la explicación) que toca según el punto en el que está la clase. */
@@ -41,6 +33,9 @@ export function ClassSessionActions({
     );
   }
   if (phase === 'finished') return null;
+  if (isStartWindowPast) {
+    return <Text color="ink2">{i18n.t('staffAgenda.session.startTooLateHint')}</Text>;
+  }
   return (
     <>
       <Button
@@ -50,7 +45,9 @@ export function ClassSessionActions({
         isLoading={isStarting}
         onPress={onStart}
       />
-      {canStartNow ? null : <Text color="ink2">{describeBlockedStart(isStartWindowPast)}</Text>}
+      {canStartNow ? null : (
+        <Text color="ink2">{i18n.t('staffAgenda.session.startTooEarlyHint')}</Text>
+      )}
     </>
   );
 }

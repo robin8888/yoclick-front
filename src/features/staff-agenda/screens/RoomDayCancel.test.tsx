@@ -5,6 +5,7 @@ import { useSessionStore } from '@/shared/auth/session-store';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { findApiCall, mockApi } from '@/test/mock-api';
 import { resetMockRouter } from '@/test/mock-router';
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { RoomDayScreen } from './RoomDayScreen';
@@ -69,6 +70,15 @@ function signInToCenter(): void {
     useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
   });
 }
+
+// Las citas de prueba son del 12 de octubre de 2026: «ahora» es esa mañana para que no estén «terminadas».
+beforeEach(() => {
+  freezeClockAt('2026-10-12T06:00:00.000Z');
+});
+
+afterEach(() => {
+  restoreClock();
+});
 
 describe('RoomDayScreen · fixed schedules and blocks', () => {
   beforeEach(() => {

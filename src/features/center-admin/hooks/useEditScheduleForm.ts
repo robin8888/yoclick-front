@@ -22,6 +22,7 @@ export interface EditScheduleForm {
   submit: () => void;
   isSaving: boolean;
   errorMessage: string | null;
+  clearError: () => void;
   /** Sesiones futuras que el servidor no pudo rehacer; `null` hasta que se guarda. */
   skipped: ScheduleSeriesWriteResponseDtoSkippedItem[] | null;
   finish: () => void;
@@ -56,6 +57,7 @@ export function useEditScheduleForm(series: ScheduleSeries): EditScheduleForm {
     },
     isSaving: update.isUpdating,
     errorMessage: update.errorMessage,
+    clearError: update.clearError,
     skipped,
     finish: router.back,
   };

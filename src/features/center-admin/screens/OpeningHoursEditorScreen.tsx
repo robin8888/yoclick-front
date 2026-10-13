@@ -36,8 +36,8 @@ function OpeningDaysList({ editor, draft }: Readonly<OpeningDaysListProps>): Rea
           onRangeRemove={(rangeIndex) => {
             editor.removeRange(day, rangeIndex);
           }}
-          onTimeStep={(change) => {
-            editor.stepTime(day, change);
+          onTimeChange={(change) => {
+            editor.changeTime(day, change);
           }}
         />
       ))}

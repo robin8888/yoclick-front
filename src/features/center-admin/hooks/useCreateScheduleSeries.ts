@@ -20,6 +20,8 @@ interface CreateScheduleSeries {
   ) => void;
   isCreating: boolean;
   errorMessage: string | null;
+  /** Cierra el aviso del error para poder volver a intentarlo. */
+  clearError: () => void;
 }
 
 /** Crea un horario (una serie de uno o varios días). No es optimista: el servidor materializa sesiones. */
@@ -40,5 +42,6 @@ export function useCreateScheduleSeries(): CreateScheduleSeries {
     },
     isCreating: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
+    clearError: mutation.reset,
   };
 }

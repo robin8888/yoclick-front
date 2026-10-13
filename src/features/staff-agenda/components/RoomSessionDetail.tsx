@@ -3,33 +3,55 @@ import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { formatTime24h } from '@/shared/lib/format/format-time';
-import { useTheme } from '@/shared/theme';
+import { buildFinishedLook, useTheme } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
-import { hasFreeSeats, type RoomSession } from '../model/room-agenda';
+import { canJoinSession, hasSessionEnded, type RoomSession } from '../model/room-agenda';
 import { createEntryCardStyle } from './AgendaEntryCard.styles';
+import { AttendeeRow } from './AttendeeRow';
 import { CancelSessionDayControl } from './CancelSessionDayControl';
 
 interface RoomSessionDetailProps {
   session: RoomSession;
   timeZone: string;
   isoDate: string;
+  now: Date;
 }
 
-function AttendeeList({ session }: Readonly<{ session: RoomSession }>): React.JSX.Element {
+interface AttendeeListProps {
+  session: RoomSession;
+  isFinished: boolean;
+}
+
+function AttendeeList({ session, isFinished }: Readonly<AttendeeListProps>): React.JSX.Element {
+  const router = useRouter();
+  const { tint } = buildFinishedLook(isFinished);
+
   return (
     <>
-      <Text variant="bodyStrong">{i18n.t('staffAgenda.rooms.attendeesTitle')}</Text>
+      <Text variant="bodyStrong" {...tint}>
+        {i18n.t('staffAgenda.rooms.attendeesTitle')}
+      </Text>
       {session.attendees.length === 0 ? (
-        <Text color="ink2">{i18n.t('staffAgenda.rooms.noAttendees')}</Text>
+        <Text color="ink2" {...tint}>
+          {i18n.t('staffAgenda.rooms.noAttendees')}
+        </Text>
       ) : null}
       {session.attendees.map((attendee) => (
-        <Text key={attendee.bookingId}>
-          {attendee.source === 'enrollment'
-            ? i18n.t('staffAgenda.rooms.enrollmentAttendee', { name: attendee.fullName })
-            : attendee.fullName}
-        </Text>
+        <AttendeeRow
+          key={attendee.bookingId}
+          fullName={attendee.fullName}
+          photoUrl={attendee.photoUrl}
+          isEnrollment={attendee.source === 'enrollment'}
+          tintColor={tint.tintColor}
+          onPress={() => {
+            router.push({
+              pathname: '/(admin)/clients/[membershipId]',
+              params: { membershipId: attendee.clientMembershipId },
+            });
+          }}
+        />
       ))}
     </>
   );
@@ -57,20 +79,36 @@ function AddPeopleButton({
   );
 }
 
-/** «Cancelada: motivo» o, si sigue en pie, «Horario fijo» y las acciones del día. */
-function SessionStateLines({ session }: Readonly<{ session: RoomSession }>): React.JSX.Element {
+/** «Horario fijo», «Cancelada: motivo» o «Terminada»: el estado con palabra, no solo con color. */
+function SessionStateLines({
+  session,
+  isFinished,
+  isMuted,
+}: Readonly<{
+  session: RoomSession;
+  isFinished: boolean;
+  /** Terminada o cancelada: va en gris con texto blanco. */
+  isMuted: boolean;
+}>): React.JSX.Element {
+  const { tint } = buildFinishedLook(isMuted);
+
   return (
     <>
       {session.schedule === null ? null : (
-        <Text variant="caption" color="info">
+        <Text variant="caption" color="info" {...tint}>
           {session.schedule.label ?? i18n.t('staffAgenda.rooms.scheduleSession')}
         </Text>
       )}
       {session.cancelledReason === null ? null : (
-        <Text color="danger" role="alert">
+        <Text color="danger" role="alert" {...tint}>
           {i18n.t('staffAgenda.rooms.cancelledSession', { reason: session.cancelledReason })}
         </Text>
       )}
+      {isFinished ? (
+        <Text variant="bodyStrong" color="ink2" {...tint}>
+          {i18n.t('staffAgenda.rooms.finishedSession')}
+        </Text>
+      ) : null}
     </>
   );
 }
@@ -80,33 +118,41 @@ export function RoomSessionDetail({
   session,
   timeZone,
   isoDate,
+  now,
 }: Readonly<RoomSessionDetailProps>): React.JSX.Element {
   const theme = useTheme();
-  const startTime = formatTime24h(session.startsAt, timeZone);
   const isCancelled = session.cancelledReason !== null;
+  const isFinished = !isCancelled && hasSessionEnded(session, now);
+  // Las clases canceladas y las terminadas se ven igual de apagadas: gris con texto blanco.
+  const isMuted = isCancelled || isFinished;
+  const { tint, cardStyle } = buildFinishedLook(isMuted);
 
   return (
-    <View style={createEntryCardStyle(theme)}>
-      <Text variant="titleMd" color="brandInk">
+    <View style={[createEntryCardStyle(theme), cardStyle]}>
+      <Text variant="titleMd" color="brandInk" {...tint}>
         {i18n.t('staffAgenda.agenda.timeRange', {
-          startTime,
+          startTime: formatTime24h(session.startsAt, timeZone),
           endTime: formatTime24h(session.endsAt, timeZone),
         })}
       </Text>
-      <Text variant="bodyStrong">{session.service.name}</Text>
-      <Text>{i18n.t('staffAgenda.rooms.teacherLine', { teacher: session.teacher.fullName })}</Text>
-      <Text color="ink2">
+      <Text variant="bodyStrong" {...tint}>
+        {session.service.name}
+      </Text>
+      <Text {...tint}>
+        {i18n.t('staffAgenda.rooms.teacherLine', { teacher: session.teacher.fullName })}
+      </Text>
+      <Text color="ink2" {...tint}>
         {i18n.t('staffAgenda.rooms.seats', {
           booked: session.bookedCount,
           capacity: session.capacity,
         })}
       </Text>
-      <SessionStateLines session={session} />
-      <AttendeeList session={session} />
-      {!isCancelled && session.mode === 'group' && hasFreeSeats(session) ? (
+      <SessionStateLines session={session} isFinished={isFinished} isMuted={isMuted} />
+      <AttendeeList session={session} isFinished={isMuted} />
+      {canJoinSession(session, now) ? (
         <AddPeopleButton isoDate={isoDate} sessionId={session.id} />
       ) : null}
-      {isCancelled ? null : <CancelSessionDayControl sessionId={session.id} />}
+      {isCancelled || isFinished ? null : <CancelSessionDayControl sessionId={session.id} />}
     </View>
   );
 }

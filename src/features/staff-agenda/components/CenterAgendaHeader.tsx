@@ -11,7 +11,7 @@ interface CenterAgendaHeaderProps {
   title: string;
 }
 
-/** Prototipo `aagenda`: fecha, título «Agenda del centro» y la campana con los avisos sin leer. */
+/** Título («Inicio») con la fecha debajo y la campana con los avisos sin leer. */
 export function CenterAgendaHeader({
   dateLabel,
   title,
@@ -21,11 +21,11 @@ export function CenterAgendaHeader({
   return (
     <View style={createCenterHeaderStyle(theme)}>
       <View style={CENTER_HEADER_TEXT_STYLE}>
-        <Text variant="caption" color="ink2">
-          {dateLabel}
-        </Text>
         <Text variant="titleLg" role="heading">
           {title}
+        </Text>
+        <Text variant="caption" color="ink2">
+          {dateLabel}
         </Text>
       </View>
       <NotificationBell href="/(admin)/(tabs)/notifications" />

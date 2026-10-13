@@ -1,6 +1,7 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { AgendaScreen } from './screens/AgendaScreen';
 export { CenterAgendaScreen } from './screens/CenterAgendaScreen';
+export { CenterDayAgendaScreen } from './screens/CenterDayAgendaScreen';
 export { InstructorAgendaScreen } from './screens/InstructorAgendaScreen';
 export { ClassSessionScreen } from './screens/ClassSessionScreen';
 export { AdminTabBar, StaffTabBar } from './components/StaffTabBars';

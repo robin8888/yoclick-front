@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ApiError } from '@/shared/api/api-error';
 import { getApiErrorMessage } from '@/shared/api/errors';
 import { getRoomsListQueryKey, roomsCreate } from '@/shared/api/generated/endpoints/rooms/rooms';
-import type { CreateRoomRequestDto } from '@/shared/api/generated/model';
+import type { CreateRoomRequestDto, RoomResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 
 import { useActiveCenterId } from './useActiveCenterId';
@@ -24,14 +24,16 @@ function describeCreationFailure(error: unknown): string {
   return getApiErrorMessage(error);
 }
 
-/** Añade una sala; no es optimista y, al terminar, vuelve a pedir la lista. */
-export function useCreateRoom(onDone: () => void): CreateRoom {
+/** Añade una sala; no es optimista y, al terminar, vuelve a pedir la lista y avisa con la sala creada. */
+export function useCreateRoom(onCreated: (room: RoomResponseDto) => void): CreateRoom {
   const centerId = useActiveCenterId();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (request: CreateRoomRequestDto) => roomsCreate(centerId, request),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: getRoomsListQueryKey(centerId) }).then(onDone);
+    onSuccess: (room) => {
+      void queryClient.invalidateQueries({ queryKey: getRoomsListQueryKey(centerId) }).then(() => {
+        onCreated(room);
+      });
     },
   });
 

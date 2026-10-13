@@ -34,8 +34,8 @@ function WeekDays({ editing, draft }: Readonly<WeekDaysProps>): React.JSX.Elemen
           onRangeRemove={(rangeIndex) => {
             editing.removeRange(day, rangeIndex);
           }}
-          onTimeStep={(change) => {
-            editing.stepTime(day, change);
+          onTimeChange={(change) => {
+            editing.changeTime(day, change);
           }}
         />
       ))}

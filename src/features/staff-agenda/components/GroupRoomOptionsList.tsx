@@ -7,23 +7,32 @@ import { Text } from '@/ui/atoms/Text';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 import { SlotButton } from '@/ui/molecules/SlotButton';
 
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
+
 import type { NewAppointmentForm } from '../hooks/useNewAppointmentForm';
+import { keepFutureSlots } from '@/shared/lib/slot-hours';
 import { CHIP_ROW_STYLE } from './AppointmentTimePicker.styles';
+
+/** Las horas que pasan desaparecen solas; con mirar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
 
 interface RoomEntryProps {
   entry: GroupOptionsResponseDtoRoomsItem;
   form: NewAppointmentForm;
+  /** Para no ofrecer horas ni grupos que ya empezaron. */
+  now: Date;
 }
 
-function RoomSlotChips({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Element {
+function RoomSlotChips({ entry, form, now }: Readonly<RoomEntryProps>): React.JSX.Element {
   const { room } = entry;
+  const openSlots = keepFutureSlots(entry.openSlots, now);
 
-  if (entry.openSlots.length === 0) {
+  if (openSlots.length === 0) {
     return <Text color="ink2">{i18n.t('staffAgenda.newAppointment.groupRoomNoSlots')}</Text>;
   }
   return (
     <View style={CHIP_ROW_STYLE.row}>
-      {entry.openSlots.map((slot) => (
+      {openSlots.map((slot) => (
         <SlotButton
           key={slot.startsAt}
           timeLabel={formatTime24h(slot.startsAt, form.timeZone)}
@@ -45,10 +54,10 @@ function RoomSlotChips({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Ele
   );
 }
 
-function RoomGroupCards({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Element {
+function RoomGroupCards({ entry, form, now }: Readonly<RoomEntryProps>): React.JSX.Element {
   return (
     <>
-      {entry.groupSessions.map((group) => (
+      {keepFutureSlots(entry.groupSessions, now).map((group) => (
         <OptionCard
           key={group.sessionId}
           title={i18n.t('staffAgenda.newAppointment.joinOption', {
@@ -71,7 +80,7 @@ function RoomGroupCards({ entry, form }: Readonly<RoomEntryProps>): React.JSX.El
 }
 
 /** Una sala con uno de sus profesores: las horas libres de los dos y los grupos con plazas. */
-function RoomEntry({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Element {
+function RoomEntry({ entry, form, now }: Readonly<RoomEntryProps>): React.JSX.Element {
   const { room } = entry;
 
   return (
@@ -85,8 +94,8 @@ function RoomEntry({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Element
       <Text variant="caption" color="ink2">
         {i18n.t('staffAgenda.newAppointment.groupRoomSeats', { capacity: room.capacity })}
       </Text>
-      <RoomSlotChips entry={entry} form={form} />
-      <RoomGroupCards entry={entry} form={form} />
+      <RoomSlotChips entry={entry} form={form} now={now} />
+      <RoomGroupCards entry={entry} form={form} now={now} />
     </View>
   );
 }
@@ -98,6 +107,8 @@ function RoomEntry({ entry, form }: Readonly<RoomEntryProps>): React.JSX.Element
 export function GroupRoomOptionsList({
   form,
 }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
+  const now = useTickingNow(NOW_REFRESH_MS);
+
   return (
     <>
       <Text variant="titleMd">{i18n.t('staffAgenda.newAppointment.groupRoomsTitle')}</Text>
@@ -112,6 +123,7 @@ export function GroupRoomOptionsList({
           key={`${entry.room.id}:${entry.room.staff.membershipId}`}
           entry={entry}
           form={form}
+          now={now}
         />
       ))}
     </>

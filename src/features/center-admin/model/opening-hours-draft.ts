@@ -73,28 +73,26 @@ export function removeRangeFromDay(
   return { ...draft, [day]: draft[day].filter((_range, index) => index !== rangeIndex) };
 }
 
-interface TimeStepRequest {
+interface TimeChangeRequest {
   draft: OpeningHoursDraft;
   day: WeekDay;
   rangeIndex: number;
   field: TimeField;
-  /** `1` suma un paso de 30 minutos y `-1` lo resta. */
-  direction: 1 | -1;
+  /** `HH:MM`, ya elegida en las ruedas (que no dejan cruzar «de» y «hasta»). */
+  time: string;
 }
 
-export function stepRangeTime({
+/** Pone la hora de un extremo de un tramo. */
+export function setRangeTime({
   draft,
   day,
   rangeIndex,
   field,
-  direction,
-}: TimeStepRequest): OpeningHoursDraft {
-  const ranges = draft[day].map((range, index) => {
-    if (index !== rangeIndex) return range;
-    const steppedMinutes = timeToMinutes(range[field]) + direction * TIME_STEP_MINUTES;
-    const clampedMinutes = Math.min(Math.max(steppedMinutes, 0), LAST_MINUTE_OF_DAY);
-    return { ...range, [field]: minutesToTime(clampedMinutes) };
-  });
+  time,
+}: TimeChangeRequest): OpeningHoursDraft {
+  const ranges = draft[day].map((range, index) =>
+    index === rangeIndex ? { ...range, [field]: time } : range,
+  );
   return { ...draft, [day]: ranges };
 }
 

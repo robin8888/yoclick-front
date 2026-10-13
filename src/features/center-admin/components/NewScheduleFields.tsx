@@ -7,11 +7,12 @@ import type { NewScheduleForm } from '../hooks/useNewScheduleForm';
 import type { ScheduleFormOptions } from '../hooks/useScheduleFormOptions';
 import {
   applyServiceChoice,
+  NO_END_VALUE,
   NO_ROOM_VALUE,
   ROOM_TEACHER_VALUE,
-  stepTime,
   toggleWeekday,
 } from '../model/schedule-form';
+import { getEndOfWeeks } from '../model/schedule-week';
 import { ChoiceChipsField, type ChoiceOption } from './ChoiceChipsField';
 import { ScheduleModeField } from './ScheduleModeField';
 import { SchedulePeriodFields } from './SchedulePeriodFields';
@@ -34,8 +35,12 @@ function listRoomOptions(options: ScheduleFormOptions): ChoiceOption[] {
 /** El profesor fijo del espacio (si lo tiene) y el resto del equipo. */
 function listTeacherOptions(options: ScheduleFormOptions): ChoiceOption[] {
   const roomTeacher = options.selectedRoom?.staff ?? null;
+  // El profesor fijo del espacio solo vale si es de los que dan ese servicio.
+  const isRoomTeacherGivingService = options.staffMembers.some(
+    (member) => member.membershipId === roomTeacher?.membershipId,
+  );
   const roomTeacherOption =
-    roomTeacher === null
+    roomTeacher === null || !isRoomTeacherGivingService
       ? []
       : [
           {
@@ -143,11 +148,11 @@ function ScheduleWhenFields({
         startsAtTime={form.values.startsAtTime}
         endsAtTime={form.values.endsAtTime}
         errorMessage={errors.endsAtTime?.message}
-        onStartStep={(direction) => {
-          form.setValue('startsAtTime', stepTime(form.values.startsAtTime, direction));
+        onStartTimeChange={(time) => {
+          form.setValue('startsAtTime', time);
         }}
-        onEndStep={(direction) => {
-          form.setValue('endsAtTime', stepTime(form.values.endsAtTime, direction));
+        onEndTimeChange={(time) => {
+          form.setValue('endsAtTime', time);
         }}
       />
     </>
@@ -178,6 +183,13 @@ function ScheduleExtraFields({
         }}
         onEndsOnChange={(isoDate) => {
           form.setValue('endsOn', isoDate, { shouldValidate: true });
+        }}
+        onPeriodPresetSelect={(weekCount) => {
+          form.setValue(
+            'endsOn',
+            weekCount === null ? NO_END_VALUE : getEndOfWeeks(form.values.startsOn, weekCount),
+            { shouldValidate: true },
+          );
         }}
       />
       <FormTextField

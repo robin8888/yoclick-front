@@ -32,6 +32,8 @@ describe('listTeachersOfRoomDay', () => {
   });
 });
 
+const NOW = new Date('2026-10-13T10:00:00.000Z');
+
 describe('findSessionInRoomAgenda and canJoinSession', () => {
   const session = {
     id: 'session-1',
@@ -39,6 +41,7 @@ describe('findSessionInRoomAgenda and canJoinSession', () => {
     capacity: 10,
     bookedCount: 3,
     cancelledReason: null,
+    endsAt: '2026-10-13T11:00:00.000Z',
   };
   const agenda = {
     rooms: [{ name: 'Sala 1', sessions: [session] }],
@@ -56,7 +59,8 @@ describe('findSessionInRoomAgenda and canJoinSession', () => {
     ['a full group', { bookedCount: 10 }, false],
     ['a private appointment', { mode: 'private', capacity: 1, bookedCount: 1 }, false],
     ['a cancelled day', { cancelledReason: 'Festivo' }, false],
+    ['a class that already ended', { endsAt: '2026-10-13T09:00:00.000Z' }, false],
   ])('can join %s: %s', (_caseName, overrides, canJoin) => {
-    expect(canJoinSession({ ...session, ...overrides } as RoomSession)).toBe(canJoin);
+    expect(canJoinSession({ ...session, ...overrides } as RoomSession, NOW)).toBe(canJoin);
   });
 });

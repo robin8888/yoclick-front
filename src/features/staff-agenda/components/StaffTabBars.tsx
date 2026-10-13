@@ -47,32 +47,33 @@ function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): r
 
 interface AdminTabsRequest {
   clientsLabel: string;
-  /** «Gestión» (salas, horarios fijos y bloqueos) entre Contenido y Marca. */
-  hasManagementTab: boolean;
+  /** Con salas, «Salas y horarios» se abre desde Inicio: sus pantallas cuelgan de él. */
+  hasRoomManagement: boolean;
 }
 
-const MANAGEMENT_TAB: PathTab = {
-  id: 'management',
-  label: i18n.t('centerAdmin.tabs.management'),
-  iconName: 'settings',
-  href: '/(admin)/(tabs)/management',
-  activePaths: ['/management', '/rooms', '/schedules', '/room-blocks'],
-};
-
-/** Las pantallas de «Servicios y horario» cuelgan de «Marca» (prototipo); las salas, de «Gestión» si existe. */
-function listBrandTabPaths(hasManagementTab: boolean): string[] {
+/** Las pantallas de «Servicios y horario» cuelgan de «Marca» (prototipo); las salas, de la agenda si hay gestión. */
+function listBrandTabPaths(hasRoomManagement: boolean): string[] {
   const paths = ['/brand', '/services', '/hours', '/team'];
-  return hasManagementTab ? paths : [...paths, '/rooms'];
+  return hasRoomManagement ? paths : [...paths, '/rooms'];
 }
 
-function listMainAdminTabs(clientsLabel: string): readonly PathTab[] {
+const MANAGEMENT_PATHS = ['/management', '/rooms', '/schedules', '/room-blocks'];
+
+function listMainAdminTabs(request: AdminTabsRequest): readonly PathTab[] {
+  const { clientsLabel, hasRoomManagement } = request;
   return [
     {
-      id: 'agenda',
-      label: i18n.t('staffAgenda.tabs.agenda'),
-      iconName: 'calendar',
+      id: 'home',
+      label: i18n.t('centerAdmin.tabs.home'),
+      iconName: 'home',
       href: '/(admin)/(tabs)/agenda',
-      activePaths: ['/agenda', '/scan'],
+      activePaths: [
+        '/agenda',
+        '/day-agenda',
+        '/scan',
+        // «Salas y horarios» se abre desde Inicio.
+        ...(hasRoomManagement ? MANAGEMENT_PATHS : []),
+      ],
     },
     {
       id: 'clients',
@@ -91,17 +92,16 @@ function listMainAdminTabs(clientsLabel: string): readonly PathTab[] {
   ];
 }
 
-/** Prototipo `aagenda`: Agenda, Clientes, Contenido, (Gestión), Marca y Más. */
-function listAdminTabs({ clientsLabel, hasManagementTab }: AdminTabsRequest): readonly PathTab[] {
+/** Inicio (donde están la agenda y los accesos del centro), Clientes, Contenido, Marca y Más. */
+function listAdminTabs(request: AdminTabsRequest): readonly PathTab[] {
   return [
-    ...listMainAdminTabs(clientsLabel),
-    ...(hasManagementTab ? [MANAGEMENT_TAB] : []),
+    ...listMainAdminTabs(request),
     {
       id: 'brand',
       label: i18n.t('centerAdmin.tabs.brand'),
       iconName: 'palette',
       href: '/(admin)/(tabs)/brand',
-      activePaths: listBrandTabPaths(hasManagementTab),
+      activePaths: listBrandTabPaths(request.hasRoomManagement),
     },
     {
       id: 'more',
@@ -142,7 +142,7 @@ export function AdminTabBar(): React.JSX.Element {
 
   return (
     <PathTabBar
-      tabs={listAdminTabs({ clientsLabel, hasManagementTab: hasRoomManagement(sectorId) })}
+      tabs={listAdminTabs({ clientsLabel, hasRoomManagement: hasRoomManagement(sectorId) })}
       currentPath={usePathname()}
       onTabPress={(href) => {
         router.navigate(href as Href);

@@ -1,4 +1,4 @@
-import { buildJoinGroupRequest, buildNewAppointmentRequest } from './new-appointment-request';
+import { buildNewAppointmentRequest } from './new-appointment-request';
 
 const COMPLETE = {
   clientMembershipId: 'membership-ana',
@@ -38,18 +38,4 @@ describe('buildNewAppointmentRequest', () => {
       expect(buildNewAppointmentRequest({ ...COMPLETE, [missingField]: null })).toBeNull();
     },
   );
-});
-
-describe('buildJoinGroupRequest', () => {
-  it('needs the client and the group to join', () => {
-    expect(
-      buildJoinGroupRequest({ clientMembershipId: 'membership-ana', joinSessionId: 'session-1' }),
-    ).toEqual({ clientMembershipId: 'membership-ana', classSessionId: 'session-1' });
-    expect(
-      buildJoinGroupRequest({ clientMembershipId: null, joinSessionId: 'session-1' }),
-    ).toBeNull();
-    expect(
-      buildJoinGroupRequest({ clientMembershipId: 'membership-ana', joinSessionId: null }),
-    ).toBeNull();
-  });
 });

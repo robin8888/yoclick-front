@@ -2,9 +2,11 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
 
 import { useSessionStore } from '@/shared/auth/session-store';
+import { FINISHED_PALETTE } from '@/shared/theme';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { RoomAgendaList } from '../components/RoomAgendaList';
@@ -32,6 +34,7 @@ const SESSION = {
     {
       bookingId: '0191d6a0-0000-7000-8000-0000000000c1',
       clientMembershipId: 'client-1',
+      photoUrl: null,
       fullName: 'Lucía Torres',
       status: 'confirmed',
       source: 'single',
@@ -39,6 +42,7 @@ const SESSION = {
     {
       bookingId: '0191d6a0-0000-7000-8000-0000000000c2',
       clientMembershipId: 'client-2',
+      photoUrl: null,
       fullName: 'Marcos Díaz',
       status: 'confirmed',
       source: 'single',
@@ -70,6 +74,15 @@ function signInToCenter(): void {
     useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
   });
 }
+
+// Las citas de prueba son del 12 de octubre de 2026: «ahora» es esa mañana para que no estén «terminadas».
+beforeEach(() => {
+  freezeClockAt('2026-10-12T06:00:00.000Z');
+});
+
+afterEach(() => {
+  restoreClock();
+});
 
 describe('RoomAgendaList', () => {
   beforeEach(() => {
@@ -124,7 +137,23 @@ describe('RoomDayGrid', () => {
     expect(screen.getByText('18:00')).toBeOnTheScreen();
     expect(screen.getByRole('radio', { name: 'A: Sala de baile' })).toBeOnTheScreen();
     expect(screen.getByRole('radio', { name: 'B: Aula común' })).toBeOnTheScreen();
-    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Salsa.*2\/10/ })).toBeOnTheScreen();
+  });
+
+  it('paints a cancelled class grey, with its state written', () => {
+    const cancelledAgenda = {
+      ...GRID_AGENDA,
+      rooms: GRID_AGENDA.rooms.map((room) => ({
+        ...room,
+        sessions: room.sessions.map((session) => ({ ...session, cancelledReason: 'Festivo' })),
+      })),
+    };
+    renderScreen(<RoomDayGrid agenda={cancelledAgenda} isoDate="2026-10-12" />);
+
+    const chip = screen.getByRole('button', { name: /Sala de baile, Salsa.*Cancelada/ });
+
+    expect(chip).toHaveStyle({ backgroundColor: FINISHED_PALETTE.background });
+    expect(screen.getByText('Cancelada')).toBeOnTheScreen();
   });
 
   it('opens the detail of the room when a chip is pressed', () => {
@@ -144,17 +173,17 @@ describe('RoomDayGrid', () => {
     expect(screen.getByRole('radio', { name: 'Todos los servicios' })).toBeOnTheScreen();
     fireEvent.press(screen.getByRole('radio', { name: 'Salsa' }));
 
-    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Salsa.*2\/10/ })).toBeOnTheScreen();
   });
 
   it('filters the grid to one room from the legend and back', () => {
     renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
 
     fireEvent.press(screen.getByRole('radio', { name: 'B: Aula común' }));
-    expect(screen.queryByText('Salsa · 2/10')).not.toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /Salsa.*2\/10/ })).not.toBeOnTheScreen();
 
     fireEvent.press(screen.getByRole('radio', { name: 'B: Aula común' }));
-    expect(screen.getByText('Salsa · 2/10')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Salsa.*2\/10/ })).toBeOnTheScreen();
   });
 });
 
@@ -196,6 +225,30 @@ describe('RoomDayScreen', () => {
     expect(screen.getByText('2 de 10 plazas ocupadas')).toBeOnTheScreen();
     expect(screen.getByText('Lucía Torres')).toBeOnTheScreen();
     expect(screen.getByText('Marcos Díaz')).toBeOnTheScreen();
+  });
+
+  it('shows a class that already ended as finished, with nothing left to change', async () => {
+    freezeClockAt('2026-10-12T20:00:00.000Z');
+    mockApi({ [ROOMS_PATH]: AGENDA });
+    renderScreen(<RoomDayScreen />);
+
+    expect(await screen.findByText('Terminada')).toBeOnTheScreen();
+    expect(
+      screen.queryByRole('button', { name: 'Apuntar a alguien a este grupo' }),
+    ).not.toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Cancelar este día' })).not.toBeOnTheScreen();
+  });
+
+  it('opens the profile of a student assigned to the class', async () => {
+    mockApi({ [ROOMS_PATH]: AGENDA });
+    renderScreen(<RoomDayScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Lucía Torres. Ver su perfil' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(admin)/clients/[membershipId]',
+      params: { membershipId: 'client-1' },
+    });
   });
 
   it('lets the center add more students to a group with free seats', async () => {

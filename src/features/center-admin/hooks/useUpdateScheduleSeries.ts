@@ -20,6 +20,8 @@ interface UpdateScheduleSeries {
   ) => void;
   isUpdating: boolean;
   errorMessage: string | null;
+  /** Cierra el aviso del error para poder volver a intentarlo. */
+  clearError: () => void;
 }
 
 /** Cambia nombre, plazas, hora, fin, espacio o profesor de un horario; el servidor rehace las sesiones futuras. */
@@ -41,5 +43,6 @@ export function useUpdateScheduleSeries(seriesId: string): UpdateScheduleSeries 
     },
     isUpdating: mutation.isPending,
     errorMessage: mutation.isError ? getApiErrorMessage(mutation.error) : null,
+    clearError: mutation.reset,
   };
 }
