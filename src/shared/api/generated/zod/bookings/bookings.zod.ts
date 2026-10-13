@@ -276,6 +276,181 @@ export const BookingsCancelResponse = zod.object({
 })
 
 /**
+ * @summary El cliente se apunta a una clase con plazas (de `GET /services/:id/open-sessions`). El centro ya decidió sala, profesor y hora. 409 SESSION_FULL si ya no quedan plazas, ALREADY_BOOKED si tiene otra cita a esa hora, OUTSIDE_BOOKING_WINDOW si está fuera de la antelación o la ventana del servicio.
+ */
+export const bookingsJoinSessionPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsJoinSessionParams = zod.object({
+  "centerId": zod.uuid().regex(bookingsJoinSessionPathCenterIdRegExp)
+})
+
+export const BookingsJoinSessionHeader = zod.object({
+  "X-Center-Id": zod.string(),
+  "Idempotency-Key": zod.string().describe('UUID por intención del usuario; los reintentos reutilizan la misma')
+})
+
+export const bookingsJoinSessionBodyClassSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsJoinSessionBody = zod.object({
+  "classSessionId": zod.uuid().regex(bookingsJoinSessionBodyClassSessionIdRegExp)
+})
+
+export const bookingsJoinSessionResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsJoinSessionResponseStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsJoinSessionResponseServiceDurationMinutesMin = -9007199254740991;
+export const bookingsJoinSessionResponseServiceDurationMinutesMax = 9007199254740991;
+
+export const bookingsJoinSessionResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsJoinSessionResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsJoinSessionResponseSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsJoinSessionResponseSessionCapacityMin = -9007199254740991;
+export const bookingsJoinSessionResponseSessionCapacityMax = 9007199254740991;
+
+export const bookingsJoinSessionResponseSessionBookedCountMin = -9007199254740991;
+export const bookingsJoinSessionResponseSessionBookedCountMax = 9007199254740991;
+
+export const bookingsJoinSessionResponseCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseEndedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseActualDurationSecondsMin = -9007199254740991;
+export const bookingsJoinSessionResponseActualDurationSecondsMax = 9007199254740991;
+
+export const bookingsJoinSessionResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsJoinSessionResponseCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsJoinSessionResponse = zod.object({
+  "id": zod.uuid().regex(bookingsJoinSessionResponseIdRegExp),
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseEndsAtRegExp),
+  "service": zod.object({
+  "id": zod.uuid().regex(bookingsJoinSessionResponseServiceIdRegExp),
+  "name": zod.string(),
+  "durationMinutes": zod.int().min(bookingsJoinSessionResponseServiceDurationMinutesMin).max(bookingsJoinSessionResponseServiceDurationMinutesMax),
+  "color": zod.string().nullable()
+}),
+  "staff": zod.object({
+  "membershipId": zod.uuid().regex(bookingsJoinSessionResponseStaffMembershipIdRegExp),
+  "fullName": zod.string()
+}),
+  "room": zod.object({
+  "id": zod.uuid().regex(bookingsJoinSessionResponseRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "session": zod.object({
+  "id": zod.uuid().regex(bookingsJoinSessionResponseSessionIdRegExp),
+  "mode": zod.enum(['private', 'group']),
+  "capacity": zod.int().min(bookingsJoinSessionResponseSessionCapacityMin).max(bookingsJoinSessionResponseSessionCapacityMax),
+  "bookedCount": zod.int().min(bookingsJoinSessionResponseSessionBookedCountMin).max(bookingsJoinSessionResponseSessionBookedCountMax)
+}),
+  "cancelledAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseCancelledAtRegExp).nullable(),
+  "cancelWithinPolicy": zod.boolean().nullable(),
+  "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseStartedAtRegExp).nullable(),
+  "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseEndedAtRegExp).nullable(),
+  "actualDurationSeconds": zod.int().min(bookingsJoinSessionResponseActualDurationSecondsMin).max(bookingsJoinSessionResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseCreatedAtRegExp),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(bookingsJoinSessionResponseCreatedByMembershipIdRegExp),
+  "fullName": zod.string(),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client'])
+}).nullable()
+})
+
+/**
+ * @summary El cliente pasa su reserva a otra clase con plazas del mismo servicio. La plaza de la clase anterior queda libre y se avisa al profesor y al centro. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE; BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SESSION_FULL, ALREADY_BOOKED y SLOT_UNAVAILABLE si la clase no sirve. Pedir la clase que ya tiene la deja como está.
+ */
+export const bookingsMoveToSessionPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionPathBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsMoveToSessionParams = zod.object({
+  "centerId": zod.uuid().regex(bookingsMoveToSessionPathCenterIdRegExp),
+  "bookingId": zod.uuid().regex(bookingsMoveToSessionPathBookingIdRegExp)
+})
+
+export const BookingsMoveToSessionHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const bookingsMoveToSessionBodyClassSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsMoveToSessionBody = zod.object({
+  "classSessionId": zod.uuid().regex(bookingsMoveToSessionBodyClassSessionIdRegExp)
+})
+
+export const bookingsMoveToSessionResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionResponseStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionResponseServiceDurationMinutesMin = -9007199254740991;
+export const bookingsMoveToSessionResponseServiceDurationMinutesMax = 9007199254740991;
+
+export const bookingsMoveToSessionResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionResponseSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const bookingsMoveToSessionResponseSessionCapacityMin = -9007199254740991;
+export const bookingsMoveToSessionResponseSessionCapacityMax = 9007199254740991;
+
+export const bookingsMoveToSessionResponseSessionBookedCountMin = -9007199254740991;
+export const bookingsMoveToSessionResponseSessionBookedCountMax = 9007199254740991;
+
+export const bookingsMoveToSessionResponseCancelledAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseStartedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseEndedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseActualDurationSecondsMin = -9007199254740991;
+export const bookingsMoveToSessionResponseActualDurationSecondsMax = 9007199254740991;
+
+export const bookingsMoveToSessionResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const bookingsMoveToSessionResponseCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const BookingsMoveToSessionResponse = zod.object({
+  "id": zod.uuid().regex(bookingsMoveToSessionResponseIdRegExp),
+  "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseEndsAtRegExp),
+  "service": zod.object({
+  "id": zod.uuid().regex(bookingsMoveToSessionResponseServiceIdRegExp),
+  "name": zod.string(),
+  "durationMinutes": zod.int().min(bookingsMoveToSessionResponseServiceDurationMinutesMin).max(bookingsMoveToSessionResponseServiceDurationMinutesMax),
+  "color": zod.string().nullable()
+}),
+  "staff": zod.object({
+  "membershipId": zod.uuid().regex(bookingsMoveToSessionResponseStaffMembershipIdRegExp),
+  "fullName": zod.string()
+}),
+  "room": zod.object({
+  "id": zod.uuid().regex(bookingsMoveToSessionResponseRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "session": zod.object({
+  "id": zod.uuid().regex(bookingsMoveToSessionResponseSessionIdRegExp),
+  "mode": zod.enum(['private', 'group']),
+  "capacity": zod.int().min(bookingsMoveToSessionResponseSessionCapacityMin).max(bookingsMoveToSessionResponseSessionCapacityMax),
+  "bookedCount": zod.int().min(bookingsMoveToSessionResponseSessionBookedCountMin).max(bookingsMoveToSessionResponseSessionBookedCountMax)
+}),
+  "cancelledAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseCancelledAtRegExp).nullable(),
+  "cancelWithinPolicy": zod.boolean().nullable(),
+  "startedAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseStartedAtRegExp).nullable(),
+  "endedAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseEndedAtRegExp).nullable(),
+  "actualDurationSeconds": zod.int().min(bookingsMoveToSessionResponseActualDurationSecondsMin).max(bookingsMoveToSessionResponseActualDurationSecondsMax).nullable(),
+  "source": zod.enum(['single', 'enrollment']),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseCreatedAtRegExp),
+  "createdBy": zod.object({
+  "membershipId": zod.uuid().regex(bookingsMoveToSessionResponseCreatedByMembershipIdRegExp),
+  "fullName": zod.string(),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client'])
+}).nullable()
+})
+
+/**
  * @summary Cambia de hora una reserva propia (mismo servicio y, si sigue libre, misma persona). La hora debe coincidir con un hueco de /availability. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE si ya no queda. 409 BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SLOT_UNAVAILABLE, OUTSIDE_BOOKING_WINDOW y ALREADY_BOOKED como al reservar. Pedir la hora que ya tiene devuelve la reserva sin cambios.
  */
 export const bookingsReschedulePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -1145,6 +1320,7 @@ export const AgendaGetRoomDayResponse = zod.object({
   "bookingId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemBookingIdRegExp),
   "clientMembershipId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemAttendeesItemClientMembershipIdRegExp),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
   "source": zod.enum(['single', 'enrollment'])
 }))
@@ -1182,6 +1358,7 @@ export const AgendaGetRoomDayResponse = zod.object({
   "bookingId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemBookingIdRegExp),
   "clientMembershipId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemAttendeesItemClientMembershipIdRegExp),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
   "source": zod.enum(['single', 'enrollment'])
 }))
@@ -1276,6 +1453,72 @@ export const AgendaRescheduleBookingResponse = zod.object({
   "fullName": zod.string(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client'])
 }).nullable()
+})
+
+/**
+ * @summary Las clases futuras de un servicio con plazas libres entre dos fechas (sala, profesor, hora y plazas), si el servicio tiene horario de sala vigente (`isScheduled`) y la próxima clase con plazas aunque caiga fuera del rango.
+ */
+export const servicesListOpenSessionsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListOpenSessionsPathServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ServicesListOpenSessionsParams = zod.object({
+  "centerId": zod.uuid().regex(servicesListOpenSessionsPathCenterIdRegExp),
+  "serviceId": zod.uuid().regex(servicesListOpenSessionsPathServiceIdRegExp)
+})
+
+export const servicesListOpenSessionsQueryFromRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const servicesListOpenSessionsQueryToRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+
+
+export const ServicesListOpenSessionsQueryParams = zod.object({
+  "from": zod.iso.date().regex(servicesListOpenSessionsQueryFromRegExp),
+  "to": zod.iso.date().regex(servicesListOpenSessionsQueryToRegExp)
+})
+
+export const ServicesListOpenSessionsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const servicesListOpenSessionsResponseSessionsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListOpenSessionsResponseSessionsItemStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const servicesListOpenSessionsResponseSessionsItemEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const servicesListOpenSessionsResponseSessionsItemCapacityMin = -9007199254740991;
+export const servicesListOpenSessionsResponseSessionsItemCapacityMax = 9007199254740991;
+
+export const servicesListOpenSessionsResponseSessionsItemBookedCountMin = -9007199254740991;
+export const servicesListOpenSessionsResponseSessionsItemBookedCountMax = 9007199254740991;
+
+export const servicesListOpenSessionsResponseSessionsItemRemainingSeatsMin = -9007199254740991;
+export const servicesListOpenSessionsResponseSessionsItemRemainingSeatsMax = 9007199254740991;
+
+export const servicesListOpenSessionsResponseSessionsItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListOpenSessionsResponseSessionsItemTeacherMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListOpenSessionsResponseNextOpenStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const ServicesListOpenSessionsResponse = zod.object({
+  "timezone": zod.string(),
+  "isScheduled": zod.boolean(),
+  "sessions": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesListOpenSessionsResponseSessionsItemIdRegExp),
+  "startsAt": zod.iso.datetime({"offset":true}).regex(servicesListOpenSessionsResponseSessionsItemStartsAtRegExp),
+  "endsAt": zod.iso.datetime({"offset":true}).regex(servicesListOpenSessionsResponseSessionsItemEndsAtRegExp),
+  "mode": zod.enum(['private', 'group']),
+  "capacity": zod.int().min(servicesListOpenSessionsResponseSessionsItemCapacityMin).max(servicesListOpenSessionsResponseSessionsItemCapacityMax),
+  "bookedCount": zod.int().min(servicesListOpenSessionsResponseSessionsItemBookedCountMin).max(servicesListOpenSessionsResponseSessionsItemBookedCountMax),
+  "remainingSeats": zod.int().min(servicesListOpenSessionsResponseSessionsItemRemainingSeatsMin).max(servicesListOpenSessionsResponseSessionsItemRemainingSeatsMax),
+  "room": zod.object({
+  "id": zod.uuid().regex(servicesListOpenSessionsResponseSessionsItemRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "teacher": zod.object({
+  "membershipId": zod.uuid().regex(servicesListOpenSessionsResponseSessionsItemTeacherMembershipIdRegExp),
+  "fullName": zod.string()
+}),
+  "label": zod.string().nullable()
+})),
+  "nextOpenStartsAt": zod.iso.datetime({"offset":true}).regex(servicesListOpenSessionsResponseNextOpenStartsAtRegExp).nullable()
 })
 
 /**

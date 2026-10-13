@@ -168,7 +168,80 @@ export function useNotificationsList<TData = Awaited<ReturnType<typeof notificat
 
 
 
-export const getNotificationsReadAllUrl = (centerId: string,) => {
+export const getNotificationsDeleteAllUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/notifications`
+}
+
+/**
+ * @summary Quita de la lista todos los avisos de quien pregunta. Es un borrado lógico: la fila se conserva.
+ */
+export const notificationsDeleteAll = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getNotificationsDeleteAllUrl(centerId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getNotificationsDeleteAllMutationKey = () => ['notificationsDeleteAll'] as const;
+
+export const getNotificationsDeleteAllMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationsDeleteAll>>, TError,NotificationsDeleteAllMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof notificationsDeleteAll>>, TError,NotificationsDeleteAllMutationVariables, TContext> => {
+
+const mutationKey = getNotificationsDeleteAllMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof notificationsDeleteAll>>, NotificationsDeleteAllMutationVariables> = (props) => {
+          const {centerId} = props ?? {};
+
+          return  notificationsDeleteAll(centerId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NotificationsDeleteAllMutationResult = NonNullable<Awaited<ReturnType<typeof notificationsDeleteAll>>>
+
+    export type NotificationsDeleteAllMutationError = ErrorType<ProblemDetailsDto>
+    export type NotificationsDeleteAllMutationVariables = {centerId: string}
+
+    /**
+ * @summary Quita de la lista todos los avisos de quien pregunta. Es un borrado lógico: la fila se conserva.
+ */
+export const useNotificationsDeleteAll = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationsDeleteAll>>, TError,NotificationsDeleteAllMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof notificationsDeleteAll>>,
+        TError,
+        NotificationsDeleteAllMutationVariables,
+        TContext
+      > => {
+      return useMutation(getNotificationsDeleteAllMutationOptions(options), queryClient);
+    }
+    export const getNotificationsReadAllUrl = (centerId: string,) => {
 
 
 
@@ -315,4 +388,79 @@ export const useNotificationsRead = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getNotificationsReadMutationOptions(options), queryClient);
+    }
+    export const getNotificationsDeleteUrl = (centerId: string,
+    notificationId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/notifications/${notificationId}`
+}
+
+/**
+ * @summary Quita de la lista un aviso propio (borrado lógico). 404 si no existe, ya estaba borrado o es de otra persona.
+ */
+export const notificationsDelete = async (centerId: string,
+    notificationId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getNotificationsDeleteUrl(centerId,notificationId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getNotificationsDeleteMutationKey = () => ['notificationsDelete'] as const;
+
+export const getNotificationsDeleteMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationsDelete>>, TError,NotificationsDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof notificationsDelete>>, TError,NotificationsDeleteMutationVariables, TContext> => {
+
+const mutationKey = getNotificationsDeleteMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof notificationsDelete>>, NotificationsDeleteMutationVariables> = (props) => {
+          const {centerId,notificationId} = props ?? {};
+
+          return  notificationsDelete(centerId,notificationId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NotificationsDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof notificationsDelete>>>
+
+    export type NotificationsDeleteMutationError = ErrorType<ProblemDetailsDto>
+    export type NotificationsDeleteMutationVariables = {centerId: string;notificationId: string}
+
+    /**
+ * @summary Quita de la lista un aviso propio (borrado lógico). 404 si no existe, ya estaba borrado o es de otra persona.
+ */
+export const useNotificationsDelete = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof notificationsDelete>>, TError,NotificationsDeleteMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof notificationsDelete>>,
+        TError,
+        NotificationsDeleteMutationVariables,
+        TContext
+      > => {
+      return useMutation(getNotificationsDeleteMutationOptions(options), queryClient);
     }

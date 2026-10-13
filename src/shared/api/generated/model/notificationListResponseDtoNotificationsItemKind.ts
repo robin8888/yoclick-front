@@ -32,4 +32,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   session_cancelled: 'session_cancelled',
   schedule_enrolled: 'schedule_enrolled',
   schedule_unenrolled: 'schedule_unenrolled',
+  pass_requested: 'pass_requested',
+  pass_activated: 'pass_activated',
 } as const;

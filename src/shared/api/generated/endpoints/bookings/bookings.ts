@@ -38,12 +38,15 @@ import type {
   EndSessionRequestDto,
   GroupOptionsResponseDto,
   JoinGroupSessionRequestDto,
+  JoinOpenSessionRequestDto,
   MyBookingsResponseDto,
   PlacementOptionsResponseDto,
   ProblemDetailsDto,
   RescheduleAgendaBookingRequestDto,
   RescheduleBookingRequestDto,
   RoomAgendaResponseDto,
+  ServiceSessionsResponseDto,
+  ServicesListOpenSessionsParams,
   SessionRecordsListParams,
   SessionRecordsResponseDto
 } from '../../model';
@@ -348,6 +351,184 @@ export const useBookingsCancel = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getBookingsCancelMutationOptions(options), queryClient);
+    }
+    export const getBookingsJoinSessionUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/bookings/join-session`
+}
+
+/**
+ * @summary El cliente se apunta a una clase con plazas (de `GET /services/:id/open-sessions`). El centro ya decidió sala, profesor y hora. 409 SESSION_FULL si ya no quedan plazas, ALREADY_BOOKED si tiene otra cita a esa hora, OUTSIDE_BOOKING_WINDOW si está fuera de la antelación o la ventana del servicio.
+ */
+export const bookingsJoinSession = async (centerId: string,
+    joinOpenSessionRequestDto: JoinOpenSessionRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getBookingsJoinSessionUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(joinOpenSessionRequestDto)
+  }
+);}
+
+
+
+
+
+export const getBookingsJoinSessionMutationKey = () => ['bookingsJoinSession'] as const;
+
+export const getBookingsJoinSessionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsJoinSession>>, TError,BookingsJoinSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof bookingsJoinSession>>, TError,BookingsJoinSessionMutationVariables, TContext> => {
+
+const mutationKey = getBookingsJoinSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookingsJoinSession>>, BookingsJoinSessionMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  bookingsJoinSession(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BookingsJoinSessionMutationResult = NonNullable<Awaited<ReturnType<typeof bookingsJoinSession>>>
+    export type BookingsJoinSessionMutationBody = JoinOpenSessionRequestDto
+    export type BookingsJoinSessionMutationError = ErrorType<ProblemDetailsDto>
+    export type BookingsJoinSessionMutationVariables = {centerId: string;data: JoinOpenSessionRequestDto}
+
+    /**
+ * @summary El cliente se apunta a una clase con plazas (de `GET /services/:id/open-sessions`). El centro ya decidió sala, profesor y hora. 409 SESSION_FULL si ya no quedan plazas, ALREADY_BOOKED si tiene otra cita a esa hora, OUTSIDE_BOOKING_WINDOW si está fuera de la antelación o la ventana del servicio.
+ */
+export const useBookingsJoinSession = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsJoinSession>>, TError,BookingsJoinSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof bookingsJoinSession>>,
+        TError,
+        BookingsJoinSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getBookingsJoinSessionMutationOptions(options), queryClient);
+    }
+    export const getBookingsMoveToSessionUrl = (centerId: string,
+    bookingId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/bookings/${bookingId}/move-to-session`
+}
+
+/**
+ * @summary El cliente pasa su reserva a otra clase con plazas del mismo servicio. La plaza de la clase anterior queda libre y se avisa al profesor y al centro. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE; BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SESSION_FULL, ALREADY_BOOKED y SLOT_UNAVAILABLE si la clase no sirve. Pedir la clase que ya tiene la deja como está.
+ */
+export const bookingsMoveToSession = async (centerId: string,
+    bookingId: string,
+    joinOpenSessionRequestDto: JoinOpenSessionRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BookingResponseDto>(getBookingsMoveToSessionUrl(centerId,bookingId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(joinOpenSessionRequestDto)
+  }
+);}
+
+
+
+
+
+export const getBookingsMoveToSessionMutationKey = () => ['bookingsMoveToSession'] as const;
+
+export const getBookingsMoveToSessionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsMoveToSession>>, TError,BookingsMoveToSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof bookingsMoveToSession>>, TError,BookingsMoveToSessionMutationVariables, TContext> => {
+
+const mutationKey = getBookingsMoveToSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookingsMoveToSession>>, BookingsMoveToSessionMutationVariables> = (props) => {
+          const {centerId,bookingId,data} = props ?? {};
+
+          return  bookingsMoveToSession(centerId,bookingId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BookingsMoveToSessionMutationResult = NonNullable<Awaited<ReturnType<typeof bookingsMoveToSession>>>
+    export type BookingsMoveToSessionMutationBody = JoinOpenSessionRequestDto
+    export type BookingsMoveToSessionMutationError = ErrorType<ProblemDetailsDto>
+    export type BookingsMoveToSessionMutationVariables = {centerId: string;bookingId: string;data: JoinOpenSessionRequestDto}
+
+    /**
+ * @summary El cliente pasa su reserva a otra clase con plazas del mismo servicio. La plaza de la clase anterior queda libre y se avisa al profesor y al centro. Pide la misma antelación que cancelar: 409 RESCHEDULE_TOO_LATE; BOOKING_NOT_RESCHEDULABLE si está cancelada, empezada o pasada; SESSION_FULL, ALREADY_BOOKED y SLOT_UNAVAILABLE si la clase no sirve. Pedir la clase que ya tiene la deja como está.
+ */
+export const useBookingsMoveToSession = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsMoveToSession>>, TError,BookingsMoveToSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof bookingsMoveToSession>>,
+        TError,
+        BookingsMoveToSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getBookingsMoveToSessionMutationOptions(options), queryClient);
     }
     export const getBookingsRescheduleUrl = (centerId: string,
     bookingId: string,) => {
@@ -1405,7 +1586,130 @@ export const useAgendaRescheduleBooking = <TError = ErrorType<ProblemDetailsDto>
       > => {
       return useMutation(getAgendaRescheduleBookingMutationOptions(options), queryClient);
     }
-    export const getSessionRecordsListUrl = (centerId: string,
+    export const getServicesListOpenSessionsUrl = (centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/services/${serviceId}/open-sessions?${stringifiedParams}` : `/v1/centers/${centerId}/services/${serviceId}/open-sessions`
+}
+
+/**
+ * @summary Las clases futuras de un servicio con plazas libres entre dos fechas (sala, profesor, hora y plazas), si el servicio tiene horario de sala vigente (`isScheduled`) y la próxima clase con plazas aunque caiga fuera del rango.
+ */
+export const servicesListOpenSessions = async (centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options?: Parameters<typeof apiMutator>[1]): Promise<ServiceSessionsResponseDto> => {
+
+  return apiMutator<ServiceSessionsResponseDto>(getServicesListOpenSessionsUrl(centerId,serviceId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getServicesListOpenSessionsQueryKey = (centerId: string,
+    serviceId: string,
+    params?: ServicesListOpenSessionsParams,) => {
+    return [
+    `/v1/centers/${centerId}/services/${serviceId}/open-sessions`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getServicesListOpenSessionsQueryOptions = <TData = Awaited<ReturnType<typeof servicesListOpenSessions>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getServicesListOpenSessionsQueryKey(centerId,serviceId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof servicesListOpenSessions>>> = ({ signal }) => servicesListOpenSessions(centerId,serviceId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && serviceId !== null && serviceId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ServicesListOpenSessionsQueryResult = NonNullable<Awaited<ReturnType<typeof servicesListOpenSessions>>>
+export type ServicesListOpenSessionsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useServicesListOpenSessions<TData = Awaited<ReturnType<typeof servicesListOpenSessions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof servicesListOpenSessions>>,
+          TError,
+          Awaited<ReturnType<typeof servicesListOpenSessions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServicesListOpenSessions<TData = Awaited<ReturnType<typeof servicesListOpenSessions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof servicesListOpenSessions>>,
+          TError,
+          Awaited<ReturnType<typeof servicesListOpenSessions>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useServicesListOpenSessions<TData = Awaited<ReturnType<typeof servicesListOpenSessions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las clases futuras de un servicio con plazas libres entre dos fechas (sala, profesor, hora y plazas), si el servicio tiene horario de sala vigente (`isScheduled`) y la próxima clase con plazas aunque caiga fuera del rango.
+ */
+
+export function useServicesListOpenSessions<TData = Awaited<ReturnType<typeof servicesListOpenSessions>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    serviceId: string,
+    params: ServicesListOpenSessionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof servicesListOpenSessions>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getServicesListOpenSessionsQueryOptions(centerId,serviceId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getSessionRecordsListUrl = (centerId: string,
     params: SessionRecordsListParams,) => {
   const normalizedParams = new URLSearchParams();
 

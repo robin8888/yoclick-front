@@ -33,6 +33,8 @@ import type {
   EnrollResponseDto,
   EnrollmentListResponseDto,
   ProblemDetailsDto,
+  RepeatWeekRequestDto,
+  RepeatWeekResponseDto,
   ScheduleSeriesListResponseDto,
   ScheduleSeriesWriteResponseDto,
   UnenrollResponseDto,
@@ -62,7 +64,95 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getSchedulesListUrl = (centerId: string,) => {
+export const getSchedulesRepeatWeekUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/schedules/repeat-week`
+}
+
+/**
+ * @summary Copia a la semana siguiente todos los horarios de una semana (los que empiezan y terminan dentro de ella): mismo servicio, sala, profesor, horas y aforo. Los que ya estaban copiados no se duplican; las fechas que chocan se devuelven en `skipped`.
+ */
+export const schedulesRepeatWeek = async (centerId: string,
+    repeatWeekRequestDto: RepeatWeekRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<RepeatWeekResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<RepeatWeekResponseDto>(getSchedulesRepeatWeekUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(repeatWeekRequestDto)
+  }
+);}
+
+
+
+
+
+export const getSchedulesRepeatWeekMutationKey = () => ['schedulesRepeatWeek'] as const;
+
+export const getSchedulesRepeatWeekMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof schedulesRepeatWeek>>, TError,SchedulesRepeatWeekMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof schedulesRepeatWeek>>, TError,SchedulesRepeatWeekMutationVariables, TContext> => {
+
+const mutationKey = getSchedulesRepeatWeekMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof schedulesRepeatWeek>>, SchedulesRepeatWeekMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  schedulesRepeatWeek(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SchedulesRepeatWeekMutationResult = NonNullable<Awaited<ReturnType<typeof schedulesRepeatWeek>>>
+    export type SchedulesRepeatWeekMutationBody = RepeatWeekRequestDto
+    export type SchedulesRepeatWeekMutationError = ErrorType<ProblemDetailsDto>
+    export type SchedulesRepeatWeekMutationVariables = {centerId: string;data: RepeatWeekRequestDto}
+
+    /**
+ * @summary Copia a la semana siguiente todos los horarios de una semana (los que empiezan y terminan dentro de ella): mismo servicio, sala, profesor, horas y aforo. Los que ya estaban copiados no se duplican; las fechas que chocan se devuelven en `skipped`.
+ */
+export const useSchedulesRepeatWeek = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof schedulesRepeatWeek>>, TError,SchedulesRepeatWeekMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof schedulesRepeatWeek>>,
+        TError,
+        SchedulesRepeatWeekMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSchedulesRepeatWeekMutationOptions(options), queryClient);
+    }
+    export const getSchedulesListUrl = (centerId: string,) => {
 
 
 

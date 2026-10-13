@@ -36,6 +36,16 @@ export const getNotificationsListMockHandler = (overrideResponse?: NotificationL
   }, options)
 }
 
+export const getNotificationsDeleteAllMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/notifications', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
+
 export const getNotificationsReadAllMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
   return http.post('*/v1/centers/:centerId/notifications/read', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
@@ -55,8 +65,20 @@ export const getNotificationsReadMockHandler = (overrideResponse?: void | ((info
       })
   }, options)
 }
+
+export const getNotificationsDeleteMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/notifications/:notificationId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getNotificationsMock = () => [
   getNotificationsListMockHandler(),
+  getNotificationsDeleteAllMockHandler(),
   getNotificationsReadAllMockHandler(),
-  getNotificationsReadMockHandler()
+  getNotificationsReadMockHandler(),
+  getNotificationsDeleteMockHandler()
 ]

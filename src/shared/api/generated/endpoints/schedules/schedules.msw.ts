@@ -18,6 +18,7 @@ import type {
   EndSeriesResponseDto,
   EnrollResponseDto,
   EnrollmentListResponseDto,
+  RepeatWeekResponseDto,
   ScheduleSeriesListResponseDto,
   ScheduleSeriesWriteResponseDto,
   UnenrollResponseDto
@@ -29,13 +30,26 @@ import {
   getSchedulesEnrollResponseMock,
   getSchedulesListEnrollmentsResponseMock,
   getSchedulesListResponseMock,
+  getSchedulesRepeatWeekResponseMock,
   getSchedulesUnenrollResponseMock,
   getSchedulesUpdateResponseMock,
   getSessionsCancelResponseMock
 } from './schedules.faker.ts';
 
-export { getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock } from './schedules.faker.ts';
+export { getSchedulesRepeatWeekResponseMock, getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock } from './schedules.faker.ts';
 
+
+export const getSchedulesRepeatWeekMockHandler = (overrideResponse?: RepeatWeekResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<RepeatWeekResponseDto> | RepeatWeekResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/schedules/repeat-week', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getSchedulesRepeatWeekResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 
 export const getSchedulesListMockHandler = (overrideResponse?: ScheduleSeriesListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ScheduleSeriesListResponseDto> | ScheduleSeriesListResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/schedules', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
@@ -133,6 +147,7 @@ export const getSessionsCancelMockHandler = (overrideResponse?: CancelSessionRes
   }, options)
 }
 export const getSchedulesMock = () => [
+  getSchedulesRepeatWeekMockHandler(),
   getSchedulesListMockHandler(),
   getSchedulesCreateMockHandler(),
   getSchedulesUpdateMockHandler(),

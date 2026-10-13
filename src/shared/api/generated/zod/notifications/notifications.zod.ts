@@ -43,13 +43,29 @@ export const NotificationsListResponse = zod.object({
   "unreadCount": zod.int().min(notificationsListResponseUnreadCountMin).max(notificationsListResponseUnreadCountMax),
   "notifications": zod.array(zod.object({
   "id": zod.uuid().regex(notificationsListResponseNotificationsItemIdRegExp),
-  "kind": zod.enum(['booking_created', 'booking_cancelled', 'booking_created_by_team', 'booking_cancelled_by_team', 'absence_added', 'booking_affected_by_absence', 'routine_assigned', 'staff_video_submitted', 'staff_video_reviewed', 'privacy_request_received', 'privacy_request_resolved', 'staff_profile_submitted', 'staff_profile_reviewed', 'staff_review_received', 'booking_rescheduled', 'booking_rescheduled_by_team', 'routine_updated', 'content_assigned', 'member_joined', 'session_cancelled', 'schedule_enrolled', 'schedule_unenrolled']),
+  "kind": zod.enum(['booking_created', 'booking_cancelled', 'booking_created_by_team', 'booking_cancelled_by_team', 'absence_added', 'booking_affected_by_absence', 'routine_assigned', 'staff_video_submitted', 'staff_video_reviewed', 'privacy_request_received', 'privacy_request_resolved', 'staff_profile_submitted', 'staff_profile_reviewed', 'staff_review_received', 'booking_rescheduled', 'booking_rescheduled_by_team', 'routine_updated', 'content_assigned', 'member_joined', 'session_cancelled', 'schedule_enrolled', 'schedule_unenrolled', 'pass_requested', 'pass_activated']),
   "data": zod.record(zod.string(), zod.string()),
   "bookingId": zod.uuid().regex(notificationsListResponseNotificationsItemBookingIdRegExp).nullable(),
   "isRead": zod.boolean(),
   "createdAt": zod.iso.datetime({"offset":true}).regex(notificationsListResponseNotificationsItemCreatedAtRegExp)
 }))
 })
+
+/**
+ * @summary Quita de la lista todos los avisos de quien pregunta. Es un borrado lógico: la fila se conserva.
+ */
+export const notificationsDeleteAllPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const NotificationsDeleteAllParams = zod.object({
+  "centerId": zod.uuid().regex(notificationsDeleteAllPathCenterIdRegExp)
+})
+
+export const NotificationsDeleteAllHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const NotificationsDeleteAllResponse = zod.void()
 
 /**
  * @summary Marca como leídos todos los avisos de quien pregunta.
@@ -84,4 +100,22 @@ export const NotificationsReadHeader = zod.object({
 })
 
 export const NotificationsReadResponse = zod.void()
+
+/**
+ * @summary Quita de la lista un aviso propio (borrado lógico). 404 si no existe, ya estaba borrado o es de otra persona.
+ */
+export const notificationsDeletePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const notificationsDeletePathNotificationIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const NotificationsDeleteParams = zod.object({
+  "centerId": zod.uuid().regex(notificationsDeletePathCenterIdRegExp),
+  "notificationId": zod.uuid().regex(notificationsDeletePathNotificationIdRegExp)
+})
+
+export const NotificationsDeleteHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const NotificationsDeleteResponse = zod.void()
 
