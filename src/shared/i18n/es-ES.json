@@ -2104,7 +2104,7 @@
       "alreadyRegisteredBadge": "Ya estaba registrada",
       "appointmentSummary": "{{serviceName}} · {{time}}",
       "scanAnotherAction": "Escanear otro",
-      "openAction": "Escanear QR"
+      "openAction": "Escanea asistencia QR"
     }
   },
   "videos": {
