@@ -49,6 +49,26 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (13 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Detalle de bonos en `docs/spec/10-bonos.md`.
+
+### Hecho el 13 de octubre
+- ✅ **Bonos sin pasarela** (API-402/404 en versión mínima): el centro crea bonos (clases, validez, precio, servicios), el alumno los pide, el centro los activa al cobrar o los asigna desde la ficha, y los puede quitar. Tarjetas como billete con marca de agua del logo del centro.
+- ✅ **Descuento del bono**: al confirmar la asistencia (check del profesional o QR), una sola vez; si no va y no cancela, al terminar la clase; si cancela, no. Si el centro apunta a alguien a un grupo se descuenta al instante y se devuelve al cancelar.
+- ✅ **Límite al agendar**: el alumno agenda solo lo que le queda menos lo ya agendado; el centro solo apunta a personas con bono y clases.
+- ✅ **Alumno**: Día y clase por servicio (el centro fija profesor y sala), varios días hasta el saldo del bono con previsión, cancelar y cambiar de clase, Mis bonos.
+- ✅ **Profesor**: agenda estilo iOS (bloques por hora, sin nombres, clases sin alumnos visibles), detalle con foto y check por alumno y «Confirmar asistencia con QR».
+- ✅ **Centro**: Inicio con cuadrícula de botones (Agenda, Asignar citas, Salas y horarios, Servicios, Bonos), «Apuntar a la clase» con foto y solo personas con bono, horarios con solapes de sala y profesor y «repetir semana».
+- ✅ **Avisos**: borrado lógico (uno o todos) para centro, profesor y alumno; avisos de bono pedido y activado.
+
+### Pendiente
+1. ⬜ Probar en el móvil (iOS y Android) todo lo del 13 oct, con la API reiniciada (migraciones `20261101` a `20261104`).
+2. ⬜ Cobro online de bonos con Stripe Connect, recibos con IVA y reembolsos (API-401, 403, 405, 406); avisos al centro cuando se acaba un bono o asiste alguien sin él.
+3. ⬜ Fase 2 y 3 de `docs/spec/09` (Mi horario del alumno, lista de espera); detalle de una clase sin alumnos en la agenda del profesor.
+4. ⬜ Descontar los no presentados con un proceso programado (hoy se hace al consultar los bonos).
+5. ⬜ Pendientes de antes: correo a personas importadas, claves push (Apple/FCM), textos legales, publicar `yoclick.app` con los ficheros de asociación.
+
 ## Estado de avance (12 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 5 oct en lo que cambia; lo que no aparece aquí sigue como se describe más abajo.
