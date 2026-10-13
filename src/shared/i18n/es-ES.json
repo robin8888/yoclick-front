@@ -90,7 +90,11 @@
     "SESSION_MODE_NOT_ALLOWED": "Este servicio no se da de esa forma (privada o en grupo). Cámbialo en el servicio",
     "SCHEDULE_HAS_BOOKINGS": "Hay citas sueltas en sesiones futuras de este horario. Cancélalas o muévelas antes",
     "SESSION_NOT_CANCELLABLE": "Esta sesión ya ha empezado o ya estaba cancelada",
-    "ROOM_HAS_BOOKINGS": "Hay citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala"
+    "ROOM_HAS_BOOKINGS": "Hay citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
+    "SERVICE_ONLY_IN_SCHEDULE": "Este servicio solo se da en sus horarios. Elige una de sus clases con plazas",
+    "ROOM_SCHEDULE_OVERLAP": "Esa sala ya tiene un horario a esa hora en esos días. Elige otra hora, otra fecha u otra sala, o edita el horario que ya existe",
+    "TEACHER_SCHEDULE_OVERLAP": "Esa persona ya da otra clase a esa hora en esos días. Elige otra hora, otra fecha u otra persona",
+    "STAFF_NOT_FOR_SERVICE": "Esa persona no da este servicio. Elige a una de las que lo dan"
   },
   "fieldErrors": {
     "invalid": "Revisa este campo",
@@ -117,6 +121,10 @@
       "cameraDenied": "Sin permiso para la cámara no podemos hacer la foto. Puedes dárselo en los ajustes del teléfono o elegir una de la galería.",
       "unreadable": "No hemos podido preparar esa foto. Prueba con otra."
     }
+  },
+  "problemModal": {
+    "title": "No se ha podido guardar",
+    "dismiss": "Entendido"
   },
   "actions": {
     "back": "Volver",
@@ -494,8 +502,8 @@
     },
     "book": {
       "title": "Agendar cita",
-      "subtitle": "Paso 1 de 3 · Servicio",
-      "stepLabel": "Paso 1 de 3",
+      "subtitle": "Paso 1 de 2 · Servicio",
+      "stepLabel": "Paso 1 de 2",
       "continueLabel": "Continuar",
       "kind": {
         "individual": "Individual"
@@ -515,13 +523,24 @@
       "continueLabel": "Continuar"
     },
     "slot": {
-      "title": "Día y hora",
-      "subtitle": "Paso 3 de 3 · {{staffLabel}}",
-      "subtitleWithoutStaff": "Paso 3 de 3",
-      "stepLabel": "Paso 3 de 3",
+      "title": "Día y clase",
+      "subtitle": "Paso 2 de 2 · {{staffLabel}}",
+      "subtitleWithoutStaff": "Paso 2 de 2",
+      "stepLabel": "Paso 2 de 2",
+      "classesLabel": "Clases de ese día",
+      "classOption": "{{startTime}}–{{endTime}}",
+      "classSeats": "Quedan {{remaining}} de {{capacity}} plazas · con {{teacher}}",
+      "noClassThisDay": "Ese día no hay clases con plazas. Elige otro día.",
+      "noScheduleTitle": "Aún no hay horarios",
+      "noScheduleMessage": "De momento este servicio no tiene sala ni horario establecidos por el centro. Cuando los fije podrás reservar aquí.",
+      "noScheduleDismiss": "Entendido",
       "timesLabel": "Horas",
       "minNoticeHint": "Se reserva con al menos {{notice}} de antelación.",
       "noSlotsAtAll": "No hay horas libres en los próximos días. Prueba con otro servicio o vuelve más tarde.",
+      "hoursLabel": "Horas",
+      "minutesLabel": "Minutos",
+      "chosenTime": "Hora elegida",
+      "swipeToChoose": "Desliza las ruedas o toca una hora para elegirla",
       "noSlotsThisDay": "Sin horas libres este día.",
       "continueLabel": "Revisar reserva",
       "errorTitle": "No hemos podido cargar las horas libres"
@@ -565,14 +584,15 @@
         "confirmed": "Confirmada",
         "cancelled": "Cancelada",
         "attended": "Realizada",
-        "no_show": "No asististe"
+        "no_show": "No asististe",
+        "past": "Ya pasada"
       }
     },
     "reschedule": {
-      "title": "Cambiar hora",
+      "title": "Cambiar de clase",
       "subtitle": "{{serviceName}} · ahora {{whenLabel}}",
-      "confirmLabel": "Confirmar nueva hora",
-      "announcement": "Cita cambiada de hora."
+      "confirmLabel": "Confirmar cambio",
+      "announcement": "Cita cambiada de clase."
     },
     "cancel": {
       "title": "¿Cancelar esta cita?",
@@ -598,7 +618,9 @@
       "weekRemaining": "Te queda {{remainingCount}} para tu objetivo.",
       "weekGoalReached": "¡Objetivo semanal cumplido!",
       "passTitle": "Bono",
-      "passEmpty": "Sin bono activo. Pregunta en tu centro."
+      "passEmpty": "Sin bono activo. Toca para pedir uno.",
+      "passRemaining_one": "Te queda {{count}} clase",
+      "passRemaining_other": "Te quedan {{count}} clases"
     },
     "room": {
       "label": "Sala {{name}}",
@@ -695,8 +717,10 @@
   "calendar": {
     "previousMonth": "Mes anterior",
     "nextMonth": "Mes siguiente",
-    "openCalendar": "Elegir en el calendario",
-    "datePlaceholder": "DD/MM/AAAA"
+    "openCalendar": "Abrir o cerrar el calendario",
+    "datePlaceholder": "Elige una fecha",
+    "hours": "horas",
+    "minutes": "minutos"
   },
   "session": {
     "profile": {
@@ -741,6 +765,22 @@
       "clientLabel": "Cliente",
       "staffLabel": "{{staffWord}}",
       "changeClient": "Cambiar",
+      "chosenTimeLabel": "Hora elegida",
+      "classDayLabel": "Día de la clase",
+      "classDayHelper": "Solo se pueden elegir los días en que este servicio tiene clase con plazas.",
+      "classesLabel": "Clases de ese día",
+      "classOption": "{{startTime}}–{{endTime}} · {{room}}",
+      "classSeats": "{{teacher}} · quedan {{remaining}} de {{capacity}} plazas",
+      "noClassThisDay": "Ese día no hay clases con plazas para este servicio.",
+      "noRoom": "Sin sala",
+      "goToNextClass": "Próxima clase con plazas: {{date}} a las {{time}}",
+      "loadingClasses": "Buscando las clases de este servicio…",
+      "swipeToChooseTime": "Desliza las ruedas o toca una hora para elegirla",
+      "clientsLabel": "Personas",
+      "severalClientsHint": "Puedes elegir a varias personas para la misma clase.",
+      "chosenClients_one": "{{count}} persona elegida: {{names}}",
+      "chosenClients_other": "{{count}} personas elegidas: {{names}}",
+      "someClientsFailed": "No se pudo apuntar a: {{names}}. {{reason}}",
       "serviceLabel": "Servicio",
       "timeLabel": "Hora",
       "hourLabel": "Hora",
@@ -821,17 +861,18 @@
         "not-started": "Pendiente",
         "in-progress": "En curso",
         "finished": "Terminada",
+        "past": "Ya pasada",
         "cancelled": "Cancelada"
       }
     },
     "center": {
-      "scheduledLabel": "Citas hoy",
-      "cancelledLabel": "Cancelaciones",
-      "occupancyLabel": "Ocupación",
-      "newClientsLabel": "Altas semana",
-      "activeClients_one": "{{count}} cliente activo",
-      "activeClients_other": "{{count}} clientes activos",
-      "sinceLastWeek": "{{difference}} respecto al {{weekdayName}} pasado",
+      "homeTitle": "Inicio",
+      "agendaTitle": "Agenda",
+      "agendaAction": "Agenda",
+      "assignAppointmentsAction": "Asignar citas",
+      "managementAction": "Salas y horarios",
+      "servicesAction": "Servicios",
+      "passesAction": "Bonos",
       "byStaffTitle": "Por {{staffWord}}",
       "noAppointments": "Sin citas este día",
       "appointmentCount_one": "{{count}} cita",
@@ -922,6 +963,7 @@
       "cancelledSession": "Cancelada: {{reason}}",
       "scheduleSession": "Horario fijo",
       "enrollmentAttendee": "{{name}} · grupo fijo",
+      "openAttendeeProfileLabel": "{{name}}. Ver su perfil",
       "cancelDayAction": "Cancelar este día",
       "cancelDayTitle": "Cancelar la clase de este día",
       "cancelDayHelper": "Se avisa a las personas apuntadas y a quien da la clase. El horario sigue los demás días.",
@@ -934,6 +976,8 @@
       "chipFull": "Completa",
       "chipPrivate": "Privada",
       "chipCancelled": "Cancelada",
+      "chipFinished": "Terminada",
+      "finishedSession": "Terminada",
       "chipLabel": "{{room}}, {{service}}, {{time}}, {{seats}}. Ver el detalle de la sala",
       "weekDayLabel_one": "{{day}}, {{count}} sala con clases",
       "weekDayLabel_other": "{{day}}, {{count}} salas con clases",
@@ -943,6 +987,12 @@
   "notifications": {
     "title": "Avisos",
     "markAllRead": "Marcar leídos",
+    "deleteOne": "Borrar aviso: {{title}}",
+    "deleteAll": "Borrar todos",
+    "deleteAllTitle": "¿Borrar todos los avisos?",
+    "deleteAllMessage": "Dejarán de salir en tu lista. Los avisos nuevos seguirán llegando.",
+    "deleteAllConfirm": "Sí, borrar todos",
+    "deleteAllDismiss": "Mantener avisos",
     "loadError": "No hemos podido cargar los avisos",
     "emptyTitle": "Sin avisos",
     "emptyDescription": "Aquí verás las citas nuevas, los cambios y las cancelaciones.",
@@ -1011,7 +1061,11 @@
     "scheduleEnrolledTitle": "Tienes un horario fijo nuevo",
     "scheduleEnrolledDescription": "{{actorName}} te ha apuntado a {{scheduleName}} con {{staffName}}{{roomSuffix}}.",
     "scheduleUnenrolledTitle": "Cambio en tu horario fijo",
-    "scheduleUnenrolledDescription": "{{actorName}} te ha dado de baja de {{scheduleName}} con {{staffName}}{{roomSuffix}}."
+    "scheduleUnenrolledDescription": "{{actorName}} te ha dado de baja de {{scheduleName}} con {{staffName}}{{roomSuffix}}.",
+    "passRequestedTitle": "Bono pedido",
+    "passRequestedDescription": "{{clientName}} ha pedido el bono {{rateName}}. Actívalo cuando lo cobres.",
+    "passActivatedTitle": "Tu bono está activo",
+    "passActivatedDescription": "Ya puedes usar tu bono {{rateName}}."
   },
   "clients": {
     "title": "{{clientWord}}",
@@ -1192,12 +1246,50 @@
       "subtitle": "{{serviceCount}} servicios · {{staffCount}} {{staffWord}}"
     }
   },
+  "passes": {
+    "title": "Mis bonos",
+    "loadError": "No hemos podido cargar tus bonos",
+    "empty": "Todavía no tienes ningún bono.",
+    "offersTitle": "Pedir un bono",
+    "noOffers": "Tu centro aún no ofrece bonos.",
+    "requestHint": "Al pedirlo, tu centro lo activará cuando lo cobre y te avisaremos.",
+    "requestAction": "Pedir",
+    "requestLabel": "Pedir el bono {{name}}",
+    "alreadyRequested": "Ya has pedido este bono: el centro lo activará en cuanto lo cobre.",
+    "allServices": "Vale para todos los servicios",
+    "offerSummary_one": "{{count}} clase · {{days}} días · {{price}}",
+    "offerSummary_other": "{{count}} clases · {{days}} días · {{price}}",
+    "remaining": "{{count}} de {{total}} clases",
+    "ofTotal": "de {{total}} clases",
+    "unit": "clases",
+    "validFor_one": "Válido {{count}} día",
+    "validFor_other": "Válido {{count}} días",
+    "expiresOn": "caduca el {{date}}",
+    "expiredOn": "caducó el {{date}}",
+    "assign": {
+      "title": "Bonos",
+      "empty": "Esta persona aún no tiene bonos.",
+      "action": "Dar un bono",
+      "noRates": "Primero crea un bono en Más → Bonos.",
+      "rateSummary_one": "{{count}} clase · {{price}}",
+      "rateSummary_other": "{{count}} clases · {{price}}"
+    },
+    "pendingDetail": "Pendiente de que el centro lo active",
+    "rejectedDetail": "El centro no lo ha activado",
+    "status": {
+      "pending": "Pendiente",
+      "active": "Activo",
+      "exhausted": "Agotado",
+      "expired": "Caducado",
+      "rejected": "Rechazado"
+    }
+  },
   "centerAdmin": {
     "tabs": {
+      "home": "Inicio",
       "content": "Contenido",
       "brand": "Marca",
-      "more": "Más",
-      "management": "Gestión"
+      "more": "Más"
     },
     "comingSoon": {
       "clientsTitle": "Clientes y grupos",
@@ -1230,6 +1322,8 @@
       "importClientsSubtitle": "Desde Excel o CSV de otro programa",
       "routinesTitle": "{{routineWordPlural}}",
       "routinesSubtitle": "Crear desde la biblioteca y asignar",
+      "passesTitle": "Bonos",
+      "passesSubtitle": "Crea bonos y activa los que piden tus {{clientWord}}",
       "reportsTitle": "Informes",
       "reportsSubtitle": "Ingresos, ocupación y retención",
       "moneySection": "Dinero",
@@ -1251,6 +1345,47 @@
       "privacySubtitle": "Consentimientos de tus {{clientWord}}",
       "myProfileTitle": "Mi perfil profesional",
       "myProfileSubtitle": "Tu vídeo, biografía y titulaciones"
+    },
+    "passes": {
+      "title": "Bonos",
+      "pendingTitle": "Pendientes de activar",
+      "pendingHint": "Cuando cobres el bono, márcalo como cobrado y empezará a contar.",
+      "subtitle": "Lo que vendes y lo que te piden",
+      "pendingRequestedBy": "Lo ha pedido {{name}}",
+      "pendingStamp": "Pendiente",
+      "removeAction": "Quitar",
+      "classesUnit": "clases",
+      "classesFact_one": "{{count}} clase",
+      "classesFact_other": "{{count}} clases",
+      "validDaysFact_one": "Válido {{count}} día",
+      "validDaysFact_other": "Válido {{count}} días",
+      "activateAction": "Marcar como cobrado",
+      "rejectAction": "Rechazar",
+      "ratesTitle": "Bonos a la venta",
+      "newAction": "Nuevo bono",
+      "newTitle": "Nuevo bono",
+      "saveAction": "Guardar bono",
+      "emptyTitle": "Aún no tienes bonos",
+      "emptyDescription": "Crea un bono (por ejemplo, 10 clases) y tus alumnos podrán pedirlo desde la app.",
+      "errorTitle": "No hemos podido cargar los bonos",
+      "allServices": "Vale para todos los servicios",
+      "removeRate": "Quitar el bono {{name}}",
+      "removeTitle": "¿Quitar este bono?",
+      "removeMessage": "«{{name}}» dejará de ofrecerse. Los bonos ya vendidos seguirán valiendo.",
+      "removeConfirm": "Sí, quitar",
+      "nameLabel": "Nombre del bono",
+      "namePlaceholder": "Bono 10 clases",
+      "nameInvalid": "Escribe un nombre de entre 2 y 80 letras.",
+      "sessionsLabel": "Número de clases",
+      "sessionsInvalid": "Indica un número de clases entre 1 y 200.",
+      "validDaysLabel": "Días de validez",
+      "validDaysHelper": "Cuenta desde que activas el bono.",
+      "validDaysInvalid": "Indica entre 1 y 730 días.",
+      "priceLabel": "Precio (€)",
+      "pricePlaceholder": "55",
+      "priceInvalid": "Indica un precio, por ejemplo 55 o 55,50.",
+      "servicesLabel": "Servicios en los que vale",
+      "servicesHelper": "Si no marcas ninguno, vale para todos."
     },
     "importClients": {
       "title": "Importar {{clientWord}}",
@@ -1567,14 +1702,8 @@
       "modeHelper": "Privado: una persona por sesión. En grupo: hasta el aforo del espacio. Tus clientes no eligen el modo."
     },
     "rooms": {
-      "title": "Salas y recursos",
-      "addAction": "Añadir",
-      "empty": "Aún no has añadido salas. Sirven para decir dónde se da cada servicio.",
-      "loadError": "No hemos podido cargar las salas",
-      "capacityShort": "aforo {{capacity}}",
-      "removeChipLabel": "{{name}}, aforo {{capacity}}. Quitar sala",
       "removeTitle": "¿Quitar la sala?",
-      "removeMessage": "{{name}} dejará de ofrecerse y los servicios que la usaban quedarán sin sala fija.",
+      "removeMessage": "{{name}} dejará de ofrecerse y los servicios que la usaban quedarán sin sala fija. Se cancelarán todas las citas y clases que tiene asignadas, se avisará a las personas apuntadas y sus horarios fijos terminarán.",
       "removeConfirm": "Quitar sala",
       "newTitle": "Nueva sala o recurso",
       "nameLabel": "Nombre",
@@ -1598,6 +1727,7 @@
       "fixedServiceLabel": "Servicio fijo de este espacio (opcional)",
       "fixedServiceHelper": "Con servicio fijo, aquí solo se programan sesiones de ese servicio.",
       "noFixedService": "Cualquier servicio",
+      "scheduleAction": "Poner horario a esta sala",
       "blocksAction": "Bloqueos del espacio"
     },
     "hoursEditor": {
@@ -1721,6 +1851,10 @@
       "confirmAction": "Exportar",
       "shareTitle": "Datos de {{name}}"
     },
+    "timeRange": {
+      "from": "De",
+      "until": "Hasta"
+    },
     "management": {
       "title": "Gestión",
       "subtitle": "Espacios, horarios fijos y bloqueos del centro",
@@ -1732,6 +1866,10 @@
       "roomLabel": "{{name}}, aforo {{capacity}}. Editar espacio",
       "loadError": "No hemos podido cargar los espacios",
       "roomFixedService": "Solo {{service}}",
+      "blocksTitle": "Alquiler y mantenimiento",
+      "blocksHelper": "Aparta una sala unas horas para alquilarla, hacer mantenimiento o un evento. Elige la sala.",
+      "blocksRoomSubtitle": "Bloquear horas de esta sala",
+      "blocksRoomLabel": "{{name}}. Bloquear horas por alquiler o mantenimiento",
       "roomsTitle": "Espacios"
     },
     "serviceSelection": {
@@ -1741,6 +1879,23 @@
       "sectionTitle": "Horario fijo",
       "addAction": "Nuevo horario",
       "emptyDay": "Nada programado el {{day}}",
+      "weekRange": "Semana del {{from}} al {{to}}",
+      "previousWeek": "Semana anterior",
+      "nextWeek": "Semana siguiente",
+      "repeatWeekAction": "Repetir en la semana siguiente",
+      "repeatWeekHelper": "Para copiar una semana, crea sus horarios con «Esta semana» (o 2, 3, 4 semanas). Los que no tienen fin ya valen para todas las semanas.",
+      "repeatCopied_one": "Copiado {{count}} horario a la semana siguiente.",
+      "repeatCopied_other": "Copiados {{count}} horarios a la semana siguiente.",
+      "repeatAlready_one": "{{count}} ya estaba copiado.",
+      "repeatAlready_other": "{{count}} ya estaban copiados.",
+      "repeatSkipped_one": "{{count}} fecha no se pudo crear (festivo, sala o profesor ocupados).",
+      "repeatSkipped_other": "{{count}} fechas no se pudieron crear (festivo, sala o profesor ocupados).",
+      "newRoomSubtitle": "Sala creada. Ahora di qué servicio se da en ella, qué días y a qué horas, y hasta cuándo.",
+      "periodOneWeek": "Esta semana",
+      "periodTwoWeeks": "2 semanas",
+      "periodThreeWeeks": "3 semanas",
+      "periodFourWeeks": "4 semanas",
+      "periodNoEnd": "Sin fin",
       "loadError": "No hemos podido cargar los horarios",
       "weekdayShort": {
         "mon": "lun",
@@ -1830,6 +1985,7 @@
       "unenrollMessage": "Se cancelan sus citas futuras de este horario sin consumir bono.",
       "unenrollConfirm": "Dar de baja",
       "editAction": "Editar horario",
+      "editRowLabel": "Editar el horario de {{time}}: {{name}}",
       "endAction": "Terminar horario",
       "endTitle": "¿Terminar el horario?",
       "endMessage": "Las sesiones futuras sin citas sueltas se cancelan y se avisa a las personas matriculadas.",

@@ -40,6 +40,8 @@ export interface AppointmentCardProps {
   /** «Confirmada», «Cancelada»: el estado siempre va con palabra. */
   statusLabel: string;
   statusTone: BadgeTone;
+  /** La cita ya pasó: tarjeta gris con texto blanco y sin acciones. */
+  isPast?: boolean | undefined;
   /** Fila de botones bajo la cita (reprogramar, cancelar). Sin ellos la tarjeta es de lectura. */
   buttonActions?: readonly AppointmentButtonAction[] | undefined;
   /** Fila de enlaces con icono bajo los botones (QR de acceso, al calendario). */

@@ -13,6 +13,8 @@ export {
 } from './center-appearance';
 export { CenterAppearanceProvider, useCenterAppearance } from './center-appearance-context';
 export { convertHexToHsv, convertHsvToHex, type HsvColor } from './color-conversion';
+export { buildFinishedLook, type FinishedLook } from './finished-look';
+export { FINISHED_PALETTE } from './finished-palette';
 export { buildHoneycombTile } from './honeycomb-tile';
 export { buildTheme } from './build-theme';
 export { calculateContrastRatio, deriveBrandTokens } from './brand-engine';

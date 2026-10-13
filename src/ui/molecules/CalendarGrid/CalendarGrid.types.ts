@@ -15,6 +15,12 @@ export interface CalendarGridProps {
   onVisibleMonthChange: (month: { year: number; month: number }) => void;
   /** Día elegido, `AAAA-MM-DD`, o cadena vacía. */
   selectedDate: string;
+  /** Hoy, `AAAA-MM-DD`: su número va en el color de la marca, como en el calendario del iPhone. */
+  todayDate?: string | undefined;
+  /** El primer día que se puede elegir, `AAAA-MM-DD`; los anteriores salen apagados y no se pulsan. */
+  minDate?: string | undefined;
+  /** Si se indica, solo estos días se pueden elegir (los de una lista de clases); el resto sale apagado. */
+  enabledDates?: ReadonlySet<string> | undefined;
   onDateSelect: (isoDate: string) => void;
   labels: CalendarGridLabels;
 }

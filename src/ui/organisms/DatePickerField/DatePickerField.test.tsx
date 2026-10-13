@@ -6,8 +6,6 @@ import { DatePickerField } from './DatePickerField';
 
 /** Lo mínimo que hace falta para probar el campo: el formato real se prueba en `shared/lib/format`. */
 const formatNumericDate = (isoDate: string): string => isoDate.split('-').reverse().join('/');
-const parseNumericDate = (text: string): string | null =>
-  text === '23/11/2026' ? '2026-11-23' : null;
 
 const LABELS = {
   monthTitle: 'noviembre de 2026',
@@ -17,17 +15,18 @@ const LABELS = {
   describeDay: (isoDate: string) => `día ${isoDate}`,
 };
 
-function renderField(onValueChange: jest.Mock, value = ''): void {
+function renderField(onValueChange: jest.Mock, value = '', minDate?: string): void {
   render(
     <ThemeProvider>
       <DatePickerField
         value={value}
         onValueChange={onValueChange}
         formatDate={formatNumericDate}
-        parseDate={parseNumericDate}
         accessibilityLabel="Fecha"
-        placeholder="DD/MM/AAAA"
-        openCalendarLabel="Elegir en el calendario"
+        placeholder="Elige una fecha"
+        openCalendarLabel="Abrir o cerrar el calendario"
+        todayDate="2026-11-20"
+        minDate={minDate}
         getCalendarLabels={() => LABELS}
       />
     </ThemeProvider>,
@@ -35,39 +34,41 @@ function renderField(onValueChange: jest.Mock, value = ''): void {
 }
 
 describe('DatePickerField', () => {
-  it('reports an ISO date when a Spanish date is typed', () => {
+  it('shows the calendar open and reports the day that is pressed', () => {
     const onValueChange = jest.fn();
     renderField(onValueChange);
 
-    fireEvent.changeText(screen.getByLabelText('Fecha'), '23/11/2026');
+    fireEvent.press(screen.getByRole('button', { name: 'día 2026-11-23' }));
 
-    expect(onValueChange).toHaveBeenLastCalledWith('2026-11-23');
+    expect(onValueChange).toHaveBeenCalledWith('2026-11-23');
   });
 
-  it('reports an empty value while what is typed is not a date', () => {
-    const onValueChange = jest.fn();
-    renderField(onValueChange);
-
-    fireEvent.changeText(screen.getByLabelText('Fecha'), '31/04/2026');
-
-    expect(onValueChange).toHaveBeenLastCalledWith('');
-  });
-
-  it('shows the given date the Spanish way', () => {
+  it('shows the given date the Spanish way in the pill', () => {
     renderField(jest.fn(), '2026-11-23');
 
-    expect(screen.getByDisplayValue('23/11/2026')).toBeOnTheScreen();
+    expect(screen.getByText('23/11/2026')).toBeOnTheScreen();
   });
 
-  it('picks a day in the calendar and closes it', () => {
+  it('asks to choose a date while there is none', () => {
+    renderField(jest.fn());
+
+    expect(screen.getByText('Elige una fecha')).toBeOnTheScreen();
+  });
+
+  it('does not let a day before the minimum be chosen', () => {
     const onValueChange = jest.fn();
-    renderField(onValueChange, '2026-11-23');
+    renderField(onValueChange, '', '2026-11-20');
 
-    fireEvent.press(screen.getByRole('button', { name: 'Elegir en el calendario' }));
-    fireEvent.press(screen.getByRole('button', { name: 'día 2026-11-27' }));
+    fireEvent.press(screen.getByRole('button', { name: 'día 2026-11-10' }));
 
-    expect(onValueChange).toHaveBeenLastCalledWith('2026-11-27');
-    expect(screen.queryByText('noviembre de 2026')).toBeNull();
-    expect(screen.getByDisplayValue('27/11/2026')).toBeOnTheScreen();
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('closes and opens the calendar from the pill', () => {
+    renderField(jest.fn(), '2026-11-23');
+
+    fireEvent.press(screen.getByRole('button', { name: /Fecha: 23\/11\/2026/ }));
+
+    expect(screen.queryByRole('button', { name: 'día 2026-11-23' })).not.toBeOnTheScreen();
   });
 });

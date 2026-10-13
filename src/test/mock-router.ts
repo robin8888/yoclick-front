@@ -3,6 +3,7 @@ interface MockRouter {
   replace: jest.Mock;
   back: jest.Mock;
   dismiss: jest.Mock;
+  dismissTo: jest.Mock;
   canGoBack: jest.Mock;
 }
 
@@ -18,5 +19,6 @@ export function resetMockRouter(): void {
   mockRouter.replace.mockReset();
   mockRouter.back.mockReset();
   mockRouter.dismiss.mockReset();
+  mockRouter.dismissTo.mockReset();
   mockRouter.canGoBack.mockReset().mockReturnValue(true);
 }

@@ -1,91 +1,59 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { Input } from '@/ui/atoms/Input';
-import { IconButton } from '@/ui/atoms/IconButton';
+import { useTheme } from '@/shared/theme';
+import { Icon } from '@/ui/atoms/Icon';
+import { Text } from '@/ui/atoms/Text';
 import { CalendarGrid, readMonthOfIsoDate } from '@/ui/molecules/CalendarGrid';
 
-import { DATE_FIELD_ROW_STYLE, DATE_FIELD_TEXT_STYLE } from './DatePickerField.styles';
+import { createDatePillStyle, DATE_FIELD_STYLE } from './DatePickerField.styles';
 import type { DatePickerFieldProps } from './DatePickerField.types';
 
-const DATE_MAX_LENGTH = 10;
-const FALLBACK_MONTH = { year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
+const FALLBACK_MONTH = { year: 2026, month: 1 };
 
-interface DatePickerState {
-  text: string;
-  isCalendarOpen: boolean;
-  visibleMonth: { year: number; month: number };
-  setVisibleMonth: (month: { year: number; month: number }) => void;
-  toggleCalendar: () => void;
-  changeText: (nextText: string) => void;
-  selectDate: (isoDate: string) => void;
-}
-
-/** Texto escrito, calendario abierto y mes visible: lo que el campo recuerda entre pulsaciones. */
-function useDatePickerState(
-  props: Pick<DatePickerFieldProps, 'value' | 'onValueChange' | 'formatDate' | 'parseDate'>,
-): DatePickerState {
-  const { value, onValueChange, formatDate, parseDate } = props;
-  const [text, setText] = useState(formatDate(value));
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [visibleMonth, setVisibleMonth] = useState(readMonthOfIsoDate(value) ?? FALLBACK_MONTH);
-
-  return {
-    text,
-    isCalendarOpen,
-    visibleMonth,
-    setVisibleMonth,
-    toggleCalendar: () => {
-      setIsCalendarOpen((isOpen) => !isOpen);
-    },
-    changeText: (nextText) => {
-      setText(nextText);
-      onValueChange(parseDate(nextText) ?? '');
-    },
-    selectDate: (isoDate) => {
-      setText(formatDate(isoDate));
-      onValueChange(isoDate);
-      setIsCalendarOpen(false);
-    },
-  };
+/** El mes que enseña el calendario al abrirse: el de la fecha elegida o, si no hay, el de hoy. */
+function resolveInitialMonth(props: Pick<DatePickerFieldProps, 'value' | 'todayDate'>) {
+  return (
+    readMonthOfIsoDate(props.value) ?? readMonthOfIsoDate(props.todayDate ?? '') ?? FALLBACK_MONTH
+  );
 }
 
 /**
- * Una fecha que se escribe como en España (`23/11/2026`) o se elige en un calendario. Entrega
- * siempre `AAAA-MM-DD`, o cadena vacía mientras lo escrito no sea una fecha que exista.
+ * Una fecha elegida en un calendario como el del iPhone: una píldora con la fecha y, debajo, el mes
+ * en rejilla (abierto por defecto; la píldora lo cierra y lo abre). Entrega `AAAA-MM-DD`.
  */
 export function DatePickerField(props: Readonly<DatePickerFieldProps>): React.JSX.Element {
-  const { value, accessibilityLabel, placeholder, openCalendarLabel, getCalendarLabels } = props;
-  const state = useDatePickerState(props);
+  const { value, formatDate, accessibilityLabel, placeholder, openCalendarLabel } = props;
+  const theme = useTheme();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(props.isInitiallyOpen ?? true);
+  const [visibleMonth, setVisibleMonth] = useState(() => resolveInitialMonth(props));
+  const dateLabel = value === '' ? placeholder : formatDate(value);
 
   return (
-    <View style={DATE_FIELD_TEXT_STYLE}>
-      <View style={DATE_FIELD_ROW_STYLE}>
-        <View style={DATE_FIELD_TEXT_STYLE}>
-          <Input
-            value={state.text}
-            onChangeText={state.changeText}
-            accessibilityLabel={accessibilityLabel}
-            placeholder={placeholder}
-            keyboardType="numbers-and-punctuation"
-            maxLength={DATE_MAX_LENGTH}
-            isInvalid={state.text.trim() !== '' && value === ''}
-          />
-        </View>
-        <IconButton
-          iconName="calendar"
-          variant="tonal"
-          accessibilityLabel={openCalendarLabel}
-          onPress={state.toggleCalendar}
-        />
-      </View>
-      {state.isCalendarOpen ? (
+    <View style={DATE_FIELD_STYLE}>
+      <Pressable
+        role="button"
+        accessibilityLabel={`${accessibilityLabel}: ${dateLabel}. ${openCalendarLabel}`}
+        accessibilityState={{ expanded: isCalendarOpen }}
+        onPress={() => {
+          setIsCalendarOpen((isOpen) => !isOpen);
+        }}
+        style={createDatePillStyle(theme)}
+      >
+        <Icon name="calendar" size="inline" color="brandInk" />
+        <Text variant="bodyStrong" color={value === '' ? 'ink2' : 'ink'}>
+          {dateLabel}
+        </Text>
+      </Pressable>
+      {isCalendarOpen ? (
         <CalendarGrid
-          visibleMonth={state.visibleMonth}
-          onVisibleMonthChange={state.setVisibleMonth}
+          visibleMonth={visibleMonth}
+          onVisibleMonthChange={setVisibleMonth}
           selectedDate={value}
-          onDateSelect={state.selectDate}
-          labels={getCalendarLabels(state.visibleMonth)}
+          todayDate={props.todayDate}
+          minDate={props.minDate}
+          onDateSelect={props.onValueChange}
+          labels={props.getCalendarLabels(visibleMonth)}
         />
       ) : null}
     </View>

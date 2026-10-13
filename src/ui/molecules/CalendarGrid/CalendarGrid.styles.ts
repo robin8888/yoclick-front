@@ -2,7 +2,8 @@ import type { ViewStyle } from 'react-native';
 
 import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
-const SELECTED_RING_WIDTH = 2;
+const DAY_CIRCLE_SIZE = 40;
+const HALF = 2;
 
 export function createCalendarStyle(theme: Theme): ViewStyle {
   return {
@@ -15,25 +16,36 @@ export function createCalendarStyle(theme: Theme): ViewStyle {
   };
 }
 
+/** Como el calendario del iPhone: el mes a la izquierda y las flechas juntas a la derecha. */
 export const CALENDAR_HEADER_STYLE: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
 };
 
+export const CALENDAR_ARROWS_STYLE: ViewStyle = { flexDirection: 'row', alignItems: 'center' };
+
 export const CALENDAR_WEEK_STYLE: ViewStyle = { flexDirection: 'row' };
 
-export function createDayCellStyle(theme: Theme, isSelected: boolean): ViewStyle {
+/** La celda de un día: ocupa 1/7 de la fila y centra el círculo. */
+export function createDayCellStyle(): ViewStyle {
   return {
     flex: 1,
     minHeight: MIN_TOUCH_TARGET_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: theme.radius.pill,
-    // El día elegido lleva relleno de marca y además un aro: no depende solo del color.
+  };
+}
+
+/** El círculo del día: relleno de marca si es el elegido (y el número en negrita, no solo color). */
+export function createDayCircleStyle(theme: Theme, isSelected: boolean): ViewStyle {
+  return {
+    width: DAY_CIRCLE_SIZE,
+    height: DAY_CIRCLE_SIZE,
+    borderRadius: DAY_CIRCLE_SIZE / HALF,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: isSelected ? theme.colors.brand : 'transparent',
-    borderWidth: isSelected ? SELECTED_RING_WIDTH : 0,
-    borderColor: theme.colors.ink,
   };
 }
 

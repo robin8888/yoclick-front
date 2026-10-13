@@ -1,17 +1,17 @@
 import type { ViewStyle } from 'react-native';
 
-import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
+import { FINISHED_PALETTE, MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
 const DATE_TILE_WIDTH = 56;
 
-export function createAppointmentCardStyle(theme: Theme): ViewStyle {
+export function createAppointmentCardStyle(theme: Theme, isPast: boolean): ViewStyle {
   return {
     gap: theme.space[3],
     padding: theme.space[4],
     borderRadius: theme.radius.lg,
     borderWidth: 1,
-    borderColor: theme.colors.line,
-    backgroundColor: theme.colors.surface,
+    borderColor: isPast ? FINISHED_PALETTE.background : theme.colors.line,
+    backgroundColor: isPast ? FINISHED_PALETTE.background : theme.colors.surface,
   };
 }
 

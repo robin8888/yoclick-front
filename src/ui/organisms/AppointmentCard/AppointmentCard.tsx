@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import { useTheme } from '@/shared/theme';
+import { FINISHED_PALETTE, useTheme } from '@/shared/theme';
 import { Badge } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
@@ -37,17 +37,53 @@ function AppointmentDateBlock({
 /** Líneas secundarias opcionales (sala, quién la asignó); las que no hay no se pintan. */
 function AppointmentCaptions({
   labels,
-}: Readonly<{ labels: readonly (string | null | undefined)[] }>): React.JSX.Element {
+  tint,
+}: Readonly<{
+  labels: readonly (string | null | undefined)[];
+  tint: { tintColor?: string };
+}>): React.JSX.Element {
   return (
     <>
       {labels.map((label) =>
         label === null || label === undefined ? null : (
-          <Text key={label} variant="caption" color="ink2">
+          <Text key={label} variant="caption" color="ink2" {...tint}>
             {label}
           </Text>
         ),
       )}
     </>
+  );
+}
+
+type AppointmentDetailsProps = Pick<
+  AppointmentCardProps,
+  'serviceName' | 'detailsLabel' | 'roomLabel' | 'assignedByLabel' | 'statusLabel' | 'statusTone'
+> & { tint: { tintColor?: string } };
+
+function AppointmentDetails({
+  serviceName,
+  detailsLabel,
+  roomLabel,
+  assignedByLabel,
+  statusLabel,
+  statusTone,
+  tint,
+}: Readonly<AppointmentDetailsProps>): React.JSX.Element {
+  const theme = useTheme();
+
+  return (
+    <View style={createAppointmentDetailsStyle(theme)}>
+      <Text variant="bodyStrong" {...tint}>
+        {serviceName}
+      </Text>
+      <Text variant="caption" color="ink2" {...tint}>
+        {detailsLabel}
+      </Text>
+      <AppointmentCaptions labels={[roomLabel, assignedByLabel]} tint={tint} />
+      <View style={createStatusBadgeRowStyle(theme)}>
+        <Badge label={statusLabel} tone={statusTone} />
+      </View>
+    </View>
   );
 }
 
@@ -57,31 +93,19 @@ function AppointmentCaptions({
  */
 export function AppointmentCard({
   dateTile,
-  serviceName,
-  detailsLabel,
-  roomLabel,
-  assignedByLabel,
-  statusLabel,
-  statusTone,
   buttonActions,
   linkActions,
+  isPast = false,
+  ...details
 }: Readonly<AppointmentCardProps>): React.JSX.Element {
   const theme = useTheme();
+  const tint = isPast ? { tintColor: FINISHED_PALETTE.text } : {};
 
   return (
-    <View style={createAppointmentCardStyle(theme)}>
+    <View style={createAppointmentCardStyle(theme, isPast)}>
       <View style={APPOINTMENT_SUMMARY_STYLE}>
         <AppointmentDateBlock dateTile={dateTile} />
-        <View style={createAppointmentDetailsStyle(theme)}>
-          <Text variant="bodyStrong">{serviceName}</Text>
-          <Text variant="caption" color="ink2">
-            {detailsLabel}
-          </Text>
-          <AppointmentCaptions labels={[roomLabel, assignedByLabel]} />
-          <View style={createStatusBadgeRowStyle(theme)}>
-            <Badge label={statusLabel} tone={statusTone} />
-          </View>
-        </View>
+        <AppointmentDetails {...details} tint={tint} />
       </View>
       {buttonActions === undefined || buttonActions.length === 0 ? null : (
         <AppointmentButtonRow actions={buttonActions} />
