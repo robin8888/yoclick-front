@@ -230,7 +230,7 @@ export const passesRequestResponseClientMembershipIdRegExp = new RegExp('^([0-9a
 export const PassesRequestResponse = zod.object({
   "id": zod.uuid().regex(passesRequestResponseIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesRequestResponseTotalSessionsMin).max(passesRequestResponseTotalSessionsMax),
   "remainingSessions": zod.int().min(passesRequestResponseRemainingSessionsMin).max(passesRequestResponseRemainingSessionsMax),
   "priceCents": zod.int().min(passesRequestResponsePriceCentsMin).max(passesRequestResponsePriceCentsMax),

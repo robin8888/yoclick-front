@@ -28,7 +28,10 @@ function ChosenClientsSummary({
   clients,
 }: Readonly<{ clients: readonly ChosenClient[] }>): React.JSX.Element {
   return (
-    <Text color="ink2">
+    <Text
+      color={clients.length === 0 ? 'ink2' : 'brandInk'}
+      variant={clients.length === 0 ? 'body' : 'bodyStrong'}
+    >
       {clients.length === 0
         ? i18n.t('staffAgenda.newAppointment.severalClientsHint')
         : i18n.t('staffAgenda.newAppointment.chosenClients', {

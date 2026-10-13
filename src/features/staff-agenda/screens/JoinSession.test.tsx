@@ -44,8 +44,18 @@ const AGENDA = {
   sessionsWithoutRoom: [],
 };
 
-const ELIGIBLE_MARTA = { membershipId: MARTA_ID, fullName: 'Marta Ruiz', bookableSessions: 4 };
-const ELIGIBLE_LUIS = { membershipId: LUIS_ID, fullName: 'Luis Gil', bookableSessions: 1 };
+const ELIGIBLE_MARTA = {
+  membershipId: MARTA_ID,
+  fullName: 'Marta Ruiz',
+  photoUrl: 'https://files.example.com/marta.jpg',
+  bookableSessions: 4,
+};
+const ELIGIBLE_LUIS = {
+  membershipId: LUIS_ID,
+  fullName: 'Luis Gil',
+  photoUrl: null,
+  bookableSessions: 1,
+};
 
 const ELIGIBLE = { clients: [ELIGIBLE_MARTA] };
 
@@ -82,7 +92,8 @@ describe('NewAppointmentScreen · joining a class of a room', () => {
 
     expect(await screen.findByText('Inglés B1')).toBeOnTheScreen();
     expect(screen.getByText('Da la clase Ana Ruiz')).toBeOnTheScreen();
-    expect(screen.getByText('Sala 1 · 17:00–18:30')).toBeOnTheScreen();
+    expect(screen.getByText('17:00–18:30')).toBeOnTheScreen();
+    expect(screen.getByText('Sala 1')).toBeOnTheScreen();
     expect(screen.getByText('3 de 12 plazas ocupadas')).toBeOnTheScreen();
     expect(screen.queryByText('Tipo de cita')).not.toBeOnTheScreen();
     expect(screen.queryByText('Servicio')).not.toBeOnTheScreen();

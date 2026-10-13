@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { PassListResponseDtoPassesItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { formatShortDate } from '@/shared/lib/format';
@@ -8,6 +10,8 @@ import { buildBanknoteSerial } from '../model/pass-serial';
 
 interface MyPassCardProps {
   pass: PassListResponseDtoPassesItem;
+  /** Acciones bajo el billete (en la ficha del alumno: «Quitar bono»). */
+  actions?: ReactNode;
 }
 
 function resolveTone(status: PassListResponseDtoPassesItem['status']): BanknoteTone {
@@ -30,7 +34,7 @@ function describeServices(pass: PassListResponseDtoPassesItem): string {
 }
 
 /** Un bono de la persona como un billete: lo que le queda en grande y su estado con palabra. */
-export function MyPassCard({ pass }: Readonly<MyPassCardProps>): React.JSX.Element {
+export function MyPassCard({ pass, actions }: Readonly<MyPassCardProps>): React.JSX.Element {
   const watermark = useBanknoteWatermark();
   const status = i18n.t(`passes.status.${pass.status}`);
   const remaining = i18n.t('passes.remaining', {
@@ -50,6 +54,8 @@ export function MyPassCard({ pass }: Readonly<MyPassCardProps>): React.JSX.Eleme
       watermark={watermark}
       tone={resolveTone(pass.status)}
       accessibilityLabel={`${pass.name}. ${status}. ${remaining}. ${detailLines.join('. ')}`}
-    />
+    >
+      {actions}
+    </BanknoteCard>
   );
 }

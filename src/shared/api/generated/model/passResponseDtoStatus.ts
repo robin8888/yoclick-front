@@ -15,4 +15,5 @@ export const PassResponseDtoStatus = {
   exhausted: 'exhausted',
   expired: 'expired',
   rejected: 'rejected',
+  cancelled: 'cancelled',
 } as const;

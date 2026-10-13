@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { formatEuros } from '@/shared/lib/format';
+import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { OptionCard } from '@/ui/molecules/OptionCard';
@@ -14,15 +16,55 @@ const OPTIONS_STYLE = { gap: 8 } as const;
 interface AssignPassOptionsProps {
   clientMembershipId: string;
   onAssigned: () => void;
+  onCancel: () => void;
 }
 
-/** Los bonos del centro como opciones: al tocar uno, se entrega ya activo a la persona. */
+interface AssignActionsProps {
+  isReady: boolean;
+  isAssigning: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+/** «Asignar bono» (activo solo con uno elegido) y «Cancelar». */
+function AssignActions({
+  isReady,
+  isAssigning,
+  onConfirm,
+  onCancel,
+}: Readonly<AssignActionsProps>): React.JSX.Element {
+  return (
+    <>
+      <Button
+        isFullWidth
+        label={i18n.t('passes.assign.confirmAction')}
+        isDisabled={!isReady}
+        isLoading={isAssigning}
+        onPress={onConfirm}
+      />
+      <Button
+        isFullWidth
+        variant="ghost"
+        label={i18n.t('actions.cancel')}
+        isDisabled={isAssigning}
+        onPress={onCancel}
+      />
+    </>
+  );
+}
+
+/**
+ * Elegir el bono y confirmarlo con «Asignar bono»: tocar una opción solo la marca, así un toque de
+ * más no crea otro bono. Mientras el servidor responde, el botón no se puede volver a pulsar.
+ */
 export function AssignPassOptions({
   clientMembershipId,
   onAssigned,
+  onCancel,
 }: Readonly<AssignPassOptionsProps>): React.JSX.Element {
   const rates = useRateOffers().data?.rates ?? [];
   const assignment = useAssignPass(clientMembershipId);
+  const [chosenRateId, setChosenRateId] = useState<string | null>(null);
 
   return (
     <View style={OPTIONS_STYLE}>
@@ -36,15 +78,23 @@ export function AssignPassOptions({
             price: formatEuros(rate.priceCents),
           })}
           selectionMode="single"
-          isSelected={false}
+          isSelected={rate.id === chosenRateId}
           onPress={() => {
-            if (!assignment.isAssigning) assignment.assignPass(rate.id, onAssigned);
+            setChosenRateId(rate.id);
           }}
         />
       ))}
       {assignment.errorMessage === null ? null : (
         <FormErrorBanner message={assignment.errorMessage} />
       )}
+      <AssignActions
+        isReady={chosenRateId !== null}
+        isAssigning={assignment.isAssigning}
+        onConfirm={() => {
+          if (chosenRateId !== null) assignment.assignPass(chosenRateId, onAssigned);
+        }}
+        onCancel={onCancel}
+      />
     </View>
   );
 }

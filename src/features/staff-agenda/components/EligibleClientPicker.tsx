@@ -5,13 +5,19 @@ import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { useTheme } from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
+import { Badge } from '@/ui/atoms/Badge';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 
 import { useEligibleClients } from '../hooks/useEligibleClients';
 import type { ChosenClient } from '../hooks/useNewAppointmentForm';
-import { createEligibleRowStyle, ELIGIBLE_ROW_TEXT_STYLE } from './EligibleClientPicker.styles';
+import {
+  createEligibleCheckStyle,
+  createEligibleRowStyle,
+  ELIGIBLE_LIST_STYLE,
+  ELIGIBLE_ROW_TEXT_STYLE,
+} from './EligibleClientPicker.styles';
 
 interface EligibleClientPickerProps {
   serviceId: string;
@@ -20,7 +26,12 @@ interface EligibleClientPickerProps {
 }
 
 interface EligibleClientRowProps {
-  client: { membershipId: string; fullName: string; bookableSessions: number };
+  client: {
+    membershipId: string;
+    fullName: string;
+    photoUrl: string | null;
+    bookableSessions: number;
+  };
   isSelected: boolean;
   onPress: () => void;
 }
@@ -44,16 +55,16 @@ function EligibleClientRow({
       onPress={onPress}
       style={createEligibleRowStyle(theme, isSelected)}
     >
-      <Avatar name={client.fullName} size="md" isDecorative />
+      <Avatar name={client.fullName} photoUrl={client.photoUrl} size="lg" isDecorative />
       <View style={ELIGIBLE_ROW_TEXT_STYLE}>
         <Text variant="bodyStrong" numberOfLines={1}>
           {client.fullName}
         </Text>
-        <Text variant="caption" color="ink2">
-          {bookable}
-        </Text>
+        <Badge label={bookable} tone="success" />
       </View>
-      {isSelected ? <Icon name="checkCircle" color="brandInk" /> : null}
+      <View style={createEligibleCheckStyle(theme, isSelected)}>
+        {isSelected ? <Icon name="check" color="onBrand" /> : null}
+      </View>
     </Pressable>
   );
 }
@@ -86,7 +97,7 @@ export function EligibleClientPicker({
     return <Text color="ink2">{i18n.t('staffAgenda.newAppointment.noEligibleClients')}</Text>;
   }
   return (
-    <>
+    <View style={ELIGIBLE_LIST_STYLE}>
       {eligible.data.clients.map((client) => (
         <EligibleClientRow
           key={client.membershipId}
@@ -97,6 +108,6 @@ export function EligibleClientPicker({
           }}
         />
       ))}
-    </>
+    </View>
   );
 }

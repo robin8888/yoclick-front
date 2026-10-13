@@ -102,11 +102,22 @@ export const getPassesRejectMockHandler = (overrideResponse?: PassResponseDto | 
       })
   }, options)
 }
+
+export const getPassesCancelMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/passes/:passId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getPassesMock = () => [
   getPassesEligibleMockHandler(),
   getPassesMineMockHandler(),
   getPassesListMockHandler(),
   getPassesAssignMockHandler(),
   getPassesActivateMockHandler(),
-  getPassesRejectMockHandler()
+  getPassesRejectMockHandler(),
+  getPassesCancelMockHandler()
 ]

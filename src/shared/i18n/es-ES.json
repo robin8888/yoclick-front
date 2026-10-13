@@ -1302,6 +1302,12 @@
       "title": "Bonos",
       "empty": "Esta persona aún no tiene bonos.",
       "action": "Dar un bono",
+      "confirmAction": "Asignar bono",
+      "removeAction": "Quitar bono",
+      "removeLabel": "Quitar el bono {{name}}",
+      "removeTitle": "¿Quitar este bono?",
+      "removeMessage": "«{{name}}» dejará de salir y no se podrá usar. Si lo asignaste por error, así queda corregido.",
+      "removeConfirm": "Sí, quitar bono",
       "noRates": "Primero crea un bono en Más → Bonos.",
       "rateSummary_one": "{{count}} clase · {{price}}",
       "rateSummary_other": "{{count}} clases · {{price}}"
@@ -1313,7 +1319,8 @@
       "active": "Activo",
       "exhausted": "Agotado",
       "expired": "Caducado",
-      "rejected": "Rechazado"
+      "rejected": "Rechazado",
+      "cancelled": "Quitado"
     }
   },
   "centerAdmin": {

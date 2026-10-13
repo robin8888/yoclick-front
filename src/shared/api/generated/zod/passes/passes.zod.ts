@@ -39,6 +39,7 @@ export const PassesEligibleResponse = zod.object({
   "clients": zod.array(zod.object({
   "membershipId": zod.uuid().regex(passesEligibleResponseClientsItemMembershipIdRegExp),
   "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
   "bookableSessions": zod.int().min(passesEligibleResponseClientsItemBookableSessionsMin).max(passesEligibleResponseClientsItemBookableSessionsMax)
 }))
 })
@@ -78,7 +79,7 @@ export const PassesMineResponse = zod.object({
   "passes": zod.array(zod.object({
   "id": zod.uuid().regex(passesMineResponsePassesItemIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesMineResponsePassesItemTotalSessionsMin).max(passesMineResponsePassesItemTotalSessionsMax),
   "remainingSessions": zod.int().min(passesMineResponsePassesItemRemainingSessionsMin).max(passesMineResponsePassesItemRemainingSessionsMax),
   "priceCents": zod.int().min(passesMineResponsePassesItemPriceCentsMin).max(passesMineResponsePassesItemPriceCentsMax),
@@ -111,7 +112,7 @@ export const passesListQueryClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]
 
 
 export const PassesListQueryParams = zod.object({
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']).optional(),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']).optional(),
   "clientMembershipId": zod.uuid().regex(passesListQueryClientMembershipIdRegExp).optional()
 })
 
@@ -140,7 +141,7 @@ export const PassesListResponse = zod.object({
   "passes": zod.array(zod.object({
   "id": zod.uuid().regex(passesListResponsePassesItemIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesListResponsePassesItemTotalSessionsMin).max(passesListResponsePassesItemTotalSessionsMax),
   "remainingSessions": zod.int().min(passesListResponsePassesItemRemainingSessionsMin).max(passesListResponsePassesItemRemainingSessionsMax),
   "priceCents": zod.int().min(passesListResponsePassesItemPriceCentsMin).max(passesListResponsePassesItemPriceCentsMax),
@@ -202,7 +203,7 @@ export const passesAssignResponseClientMembershipIdRegExp = new RegExp('^([0-9a-
 export const PassesAssignResponse = zod.object({
   "id": zod.uuid().regex(passesAssignResponseIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesAssignResponseTotalSessionsMin).max(passesAssignResponseTotalSessionsMax),
   "remainingSessions": zod.int().min(passesAssignResponseRemainingSessionsMin).max(passesAssignResponseRemainingSessionsMax),
   "priceCents": zod.int().min(passesAssignResponsePriceCentsMin).max(passesAssignResponsePriceCentsMax),
@@ -256,7 +257,7 @@ export const passesActivateResponseClientMembershipIdRegExp = new RegExp('^([0-9
 export const PassesActivateResponse = zod.object({
   "id": zod.uuid().regex(passesActivateResponseIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesActivateResponseTotalSessionsMin).max(passesActivateResponseTotalSessionsMax),
   "remainingSessions": zod.int().min(passesActivateResponseRemainingSessionsMin).max(passesActivateResponseRemainingSessionsMax),
   "priceCents": zod.int().min(passesActivateResponsePriceCentsMin).max(passesActivateResponsePriceCentsMax),
@@ -310,7 +311,7 @@ export const passesRejectResponseClientMembershipIdRegExp = new RegExp('^([0-9a-
 export const PassesRejectResponse = zod.object({
   "id": zod.uuid().regex(passesRejectResponseIdRegExp),
   "name": zod.string(),
-  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected']),
+  "status": zod.enum(['pending', 'active', 'exhausted', 'expired', 'rejected', 'cancelled']),
   "totalSessions": zod.int().min(passesRejectResponseTotalSessionsMin).max(passesRejectResponseTotalSessionsMax),
   "remainingSessions": zod.int().min(passesRejectResponseRemainingSessionsMin).max(passesRejectResponseRemainingSessionsMax),
   "priceCents": zod.int().min(passesRejectResponsePriceCentsMin).max(passesRejectResponsePriceCentsMax),
@@ -327,4 +328,22 @@ export const PassesRejectResponse = zod.object({
   "fullName": zod.string()
 })
 })
+
+/**
+ * @summary Quita un bono asignado (por error o dado de baja): deja de salir y de poder usarse. No se borra del libro. 404 si no existe o ya estaba quitado.
+ */
+export const passesCancelPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const passesCancelPathPassIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PassesCancelParams = zod.object({
+  "centerId": zod.uuid().regex(passesCancelPathCenterIdRegExp),
+  "passId": zod.uuid().regex(passesCancelPathPassIdRegExp)
+})
+
+export const PassesCancelHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const PassesCancelResponse = zod.void()
 

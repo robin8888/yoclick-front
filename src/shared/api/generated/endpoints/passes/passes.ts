@@ -625,3 +625,78 @@ export const usePassesReject = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getPassesRejectMutationOptions(options), queryClient);
     }
+    export const getPassesCancelUrl = (centerId: string,
+    passId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/passes/${passId}`
+}
+
+/**
+ * @summary Quita un bono asignado (por error o dado de baja): deja de salir y de poder usarse. No se borra del libro. 404 si no existe o ya estaba quitado.
+ */
+export const passesCancel = async (centerId: string,
+    passId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getPassesCancelUrl(centerId,passId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getPassesCancelMutationKey = () => ['passesCancel'] as const;
+
+export const getPassesCancelMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof passesCancel>>, TError,PassesCancelMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof passesCancel>>, TError,PassesCancelMutationVariables, TContext> => {
+
+const mutationKey = getPassesCancelMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof passesCancel>>, PassesCancelMutationVariables> = (props) => {
+          const {centerId,passId} = props ?? {};
+
+          return  passesCancel(centerId,passId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PassesCancelMutationResult = NonNullable<Awaited<ReturnType<typeof passesCancel>>>
+
+    export type PassesCancelMutationError = ErrorType<ProblemDetailsDto>
+    export type PassesCancelMutationVariables = {centerId: string;passId: string}
+
+    /**
+ * @summary Quita un bono asignado (por error o dado de baja): deja de salir y de poder usarse. No se borra del libro. 404 si no existe o ya estaba quitado.
+ */
+export const usePassesCancel = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof passesCancel>>, TError,PassesCancelMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof passesCancel>>,
+        TError,
+        PassesCancelMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPassesCancelMutationOptions(options), queryClient);
+    }

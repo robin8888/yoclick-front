@@ -15,4 +15,5 @@ export const PassListResponseDtoPassesItemStatus = {
   exhausted: 'exhausted',
   expired: 'expired',
   rejected: 'rejected',
+  cancelled: 'cancelled',
 } as const;
