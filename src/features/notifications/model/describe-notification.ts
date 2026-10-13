@@ -43,6 +43,8 @@ const TITLE_KEYS = {
   session_cancelled: 'notifications.sessionCancelledTitle',
   schedule_enrolled: 'notifications.scheduleEnrolledTitle',
   schedule_unenrolled: 'notifications.scheduleUnenrolledTitle',
+  pass_requested: 'notifications.passRequestedTitle',
+  pass_activated: 'notifications.passActivatedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -68,6 +70,8 @@ const DESCRIPTION_KEYS = {
   session_cancelled: 'notifications.sessionCancelledDescription',
   schedule_enrolled: 'notifications.scheduleEnrolledDescription',
   schedule_unenrolled: 'notifications.scheduleUnenrolledDescription',
+  pass_requested: 'notifications.passRequestedDescription',
+  pass_activated: 'notifications.passActivatedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -147,6 +151,7 @@ interface NoticeTexts {
   scheduleName: string;
   /** « en Aula 2», o vacío si la clase no tiene sala. */
   roomSuffix: string;
+  rateName: string;
 }
 
 /** Un dato del aviso que puede faltar: sin él, el texto queda vacío. */
@@ -180,6 +185,7 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
         ? textOf(noticeData.serviceName)
         : noticeData.label,
     roomSuffix: describeRoomSuffix(noticeData.roomName),
+    rateName: textOf(noticeData.rateName),
   };
 }
 

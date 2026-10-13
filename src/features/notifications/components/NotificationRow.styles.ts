@@ -8,9 +8,11 @@ export function createNotificationRowStyle(theme: Theme, isRead: boolean): ViewS
   return {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: theme.space[3],
+    gap: theme.space[1],
     minHeight: MIN_TOUCH_TARGET_SIZE,
-    padding: theme.space[4],
+    paddingVertical: theme.space[2],
+    paddingStart: theme.space[4],
+    paddingEnd: theme.space[1],
     borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderColor: theme.colors.line,
@@ -30,3 +32,12 @@ export function createUnreadDotStyle(theme: Theme): ViewStyle {
 }
 
 export const NOTIFICATION_TEXT_STYLE: ViewStyle = { flex: 1, gap: 2 };
+
+/** Lo que se toca para marcar como leído: icono, textos y punto; la papelera queda aparte. */
+export const NOTIFICATION_CONTENT_STYLE: ViewStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+  gap: 12,
+  paddingVertical: 8,
+};
