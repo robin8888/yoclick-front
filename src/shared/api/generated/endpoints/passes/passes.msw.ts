@@ -14,6 +14,7 @@ import type {
 } from 'msw';
 
 import type {
+  EligibleClientsResponseDto,
   PassListResponseDto,
   PassResponseDto
 } from '../../model';
@@ -21,13 +22,26 @@ import type {
 import {
   getPassesActivateResponseMock,
   getPassesAssignResponseMock,
+  getPassesEligibleResponseMock,
   getPassesListResponseMock,
   getPassesMineResponseMock,
   getPassesRejectResponseMock
 } from './passes.faker.ts';
 
-export { getPassesMineResponseMock, getPassesListResponseMock, getPassesAssignResponseMock, getPassesActivateResponseMock, getPassesRejectResponseMock } from './passes.faker.ts';
+export { getPassesEligibleResponseMock, getPassesMineResponseMock, getPassesListResponseMock, getPassesAssignResponseMock, getPassesActivateResponseMock, getPassesRejectResponseMock } from './passes.faker.ts';
 
+
+export const getPassesEligibleMockHandler = (overrideResponse?: EligibleClientsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<EligibleClientsResponseDto> | EligibleClientsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/passes/eligible', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPassesEligibleResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 
 export const getPassesMineMockHandler = (overrideResponse?: PassListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PassListResponseDto> | PassListResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/passes/mine', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
@@ -89,6 +103,7 @@ export const getPassesRejectMockHandler = (overrideResponse?: PassResponseDto | 
   }, options)
 }
 export const getPassesMock = () => [
+  getPassesEligibleMockHandler(),
   getPassesMineMockHandler(),
   getPassesListMockHandler(),
   getPassesAssignMockHandler(),

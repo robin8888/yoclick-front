@@ -9,6 +9,41 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Las personas a las que el centro puede apuntar a una clase de ese servicio: con un bono en vigor y clases por agendar.
+ */
+export const passesEligiblePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PassesEligibleParams = zod.object({
+  "centerId": zod.uuid().regex(passesEligiblePathCenterIdRegExp)
+})
+
+export const passesEligibleQueryServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PassesEligibleQueryParams = zod.object({
+  "serviceId": zod.uuid().regex(passesEligibleQueryServiceIdRegExp)
+})
+
+export const PassesEligibleHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const passesEligibleResponseClientsItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const passesEligibleResponseClientsItemBookableSessionsMin = -9007199254740991;
+export const passesEligibleResponseClientsItemBookableSessionsMax = 9007199254740991;
+
+
+
+export const PassesEligibleResponse = zod.object({
+  "clients": zod.array(zod.object({
+  "membershipId": zod.uuid().regex(passesEligibleResponseClientsItemMembershipIdRegExp),
+  "fullName": zod.string(),
+  "bookableSessions": zod.int().min(passesEligibleResponseClientsItemBookableSessionsMin).max(passesEligibleResponseClientsItemBookableSessionsMax)
+}))
+})
+
+/**
  * @summary Los bonos de quien pregunta: pendientes, activos, agotados y caducados.
  */
 export const passesMinePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

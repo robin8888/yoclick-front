@@ -785,6 +785,81 @@ export const useBookingsEnd = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getBookingsEndMutationOptions(options), queryClient);
     }
+    export const getBookingsConfirmAttendanceUrl = (centerId: string,
+    bookingId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/bookings/${bookingId}/attendance`
+}
+
+/**
+ * @summary Confirma con un check que la persona vino a la cita: guarda checkedInAt y descuenta una clase de su bono en vigor (una sola vez). Quien atiende la reserva (o administración); para el resto, 404. 409 CHECKIN_NO_BOOKING si está cancelada o falta más de una hora para que empiece. Repetirlo devuelve la misma reserva.
+ */
+export const bookingsConfirmAttendance = async (centerId: string,
+    bookingId: string, options?: Parameters<typeof apiMutator>[1]): Promise<BookingResponseDto> => {
+
+  return apiMutator<BookingResponseDto>(getBookingsConfirmAttendanceUrl(centerId,bookingId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getBookingsConfirmAttendanceMutationKey = () => ['bookingsConfirmAttendance'] as const;
+
+export const getBookingsConfirmAttendanceMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsConfirmAttendance>>, TError,BookingsConfirmAttendanceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof bookingsConfirmAttendance>>, TError,BookingsConfirmAttendanceMutationVariables, TContext> => {
+
+const mutationKey = getBookingsConfirmAttendanceMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof bookingsConfirmAttendance>>, BookingsConfirmAttendanceMutationVariables> = (props) => {
+          const {centerId,bookingId} = props ?? {};
+
+          return  bookingsConfirmAttendance(centerId,bookingId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BookingsConfirmAttendanceMutationResult = NonNullable<Awaited<ReturnType<typeof bookingsConfirmAttendance>>>
+
+    export type BookingsConfirmAttendanceMutationError = ErrorType<ProblemDetailsDto>
+    export type BookingsConfirmAttendanceMutationVariables = {centerId: string;bookingId: string}
+
+    /**
+ * @summary Confirma con un check que la persona vino a la cita: guarda checkedInAt y descuenta una clase de su bono en vigor (una sola vez). Quien atiende la reserva (o administración); para el resto, 404. 409 CHECKIN_NO_BOOKING si está cancelada o falta más de una hora para que empiece. Repetirlo devuelve la misma reserva.
+ */
+export const useBookingsConfirmAttendance = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof bookingsConfirmAttendance>>, TError,BookingsConfirmAttendanceMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof bookingsConfirmAttendance>>,
+        TError,
+        BookingsConfirmAttendanceMutationVariables,
+        TContext
+      > => {
+      return useMutation(getBookingsConfirmAttendanceMutationOptions(options), queryClient);
+    }
     export const getAgendaGetDayUrl = (centerId: string,
     params: AgendaGetDayParams,) => {
   const normalizedParams = new URLSearchParams();

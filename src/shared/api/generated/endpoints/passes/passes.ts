@@ -26,8 +26,10 @@ import type {
 
 import type {
   AssignPassRequestDto,
+  EligibleClientsResponseDto,
   PassListResponseDto,
   PassResponseDto,
+  PassesEligibleParams,
   PassesListParams,
   ProblemDetailsDto
 } from '../../model';
@@ -54,6 +56,121 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getPassesEligibleUrl = (centerId: string,
+    params: PassesEligibleParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/passes/eligible?${stringifiedParams}` : `/v1/centers/${centerId}/passes/eligible`
+}
+
+/**
+ * @summary Las personas a las que el centro puede apuntar a una clase de ese servicio: con un bono en vigor y clases por agendar.
+ */
+export const passesEligible = async (centerId: string,
+    params: PassesEligibleParams, options?: Parameters<typeof apiMutator>[1]): Promise<EligibleClientsResponseDto> => {
+
+  return apiMutator<EligibleClientsResponseDto>(getPassesEligibleUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPassesEligibleQueryKey = (centerId: string,
+    params?: PassesEligibleParams,) => {
+    return [
+    `/v1/centers/${centerId}/passes/eligible`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getPassesEligibleQueryOptions = <TData = Awaited<ReturnType<typeof passesEligible>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params: PassesEligibleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPassesEligibleQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof passesEligible>>> = ({ signal }) => passesEligible(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PassesEligibleQueryResult = NonNullable<Awaited<ReturnType<typeof passesEligible>>>
+export type PassesEligibleQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePassesEligible<TData = Awaited<ReturnType<typeof passesEligible>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: PassesEligibleParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof passesEligible>>,
+          TError,
+          Awaited<ReturnType<typeof passesEligible>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePassesEligible<TData = Awaited<ReturnType<typeof passesEligible>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: PassesEligibleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof passesEligible>>,
+          TError,
+          Awaited<ReturnType<typeof passesEligible>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePassesEligible<TData = Awaited<ReturnType<typeof passesEligible>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: PassesEligibleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las personas a las que el centro puede apuntar a una clase de ese servicio: con un bono en vigor y clases por agendar.
+ */
+
+export function usePassesEligible<TData = Awaited<ReturnType<typeof passesEligible>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: PassesEligibleParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof passesEligible>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPassesEligibleQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
 
 export const getPassesMineUrl = (centerId: string,) => {
 

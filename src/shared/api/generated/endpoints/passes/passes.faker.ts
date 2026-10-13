@@ -10,10 +10,13 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  EligibleClientsResponseDto,
   PassListResponseDto,
   PassResponseDto
 } from '../../model';
 
+
+export const getPassesEligibleResponseMock = (overrideResponse: Partial<Extract<EligibleClientsResponseDto, object>> = {}): EligibleClientsResponseDto => ({clients: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({membershipId: faker.string.uuid(), fullName: faker.string.alpha({length: {min: 10, max: 20}}), bookableSessions: faker.number.int({min: -9007199254740991, max: 9007199254740991})})), ...overrideResponse})
 
 export const getPassesMineResponseMock = (overrideResponse: Partial<Extract<PassListResponseDto, object>> = {}): PassListResponseDto => ({passes: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), status: faker.helpers.arrayElement(['pending','active','exhausted','expired','rejected'] as const), totalSessions: faker.number.int({min: -9007199254740991, max: 9007199254740991}), remainingSessions: faker.number.int({min: -9007199254740991, max: 9007199254740991}), priceCents: faker.number.int({min: -9007199254740991, max: 9007199254740991}), services: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}})})), isRequestedByClient: faker.datatype.boolean(), requestedAt: faker.date.past().toISOString().slice(0, 19) + 'Z', startsAt: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 19) + 'Z', null]), expiresAt: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 19) + 'Z', null]), client: {membershipId: faker.string.uuid(), fullName: faker.string.alpha({length: {min: 10, max: 20}})}})), ...overrideResponse})
 

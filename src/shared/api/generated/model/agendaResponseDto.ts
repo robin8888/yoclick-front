@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { AgendaResponseDtoEmptySessionsItem } from './agendaResponseDtoEmptySessionsItem.ts';
 import type { AgendaResponseDtoEntriesItem } from './agendaResponseDtoEntriesItem.ts';
 import type { AgendaResponseDtoOpeningRangesItem } from './agendaResponseDtoOpeningRangesItem.ts';
 
@@ -14,4 +15,5 @@ export interface AgendaResponseDto {
   timezone: string;
   openingRanges: AgendaResponseDtoOpeningRangesItem[];
   entries: AgendaResponseDtoEntriesItem[];
+  emptySessions: AgendaResponseDtoEmptySessionsItem[];
 }
