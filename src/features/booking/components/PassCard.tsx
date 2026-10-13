@@ -1,30 +1,75 @@
-import { View } from 'react-native';
+import { useRouter } from 'expo-router';
 
+import {
+  countRemainingSessions,
+  pickHomePass,
+  useBanknoteWatermark,
+  useMyPasses,
+} from '@/features/passes';
 import { i18n } from '@/shared/i18n';
-import { useTheme } from '@/shared/theme';
-import { Icon } from '@/ui/atoms/Icon';
-import { Text } from '@/ui/atoms/Text';
+import { formatShortDate } from '@/shared/lib/format';
+import { BanknoteCard } from '@/ui/organisms/BanknoteCard';
 
-import { createPassCardStyle, createPassIconStyle, PASS_TEXT_STYLE } from './PassCard.styles';
+const SERIAL_LENGTH = 6;
 
-/**
- * Tarjeta de bono del prototipo `home`. La API aún no expone bonos (docs/api-requests.md), así que
- * muestra el estado sin bono en lugar de inventar «te quedan 6».
- */
+interface HomePassSummary {
+  title: string;
+  valueText: string;
+  detailLines: string[];
+  serialText: string;
+  stampText: string;
+  isUsable: boolean;
+}
+
+/** Lo que cuenta el billete de inicio: el bono que se gastará antes o «sin bono». */
+function useHomePassSummary(): HomePassSummary {
+  const passes = useMyPasses().data?.passes ?? [];
+  const homePass = pickHomePass(passes);
+  if (homePass === null) {
+    return {
+      title: i18n.t('booking.home.passTitle'),
+      valueText: '0',
+      detailLines: [i18n.t('booking.home.passEmpty')],
+      serialText: 'Nº ——',
+      stampText: i18n.t('passes.status.exhausted'),
+      isUsable: false,
+    };
+  }
+  const expiry =
+    homePass.expiresAt === null
+      ? []
+      : [i18n.t('passes.expiresOn', { date: formatShortDate(homePass.expiresAt) })];
+  return {
+    title: homePass.name,
+    valueText: String(countRemainingSessions(passes)),
+    detailLines: expiry,
+    serialText: `Nº ${homePass.id.replaceAll('-', '').slice(-SERIAL_LENGTH).toUpperCase()}`,
+    stampText: i18n.t('passes.status.active'),
+    isUsable: true,
+  };
+}
+
+/** Tarjeta de bono del prototipo `home`, como un billete: lo que queda y acceso a «Mis bonos». */
 export function PassCard(): React.JSX.Element {
-  const theme = useTheme();
+  const router = useRouter();
+  const summary = useHomePassSummary();
+  const watermark = useBanknoteWatermark();
+  const unit = i18n.t('passes.unit');
 
   return (
-    <View style={createPassCardStyle(theme)}>
-      <View style={createPassIconStyle(theme)}>
-        <Icon name="creditCard" color="brandInk" />
-      </View>
-      <View style={PASS_TEXT_STYLE}>
-        <Text variant="bodyStrong">{i18n.t('booking.home.passTitle')}</Text>
-        <Text variant="caption" color="ink2">
-          {i18n.t('booking.home.passEmpty')}
-        </Text>
-      </View>
-    </View>
+    <BanknoteCard
+      title={summary.title}
+      valueText={summary.valueText}
+      unitText={unit}
+      detailLines={summary.detailLines}
+      serialText={summary.serialText}
+      stampText={summary.stampText}
+      watermark={watermark}
+      tone={summary.isUsable ? 'active' : 'inactive'}
+      accessibilityLabel={`${summary.title}. ${summary.valueText} ${unit}. ${summary.detailLines.join('. ')}`}
+      onPress={() => {
+        router.push('/(client)/my-passes');
+      }}
+    />
   );
 }

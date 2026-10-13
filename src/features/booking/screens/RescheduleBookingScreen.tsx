@@ -1,46 +1,26 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { AccessibilityInfo } from 'react-native';
 
+import { LoadErrorState } from '@/features/join';
+import type { ServiceSessionsResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
+import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { SlotChoiceBody } from '../components/SlotChoiceBody';
-import { useBookSlotChoice } from '../hooks/useBookSlotChoice';
-import { useCenterServices } from '../hooks/useCenterServices';
+import { ClassChoiceFields } from '../components/ClassChoiceFields';
+import { NoScheduleYet } from '../components/NoScheduleYet';
+import { useClassChoice } from '../hooks/useClassChoice';
 import { useRescheduleBooking } from '../hooks/useRescheduleBooking';
-import {
-  DEFAULT_CENTER_TIME_ZONE,
-  formatBookingDayAndTime,
-  formatServiceDuration,
-} from '../model/booking-labels';
+import { useServiceSessions } from '../hooks/useServiceSessions';
+import { DEFAULT_CENTER_TIME_ZONE, formatBookingDayAndTime } from '../model/booking-labels';
 import {
   rescheduleRouteParamsSchema,
   type RescheduleRouteParams,
 } from '../model/booking-route-params';
-
-/** Pide el cambio al servidor y, cuando lo confirma, vuelve a «Mis citas» anunciándolo. */
-function useConfirmReschedule(
-  bookingId: string,
-  selectedStartsAt: string | undefined,
-): { confirmReschedule: () => void; isRescheduling: boolean; errorMessage: string | null } {
-  const router = useRouter();
-  const reschedule = useRescheduleBooking();
-
-  return {
-    confirmReschedule: () => {
-      if (selectedStartsAt === undefined) return;
-      reschedule.rescheduleBooking({ bookingId, startsAt: selectedStartsAt }, () => {
-        AccessibilityInfo.announceForAccessibility(i18n.t('booking.reschedule.announcement'));
-        router.dismissTo('/(client)/(tabs)/bookings');
-      });
-    },
-    isRescheduling: reschedule.isRescheduling,
-    errorMessage: reschedule.rescheduleErrorMessage,
-  };
-}
 
 function buildSubtitle(params: RescheduleRouteParams): string {
   return i18n.t('booking.reschedule.subtitle', {
@@ -49,21 +29,42 @@ function buildSubtitle(params: RescheduleRouteParams): string {
   });
 }
 
-function RescheduleBookingContent({
-  params,
-}: Readonly<{ params: RescheduleRouteParams }>): React.JSX.Element {
+interface MoveStepProps {
+  params: RescheduleRouteParams;
+  sessions: ServiceSessionsResponseDto;
+}
+
+/** Pide el cambio al servidor y, cuando lo confirma, vuelve a «Mis citas» anunciándolo. */
+function useMoveToClass(params: RescheduleRouteParams, classSessionId: string | undefined) {
   const router = useRouter();
-  const choice = useBookSlotChoice(params.serviceId, params.staffMembershipId);
-  const reschedule = useConfirmReschedule(params.bookingId, choice.selectedSlot?.startsAt);
-  const service = useCenterServices().data?.services.find(
-    (candidate) => candidate.id === params.serviceId,
-  );
+  const reschedule = useRescheduleBooking();
+
+  return {
+    ...reschedule,
+    confirmMove: () => {
+      if (classSessionId === undefined) return;
+      reschedule.rescheduleBooking(
+        { bookingId: params.bookingId, serviceId: params.serviceId, classSessionId },
+        () => {
+          AccessibilityInfo.announceForAccessibility(i18n.t('booking.reschedule.announcement'));
+          router.dismissTo('/(client)/(tabs)/bookings');
+        },
+      );
+    },
+  };
+}
+
+/** Elegir otra clase con plazas del mismo servicio y pasar a ella la reserva. */
+function MoveStep({ params, sessions }: Readonly<MoveStepProps>): React.JSX.Element {
+  const router = useRouter();
+  const choice = useClassChoice(sessions);
+  const move = useMoveToClass(params, choice.selectedClass?.id);
 
   return (
     <ScreenTemplate
       title={i18n.t('booking.reschedule.title')}
       subtitle={buildSubtitle(params)}
-      isLoading={reschedule.isRescheduling}
+      isLoading={move.isRescheduling}
       loadingLabel={getSharedStateCopy().loadingLabel}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
@@ -71,26 +72,45 @@ function RescheduleBookingContent({
         <Button
           label={i18n.t('booking.reschedule.confirmLabel')}
           isFullWidth
-          isDisabled={choice.selectedSlot === null}
-          isLoading={reschedule.isRescheduling}
-          onPress={reschedule.confirmReschedule}
+          isDisabled={choice.selectedClass === null}
+          isLoading={move.isRescheduling}
+          onPress={move.confirmMove}
         />
       }
     >
-      {reschedule.errorMessage === null ? null : (
-        <FormErrorBanner message={reschedule.errorMessage} />
-      )}
-      <SlotChoiceBody
-        choice={choice}
-        minNoticeLabel={
-          service === undefined ? null : formatServiceDuration(service.minNoticeMinutes)
-        }
+      <ProblemModal
+        message={move.rescheduleErrorMessage}
+        onDismiss={move.clearError}
+        {...getProblemModalCopy()}
       />
+      <ClassChoiceFields choice={choice} />
     </ScreenTemplate>
   );
 }
 
-/** Cambiar la hora de una cita: mismos días y horas libres que al reservar, con confirmación directa. */
+function RescheduleBookingContent({
+  params,
+}: Readonly<{ params: RescheduleRouteParams }>): React.JSX.Element {
+  const sessions = useServiceSessions(params.serviceId);
+
+  if (sessions.isError) {
+    return (
+      <LoadErrorState
+        title={i18n.t('booking.slot.errorTitle')}
+        error={sessions.error}
+        onRetry={() => void sessions.refetch()}
+        isRetrying={sessions.isFetching}
+      />
+    );
+  }
+  if (sessions.isPending) {
+    return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
+  }
+  if (!sessions.data.isScheduled) return <NoScheduleYet />;
+  return <MoveStep params={params} sessions={sessions.data} />;
+}
+
+/** Cambiar una cita de clase: mismas clases con plazas que al reservar, con confirmación directa. */
 export function RescheduleBookingScreen(): React.JSX.Element {
   const params = rescheduleRouteParamsSchema.safeParse(useLocalSearchParams());
 

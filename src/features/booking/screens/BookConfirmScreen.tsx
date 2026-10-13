@@ -3,7 +3,8 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
+import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { BookingSummary } from '../components/BookingSummary';
@@ -19,12 +20,12 @@ function useConfirmBooking(params: ConfirmBookingRouteParams): {
   createAndOpenDoneScreen: () => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+  clearError: () => void;
 } {
   const router = useRouter();
   const booking = useCreateBooking({
     serviceId: params.serviceId,
-    startsAt: params.startsAt,
-    staffMembershipId: params.staffMembershipId,
+    classSessionId: params.classSessionId,
   });
 
   return {
@@ -38,6 +39,7 @@ function useConfirmBooking(params: ConfirmBookingRouteParams): {
     },
     isCreating: booking.isCreating,
     createErrorMessage: booking.createErrorMessage,
+    clearError: booking.clearError,
   };
 }
 
@@ -66,9 +68,11 @@ function BookConfirmContent({
         />
       }
     >
-      {confirmation.createErrorMessage === null ? null : (
-        <FormErrorBanner message={confirmation.createErrorMessage} />
-      )}
+      <ProblemModal
+        message={confirmation.createErrorMessage}
+        onDismiss={confirmation.clearError}
+        {...getProblemModalCopy()}
+      />
       <BookingSummary
         serviceName={service?.name ?? ''}
         durationMinutes={service?.durationMinutes ?? null}

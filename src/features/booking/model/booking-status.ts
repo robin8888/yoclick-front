@@ -8,13 +8,26 @@ interface BookingStatusPresentation {
   readonly canBeCancelled: boolean;
 }
 
-const STATUS_PRESENTATION: Readonly<Record<BookingStatus, BookingStatusPresentation>> = {
+/** Lo que ve la persona: el estado de la API o «ya pasada» si su hora quedó atrás sin registrarse. */
+export type BookingDisplayStatus = BookingStatus | 'past';
+
+const STATUS_PRESENTATION: Readonly<Record<BookingDisplayStatus, BookingStatusPresentation>> = {
+  past: { tone: 'neutral', canBeCancelled: false },
   confirmed: { tone: 'success', canBeCancelled: true },
   cancelled: { tone: 'neutral', canBeCancelled: false },
   attended: { tone: 'info', canBeCancelled: false },
   no_show: { tone: 'warning', canBeCancelled: false },
 };
 
-export function presentBookingStatus(status: BookingStatus): BookingStatusPresentation {
+/** Una cita confirmada cuya hora de fin ya pasó no está «Confirmada»: ya pasó. */
+export function resolveBookingDisplayStatus(
+  booking: { status: BookingStatus; endsAt: string },
+  now: Date,
+): BookingDisplayStatus {
+  const hasEnded = new Date(booking.endsAt).getTime() <= now.getTime();
+  return booking.status === 'confirmed' && hasEnded ? 'past' : booking.status;
+}
+
+export function presentBookingStatus(status: BookingDisplayStatus): BookingStatusPresentation {
   return STATUS_PRESENTATION[status];
 }

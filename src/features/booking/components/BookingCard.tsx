@@ -9,7 +9,7 @@ import { formatTime24h } from '@/shared/lib/format/format-time';
 import { AppointmentCard, type AppointmentButtonAction } from '@/ui/organisms/AppointmentCard';
 
 import { buildBookingDateTileLabels, DEFAULT_CENTER_TIME_ZONE } from '../model/booking-labels';
-import { presentBookingStatus } from '../model/booking-status';
+import { presentBookingStatus, resolveBookingDisplayStatus } from '../model/booking-status';
 import { calculateDurationInMinutes } from '../model/home-labels';
 
 type Booking = MyBookingsResponseDtoBookingsItem;
@@ -62,23 +62,40 @@ function buildDetailsLabel(booking: Booking): string {
   });
 }
 
+function buildQrLinkActions(router: ReturnType<typeof useRouter>, isAvailable: boolean) {
+  return [
+    {
+      label: i18n.t('booking.list.accessQrAction'),
+      iconName: 'qrCode' as const,
+      isDisabled: !isAvailable,
+      onPress: () => {
+        router.push('/(client)/access-qr');
+      },
+    },
+  ];
+}
+
 interface BookingCardProps {
   booking: Booking;
+  /** La hora actual, compartida por la lista: una cita confirmada cuya hora pasó se ve «ya pasada». */
+  now: Date;
   /** Solo las próximas y confirmadas se pueden cancelar. */
   onCancelRequest: ((booking: Booking) => void) | undefined;
   /** Solo las próximas y confirmadas se pueden cambiar de hora. */
   onRescheduleRequest: ((booking: Booking) => void) | undefined;
 }
 
-/** Una cita de «Mis citas» con el estilo del prototipo `appts`. */
+/** Una cita de «Mis citas» con el estilo del prototipo `appts`; las pasadas, en gris y sin acciones. */
 export function BookingCard({
   booking,
+  now,
   onCancelRequest,
   onRescheduleRequest,
 }: Readonly<BookingCardProps>): React.JSX.Element {
   const router = useRouter();
   const qrAvailability = useCheckInQrAvailability(booking);
-  const presentation = presentBookingStatus(booking.status);
+  const displayStatus = resolveBookingDisplayStatus(booking, now);
+  const presentation = presentBookingStatus(displayStatus);
   const requests =
     onCancelRequest === undefined || onRescheduleRequest === undefined
       ? null
@@ -92,22 +109,12 @@ export function BookingCard({
       detailsLabel={buildDetailsLabel(booking)}
       roomLabel={describeBookingRoom(booking, { shouldShowSeats: false })}
       assignedByLabel={describeBookingAssigner(booking.createdBy)}
-      statusLabel={i18n.t(`booking.list.status.${booking.status}`)}
+      statusLabel={i18n.t(`booking.list.status.${displayStatus}`)}
       statusTone={presentation.tone}
+      isPast={displayStatus === 'past'}
       buttonActions={requests !== null && isActionable ? buildButtonActions(booking, requests) : []}
       linkActions={
-        isActionable
-          ? [
-              {
-                label: i18n.t('booking.list.accessQrAction'),
-                iconName: 'qrCode',
-                isDisabled: qrAvailability?.isAvailable !== true,
-                onPress: () => {
-                  router.push('/(client)/access-qr');
-                },
-              },
-            ]
-          : []
+        isActionable ? buildQrLinkActions(router, qrAvailability?.isAvailable === true) : []
       }
     />
   );

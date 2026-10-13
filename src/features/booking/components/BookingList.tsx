@@ -1,10 +1,14 @@
 import type { MyBookingsResponseDtoBookingsItem } from '@/shared/api/generated/model';
+import { useTickingNow } from '@/shared/hooks/useTickingNow';
 import { i18n } from '@/shared/i18n';
 import { EmptyState } from '@/ui/molecules/EmptyState';
 
 import type { BookingScope } from '../hooks/useMyBookings';
 import { BookingCard } from './BookingCard';
 import { BookingHistoryEmptyState } from './BookingHistoryEmptyState';
+
+/** «Ya pasada» aparece sola al cumplirse la hora; con refrescar cada minuto basta. */
+const NOW_REFRESH_MS = 60_000;
 
 interface EmptyBookingsProps {
   scope: BookingScope;
@@ -41,6 +45,8 @@ export function BookingList({
   onCancelRequest,
   onRescheduleRequest,
 }: Readonly<BookingListProps>): React.JSX.Element {
+  const now = useTickingNow(NOW_REFRESH_MS);
+
   if (bookings.length === 0) return <EmptyBookings scope={scope} onBookAction={onBookAction} />;
   return (
     <>
@@ -48,6 +54,7 @@ export function BookingList({
         <BookingCard
           key={booking.id}
           booking={booking}
+          now={now}
           onCancelRequest={scope === 'upcoming' ? onCancelRequest : undefined}
           onRescheduleRequest={scope === 'upcoming' ? onRescheduleRequest : undefined}
         />

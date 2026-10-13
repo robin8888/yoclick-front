@@ -7,11 +7,11 @@ import { StepProgress } from '@/ui/molecules/StepProgress';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { ContinueToStaffButton } from '../components/ContinueToStaffButton';
+import { ContinueToClassesButton } from '../components/ContinueToClassesButton';
 import { ServiceOptionList } from '../components/ServiceOptionList';
 import { useCenterServices } from '../hooks/useCenterServices';
 
-const BOOKING_STEP_COUNT = 3;
+const BOOKING_STEP_COUNT = 2;
 
 /** Prototipo `book1`: paso 1 de 3, el servicio que se quiere reservar con su duración y precio. */
 export function BookServiceScreen(): React.JSX.Element {
@@ -22,7 +22,7 @@ export function BookServiceScreen(): React.JSX.Element {
     <ScreenTemplate
       title={i18n.t('booking.book.title')}
       subtitle={i18n.t('booking.book.subtitle')}
-      footer={<ContinueToStaffButton selectedServiceId={selectedServiceId} />}
+      footer={<ContinueToClassesButton selectedServiceId={selectedServiceId} />}
     >
       <StepProgress
         currentStep={1}

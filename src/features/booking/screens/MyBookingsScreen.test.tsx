@@ -6,6 +6,7 @@ import { buildBooking, BOOKING_ID } from '@/test/booking-factories';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
+import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { BookedScreen } from './BookedScreen';
@@ -18,11 +19,17 @@ const CANCEL_PATH = `POST /v1/centers/${NORTE_CENTER_ID}/bookings/${BOOKING_ID}/
 
 describe('MyBookingsScreen', () => {
   beforeEach(() => {
+    // Las citas de prueba son del 8 de octubre de 2026: «ahora» es esa mañana, antes de todas.
+    freezeClockAt('2026-10-08T05:00:00.000Z');
     resetMockRouter();
     act(() => {
       useSessionStore.getState().startSession({ accessToken: 'token', user: null });
       useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
     });
+  });
+
+  afterEach(() => {
+    restoreClock();
   });
 
   it('lists the upcoming appointments with their status as a word', async () => {
@@ -175,5 +182,29 @@ describe('BookedScreen', () => {
     renderScreen(<BookedScreen />);
 
     expect(screen.getByText('redirect:/(client)/(tabs)/home')).toBeOnTheScreen();
+  });
+});
+
+describe('MyBookingsScreen · past appointments', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    freezeClockAt('2026-10-08T18:00:00.000Z');
+    act(() => {
+      useSessionStore.getState().startSession({ accessToken: 'token', user: null });
+      useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
+    });
+  });
+
+  afterEach(() => {
+    restoreClock();
+  });
+
+  it('shows a confirmed appointment whose time has gone as already past, without actions', async () => {
+    mockApi({ [LIST_PATH]: { bookings: [buildBooking()] } });
+    renderScreen(<MyBookingsScreen />);
+
+    expect(await screen.findByText('Ya pasada')).toBeOnTheScreen();
+    expect(screen.queryByText('Confirmada')).not.toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /Cancelar/ })).not.toBeOnTheScreen();
   });
 });
