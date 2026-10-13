@@ -47,6 +47,7 @@ export function buildBooking(overrides: Partial<BookingResponseDto> = {}): Booki
     cancelWithinPolicy: null,
     startedAt: null,
     endedAt: null,
+    checkedInAt: null,
     actualDurationSeconds: null,
     createdAt: '2026-10-05T10:00:00.000Z',
     createdBy: null,

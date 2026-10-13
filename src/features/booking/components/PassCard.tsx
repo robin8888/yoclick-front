@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import {
-  countRemainingSessions,
+  countBookableSessions,
   pickHomePass,
   useBanknoteWatermark,
   useMyPasses,
@@ -9,6 +9,8 @@ import {
 import { i18n } from '@/shared/i18n';
 import { formatShortDate } from '@/shared/lib/format';
 import { BanknoteCard } from '@/ui/organisms/BanknoteCard';
+
+import { useMyBookings } from '../hooks/useMyBookings';
 
 const SERIAL_LENGTH = 6;
 
@@ -21,9 +23,13 @@ interface HomePassSummary {
   isUsable: boolean;
 }
 
-/** Lo que cuenta el billete de inicio: el bono que se gastará antes o «sin bono». */
+/**
+ * Lo que cuenta el billete de inicio: el bono que se gastará antes y cuántas clases puede aún
+ * agendar (las que le quedan menos las ya agendadas), o «sin bono».
+ */
 function useHomePassSummary(): HomePassSummary {
   const passes = useMyPasses().data?.passes ?? [];
+  const upcoming = useMyBookings('upcoming').data?.bookings ?? [];
   const homePass = pickHomePass(passes);
   if (homePass === null) {
     return {
@@ -41,8 +47,8 @@ function useHomePassSummary(): HomePassSummary {
       : [i18n.t('passes.expiresOn', { date: formatShortDate(homePass.expiresAt) })];
   return {
     title: homePass.name,
-    valueText: String(countRemainingSessions(passes)),
-    detailLines: expiry,
+    valueText: String(countBookableSessions(passes, upcoming)),
+    detailLines: [i18n.t('booking.home.passBookable'), ...expiry],
     serialText: `Nº ${homePass.id.replaceAll('-', '').slice(-SERIAL_LENGTH).toUpperCase()}`,
     stampText: i18n.t('passes.status.active'),
     isUsable: true,

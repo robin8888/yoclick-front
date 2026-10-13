@@ -22,6 +22,8 @@ const MONTHS_PER_YEAR = 12;
 interface DayCellProps {
   isoDate: string | null;
   isSelected: boolean;
+  /** Elegido en una selección de varios días (aro de marca). */
+  isMarked: boolean;
   isToday: boolean;
   /** Día anterior al mínimo: se ve apagado y no se puede elegir. */
   isDisabled: boolean;
@@ -43,6 +45,7 @@ function pickDayColor(state: {
 function DayCell({
   isoDate,
   isSelected,
+  isMarked,
   isToday,
   isDisabled,
   describeDay,
@@ -55,16 +58,16 @@ function DayCell({
     <Pressable
       role="button"
       accessibilityLabel={describeDay(isoDate)}
-      accessibilityState={{ selected: isSelected, disabled: isDisabled }}
+      accessibilityState={{ selected: isSelected || isMarked, disabled: isDisabled }}
       disabled={isDisabled}
       onPress={() => {
         onPress(isoDate);
       }}
       style={createDayCellStyle()}
     >
-      <View style={createDayCircleStyle(theme, isSelected)}>
+      <View style={createDayCircleStyle(theme, { isSelected, isMarked })}>
         <Text
-          variant={isSelected || isToday ? 'bodyStrong' : 'body'}
+          variant={isSelected || isMarked || isToday ? 'bodyStrong' : 'body'}
           color={pickDayColor({ isSelected, isToday, isDisabled })}
         >
           {String(Number(isoDate.slice(DAY_NUMBER_START)))}
@@ -128,6 +131,7 @@ type MonthWeeksProps = Pick<
   | 'todayDate'
   | 'minDate'
   | 'enabledDates'
+  | 'markedDates'
   | 'labels'
   | 'onDateSelect'
 >;
@@ -139,6 +143,7 @@ function MonthWeeks({
   todayDate,
   minDate,
   enabledDates,
+  markedDates,
   labels,
   onDateSelect,
 }: Readonly<MonthWeeksProps>): React.JSX.Element {
@@ -151,6 +156,7 @@ function MonthWeeks({
               key={isoDate ?? `blank-${String(dayIndex)}`}
               isoDate={isoDate}
               isSelected={isoDate !== null && isoDate === selectedDate}
+              isMarked={isoDate !== null && markedDates?.has(isoDate) === true}
               isToday={isoDate !== null && isoDate === todayDate}
               isDisabled={isDateDisabled(isoDate, { minDate, enabledDates })}
               describeDay={labels.describeDay}
@@ -192,6 +198,7 @@ export function CalendarGrid({
   todayDate,
   minDate,
   enabledDates,
+  markedDates,
   onDateSelect,
   labels,
 }: Readonly<CalendarGridProps>): React.JSX.Element {
@@ -216,6 +223,7 @@ export function CalendarGrid({
         todayDate={todayDate}
         minDate={minDate}
         enabledDates={enabledDates}
+        markedDates={markedDates}
         labels={labels}
         onDateSelect={onDateSelect}
       />

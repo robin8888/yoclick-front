@@ -4,6 +4,7 @@ import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 
 const DAY_CIRCLE_SIZE = 40;
 const HALF = 2;
+const MARKED_RING_WIDTH = 2;
 
 export function createCalendarStyle(theme: Theme): ViewStyle {
   return {
@@ -37,8 +38,15 @@ export function createDayCellStyle(): ViewStyle {
   };
 }
 
-/** El círculo del día: relleno de marca si es el elegido (y el número en negrita, no solo color). */
-export function createDayCircleStyle(theme: Theme, isSelected: boolean): ViewStyle {
+/**
+ * El círculo del día: relleno de marca si es el enfocado y aro de marca si ya está elegido en una
+ * selección de varios (el número en negrita en ambos casos, no solo color).
+ */
+export function createDayCircleStyle(
+  theme: Theme,
+  state: { isSelected: boolean; isMarked: boolean },
+): ViewStyle {
+  const { isSelected, isMarked } = state;
   return {
     width: DAY_CIRCLE_SIZE,
     height: DAY_CIRCLE_SIZE,
@@ -46,6 +54,7 @@ export function createDayCircleStyle(theme: Theme, isSelected: boolean): ViewSty
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: isSelected ? theme.colors.brand : 'transparent',
+    ...(isMarked && { borderWidth: MARKED_RING_WIDTH, borderColor: theme.colors.brand }),
   };
 }
 

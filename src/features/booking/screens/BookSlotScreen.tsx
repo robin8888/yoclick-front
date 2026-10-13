@@ -1,6 +1,7 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { LoadErrorState } from '@/features/join';
+import { getServicePassBalance, useMyPasses } from '@/features/passes';
 import type { ServiceSessionsResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
@@ -8,10 +9,12 @@ import { StepProgress } from '@/ui/molecules/StepProgress';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { ClassChoiceFields } from '../components/ClassChoiceFields';
+import { ClassSelectionFields } from '../components/ClassSelectionFields';
+import { PassBalanceNote } from '../components/PassBalanceNote';
 import { NoScheduleYet } from '../components/NoScheduleYet';
 import { ReviewClassButton } from '../components/ReviewClassButton';
-import { useClassChoice } from '../hooks/useClassChoice';
+import { useClassSelection } from '../hooks/useClassSelection';
+import { useMyBookings } from '../hooks/useMyBookings';
 import { useServiceSessions } from '../hooks/useServiceSessions';
 import { slotRouteParamsSchema } from '../model/booking-route-params';
 
@@ -25,7 +28,10 @@ interface ClassStepProps {
 /** Elegir día y clase entre las que el centro ya fijó en sus salas, con plazas y por delante. */
 function ClassStep({ sessions, serviceId }: Readonly<ClassStepProps>): React.JSX.Element {
   const router = useRouter();
-  const choice = useClassChoice(sessions);
+  // Con bono se agendan tantas clases como le queden menos las ya agendadas; sin bono, una.
+  const upcoming = useMyBookings('upcoming').data?.bookings ?? [];
+  const balance = getServicePassBalance(useMyPasses().data?.passes ?? [], serviceId, upcoming);
+  const selection = useClassSelection(sessions, balance?.bookableSessions ?? 1);
 
   return (
     <ScreenTemplate
@@ -33,14 +39,17 @@ function ClassStep({ sessions, serviceId }: Readonly<ClassStepProps>): React.JSX
       subtitle={i18n.t('booking.slot.subtitleWithoutStaff')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
-      footer={<ReviewClassButton serviceId={serviceId} selectedSession={choice.selectedClass} />}
+      footer={
+        <ReviewClassButton serviceId={serviceId} selectedSessions={selection.pickedClasses} />
+      }
     >
       <StepProgress
         currentStep={BOOKING_STEP_COUNT}
         stepCount={BOOKING_STEP_COUNT}
         accessibilityLabel={i18n.t('booking.slot.stepLabel')}
       />
-      <ClassChoiceFields choice={choice} />
+      <ClassSelectionFields selection={selection} />
+      <PassBalanceNote serviceId={serviceId} pickedCount={selection.pickedClasses.length} />
     </ScreenTemplate>
   );
 }

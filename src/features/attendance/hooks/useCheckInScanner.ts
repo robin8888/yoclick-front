@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
@@ -20,8 +20,14 @@ export function useCheckInScanner(): CheckInScanner {
   const centerId = useActiveCenterId();
   // La cámara dispara el evento muchas veces por segundo con el mismo QR: se procesa una vez.
   const lastHandledQrContent = useRef<string | null>(null);
+  const queryClient = useQueryClient();
   const checkInMutation = useMutation({
     mutationFn: (qrContent: string) => attendanceCheckIn(centerId, { qrContent }),
+    // La asistencia se ve en la agenda y descuenta del bono: ambas se vuelven a pedir.
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [`/v1/centers/${centerId}/agenda`] });
+      void queryClient.invalidateQueries({ queryKey: [`/v1/centers/${centerId}/passes`] });
+    },
   });
 
   return {

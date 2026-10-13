@@ -1,6 +1,11 @@
 import type { PassListResponseDtoPassesItem } from '@/shared/api/generated/model';
 
-import { countRemainingSessions, getUsablePasses, pickHomePass } from './pass-summary';
+import {
+  countBookableSessions,
+  countRemainingSessions,
+  getUsablePasses,
+  pickHomePass,
+} from './pass-summary';
 
 function buildPass(
   overrides: Partial<PassListResponseDtoPassesItem>,
@@ -46,5 +51,41 @@ describe('pass summary', () => {
   it('picks the pass that will be used first, or none', () => {
     expect(pickHomePass([later, soon])?.id).toBe('soon');
     expect(pickHomePass([exhausted, pending])).toBeNull();
+  });
+});
+
+describe('countBookableSessions', () => {
+  it('takes the booked classes off what is left, so a pass of 10 with 5 booked offers 5', () => {
+    const pass = buildPass({ remainingSessions: 10 });
+    const upcoming = Array.from({ length: 5 }, () => ({
+      status: 'confirmed',
+      source: 'single',
+      service: { id: 'service-1' },
+    }));
+
+    expect(countBookableSessions([pass], upcoming)).toBe(5);
+  });
+
+  it('ignores cancelled and enrolment bookings and never goes below zero', () => {
+    const pass = buildPass({ remainingSessions: 1 });
+
+    expect(
+      countBookableSessions(
+        [pass],
+        [
+          { status: 'cancelled', source: 'single', service: { id: 'service-1' } },
+          { status: 'confirmed', source: 'enrollment', service: { id: 'service-1' } },
+        ],
+      ),
+    ).toBe(1);
+    expect(
+      countBookableSessions(
+        [pass],
+        [
+          { status: 'confirmed', source: 'single', service: { id: 'service-1' } },
+          { status: 'confirmed', source: 'single', service: { id: 'service-1' } },
+        ],
+      ),
+    ).toBe(0);
   });
 });

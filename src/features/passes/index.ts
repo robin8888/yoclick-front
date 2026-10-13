@@ -2,5 +2,7 @@
 export { MyPassesScreen } from './screens/MyPassesScreen';
 export { useMyPasses } from './hooks/useMyPasses';
 export { ClientPassesSection } from './components/ClientPassesSection';
-export { countRemainingSessions, pickHomePass } from './model/pass-summary';
+export { countBookableSessions, countRemainingSessions, pickHomePass } from './model/pass-summary';
+export { getServicePassBalance, type ServicePassBalance } from './model/service-balance';
+export { buildBanknoteSerial } from './model/pass-serial';
 export { useBanknoteWatermark } from './hooks/useBanknoteWatermark';

@@ -21,6 +21,8 @@ export interface CalendarGridProps {
   minDate?: string | undefined;
   /** Si se indica, solo estos días se pueden elegir (los de una lista de clases); el resto sale apagado. */
   enabledDates?: ReadonlySet<string> | undefined;
+  /** Días ya elegidos en una selección de varios: llevan un aro de marca además del día enfocado. */
+  markedDates?: ReadonlySet<string> | undefined;
   onDateSelect: (isoDate: string) => void;
   labels: CalendarGridLabels;
 }

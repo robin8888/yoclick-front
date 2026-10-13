@@ -7,6 +7,8 @@ interface ClassDayCalendarProps {
   /** Los días con alguna clase con plazas: los únicos que se pueden elegir. */
   enabledDates: ReadonlySet<string>;
   selectedIsoDate: string | null;
+  /** Días con una clase ya elegida (selección de varios días). */
+  markedDates?: ReadonlySet<string> | undefined;
   /** Hoy, `AAAA-MM-DD`. */
   todayIsoDate: string;
   onDaySelect: (isoDate: string) => void;
@@ -17,6 +19,7 @@ const FALLBACK_MONTH = { year: 2026, month: 1 };
 /** El mes en rejilla, como el calendario del iPhone: solo se pueden pulsar los días con clase. */
 export function ClassDayCalendar({
   enabledDates,
+  markedDates,
   selectedIsoDate,
   todayIsoDate,
   onDaySelect,
@@ -36,6 +39,7 @@ export function ClassDayCalendar({
       todayDate={todayIsoDate}
       minDate={todayIsoDate}
       enabledDates={enabledDates}
+      markedDates={markedDates}
       onDateSelect={onDaySelect}
       labels={buildCalendarLabels(visibleMonth)}
     />

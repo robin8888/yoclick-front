@@ -1,15 +1,15 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
+import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
 import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { BookingSummary } from '../components/BookingSummary';
 import { useCenterServices } from '../hooks/useCenterServices';
-import { useCreateBooking } from '../hooks/useCreateBooking';
+import { useCreateBookings } from '../hooks/useCreateBookings';
 import { DEFAULT_CENTER_TIME_ZONE } from '../model/booking-labels';
 import {
   confirmBookingRouteParamsSchema,
@@ -23,24 +23,55 @@ function useConfirmBooking(params: ConfirmBookingRouteParams): {
   clearError: () => void;
 } {
   const router = useRouter();
-  const booking = useCreateBooking({
+  const bookings = useCreateBookings({
     serviceId: params.serviceId,
-    classSessionId: params.classSessionId,
+    classSessionIds: params.classes.map(({ id }) => id),
   });
 
   return {
     createAndOpenDoneScreen: () => {
-      booking.createBooking((createdBooking) => {
-        router.replace({
-          pathname: '/(client)/book/done',
-          params: { bookingId: createdBooking.id },
-        });
+      bookings.createBookings((createdBookings) => {
+        const [onlyBooking] = createdBookings;
+        // Una clase: su pantalla de «reservada». Varias: la lista de Mis citas, con todas.
+        if (createdBookings.length === 1 && onlyBooking !== undefined) {
+          router.replace({
+            pathname: '/(client)/book/done',
+            params: { bookingId: onlyBooking.id },
+          });
+          return;
+        }
+        router.replace('/(client)/(tabs)/bookings');
       });
     },
-    isCreating: booking.isCreating,
-    createErrorMessage: booking.createErrorMessage,
-    clearError: booking.clearError,
+    isCreating: bookings.isCreating,
+    createErrorMessage: bookings.createErrorMessage,
+    clearError: bookings.clearError,
   };
+}
+
+/** Un resumen por clase elegida, con el servicio y su precio. */
+function ChosenClassSummaries({
+  params,
+}: Readonly<{ params: ConfirmBookingRouteParams }>): React.JSX.Element {
+  const service = useCenterServices().data?.services.find(
+    (candidate) => candidate.id === params.serviceId,
+  );
+
+  return (
+    <>
+      {params.classes.map((chosenClass) => (
+        <BookingSummary
+          key={chosenClass.id}
+          serviceName={service?.name ?? ''}
+          durationMinutes={service?.durationMinutes ?? null}
+          priceCents={service?.priceCents ?? null}
+          startsAt={chosenClass.startsAt}
+          timeZone={DEFAULT_CENTER_TIME_ZONE}
+          staffName={chosenClass.staffName}
+        />
+      ))}
+    </>
+  );
 }
 
 function BookConfirmContent({
@@ -48,9 +79,7 @@ function BookConfirmContent({
 }: Readonly<{ params: ConfirmBookingRouteParams }>): React.JSX.Element {
   const router = useRouter();
   const confirmation = useConfirmBooking(params);
-  const service = useCenterServices().data?.services.find(
-    (candidate) => candidate.id === params.serviceId,
-  );
+  const isMany = params.classes.length > 1;
 
   return (
     <ScreenTemplate
@@ -61,7 +90,11 @@ function BookConfirmContent({
       backLabel={i18n.t('actions.back')}
       footer={
         <Button
-          label={i18n.t('booking.confirm.confirmLabel')}
+          label={
+            isMany
+              ? i18n.t('booking.confirm.confirmManyLabel', { count: params.classes.length })
+              : i18n.t('booking.confirm.confirmLabel')
+          }
           isFullWidth
           isLoading={confirmation.isCreating}
           onPress={confirmation.createAndOpenDoneScreen}
@@ -73,14 +106,7 @@ function BookConfirmContent({
         onDismiss={confirmation.clearError}
         {...getProblemModalCopy()}
       />
-      <BookingSummary
-        serviceName={service?.name ?? ''}
-        durationMinutes={service?.durationMinutes ?? null}
-        priceCents={service?.priceCents ?? null}
-        startsAt={params.startsAt}
-        timeZone={DEFAULT_CENTER_TIME_ZONE}
-        staffName={params.staffName}
-      />
+      <ChosenClassSummaries params={params} />
     </ScreenTemplate>
   );
 }

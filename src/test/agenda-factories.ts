@@ -27,16 +27,20 @@ export function buildAgendaEntry(
       endsAt: minutesFromNow(startsInMinutes + 60),
       ...overrides,
     }),
-    client: { membershipId: CLIENT_MEMBERSHIP_ID, fullName: 'Lucía Torres' },
+    client: { membershipId: CLIENT_MEMBERSHIP_ID, fullName: 'Lucía Torres', photoUrl: null },
   };
 }
 
-export function buildAgenda(entries: AgendaResponseDtoEntriesItem[]): AgendaResponseDto {
+export function buildAgenda(
+  entries: AgendaResponseDtoEntriesItem[],
+  emptySessions: AgendaResponseDto['emptySessions'] = [],
+): AgendaResponseDto {
   return {
     date: '2026-10-08',
     timezone: 'Europe/Madrid',
     openingRanges: [{ opensAt: '08:00', closesAt: '20:00' }],
     entries,
+    emptySessions,
   };
 }
 
