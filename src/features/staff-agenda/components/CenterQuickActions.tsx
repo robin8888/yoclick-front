@@ -1,49 +1,21 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
-import { motionTokens, usePressableStyle, useTheme } from '@/shared/theme';
-import { Icon, type IconName } from '@/ui/atoms/Icon';
-import { Text } from '@/ui/atoms/Text';
+import { useTheme } from '@/shared/theme';
+import type { IconName } from '@/ui/atoms/Icon';
 
+import { PrimaryQuickAction, QuickActionTile } from './CenterQuickActionTile';
 import {
-  createQuickActionStyle,
   createQuickActionsRowStyle,
   createQuickActionsStackStyle,
-  QUICK_ACTION_WATERMARK_STYLE,
 } from './CenterQuickActions.styles';
 
 interface QuickAction {
   id: string;
   iconName: IconName;
   label: string;
-  /** La acción que más se usa: va rellena con el color de la marca. */
-  isPrimary?: boolean;
+  hint: string;
   onPress: () => void;
-}
-
-function QuickActionTile({
-  iconName,
-  label,
-  isPrimary = false,
-  onPress,
-}: Readonly<Omit<QuickAction, 'id'>>): React.JSX.Element {
-  const theme = useTheme();
-  const style = usePressableStyle({
-    baseStyle: createQuickActionStyle(theme, isPrimary),
-    pressedScale: motionTokens.pressScaleButton,
-    isEnabled: true,
-  });
-
-  return (
-    <Pressable role="button" accessibilityLabel={label} onPress={onPress} style={style}>
-      <View style={QUICK_ACTION_WATERMARK_STYLE} pointerEvents="none">
-        <Icon name={iconName} size="large" color={isPrimary ? 'onBrand' : 'brandInk'} />
-      </View>
-      <Text variant="titleMd" numberOfLines={2} color={isPrimary ? 'onBrand' : 'ink'}>
-        {label}
-      </Text>
-    </Pressable>
-  );
 }
 
 const TILES_PER_ROW = 2;
@@ -67,13 +39,24 @@ interface CenterQuickActionsProps {
   onPassesPress: () => void;
 }
 
-function buildActions(props: CenterQuickActionsProps): QuickAction[] {
+function buildPrimaryAction(props: CenterQuickActionsProps): QuickAction {
+  return {
+    id: 'assign',
+    iconName: 'plus',
+    label: i18n.t('staffAgenda.center.assignAppointmentsAction'),
+    hint: i18n.t('staffAgenda.center.assignAppointmentsHint'),
+    onPress: props.onAssignAppointmentPress,
+  };
+}
+
+function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
   const management: QuickAction[] = props.canManageSpaces
     ? [
         {
           id: 'management',
           iconName: 'settings',
           label: i18n.t('staffAgenda.center.managementAction'),
+          hint: i18n.t('staffAgenda.center.managementHint'),
           onPress: props.onManagementPress,
         },
       ]
@@ -83,41 +66,39 @@ function buildActions(props: CenterQuickActionsProps): QuickAction[] {
       id: 'agenda',
       iconName: 'calendar',
       label: i18n.t('staffAgenda.center.agendaAction'),
+      hint: i18n.t('staffAgenda.center.agendaHint'),
       onPress: props.onAgendaPress,
-    },
-    {
-      id: 'assign',
-      iconName: 'plus',
-      label: i18n.t('staffAgenda.center.assignAppointmentsAction'),
-      isPrimary: true,
-      onPress: props.onAssignAppointmentPress,
-    },
-    ...management,
-    {
-      id: 'services',
-      iconName: 'file',
-      label: i18n.t('staffAgenda.center.servicesAction'),
-      onPress: props.onServicesPress,
     },
     {
       id: 'passes',
       iconName: 'creditCard',
       label: i18n.t('staffAgenda.center.passesAction'),
+      hint: i18n.t('staffAgenda.center.passesHint'),
       onPress: props.onPassesPress,
     },
+    {
+      id: 'services',
+      iconName: 'file',
+      label: i18n.t('staffAgenda.center.servicesAction'),
+      hint: i18n.t('staffAgenda.center.servicesHint'),
+      onPress: props.onServicesPress,
+    },
+    ...management,
   ];
 }
 
 /**
- * Los accesos del centro como una cuadrícula que llena el ancho: la agenda, asignar citas, salas y
- * horarios, servicios y bonos, cada uno con su icono grande asomando por la esquina.
+ * Los accesos del centro: una acción principal a todo el ancho (asignar citas) y debajo una
+ * cuadrícula de tarjetas limpias, cada una con su icono, su nombre y una línea de apoyo.
  */
 export function CenterQuickActions(props: Readonly<CenterQuickActionsProps>): React.JSX.Element {
   const theme = useTheme();
+  const { id: primaryId, ...primaryAction } = buildPrimaryAction(props);
 
   return (
     <View style={createQuickActionsStackStyle(theme)}>
-      {chunkIntoRows(buildActions(props)).map((row) => (
+      <PrimaryQuickAction key={primaryId} {...primaryAction} />
+      {chunkIntoRows(buildSecondaryActions(props)).map((row) => (
         <View key={row.map(({ id }) => id).join('-')} style={createQuickActionsRowStyle(theme)}>
           {row.map(({ id, ...tile }) => (
             <QuickActionTile key={id} {...tile} />
