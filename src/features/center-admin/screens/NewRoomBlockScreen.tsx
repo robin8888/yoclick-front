@@ -13,10 +13,12 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ChoiceChipsField } from '../components/ChoiceChipsField';
+import { RoomBlockAvailabilityNotice } from '../components/RoomBlockAvailabilityNotice';
 import { SpanishDateField } from '../components/SpanishDateField';
 import { TimeRangeStepFields } from '../components/TimeRangeStepFields';
 import { getDeviceTimeZone, useCenterTimeZone } from '../hooks/useCenterTimeZone';
 import { useCreateRoomBlock } from '../hooks/useCreateRoomBlock';
+import { useRoomBlockAvailability } from '../hooks/useRoomBlockAvailability';
 import {
   buildEmptyRoomBlockForm,
   describeBlockReason,
@@ -108,11 +110,38 @@ function useRoomBlockForm() {
   });
 }
 
-function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JSX.Element {
+/**
+ * Guardar solo es posible con la zona del centro y un tramo libre y futuro (el servidor aplica la
+ * misma regla). Devuelve también el aviso de disponibilidad que se enseña bajo la hora.
+ */
+function useRoomBlockSubmission(roomId: string, form: RoomBlockForm) {
   const router = useRouter();
   const timeZone = useCenterTimeZone();
   const creation = useCreateRoomBlock(roomId);
+  const values = form.watch();
+  const { availability, busyRanges } = useRoomBlockAvailability({ roomId, ...values });
+  const isTimeSlotTaken = availability !== null && availability.status !== 'available';
+
+  const submit = (): void => {
+    if (timeZone === null || isTimeSlotTaken) return;
+    void form.handleSubmit((formValues) => {
+      creation.createBlock(mapRoomBlockFormToRequest(formValues, timeZone), router.back);
+    })();
+  };
+  return {
+    creation,
+    availability,
+    busyRanges,
+    submit,
+    isSaveDisabled: timeZone === null || isTimeSlotTaken,
+  };
+}
+
+function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JSX.Element {
+  const router = useRouter();
   const form = useRoomBlockForm();
+  const submission = useRoomBlockSubmission(roomId, form);
+  const { creation } = submission;
 
   return (
     <ScreenTemplate
@@ -121,19 +150,15 @@ function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JS
       backLabel={i18n.t('actions.back')}
       isLoading={creation.isCreating}
       footer={
-        <SaveBlockButton
-          isDisabled={timeZone === null}
-          onPress={() => {
-            if (timeZone === null) return;
-            void form.handleSubmit((formValues) => {
-              creation.createBlock(mapRoomBlockFormToRequest(formValues, timeZone), router.back);
-            })();
-          }}
-        />
+        <SaveBlockButton isDisabled={submission.isSaveDisabled} onPress={submission.submit} />
       }
     >
       <BlockDateField form={form} />
       <BlockTimeAndReasonFields form={form} />
+      <RoomBlockAvailabilityNotice
+        availability={submission.availability}
+        busyRanges={submission.busyRanges}
+      />
       <FormTextField
         control={form.control}
         name="note"

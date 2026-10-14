@@ -2108,7 +2108,13 @@
       "noteLabel": "Nota (opcional)",
       "notePlaceholder": "Alquilado a la asociación de vecinos",
       "noteTooLong": "Usa como máximo 200 caracteres",
-      "saveAction": "Bloquear"
+      "saveAction": "Bloquear",
+      "availability": {
+        "inThePast": "Ese tramo ya ha empezado o ha pasado. Elige una hora que aún no haya llegado",
+        "outsideOpeningHours": "El centro está cerrado a esas horas. Abre: {{ranges}}",
+        "occupied": "El espacio ya está ocupado en ese tramo. Ocupado ese día: {{ranges}}",
+        "busyDay": "Ocupado ese día: {{ranges}}"
+      }
     }
   },
   "practice": {
