@@ -12,6 +12,7 @@ import {
   zonedDateTimeToUtc,
 } from '@/shared/lib/format';
 
+import { parsePriceInCents } from './rate-form';
 import { isTimeRangeOrdered } from './schedule-form';
 
 export const ROOM_BLOCK_REASONS = ['rental', 'maintenance', 'event', 'other'] as const;
@@ -38,10 +39,23 @@ export const roomBlockFormSchema = z
       .string()
       .trim()
       .max(MAX_NOTE_LENGTH, { error: () => i18n.t('centerAdmin.roomBlocks.noteTooLong') }),
+    /** Quien alquila (persona registrada); vacío = bloqueo sin más. Solo cuenta con motivo `rental`. */
+    renterMembershipId: z.string(),
+    renterName: z.string(),
+    /** Euros del alquiler; vacío = sin precio. */
+    price: z.string(),
   })
   .refine((form) => isTimeRangeOrdered(form.startsAtTime, form.endsAtTime), {
     error: () => i18n.t('centerAdmin.roomBlocks.timeOrder'),
     path: ['endsAtTime'],
+  })
+  .refine((form) => form.price.trim() === '' || parsePriceInCents(form.price) !== null, {
+    error: () => i18n.t('centerAdmin.roomBlocks.priceInvalid'),
+    path: ['price'],
+  })
+  .refine((form) => form.price.trim() === '' || form.renterMembershipId !== '', {
+    error: () => i18n.t('centerAdmin.roomBlocks.priceNeedsRenter'),
+    path: ['price'],
   });
 export type RoomBlockFormValues = z.infer<typeof roomBlockFormSchema>;
 
@@ -52,6 +66,9 @@ export function buildEmptyRoomBlockForm(todayIsoDate: string): RoomBlockFormValu
     endsAtTime: DEFAULT_ENDS_AT_TIME,
     reason: 'rental',
     note: '',
+    renterMembershipId: '',
+    renterName: '',
+    price: '',
   };
 }
 
@@ -60,11 +77,15 @@ export function mapRoomBlockFormToRequest(
   formValues: RoomBlockFormValues,
   timeZone: string,
 ): CreateRoomBlockRequestDto {
+  const priceCents = parsePriceInCents(formValues.price);
+  const isRentedToSomeone = formValues.reason === 'rental' && formValues.renterMembershipId !== '';
   return {
     startsAt: zonedDateTimeToUtc(formValues.date, formValues.startsAtTime, timeZone).toISOString(),
     endsAt: zonedDateTimeToUtc(formValues.date, formValues.endsAtTime, timeZone).toISOString(),
     reason: formValues.reason,
     ...(formValues.note === '' ? {} : { note: formValues.note }),
+    ...(isRentedToSomeone ? { renterMembershipId: formValues.renterMembershipId } : {}),
+    ...(isRentedToSomeone && priceCents !== null && priceCents > 0 ? { priceCents } : {}),
   };
 }
 

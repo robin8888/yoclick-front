@@ -9,8 +9,11 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { MyPassCard } from '../components/MyPassCard';
+import { MyRentalsSection } from '../components/MyRentalsSection';
+import { PayPassAction } from '../components/PayPassAction';
 import { RateOfferCard } from '../components/RateOfferCard';
 import { useMyPasses } from '../hooks/useMyPasses';
+import { usePaymentsStatus } from '../hooks/usePaymentsStatus';
 import { useRateOffers } from '../hooks/useRateOffers';
 import { useRequestPass } from '../hooks/useRequestPass';
 
@@ -52,6 +55,7 @@ export function MyPassesScreen(): React.JSX.Element {
   const router = useRouter();
   const passes = useMyPasses();
   const myPasses = (passes.data?.passes ?? []).filter(({ status }) => status !== 'rejected');
+  const canPayOnline = usePaymentsStatus() === 'ready';
 
   return (
     <ScreenTemplate
@@ -74,8 +78,13 @@ export function MyPassesScreen(): React.JSX.Element {
         <Text color="ink2">{i18n.t('passes.empty')}</Text>
       ) : null}
       {myPasses.map((pass) => (
-        <MyPassCard key={pass.id} pass={pass} />
+        <MyPassCard
+          key={pass.id}
+          pass={pass}
+          actions={canPayOnline && pass.status === 'pending' ? <PayPassAction pass={pass} /> : null}
+        />
       ))}
+      <MyRentalsSection />
       <RateOffersSection />
     </ScreenTemplate>
   );

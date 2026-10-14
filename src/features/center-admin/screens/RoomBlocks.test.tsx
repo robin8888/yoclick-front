@@ -38,6 +38,20 @@ const BLOCKS = {
       reason: 'rental',
       note: 'Asociación de vecinos',
       createdBy: { membershipId: 'owner', fullName: 'Carlos Núñez' },
+      renter: null,
+      priceCents: null,
+      isPaid: false,
+    },
+  ],
+};
+
+const RENTED_BLOCKS = {
+  blocks: [
+    {
+      ...BLOCKS.blocks[0],
+      renter: { membershipId: 'ana', fullName: 'Ana Ruiz' },
+      priceCents: 4500,
+      isPaid: true,
     },
   ],
 };
@@ -74,6 +88,19 @@ describe('RoomBlocksScreen', () => {
     await waitFor(() => {
       expect(findApiCall('DELETE', `${BLOCKS_PATH}/${BLOCK_ID}`)).toBeDefined();
     });
+  });
+
+  it('shows who rents the room, the price and whether it is paid', async () => {
+    mockApi({
+      [`GET ${ROOMS_PATH}`]: ROOMS,
+      [`GET ${SETTINGS_PATH}`]: { timezone: TIME_ZONE },
+      [`GET ${BLOCKS_PATH}`]: RENTED_BLOCKS,
+    });
+    renderScreen(<RoomBlocksScreen />);
+
+    expect(
+      await screen.findByText(/Alquiler · Ana Ruiz · 45(,00)?.€ · Pagado · Asociación de vecinos/),
+    ).toBeOnTheScreen();
   });
 
   it('opens the form for a new block', async () => {

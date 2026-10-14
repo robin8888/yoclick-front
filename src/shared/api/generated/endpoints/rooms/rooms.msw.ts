@@ -14,6 +14,7 @@ import type {
 } from 'msw';
 
 import type {
+  MyRentalsResponseDto,
   RoomBlockListResponseDto,
   RoomBlockResponseDto,
   RoomListResponseDto,
@@ -24,12 +25,13 @@ import {
   getRoomBlocksCreateResponseMock,
   getRoomBlocksListOfRoomResponseMock,
   getRoomBlocksListResponseMock,
+  getRoomRentalsMineResponseMock,
   getRoomsCreateResponseMock,
   getRoomsListResponseMock,
   getRoomsUpdateResponseMock
 } from './rooms.faker.ts';
 
-export { getRoomsListResponseMock, getRoomsCreateResponseMock, getRoomsUpdateResponseMock, getRoomBlocksListResponseMock, getRoomBlocksListOfRoomResponseMock, getRoomBlocksCreateResponseMock } from './rooms.faker.ts';
+export { getRoomsListResponseMock, getRoomsCreateResponseMock, getRoomsUpdateResponseMock, getRoomRentalsMineResponseMock, getRoomBlocksListResponseMock, getRoomBlocksListOfRoomResponseMock, getRoomBlocksCreateResponseMock } from './rooms.faker.ts';
 
 
 export const getRoomsListMockHandler = (overrideResponse?: RoomListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomListResponseDto> | RoomListResponseDto), options?: RequestHandlerOptions) => {
@@ -74,6 +76,18 @@ export const getRoomsArchiveMockHandler = (overrideResponse?: void | ((info: Par
 
     return new HttpResponse(null,
       { status: 204
+      })
+  }, options)
+}
+
+export const getRoomRentalsMineMockHandler = (overrideResponse?: MyRentalsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MyRentalsResponseDto> | MyRentalsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/room-rentals/mine', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getRoomRentalsMineResponseMock(),
+      { status: 200
       })
   }, options)
 }
@@ -128,6 +142,7 @@ export const getRoomsMock = () => [
   getRoomsCreateMockHandler(),
   getRoomsUpdateMockHandler(),
   getRoomsArchiveMockHandler(),
+  getRoomRentalsMineMockHandler(),
   getRoomBlocksListMockHandler(),
   getRoomBlocksListOfRoomMockHandler(),
   getRoomBlocksCreateMockHandler(),

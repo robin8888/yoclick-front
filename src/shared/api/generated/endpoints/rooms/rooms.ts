@@ -27,6 +27,7 @@ import type {
 import type {
   CreateRoomBlockRequestDto,
   CreateRoomRequestDto,
+  MyRentalsResponseDto,
   ProblemDetailsDto,
   RoomBlockListResponseDto,
   RoomBlockResponseDto,
@@ -413,7 +414,107 @@ export const useRoomsArchive = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getRoomsArchiveMutationOptions(options), queryClient);
     }
-    export const getRoomBlocksListUrl = (centerId: string,
+    export const getRoomRentalsMineUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/room-rentals/mine`
+}
+
+/**
+ * @summary Los alquileres de sala hechos a nombre de la propia persona, con precio y estado de pago.
+ */
+export const roomRentalsMine = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<MyRentalsResponseDto> => {
+
+  return apiMutator<MyRentalsResponseDto>(getRoomRentalsMineUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getRoomRentalsMineQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/room-rentals/mine`
+    ] as const;
+    }
+
+
+export const getRoomRentalsMineQueryOptions = <TData = Awaited<ReturnType<typeof roomRentalsMine>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getRoomRentalsMineQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof roomRentalsMine>>> = ({ signal }) => roomRentalsMine(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type RoomRentalsMineQueryResult = NonNullable<Awaited<ReturnType<typeof roomRentalsMine>>>
+export type RoomRentalsMineQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useRoomRentalsMine<TData = Awaited<ReturnType<typeof roomRentalsMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomRentalsMine>>,
+          TError,
+          Awaited<ReturnType<typeof roomRentalsMine>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomRentalsMine<TData = Awaited<ReturnType<typeof roomRentalsMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof roomRentalsMine>>,
+          TError,
+          Awaited<ReturnType<typeof roomRentalsMine>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useRoomRentalsMine<TData = Awaited<ReturnType<typeof roomRentalsMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los alquileres de sala hechos a nombre de la propia persona, con precio y estado de pago.
+ */
+
+export function useRoomRentalsMine<TData = Awaited<ReturnType<typeof roomRentalsMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof roomRentalsMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getRoomRentalsMineQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getRoomBlocksListUrl = (centerId: string,
     params: RoomBlocksListParams,) => {
   const normalizedParams = new URLSearchParams();
 
@@ -661,7 +762,7 @@ export const getRoomBlocksCreateUrl = (centerId: string,
 }
 
 /**
- * @summary Bloquea la sala en un tramo (alquiler, mantenimiento, evento). Las sesiones de horario sin citas sueltas que caigan dentro se cancelan y se avisa a sus matriculados. 409 ROOM_HAS_BOOKINGS si hay citas sueltas en ese tramo; CONFLICT si se solapa con otro bloqueo.
+ * @summary Bloquea la sala en un tramo futuro y libre (alquiler, mantenimiento, evento). 409 ROOM_HAS_BOOKINGS si hay clases o citas en ese tramo; CONFLICT si empieza en el pasado o se solapa con otro bloqueo.
  */
 export const roomBlocksCreate = async (centerId: string,
     roomId: string,
@@ -729,7 +830,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type RoomBlocksCreateMutationVariables = {centerId: string;roomId: string;data: CreateRoomBlockRequestDto}
 
     /**
- * @summary Bloquea la sala en un tramo (alquiler, mantenimiento, evento). Las sesiones de horario sin citas sueltas que caigan dentro se cancelan y se avisa a sus matriculados. 409 ROOM_HAS_BOOKINGS si hay citas sueltas en ese tramo; CONFLICT si se solapa con otro bloqueo.
+ * @summary Bloquea la sala en un tramo futuro y libre (alquiler, mantenimiento, evento). 409 ROOM_HAS_BOOKINGS si hay clases o citas en ese tramo; CONFLICT si empieza en el pasado o se solapa con otro bloqueo.
  */
 export const useRoomBlocksCreate = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof roomBlocksCreate>>, TError,RoomBlocksCreateMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

@@ -90,13 +90,15 @@
     "SESSION_MODE_NOT_ALLOWED": "Este servicio no se da de esa forma (privada o en grupo). Cámbialo en el servicio",
     "SCHEDULE_HAS_BOOKINGS": "Hay citas sueltas en sesiones futuras de este horario. Cancélalas o muévelas antes",
     "SESSION_NOT_CANCELLABLE": "Esta sesión ya ha empezado o ya estaba cancelada",
-    "ROOM_HAS_BOOKINGS": "Hay citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
+    "ROOM_HAS_BOOKINGS": "Hay clases o citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
     "SERVICE_ONLY_IN_SCHEDULE": "Este servicio solo se da en sus horarios. Elige una de sus clases con plazas",
     "CLIENT_HAS_NO_PASS": "Esa persona no tiene un bono en vigor con clases. Dale un bono desde su ficha para apuntarla",
     "PASS_FULLY_BOOKED": "Ya tienes agendadas todas las clases de tu bono. Cancela alguna o pide otro bono para agendar más",
     "ROOM_SCHEDULE_OVERLAP": "Esa sala ya tiene un horario a esa hora en esos días. Elige otra hora, otra fecha u otra sala, o edita el horario que ya existe",
     "TEACHER_SCHEDULE_OVERLAP": "Esa persona ya da otra clase a esa hora en esos días. Elige otra hora, otra fecha u otra persona",
-    "STAFF_NOT_FOR_SERVICE": "Esa persona no da este servicio. Elige a una de las que lo dan"
+    "STAFF_NOT_FOR_SERVICE": "Esa persona no da este servicio. Elige a una de las que lo dan",
+    "PAYMENTS_NOT_INCLUDED": "El plan de este centro no incluye cobros online",
+    "PAYMENTS_NOT_READY": "Este centro aún no puede cobrar online. Pídele que complete el alta de cobros"
   },
   "fieldErrors": {
     "invalid": "Revisa este campo",
@@ -1131,7 +1133,12 @@
     "passRequestedTitle": "Bono pedido",
     "passRequestedDescription": "{{clientName}} ha pedido el bono {{rateName}}. Actívalo cuando lo cobres.",
     "passActivatedTitle": "Tu bono está activo",
-    "passActivatedDescription": "Ya puedes usar tu bono {{rateName}}."
+    "passActivatedDescription": "Ya puedes usar tu bono {{rateName}}.",
+    "roomRentalAssignedTitle": "Alquiler de sala",
+    "roomRentalAssignedDescription": "Tienes alquilada la sala {{roomName}} el {{when}}{{priceSuffix}}. Si tu centro cobra online, puedes pagarlo desde Mis bonos.",
+    "paymentReceivedTitle": "Pago recibido",
+    "paymentReceivedDescription": "{{clientName}} ha pagado {{rateName}} ({{price}}).",
+    "priceSuffix": " por {{price}}"
   },
   "clients": {
     "title": "{{clientWord}}",
@@ -1332,6 +1339,19 @@
     "validFor_other": "Válido {{count}} días",
     "expiresOn": "caduca el {{date}}",
     "expiredOn": "caducó el {{date}}",
+    "pay": {
+      "action": "Pagar {{price}}",
+      "label": "Pagar el bono {{name}} con tarjeta",
+      "failed": "No se ha podido completar el pago. No se ha cobrado nada; inténtalo de nuevo.",
+      "unavailable": "Esta versión de la app todavía no admite pagos. Actualízala e inténtalo de nuevo.",
+      "confirming": "Pago recibido: estamos esperando a que Stripe lo confirme. En unos instantes se reflejará aquí."
+    },
+    "rentals": {
+      "title": "Alquileres de sala",
+      "paid": "Pagado",
+      "unpaid": "Pendiente de pago",
+      "payLabel": "Pagar con tarjeta el alquiler de {{name}}"
+    },
     "assign": {
       "title": "Bonos",
       "empty": "Esta persona aún no tiene bonos.",
@@ -1358,6 +1378,26 @@
     }
   },
   "centerAdmin": {
+    "onlinePayments": {
+      "title": "Cobros online",
+      "not_included": "Cobrar los bonos y los alquileres desde la app con tarjeta es del plan Premium. Mientras tanto, activa cada bono cuando lo cobres a mano.",
+      "not_started": "Cobra los bonos y los alquileres con tarjeta, Apple Pay y Google Pay. El dinero va directo a la cuenta de tu centro. Necesitas completar un alta en Stripe (unos 5 minutos).",
+      "pending": "Tu alta en Stripe aún no está completa. Termínala para empezar a cobrar; cuando acabes, pulsa «Comprobar».",
+      "ready": "Cobros online activados: quien pida un bono verá «Pagar» y se le activará solo al pagar. También puedes seguir marcando bonos como cobrados a mano.",
+      "startAction": "Activar cobros con Stripe",
+      "continueAction": "Continuar el alta en Stripe",
+      "refreshAction": "Comprobar",
+      "viewPaymentsAction": "Ver cobros"
+    },
+    "payments": {
+      "title": "Cobros online",
+      "subtitle": "Lo que han pagado desde la app",
+      "empty": "Todavía no hay cobros online.",
+      "loadError": "No hemos podido cargar los cobros",
+      "kind": { "pass": "Bono", "room_rental": "Alquiler" },
+      "status": { "pending": "Pendiente", "succeeded": "Pagado", "failed": "Fallido" },
+      "rowLabel": "{{label}}, {{clientName}}, {{amount}}, {{status}}"
+    },
     "tabs": {
       "home": "Inicio",
       "content": "Contenido",
@@ -2109,6 +2149,15 @@
       "notePlaceholder": "Alquilado a la asociación de vecinos",
       "noteTooLong": "Usa como máximo 200 caracteres",
       "saveAction": "Bloquear",
+      "renterLabel": "¿A quién se alquila? (opcional)",
+      "renterHint": "Elige a una persona registrada para ponerle precio: lo verá en su app y podrá pagarlo con tarjeta si tu centro cobra online.",
+      "renterRemove": "Quitar a esta persona",
+      "priceLabel": "Precio del alquiler (€)",
+      "pricePlaceholder": "45",
+      "priceInvalid": "Escribe un precio válido, por ejemplo 45 o 45,50",
+      "priceNeedsRenter": "Para poner precio elige antes a quién se alquila",
+      "paid": "Pagado",
+      "unpaid": "Pendiente de pago",
       "availability": {
         "inThePast": "Ese tramo ya ha empezado o ha pasado. Elige una hora que aún no haya llegado",
         "outsideOpeningHours": "El centro está cerrado a esas horas. Abre: {{ranges}}",

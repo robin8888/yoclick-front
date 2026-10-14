@@ -12,6 +12,7 @@ export * from './mfa/mfa.zod.ts';
 export * from './notifications/notifications.zod.ts';
 export * from './onboarding/onboarding.zod.ts';
 export * from './passes/passes.zod.ts';
+export * from './payments/payments.zod.ts';
 export * from './privacy/privacy.zod.ts';
 export * from './rates/rates.zod.ts';
 export * from './reports/reports.zod.ts';

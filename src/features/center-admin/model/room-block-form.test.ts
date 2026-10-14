@@ -20,8 +20,16 @@ describe('roomBlockFormSchema', () => {
     ['a missing date', { date: '' }],
     ['an end before the start', { startsAtTime: '14:00', endsAtTime: '09:00' }],
     ['a note over 200 characters', { note: 'a'.repeat(201) }],
+    ['a price without a renter', { price: '45' }],
+    ['a price that is not a number', { renterMembershipId: 'membership-ana', price: 'mucho' }],
   ])('rejects %s', (_caseName, overrides) => {
     expect(roomBlockFormSchema.safeParse({ ...validForm, ...overrides }).success).toBe(false);
+  });
+
+  it('accepts a rental to a person with a price in euros', () => {
+    const rental = { ...validForm, renterMembershipId: 'membership-ana', price: '45,50' };
+
+    expect(roomBlockFormSchema.safeParse(rental).success).toBe(true);
   });
 });
 
@@ -48,6 +56,37 @@ describe('mapRoomBlockFormToRequest', () => {
       reason: 'event',
       note: 'Exhibición',
     });
+  });
+});
+
+describe('mapRoomBlockFormToRequest for a rental', () => {
+  const rentalForm = {
+    ...buildEmptyRoomBlockForm(TODAY),
+    renterMembershipId: 'membership-ana',
+    renterName: 'Ana Ruiz',
+    price: '45,50',
+  };
+
+  it('sends who rents and the price in cents', () => {
+    expect(mapRoomBlockFormToRequest(rentalForm, 'UTC')).toMatchObject({
+      reason: 'rental',
+      renterMembershipId: 'membership-ana',
+      priceCents: 4550,
+    });
+  });
+
+  it('leaves the renter and the price out when the reason is not a rental', () => {
+    const request = mapRoomBlockFormToRequest({ ...rentalForm, reason: 'maintenance' }, 'UTC');
+
+    expect(request).not.toHaveProperty('renterMembershipId');
+    expect(request).not.toHaveProperty('priceCents');
+  });
+
+  it('sends the renter without a price when none was typed', () => {
+    const request = mapRoomBlockFormToRequest({ ...rentalForm, price: '' }, 'UTC');
+
+    expect(request).toMatchObject({ renterMembershipId: 'membership-ana' });
+    expect(request).not.toHaveProperty('priceCents');
   });
 });
 

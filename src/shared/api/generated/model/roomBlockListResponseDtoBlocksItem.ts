@@ -7,6 +7,7 @@
  */
 import type { RoomBlockListResponseDtoBlocksItemCreatedBy } from './roomBlockListResponseDtoBlocksItemCreatedBy.ts';
 import type { RoomBlockListResponseDtoBlocksItemReason } from './roomBlockListResponseDtoBlocksItemReason.ts';
+import type { RoomBlockListResponseDtoBlocksItemRenter } from './roomBlockListResponseDtoBlocksItemRenter.ts';
 
 export type RoomBlockListResponseDtoBlocksItem = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
@@ -21,4 +22,13 @@ export type RoomBlockListResponseDtoBlocksItem = {
   /** @nullable */
   note: string | null;
   createdBy: RoomBlockListResponseDtoBlocksItemCreatedBy;
+  /** @nullable */
+  renter: RoomBlockListResponseDtoBlocksItemRenter;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     * @nullable
+     */
+  priceCents: number | null;
+  isPaid: boolean;
 };

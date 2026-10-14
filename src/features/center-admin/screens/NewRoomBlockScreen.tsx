@@ -14,6 +14,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ChoiceChipsField } from '../components/ChoiceChipsField';
 import { RoomBlockAvailabilityNotice } from '../components/RoomBlockAvailabilityNotice';
+import { RoomRentalFields } from '../components/RoomRentalFields';
 import { SpanishDateField } from '../components/SpanishDateField';
 import { TimeRangeStepFields } from '../components/TimeRangeStepFields';
 import { getDeviceTimeZone, useCenterTimeZone } from '../hooks/useCenterTimeZone';
@@ -155,6 +156,7 @@ function NewRoomBlockContent({ roomId }: Readonly<{ roomId: string }>): React.JS
     >
       <BlockDateField form={form} />
       <BlockTimeAndReasonFields form={form} />
+      <RoomRentalFields form={form} />
       <RoomBlockAvailabilityNotice
         availability={submission.availability}
         busyRanges={submission.busyRanges}

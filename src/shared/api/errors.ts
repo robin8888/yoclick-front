@@ -100,6 +100,8 @@ export const KNOWN_API_ERROR_CODES = [
   'ROOM_SCHEDULE_OVERLAP',
   'TEACHER_SCHEDULE_OVERLAP',
   'STAFF_NOT_FOR_SERVICE',
+  'PAYMENTS_NOT_INCLUDED',
+  'PAYMENTS_NOT_READY',
 ] as const;
 
 export type KnownApiErrorCode = (typeof KNOWN_API_ERROR_CODES)[number];

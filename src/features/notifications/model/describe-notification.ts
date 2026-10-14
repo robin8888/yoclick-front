@@ -1,5 +1,6 @@
 import type { NotificationListResponseDtoNotificationsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { formatEuros } from '@/shared/lib/format';
 import { formatNumericDate } from '@/shared/lib/format/numeric-date';
 import { formatShortDate } from '@/shared/lib/format/format-short-date';
 import { formatTime24h } from '@/shared/lib/format/format-time';
@@ -45,6 +46,8 @@ const TITLE_KEYS = {
   schedule_unenrolled: 'notifications.scheduleUnenrolledTitle',
   pass_requested: 'notifications.passRequestedTitle',
   pass_activated: 'notifications.passActivatedTitle',
+  room_rental_assigned: 'notifications.roomRentalAssignedTitle',
+  payment_received: 'notifications.paymentReceivedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -72,6 +75,8 @@ const DESCRIPTION_KEYS = {
   schedule_unenrolled: 'notifications.scheduleUnenrolledDescription',
   pass_requested: 'notifications.passRequestedDescription',
   pass_activated: 'notifications.passActivatedDescription',
+  room_rental_assigned: 'notifications.roomRentalAssignedDescription',
+  payment_received: 'notifications.paymentReceivedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -152,6 +157,11 @@ interface NoticeTexts {
   /** « en Aula 2», o vacío si la clase no tiene sala. */
   roomSuffix: string;
   rateName: string;
+  roomName: string;
+  /** «45 €», o vacío si el aviso no trae precio. */
+  price: string;
+  /** « por 45 €», o vacío: para frases donde el precio es opcional. */
+  priceSuffix: string;
 }
 
 /** Un dato del aviso que puede faltar: sin él, el texto queda vacío. */
@@ -162,6 +172,13 @@ function textOf(value: string | undefined): string {
 function describeRoomSuffix(roomName: string | undefined): string {
   if (roomName === undefined || roomName === '') return '';
   return i18n.t('notifications.sessionCancelledRoomSuffix', { roomName });
+}
+
+function describePrice(priceCents: string | undefined): { price: string; priceSuffix: string } {
+  const cents = Number(priceCents);
+  if (priceCents === undefined || !Number.isFinite(cents)) return { price: '', priceSuffix: '' };
+  const price = formatEuros(cents);
+  return { price, priceSuffix: i18n.t('notifications.priceSuffix', { price }) };
 }
 
 function buildNoticeTexts(notification: NotificationItem, timeZone: string): NoticeTexts {
@@ -186,6 +203,8 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
         : noticeData.label,
     roomSuffix: describeRoomSuffix(noticeData.roomName),
     rateName: textOf(noticeData.rateName),
+    roomName: textOf(noticeData.roomName),
+    ...describePrice(noticeData.priceCents),
   };
 }
 

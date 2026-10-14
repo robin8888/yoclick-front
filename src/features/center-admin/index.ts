@@ -13,6 +13,7 @@ export { InvitePersonScreen } from './screens/InvitePersonScreen';
 export { ServiceEditorScreen } from './screens/ServiceEditorScreen';
 export { ServicesScreen } from './screens/ServicesScreen';
 export { PassesAdminScreen } from './screens/PassesAdminScreen';
+export { PaymentsAdminScreen } from './screens/PaymentsAdminScreen';
 export { NewRateScreen } from './screens/NewRateScreen';
 export { useAssignableStaff } from './hooks/useAssignableStaff';
 export { useCenterSettings } from './hooks/useCenterSettings';

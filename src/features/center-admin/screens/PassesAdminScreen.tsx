@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { OnlinePaymentsSection } from '../components/OnlinePaymentsSection';
 import { PendingPassesSection } from '../components/PendingPassesSection';
 import { RateCatalogSection } from '../components/RateCatalogSection';
 
@@ -17,6 +18,7 @@ export function PassesAdminScreen(): React.JSX.Element {
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
     >
+      <OnlinePaymentsSection />
       <PendingPassesSection />
       <RateCatalogSection
         onNewRate={() => {
