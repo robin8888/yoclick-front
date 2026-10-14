@@ -28,7 +28,7 @@ export function MonthSwitcher({
     <View style={createMonthSwitcherStyle(theme)}>
       <IconButton
         iconName="chevronLeft"
-        variant="tonal"
+        variant="plain"
         accessibilityLabel={i18n.t('timeClock.previousMonth')}
         onPress={onPreviousPress}
       />
@@ -37,7 +37,7 @@ export function MonthSwitcher({
       </Text>
       <IconButton
         iconName="chevronRight"
-        variant="tonal"
+        variant="plain"
         accessibilityLabel={i18n.t('timeClock.nextMonth')}
         isDisabled={isLastMonth}
         onPress={onNextPress}

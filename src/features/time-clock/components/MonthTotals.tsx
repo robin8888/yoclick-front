@@ -5,7 +5,7 @@ import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
 import { formatWorkedMinutes } from '../model/worked-time';
-import { createTotalsRowStyle, createTotalTileStyle } from './TimeClock.styles';
+import { createHeroCardStyle, createHeroStatsStyle, createHeroStatStyle } from './TimeClock.styles';
 
 interface MonthTotalsProps {
   workedMinutes: number;
@@ -13,16 +13,16 @@ interface MonthTotalsProps {
   editedCount: number;
 }
 
-interface TotalTileProps {
+interface HeroStatProps {
   label: string;
   value: string;
 }
 
-function TotalTile({ label, value }: Readonly<TotalTileProps>): React.JSX.Element {
+function HeroStat({ label, value }: Readonly<HeroStatProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
-    <View style={createTotalTileStyle(theme)} accessible accessibilityLabel={`${label}: ${value}`}>
+    <View style={createHeroStatStyle(theme)} accessible accessibilityLabel={`${label}: ${value}`}>
       <Text variant="caption" color="ink2">
         {label}
       </Text>
@@ -31,22 +31,29 @@ function TotalTile({ label, value }: Readonly<TotalTileProps>): React.JSX.Elemen
   );
 }
 
-/** Lo que cuenta el mes de un vistazo: horas trabajadas, días con fichaje y fichajes corregidos. */
+/** El mes en una tarjeta: las horas trabajadas en grande y, debajo, los días y lo corregido. */
 export function MonthTotals({
   workedMinutes,
   daysWorked,
   editedCount,
 }: Readonly<MonthTotalsProps>): React.JSX.Element {
   const theme = useTheme();
+  const worked = formatWorkedMinutes(workedMinutes);
 
   return (
-    <View style={createTotalsRowStyle(theme)}>
-      <TotalTile
-        label={i18n.t('timeClock.workedLabel')}
-        value={formatWorkedMinutes(workedMinutes)}
-      />
-      <TotalTile label={i18n.t('timeClock.daysLabel')} value={String(daysWorked)} />
-      <TotalTile label={i18n.t('timeClock.editedLabel')} value={String(editedCount)} />
+    <View style={createHeroCardStyle(theme)}>
+      <View accessible accessibilityLabel={`${i18n.t('timeClock.workedLabel')}: ${worked}`}>
+        <Text variant="caption" color="ink2">
+          {i18n.t('timeClock.workedLabel')}
+        </Text>
+        <Text variant="display" color="brandInk">
+          {worked}
+        </Text>
+      </View>
+      <View style={createHeroStatsStyle(theme)}>
+        <HeroStat label={i18n.t('timeClock.daysLabel')} value={String(daysWorked)} />
+        <HeroStat label={i18n.t('timeClock.editedLabel')} value={String(editedCount)} />
+      </View>
     </View>
   );
 }
