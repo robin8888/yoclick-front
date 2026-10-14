@@ -107,8 +107,9 @@ function buildPlugins(
       },
     ],
     // Hoja de pago de Stripe para bonos y alquileres (solo centros Premium). Apple Pay se añade al
-    // dar de alta el identificador de comercio de Apple.
-    '@stripe/stripe-react-native',
+    // dar de alta el identificador de comercio de Apple y Google Pay al activarlo en Stripe. El plugin
+    // exige recibir opciones aunque vayan vacías de comercio.
+    ['@stripe/stripe-react-native', { enableGooglePay: false }],
   ];
   // SEC-32: el dev client y su menú de depuración solo existen en builds de desarrollo.
   if (buildEnvironment.appEnvironment === 'development') plugins.push('expo-dev-client');
