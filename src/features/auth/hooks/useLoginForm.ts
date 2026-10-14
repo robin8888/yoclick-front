@@ -23,7 +23,7 @@ export function useLoginForm(): LoginForm {
   const router = useRouter();
   const loginMutation = useAuthLogin();
   const { completeSignIn, hasSessionStartFailed } = useCompleteSignIn();
-  const saveMfaChallengeToken = useAuthFlowStore((state) => state.saveMfaChallengeToken);
+  const saveMfaChallenge = useAuthFlowStore((state) => state.saveMfaChallenge);
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
@@ -38,7 +38,7 @@ export function useLoginForm(): LoginForm {
             completeSignIn(response);
             return;
           }
-          saveMfaChallengeToken(response.mfaToken);
+          saveMfaChallenge(response);
           router.push('/(auth)/mfa');
         },
       },

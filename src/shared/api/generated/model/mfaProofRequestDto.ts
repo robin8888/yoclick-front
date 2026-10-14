@@ -14,6 +14,8 @@ export interface MfaProofRequestDto {
   password: string;
   /** @pattern ^\d{6}$ */
   code?: string;
+  /** @pattern ^\d{6}$ */
+  emailCode?: string;
   /**
      * @minLength 8
      * @maxLength 24

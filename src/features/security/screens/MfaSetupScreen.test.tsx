@@ -16,6 +16,7 @@ const SETUP_RESPONSE = {
 const RECOVERY_CODES = Array.from({ length: 10 }, (_unused, index) => `RCODE-${String(index + 1)}`);
 
 async function reachScanStep(): Promise<void> {
+  fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
   fireEvent.changeText(screen.getByLabelText('Contraseña'), 'Nosnibor88');
   fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
   await screen.findByText('Conecta tu app de autenticación');
@@ -47,6 +48,7 @@ describe('MfaSetupScreen', () => {
     });
     renderScreen(<MfaSetupScreen />);
 
+    fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
     fireEvent.changeText(screen.getByLabelText('Contraseña'), 'mal');
     fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
 
@@ -118,6 +120,52 @@ describe('MfaSetupScreen', () => {
     });
     await act(async () => {
       await Promise.resolve();
+    });
+  });
+
+  describe('with a code by email', () => {
+    const EMAIL_SETUP_RESPONSE = {
+      emailHint: 'r***@correo.es',
+      codeExpiresAt: '2026-10-04T10:10:00.000Z',
+    };
+
+    async function reachEmailCodeStep(): Promise<void> {
+      fireEvent.press(screen.getByRole('radio', { name: /Código por correo/ }));
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+      fireEvent.changeText(screen.getByLabelText('Contraseña'), 'Nosnibor88');
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+      await screen.findByText('Escribe el código que te hemos enviado');
+    }
+
+    it('sends the code to the email and says where it went', async () => {
+      mockApi({ 'POST /v1/me/mfa/email/setup': EMAIL_SETUP_RESPONSE });
+      renderScreen(<MfaSetupScreen />);
+
+      await reachEmailCodeStep();
+
+      expect(findApiCall('POST', '/v1/me/mfa/email/setup')?.body).toEqual({
+        password: 'Nosnibor88',
+      });
+      expect(findApiCall('POST', '/v1/me/mfa/totp/setup')).toBeUndefined();
+      expect(
+        screen.getByText(/enviado un código de 6 dígitos a r\*\*\*@correo.es/),
+      ).toBeOnTheScreen();
+    });
+
+    it('activates with the code from the email and shows the recovery codes', async () => {
+      mockApi({
+        'POST /v1/me/mfa/email/setup': EMAIL_SETUP_RESPONSE,
+        'POST /v1/me/mfa/email/confirm': { recoveryCodes: RECOVERY_CODES },
+        'GET /v1/me/mfa': { isEnabled: true, method: 'email', recoveryCodesRemaining: 10 },
+      });
+      renderScreen(<MfaSetupScreen />);
+      await reachEmailCodeStep();
+
+      fireEvent.changeText(screen.getByLabelText('Código de 6 dígitos'), '246810');
+      fireEvent.press(screen.getByRole('button', { name: 'Activar verificación' }));
+
+      expect(await screen.findByText('Guarda tus códigos de recuperación')).toBeOnTheScreen();
+      expect(findApiCall('POST', '/v1/me/mfa/email/confirm')?.body).toEqual({ code: '246810' });
     });
   });
 });

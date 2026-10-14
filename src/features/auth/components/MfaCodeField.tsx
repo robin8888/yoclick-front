@@ -7,20 +7,21 @@ import { CenteredCodeField } from './CenteredCodeField';
 import { VerificationCodeTextField } from './VerificationCodeTextField';
 
 interface MfaCodeFieldProps {
-  codeKind: 'appCode' | 'recoveryCode';
+  codeKind: 'appCode' | 'emailCode' | 'recoveryCode';
+  /** Los seis dígitos: los de la app o los del correo. */
   appCodeControl: Control<MfaAppCodeFormValues>;
   recoveryCodeControl: Control<MfaRecoveryCodeFormValues>;
   onSubmitEditing: () => void;
 }
 
-/** El campo del segundo factor: seis dígitos de la app o un código de recuperación. */
+/** El campo del segundo factor: seis dígitos (app o correo) o un código de recuperación. */
 export function MfaCodeField({
   codeKind,
   appCodeControl,
   recoveryCodeControl,
   onSubmitEditing,
 }: Readonly<MfaCodeFieldProps>): React.JSX.Element {
-  if (codeKind === 'appCode') {
+  if (codeKind !== 'recoveryCode') {
     return (
       <VerificationCodeTextField
         control={appCodeControl}

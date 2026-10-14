@@ -16,6 +16,8 @@ describe('isMfaChallenge', () => {
         status: 'mfa_required',
         mfaToken: 'mfa-token',
         mfaTokenExpiresAt: '2026-10-04T10:05:00.000Z',
+        methods: ['totp'],
+        emailHint: 'm***@correo.es',
       }),
     ).toBe(true);
   });

@@ -58,10 +58,15 @@ export function buildAuthenticatedLoginResponse(): MfaLoginResponseDto {
   };
 }
 
-export function buildMfaChallengeResponse(): MfaChallengeResponseDto {
+export function buildMfaChallengeResponse(
+  overrides: Partial<MfaChallengeResponseDto> = {},
+): MfaChallengeResponseDto {
   return {
     status: 'mfa_required',
     mfaToken: 'mfa-challenge-token',
     mfaTokenExpiresAt: '2026-10-04T10:05:00.000Z',
+    methods: ['totp', 'email'],
+    emailHint: 'm***@correo.es',
+    ...overrides,
   };
 }

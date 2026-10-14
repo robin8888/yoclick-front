@@ -14,6 +14,7 @@ import type {
 } from 'msw';
 
 import type {
+  EmailCodeSentResponseDto,
   MfaConfirmResponseDto,
   MfaSetupResponseDto,
   MfaStatusResponseDto,
@@ -21,13 +22,16 @@ import type {
 } from '../../model';
 
 import {
+  getMfaConfirmEmailResponseMock,
   getMfaConfirmTotpResponseMock,
   getMfaGetStatusResponseMock,
   getMfaRegenerateRecoveryCodesResponseMock,
+  getMfaSendEmailCodeResponseMock,
+  getMfaSetupEmailResponseMock,
   getMfaSetupTotpResponseMock
 } from './mfa.faker.ts';
 
-export { getMfaGetStatusResponseMock, getMfaSetupTotpResponseMock, getMfaConfirmTotpResponseMock, getMfaRegenerateRecoveryCodesResponseMock } from './mfa.faker.ts';
+export { getMfaGetStatusResponseMock, getMfaSetupTotpResponseMock, getMfaConfirmTotpResponseMock, getMfaRegenerateRecoveryCodesResponseMock, getMfaSetupEmailResponseMock, getMfaConfirmEmailResponseMock, getMfaSendEmailCodeResponseMock } from './mfa.faker.ts';
 
 
 export const getMfaGetStatusMockHandler = (overrideResponse?: MfaStatusResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MfaStatusResponseDto> | MfaStatusResponseDto), options?: RequestHandlerOptions) => {
@@ -87,10 +91,49 @@ export const getMfaRegenerateRecoveryCodesMockHandler = (overrideResponse?: Rege
       })
   }, options)
 }
+
+export const getMfaSetupEmailMockHandler = (overrideResponse?: EmailCodeSentResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<EmailCodeSentResponseDto> | EmailCodeSentResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/mfa/email/setup', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getMfaSetupEmailResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getMfaConfirmEmailMockHandler = (overrideResponse?: MfaConfirmResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<MfaConfirmResponseDto> | MfaConfirmResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/mfa/email/confirm', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getMfaConfirmEmailResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getMfaSendEmailCodeMockHandler = (overrideResponse?: EmailCodeSentResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<EmailCodeSentResponseDto> | EmailCodeSentResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/me/mfa/email/send', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getMfaSendEmailCodeResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getMfaMock = () => [
   getMfaGetStatusMockHandler(),
   getMfaSetupTotpMockHandler(),
   getMfaConfirmTotpMockHandler(),
   getMfaDisableMockHandler(),
-  getMfaRegenerateRecoveryCodesMockHandler()
+  getMfaRegenerateRecoveryCodesMockHandler(),
+  getMfaSetupEmailMockHandler(),
+  getMfaConfirmEmailMockHandler(),
+  getMfaSendEmailCodeMockHandler()
 ]

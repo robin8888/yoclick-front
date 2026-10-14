@@ -20,7 +20,11 @@ describe('MfaChallengeScreen', () => {
     startSession.mockReset().mockResolvedValue(undefined);
     jest.mocked(getSessionServices).mockReturnValue({ startSession } as never);
     act(() => {
-      useAuthFlowStore.setState({ mfaChallengeToken: 'mfa-challenge-token' });
+      useAuthFlowStore.setState({
+        mfaChallengeToken: 'mfa-challenge-token',
+        mfaMethods: ['totp', 'email'],
+        mfaEmailHint: 'm***@correo.es',
+      });
     });
   });
 
@@ -94,5 +98,67 @@ describe('MfaChallengeScreen', () => {
 
     expect(await screen.findByText('El código tiene 6 dígitos')).toBeOnTheScreen();
     expect(findApiCall('POST', '/v1/auth/mfa/verify')).toBeUndefined();
+  });
+
+  describe('code sent by email', () => {
+    const SEND_PATH = '/v1/auth/mfa/email/send';
+
+    function sendResponse(): { emailHint: string; codeExpiresAt: string } {
+      return { emailHint: 'm***@correo.es', codeExpiresAt: '2026-10-04T10:10:00.000Z' };
+    }
+
+    it('offers the email code as an alternative and sends the code when it is chosen', async () => {
+      mockApi({ [`POST ${SEND_PATH}`]: sendResponse() });
+      renderScreen(<MfaChallengeScreen />);
+
+      fireEvent.press(screen.getByRole('button', { name: 'Enviarme un código por correo' }));
+
+      await waitFor(() => {
+        expect(findApiCall('POST', SEND_PATH)?.body).toEqual({ mfaToken: 'mfa-challenge-token' });
+      });
+      expect(await screen.findByText(/te hemos enviado a m\*\*\*@correo.es/)).toBeOnTheScreen();
+    });
+
+    it('verifies with the emailCode field, not with the app code', async () => {
+      mockApi({
+        [`POST ${SEND_PATH}`]: sendResponse(),
+        'POST /v1/auth/mfa/verify': buildAuthenticatedLoginResponse(),
+      });
+      renderScreen(<MfaChallengeScreen />);
+
+      fireEvent.press(screen.getByRole('button', { name: 'Enviarme un código por correo' }));
+      fireEvent.changeText(await screen.findByLabelText('Código de 6 dígitos'), '654321');
+      fireEvent.press(screen.getByRole('button', { name: 'Verificar' }));
+
+      await waitFor(() => {
+        expect(findApiCall('POST', '/v1/auth/mfa/verify')?.body).toEqual({
+          mfaToken: 'mfa-challenge-token',
+          emailCode: '654321',
+          deviceName: 'iPhone · app',
+        });
+      });
+    });
+
+    it('sends the code on its own when the email is the only method', async () => {
+      act(() => {
+        useAuthFlowStore.setState({ mfaMethods: ['email'] });
+      });
+      mockApi({ [`POST ${SEND_PATH}`]: sendResponse() });
+      renderScreen(<MfaChallengeScreen />);
+
+      await waitFor(() => {
+        expect(findApiCall('POST', SEND_PATH)).toBeDefined();
+      });
+      expect(screen.queryByRole('button', { name: 'Usar el código de la app' })).toBeNull();
+    });
+
+    it('does not let the code be resent until the wait is over', async () => {
+      mockApi({ [`POST ${SEND_PATH}`]: sendResponse() });
+      renderScreen(<MfaChallengeScreen />);
+
+      fireEvent.press(screen.getByRole('button', { name: 'Enviarme un código por correo' }));
+
+      expect(await screen.findByText(/Podrás reenviarlo en \d+ s/)).toBeOnTheScreen();
+    });
   });
 });

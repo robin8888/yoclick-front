@@ -361,7 +361,12 @@
       "submitLabel": "Verificar",
       "useRecoveryCodeAction": "Usar un código de recuperación",
       "useAppCodeAction": "Usar el código de la app",
-      "missingChallengeMessage": "La verificación ha caducado. Vuelve a iniciar sesión."
+      "missingChallengeMessage": "La verificación ha caducado. Vuelve a iniciar sesión.",
+      "emailCodeSubtitle": "Escribe el código de 6 dígitos que te hemos enviado a {{emailHint}}. Caduca en 10 minutos.",
+      "emailCodeSending": "Enviando el código a tu correo…",
+      "useEmailCodeAction": "Enviarme un código por correo",
+      "resendEmailCodeAction": "Reenviar el código",
+      "resendEmailCodeWait": "Podrás reenviarlo en {{seconds}} s"
     },
     "session": {
       "errorTitle": "No hemos podido abrir tu sesión",
@@ -485,7 +490,17 @@
       "shareCodesAction": "Compartir códigos",
       "shareCodesMessage": "Códigos de recuperación de Yoclick (cada uno vale una vez):\n{{codes}}",
       "savedLabel": "Ya los he guardado",
-      "gateErrorTitle": "No hemos podido comprobar tu seguridad"
+      "gateErrorTitle": "No hemos podido comprobar tu seguridad",
+      "methodTitle": "Elige cómo recibir el código",
+      "methodSubtitle": "Cada vez que entres te pediremos un código además de tu contraseña.",
+      "methodAppTitle": "App de autenticación",
+      "methodAppDescription": "Un código que genera tu móvil, sin conexión. Es la opción más segura.",
+      "methodEmailTitle": "Código por correo",
+      "methodEmailDescription": "Te enviamos un código de 6 dígitos a tu correo cada vez que entres.",
+      "emailCodeTitle": "Escribe el código que te hemos enviado",
+      "emailCodeSubtitle": "Hemos enviado un código de 6 dígitos a {{emailHint}}. Caduca en 10 minutos.",
+      "resendCodeAction": "Reenviar el código",
+      "resendCodeWait": "Podrás reenviarlo en {{seconds}} s"
     }
   },
   "booking": {
@@ -1605,7 +1620,7 @@
     "security": {
       "title": "Seguridad",
       "twoFactorTitle": "Verificación en dos pasos",
-      "twoFactorDescription": "Código de una app autenticadora al entrar. Recomendado para administradores.",
+      "twoFactorDescription": "Código de tu app autenticadora o de tu correo al entrar. Recomendado para administradores.",
       "twoFactorOn": "Activa",
       "twoFactorOff": "Desactivada",
       "twoFactorOffNote": "Tu cuenta tiene acceso a datos de salud y pagos de tus {{clientWord}}. Activa la verificación en dos pasos.",

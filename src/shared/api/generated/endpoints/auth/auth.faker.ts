@@ -10,6 +10,7 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  EmailCodeSentResponseDto,
   EmailVerifiedResponseDto,
   MfaChallengeResponseDto,
   MfaLoginResponseDto,
@@ -28,11 +29,13 @@ export const getAuthResendEmailVerificationResponseMock = (overrideResponse: Par
 
 export const getAuthLoginResponseMfaLoginResponseDtoMock = (overrideResponse: Partial<MfaLoginResponseDto> = {}): MfaLoginResponseDto => ({...{status: faker.helpers.arrayElement(['authenticated'] as const), accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', user: {id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}})}}, ...overrideResponse});
 
-export const getAuthLoginResponseMfaChallengeResponseDtoMock = (overrideResponse: Partial<MfaChallengeResponseDto> = {}): MfaChallengeResponseDto => ({...{status: faker.helpers.arrayElement(['mfa_required'] as const), mfaToken: faker.string.alpha({length: {min: 10, max: 20}}), mfaTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z'}, ...overrideResponse});
+export const getAuthLoginResponseMfaChallengeResponseDtoMock = (overrideResponse: Partial<MfaChallengeResponseDto> = {}): MfaChallengeResponseDto => ({...{status: faker.helpers.arrayElement(['mfa_required'] as const), mfaToken: faker.string.alpha({length: {min: 10, max: 20}}), mfaTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', methods: faker.helpers.arrayElements(['totp','email'] as const), emailHint: faker.string.alpha({length: {min: 10, max: 20}})}, ...overrideResponse});
 
 export const getAuthLoginResponseMock = (): MfaLoginResponseDto | MfaChallengeResponseDto => (faker.helpers.arrayElement([{...getAuthLoginResponseMfaLoginResponseDtoMock()},{...getAuthLoginResponseMfaChallengeResponseDtoMock()},]))
 
 export const getAuthVerifyMfaResponseMock = (overrideResponse: Partial<Extract<MfaLoginResponseDto, object>> = {}): MfaLoginResponseDto => ({status: faker.helpers.arrayElement(['authenticated'] as const), accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', user: {id: faker.string.uuid(), email: faker.string.alpha({length: {min: 10, max: 20}}), fullName: faker.string.alpha({length: {min: 10, max: 20}})}, ...overrideResponse})
+
+export const getAuthSendMfaEmailCodeResponseMock = (overrideResponse: Partial<Extract<EmailCodeSentResponseDto, object>> = {}): EmailCodeSentResponseDto => ({emailHint: faker.string.alpha({length: {min: 10, max: 20}}), codeExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
 
 export const getAuthRefreshResponseMock = (overrideResponse: Partial<Extract<RefreshResponseDto, object>> = {}): RefreshResponseDto => ({accessToken: faker.string.alpha({length: {min: 10, max: 20}}), accessTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', refreshToken: faker.string.alpha({length: {min: 10, max: 20}}), refreshTokenExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
 

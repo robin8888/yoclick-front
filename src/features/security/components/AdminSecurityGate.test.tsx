@@ -28,7 +28,7 @@ describe('AdminSecurityGate', () => {
     mockApi({ 'GET /v1/me/mfa': { isEnabled: false, recoveryCodesRemaining: 0 } });
     renderGate();
 
-    expect(await screen.findByText('Protege tu cuenta')).toBeOnTheScreen();
+    expect(await screen.findByText('Elige cómo recibir el código')).toBeOnTheScreen();
     expect(screen.queryByText('Zona de administración')).not.toBeOnTheScreen();
   });
 

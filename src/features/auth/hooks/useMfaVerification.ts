@@ -6,7 +6,7 @@ import { i18n } from '@/shared/i18n';
 import { useAuthFlowStore } from '../model/auth-flow-store';
 import { useCompleteSignIn } from './useCompleteSignIn';
 
-type MfaCodeFields = { code: string } | { recoveryCode: string };
+type MfaCodeFields = { code: string } | { emailCode: string } | { recoveryCode: string };
 
 interface MfaVerification {
   verifyWith: (codeFields: MfaCodeFields) => void;
@@ -15,7 +15,7 @@ interface MfaVerification {
   hasChallenge: boolean;
 }
 
-/** Envía el código del segundo factor con el desafío del login y, si vale, abre la sesión. */
+/** Envía el código del segundo factor (app, correo o recuperación) con el desafío y, si vale, abre la sesión. */
 export function useMfaVerification(): MfaVerification {
   const mfaToken = useAuthFlowStore((state) => state.mfaChallengeToken);
   const clearMfaChallengeToken = useAuthFlowStore((state) => state.clearMfaChallengeToken);

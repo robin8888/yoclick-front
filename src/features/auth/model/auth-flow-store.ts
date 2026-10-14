@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import type { MfaChallengeResponseDto } from '@/shared/api/generated/model';
+
 import type { ExperienceDuration } from './starting-level';
 
 export type AuthNotice = 'passwordChanged' | 'emailVerified' | 'mfaEnabled';
@@ -21,11 +23,15 @@ interface AuthFlowState {
   readonly pendingEmail: string | null;
   /** Desafío del segundo factor; nunca va en la URL (SEC-21). */
   readonly mfaChallengeToken: string | null;
+  /** Cómo puede dar el segundo factor quien inicia sesión: app, correo (o ambos). */
+  readonly mfaMethods: MfaChallengeResponseDto['methods'];
+  /** El correo enmascarado al que se enviará el código («a***@correo.com»). */
+  readonly mfaEmailHint: string | null;
   readonly notice: AuthNotice | null;
   readonly saveRegistrationDraft: (draft: RegistrationDraft) => void;
   readonly clearRegistrationDraft: () => void;
   readonly savePendingEmail: (email: string) => void;
-  readonly saveMfaChallengeToken: (mfaToken: string) => void;
+  readonly saveMfaChallenge: (challenge: MfaChallengeResponseDto) => void;
   readonly clearMfaChallengeToken: () => void;
   readonly showNotice: (notice: AuthNotice) => void;
   readonly dismissNotice: () => void;
@@ -35,6 +41,8 @@ export const useAuthFlowStore = create<AuthFlowState>((set) => ({
   registrationDraft: null,
   pendingEmail: null,
   mfaChallengeToken: null,
+  mfaMethods: [],
+  mfaEmailHint: null,
   notice: null,
   saveRegistrationDraft: (draft) => {
     set({ registrationDraft: draft });
@@ -45,11 +53,15 @@ export const useAuthFlowStore = create<AuthFlowState>((set) => ({
   savePendingEmail: (email) => {
     set({ pendingEmail: email });
   },
-  saveMfaChallengeToken: (mfaToken) => {
-    set({ mfaChallengeToken: mfaToken });
+  saveMfaChallenge: (challenge) => {
+    set({
+      mfaChallengeToken: challenge.mfaToken,
+      mfaMethods: challenge.methods,
+      mfaEmailHint: challenge.emailHint,
+    });
   },
   clearMfaChallengeToken: () => {
-    set({ mfaChallengeToken: null });
+    set({ mfaChallengeToken: null, mfaMethods: [], mfaEmailHint: null });
   },
   showNotice: (notice) => {
     set({ notice });

@@ -1,5 +1,5 @@
 import { MfaScreenLogo, PasswordTextField } from '@/features/auth';
-import type { MfaSetupResponseDto } from '@/shared/api/generated/model';
+import type { EmailCodeSentResponseDto, MfaSetupResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
@@ -8,17 +8,21 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { SignOutAction } from '@/features/session';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 
-import { useMfaPasswordStep } from '../hooks/useMfaPasswordStep';
+import { useMfaPasswordStep, type MfaEnrollmentMethod } from '../hooks/useMfaPasswordStep';
 
 interface MfaPasswordStepProps {
-  onSetupStarted: (setup: MfaSetupResponseDto) => void;
+  method: MfaEnrollmentMethod;
+  onTotpSetupStarted: (setup: MfaSetupResponseDto) => void;
+  onEmailCodeSent: (sent: EmailCodeSentResponseDto) => void;
 }
 
-/** Paso 1 de la verificación en dos pasos: confirmar la contraseña. */
+/** Paso 2 de la verificación en dos pasos: confirmar la contraseña. */
 export function MfaPasswordStep({
-  onSetupStarted,
+  method,
+  onTotpSetupStarted,
+  onEmailCodeSent,
 }: Readonly<MfaPasswordStepProps>): React.JSX.Element {
-  const step = useMfaPasswordStep(onSetupStarted);
+  const step = useMfaPasswordStep({ method, onTotpSetupStarted, onEmailCodeSent });
   const signOut = useSignOutFlow();
 
   return (

@@ -8,6 +8,8 @@ registerSignOutCleanup(() => {
     registrationDraft: null,
     pendingEmail: null,
     mfaChallengeToken: null,
+    mfaMethods: [],
+    mfaEmailHint: null,
     notice: null,
   });
 });

@@ -90,6 +90,7 @@ export const authLoginResponseOneUserIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-
 export const authLoginResponseTwoMfaTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
+
 export const AuthLoginResponse = zod.union([zod.object({
   "status": zod.enum(['authenticated']),
   "accessToken": zod.string(),
@@ -104,15 +105,18 @@ export const AuthLoginResponse = zod.union([zod.object({
 }),zod.object({
   "status": zod.enum(['mfa_required']),
   "mfaToken": zod.string(),
-  "mfaTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseTwoMfaTokenExpiresAtRegExp)
+  "mfaTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(authLoginResponseTwoMfaTokenExpiresAtRegExp),
+  "methods": zod.array(zod.enum(['totp', 'email'])).min(1),
+  "emailHint": zod.string()
 })])
 
 /**
- * @summary Completa el inicio de sesión con el código de la app de autenticación o un código de recuperación. Cada código de la app sirve una sola vez.
+ * @summary Completa el inicio de sesión con el código de la app (`code`), el recibido por correo (`emailCode`) o un código de recuperación (`recoveryCode`): exactamente uno. Cada código sirve una sola vez; el de correo caduca a los 10 minutos y se invalida tras 5 fallos.
  */
 export const authVerifyMfaBodyMfaTokenMax = 2048;
 
 export const authVerifyMfaBodyCodeRegExp = new RegExp('^\\d{6}$');
+export const authVerifyMfaBodyEmailCodeRegExp = new RegExp('^\\d{6}$');
 export const authVerifyMfaBodyRecoveryCodeMin = 8;
 export const authVerifyMfaBodyRecoveryCodeMax = 24;
 
@@ -123,6 +127,7 @@ export const authVerifyMfaBodyDeviceNameMax = 100;
 export const AuthVerifyMfaBody = zod.object({
   "mfaToken": zod.string().min(1).max(authVerifyMfaBodyMfaTokenMax),
   "code": zod.string().regex(authVerifyMfaBodyCodeRegExp).optional(),
+  "emailCode": zod.string().regex(authVerifyMfaBodyEmailCodeRegExp).optional(),
   "recoveryCode": zod.string().min(authVerifyMfaBodyRecoveryCodeMin).max(authVerifyMfaBodyRecoveryCodeMax).optional(),
   "deviceName": zod.string().min(1).max(authVerifyMfaBodyDeviceNameMax).optional()
 })
@@ -143,6 +148,25 @@ export const AuthVerifyMfaResponse = zod.object({
   "email": zod.string(),
   "fullName": zod.string()
 })
+})
+
+/**
+ * @summary Envía al correo de la persona el código de 6 dígitos del segundo factor (caduca a los 10 minutos). Pide el desafío `mfaToken` del login. 429 RATE_LIMITED si se pidió otro hace menos de 60 s; 409 MFA_NOT_ENABLED; 401 si el desafío no es válido.
+ */
+export const authSendMfaEmailCodeBodyMfaTokenMax = 2048;
+
+
+
+export const AuthSendMfaEmailCodeBody = zod.object({
+  "mfaToken": zod.string().min(1).max(authSendMfaEmailCodeBodyMfaTokenMax)
+})
+
+export const authSendMfaEmailCodeResponseCodeExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const AuthSendMfaEmailCodeResponse = zod.object({
+  "emailHint": zod.string(),
+  "codeExpiresAt": zod.iso.datetime({"offset":true}).regex(authSendMfaEmailCodeResponseCodeExpiresAtRegExp)
 })
 
 /**

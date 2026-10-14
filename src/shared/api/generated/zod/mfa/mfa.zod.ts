@@ -9,7 +9,7 @@ import * as zod from 'zod';
 
 
 /**
- * @summary Si el segundo factor está activo y cuántos códigos de recuperación quedan.
+ * @summary Si el segundo factor está activo, con qué método (`totp` o `email`), el correo enmascarado y cuántos códigos de recuperación quedan.
  */
 export const mfaGetStatusResponseRecoveryCodesRemainingMin = 0;
 export const mfaGetStatusResponseRecoveryCodesRemainingMax = 9007199254740991;
@@ -18,6 +18,8 @@ export const mfaGetStatusResponseRecoveryCodesRemainingMax = 9007199254740991;
 
 export const MfaGetStatusResponse = zod.object({
   "isEnabled": zod.boolean(),
+  "method": zod.union([zod.literal('totp'),zod.literal('email'),zod.literal(null)]).nullable(),
+  "emailHint": zod.string().nullable(),
   "recoveryCodesRemaining": zod.int().min(mfaGetStatusResponseRecoveryCodesRemainingMin).max(mfaGetStatusResponseRecoveryCodesRemainingMax)
 })
 
@@ -57,11 +59,12 @@ export const MfaConfirmTotpResponse = zod.object({
 })
 
 /**
- * @summary Desactiva el segundo factor. Pide la contraseña y un código. No disponible para propietarias y administradoras.
+ * @summary Desactiva el segundo factor. Pide la contraseña y un código (`code`, `emailCode` o `recoveryCode`). No disponible para propietarias y administradoras.
  */
 export const mfaDisableBodyPasswordMax = 256;
 
 export const mfaDisableBodyCodeRegExp = new RegExp('^\\d{6}$');
+export const mfaDisableBodyEmailCodeRegExp = new RegExp('^\\d{6}$');
 export const mfaDisableBodyRecoveryCodeMin = 8;
 export const mfaDisableBodyRecoveryCodeMax = 24;
 
@@ -70,6 +73,7 @@ export const mfaDisableBodyRecoveryCodeMax = 24;
 export const MfaDisableBody = zod.object({
   "password": zod.string().min(1).max(mfaDisableBodyPasswordMax),
   "code": zod.string().regex(mfaDisableBodyCodeRegExp).optional(),
+  "emailCode": zod.string().regex(mfaDisableBodyEmailCodeRegExp).optional(),
   "recoveryCode": zod.string().min(mfaDisableBodyRecoveryCodeMin).max(mfaDisableBodyRecoveryCodeMax).optional()
 })
 
@@ -81,6 +85,7 @@ export const MfaDisableResponse = zod.void()
 export const mfaRegenerateRecoveryCodesBodyPasswordMax = 256;
 
 export const mfaRegenerateRecoveryCodesBodyCodeRegExp = new RegExp('^\\d{6}$');
+export const mfaRegenerateRecoveryCodesBodyEmailCodeRegExp = new RegExp('^\\d{6}$');
 export const mfaRegenerateRecoveryCodesBodyRecoveryCodeMin = 8;
 export const mfaRegenerateRecoveryCodesBodyRecoveryCodeMax = 24;
 
@@ -89,6 +94,7 @@ export const mfaRegenerateRecoveryCodesBodyRecoveryCodeMax = 24;
 export const MfaRegenerateRecoveryCodesBody = zod.object({
   "password": zod.string().min(1).max(mfaRegenerateRecoveryCodesBodyPasswordMax),
   "code": zod.string().regex(mfaRegenerateRecoveryCodesBodyCodeRegExp).optional(),
+  "emailCode": zod.string().regex(mfaRegenerateRecoveryCodesBodyEmailCodeRegExp).optional(),
   "recoveryCode": zod.string().min(mfaRegenerateRecoveryCodesBodyRecoveryCodeMin).max(mfaRegenerateRecoveryCodesBodyRecoveryCodeMax).optional()
 })
 
@@ -99,5 +105,54 @@ export const mfaRegenerateRecoveryCodesResponseRecoveryCodesMax = 10;
 
 export const MfaRegenerateRecoveryCodesResponse = zod.object({
   "recoveryCodes": zod.array(zod.string()).min(mfaRegenerateRecoveryCodesResponseRecoveryCodesMin).max(mfaRegenerateRecoveryCodesResponseRecoveryCodesMax)
+})
+
+/**
+ * @summary Empieza a activar el segundo factor por correo: pide la contraseña y envía un código de 6 dígitos al correo de la cuenta. No cuenta hasta confirmarlo. 409 MFA_ALREADY_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const mfaSetupEmailBodyPasswordMax = 256;
+
+
+
+export const MfaSetupEmailBody = zod.object({
+  "password": zod.string().min(1).max(mfaSetupEmailBodyPasswordMax)
+})
+
+export const mfaSetupEmailResponseCodeExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const MfaSetupEmailResponse = zod.object({
+  "emailHint": zod.string(),
+  "codeExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaSetupEmailResponseCodeExpiresAtRegExp)
+})
+
+/**
+ * @summary Activa el segundo factor por correo con el primer código recibido y entrega diez códigos de recuperación (una sola vez). 403 MFA_CODE_INVALID si el código es erróneo, caducó o se agotaron sus 5 intentos.
+ */
+export const mfaConfirmEmailBodyCodeRegExp = new RegExp('^\\d{6}$');
+
+
+export const MfaConfirmEmailBody = zod.object({
+  "code": zod.string().regex(mfaConfirmEmailBodyCodeRegExp)
+})
+
+export const mfaConfirmEmailResponseRecoveryCodesMin = 10;
+export const mfaConfirmEmailResponseRecoveryCodesMax = 10;
+
+
+
+export const MfaConfirmEmailResponse = zod.object({
+  "recoveryCodes": zod.array(zod.string()).min(mfaConfirmEmailResponseRecoveryCodesMin).max(mfaConfirmEmailResponseRecoveryCodesMax)
+})
+
+/**
+ * @summary Con el segundo factor ya activo, envía un código por correo para usarlo en desactivar el factor o regenerar los códigos de recuperación (`emailCode`). 409 MFA_NOT_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const mfaSendEmailCodeResponseCodeExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const MfaSendEmailCodeResponse = zod.object({
+  "emailHint": zod.string(),
+  "codeExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaSendEmailCodeResponseCodeExpiresAtRegExp)
 })
 

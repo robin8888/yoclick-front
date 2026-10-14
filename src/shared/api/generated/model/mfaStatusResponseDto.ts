@@ -5,9 +5,14 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { MfaStatusResponseDtoMethod } from './mfaStatusResponseDtoMethod.ts';
 
 export interface MfaStatusResponseDto {
   isEnabled: boolean;
+  /** @nullable */
+  method: MfaStatusResponseDtoMethod;
+  /** @nullable */
+  emailHint: string | null;
   /**
      * @minimum 0
      * @maximum 9007199254740991

@@ -10,6 +10,7 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  EmailCodeSentResponseDto,
   MfaConfirmResponseDto,
   MfaSetupResponseDto,
   MfaStatusResponseDto,
@@ -17,11 +18,17 @@ import type {
 } from '../../model';
 
 
-export const getMfaGetStatusResponseMock = (overrideResponse: Partial<Extract<MfaStatusResponseDto, object>> = {}): MfaStatusResponseDto => ({isEnabled: faker.datatype.boolean(), recoveryCodesRemaining: faker.number.int({min: 0, max: 9007199254740991}), ...overrideResponse})
+export const getMfaGetStatusResponseMock = (overrideResponse: Partial<Extract<MfaStatusResponseDto, object>> = {}): MfaStatusResponseDto => ({isEnabled: faker.datatype.boolean(), method: faker.helpers.arrayElement([faker.helpers.arrayElement(['totp','email'] as const), null]), emailHint: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), recoveryCodesRemaining: faker.number.int({min: 0, max: 9007199254740991}), ...overrideResponse})
 
 export const getMfaSetupTotpResponseMock = (overrideResponse: Partial<Extract<MfaSetupResponseDto, object>> = {}): MfaSetupResponseDto => ({secret: faker.string.alpha({length: {min: 10, max: 20}}), provisioningUri: faker.string.alpha({length: {min: 10, max: 20}}), ...overrideResponse})
 
 export const getMfaConfirmTotpResponseMock = (overrideResponse: Partial<Extract<MfaConfirmResponseDto, object>> = {}): MfaConfirmResponseDto => ({recoveryCodes: Array.from({ length: faker.number.int({min: 10, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), ...overrideResponse})
 
 export const getMfaRegenerateRecoveryCodesResponseMock = (overrideResponse: Partial<Extract<RegeneratedRecoveryCodesResponseDto, object>> = {}): RegeneratedRecoveryCodesResponseDto => ({recoveryCodes: Array.from({ length: faker.number.int({min: 10, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), ...overrideResponse})
+
+export const getMfaSetupEmailResponseMock = (overrideResponse: Partial<Extract<EmailCodeSentResponseDto, object>> = {}): EmailCodeSentResponseDto => ({emailHint: faker.string.alpha({length: {min: 10, max: 20}}), codeExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
+
+export const getMfaConfirmEmailResponseMock = (overrideResponse: Partial<Extract<MfaConfirmResponseDto, object>> = {}): MfaConfirmResponseDto => ({recoveryCodes: Array.from({ length: faker.number.int({min: 10, max: 10}) }, (_, i) => i + 1).map(() => (faker.string.alpha({length: {min: 10, max: 20}}))), ...overrideResponse})
+
+export const getMfaSendEmailCodeResponseMock = (overrideResponse: Partial<Extract<EmailCodeSentResponseDto, object>> = {}): EmailCodeSentResponseDto => ({emailHint: faker.string.alpha({length: {min: 10, max: 20}}), codeExpiresAt: faker.date.past().toISOString().slice(0, 19) + 'Z', ...overrideResponse})
 

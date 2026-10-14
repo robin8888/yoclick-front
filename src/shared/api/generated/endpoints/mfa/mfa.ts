@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  EmailCodeSentResponseDto,
   MfaConfirmRequestDto,
   MfaConfirmResponseDto,
   MfaProofRequestDto,
@@ -67,7 +68,7 @@ export const getMfaGetStatusUrl = () => {
 }
 
 /**
- * @summary Si el segundo factor está activo y cuántos códigos de recuperación quedan.
+ * @summary Si el segundo factor está activo, con qué método (`totp` o `email`), el correo enmascarado y cuántos códigos de recuperación quedan.
  */
 export const mfaGetStatus = async ( options?: Parameters<typeof apiMutator>[1]): Promise<MfaStatusResponseDto> => {
 
@@ -138,7 +139,7 @@ export function useMfaGetStatus<TData = Awaited<ReturnType<typeof mfaGetStatus>>
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Si el segundo factor está activo y cuántos códigos de recuperación quedan.
+ * @summary Si el segundo factor está activo, con qué método (`totp` o `email`), el correo enmascarado y cuántos códigos de recuperación quedan.
  */
 
 export function useMfaGetStatus<TData = Awaited<ReturnType<typeof mfaGetStatus>>, TError = ErrorType<ProblemDetailsDto>>(
@@ -341,7 +342,7 @@ export const useMfaConfirmTotp = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Desactiva el segundo factor. Pide la contraseña y un código. No disponible para propietarias y administradoras.
+ * @summary Desactiva el segundo factor. Pide la contraseña y un código (`code`, `emailCode` o `recoveryCode`). No disponible para propietarias y administradoras.
  */
 export const mfaDisable = async (mfaProofRequestDto: MfaProofRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
 
@@ -407,7 +408,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type MfaDisableMutationVariables = {data: MfaProofRequestDto}
 
     /**
- * @summary Desactiva el segundo factor. Pide la contraseña y un código. No disponible para propietarias y administradoras.
+ * @summary Desactiva el segundo factor. Pide la contraseña y un código (`code`, `emailCode` o `recoveryCode`). No disponible para propietarias y administradoras.
  */
 export const useMfaDisable = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaDisable>>, TError,MfaDisableMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -505,4 +506,251 @@ export const useMfaRegenerateRecoveryCodes = <TError = ErrorType<ProblemDetailsD
         TContext
       > => {
       return useMutation(getMfaRegenerateRecoveryCodesMutationOptions(options), queryClient);
+    }
+    export const getMfaSetupEmailUrl = () => {
+
+
+
+
+  return `/v1/me/mfa/email/setup`
+}
+
+/**
+ * @summary Empieza a activar el segundo factor por correo: pide la contraseña y envía un código de 6 dígitos al correo de la cuenta. No cuenta hasta confirmarlo. 409 MFA_ALREADY_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const mfaSetupEmail = async (mfaSetupRequestDto: MfaSetupRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<EmailCodeSentResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<EmailCodeSentResponseDto>(getMfaSetupEmailUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(mfaSetupRequestDto)
+  }
+);}
+
+
+
+
+
+export const getMfaSetupEmailMutationKey = () => ['mfaSetupEmail'] as const;
+
+export const getMfaSetupEmailMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaSetupEmail>>, TError,MfaSetupEmailMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof mfaSetupEmail>>, TError,MfaSetupEmailMutationVariables, TContext> => {
+
+const mutationKey = getMfaSetupEmailMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mfaSetupEmail>>, MfaSetupEmailMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  mfaSetupEmail(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MfaSetupEmailMutationResult = NonNullable<Awaited<ReturnType<typeof mfaSetupEmail>>>
+    export type MfaSetupEmailMutationBody = MfaSetupRequestDto
+    export type MfaSetupEmailMutationError = ErrorType<ProblemDetailsDto>
+    export type MfaSetupEmailMutationVariables = {data: MfaSetupRequestDto}
+
+    /**
+ * @summary Empieza a activar el segundo factor por correo: pide la contraseña y envía un código de 6 dígitos al correo de la cuenta. No cuenta hasta confirmarlo. 409 MFA_ALREADY_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const useMfaSetupEmail = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaSetupEmail>>, TError,MfaSetupEmailMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof mfaSetupEmail>>,
+        TError,
+        MfaSetupEmailMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMfaSetupEmailMutationOptions(options), queryClient);
+    }
+    export const getMfaConfirmEmailUrl = () => {
+
+
+
+
+  return `/v1/me/mfa/email/confirm`
+}
+
+/**
+ * @summary Activa el segundo factor por correo con el primer código recibido y entrega diez códigos de recuperación (una sola vez). 403 MFA_CODE_INVALID si el código es erróneo, caducó o se agotaron sus 5 intentos.
+ */
+export const mfaConfirmEmail = async (mfaConfirmRequestDto: MfaConfirmRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<MfaConfirmResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<MfaConfirmResponseDto>(getMfaConfirmEmailUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(mfaConfirmRequestDto)
+  }
+);}
+
+
+
+
+
+export const getMfaConfirmEmailMutationKey = () => ['mfaConfirmEmail'] as const;
+
+export const getMfaConfirmEmailMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaConfirmEmail>>, TError,MfaConfirmEmailMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof mfaConfirmEmail>>, TError,MfaConfirmEmailMutationVariables, TContext> => {
+
+const mutationKey = getMfaConfirmEmailMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mfaConfirmEmail>>, MfaConfirmEmailMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  mfaConfirmEmail(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MfaConfirmEmailMutationResult = NonNullable<Awaited<ReturnType<typeof mfaConfirmEmail>>>
+    export type MfaConfirmEmailMutationBody = MfaConfirmRequestDto
+    export type MfaConfirmEmailMutationError = ErrorType<ProblemDetailsDto>
+    export type MfaConfirmEmailMutationVariables = {data: MfaConfirmRequestDto}
+
+    /**
+ * @summary Activa el segundo factor por correo con el primer código recibido y entrega diez códigos de recuperación (una sola vez). 403 MFA_CODE_INVALID si el código es erróneo, caducó o se agotaron sus 5 intentos.
+ */
+export const useMfaConfirmEmail = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaConfirmEmail>>, TError,MfaConfirmEmailMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof mfaConfirmEmail>>,
+        TError,
+        MfaConfirmEmailMutationVariables,
+        TContext
+      > => {
+      return useMutation(getMfaConfirmEmailMutationOptions(options), queryClient);
+    }
+    export const getMfaSendEmailCodeUrl = () => {
+
+
+
+
+  return `/v1/me/mfa/email/send`
+}
+
+/**
+ * @summary Con el segundo factor ya activo, envía un código por correo para usarlo en desactivar el factor o regenerar los códigos de recuperación (`emailCode`). 409 MFA_NOT_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const mfaSendEmailCode = async ( options?: Parameters<typeof apiMutator>[1]): Promise<EmailCodeSentResponseDto> => {
+
+  return apiMutator<EmailCodeSentResponseDto>(getMfaSendEmailCodeUrl(),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getMfaSendEmailCodeMutationKey = () => ['mfaSendEmailCode'] as const;
+
+export const getMfaSendEmailCodeMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaSendEmailCode>>, TError,void, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof mfaSendEmailCode>>, TError,void, TContext> => {
+
+const mutationKey = getMfaSendEmailCodeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof mfaSendEmailCode>>, void> = () => {
+
+
+          return  mfaSendEmailCode(requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type MfaSendEmailCodeMutationResult = NonNullable<Awaited<ReturnType<typeof mfaSendEmailCode>>>
+
+    export type MfaSendEmailCodeMutationError = ErrorType<ProblemDetailsDto>
+
+
+    /**
+ * @summary Con el segundo factor ya activo, envía un código por correo para usarlo en desactivar el factor o regenerar los códigos de recuperación (`emailCode`). 409 MFA_NOT_ENABLED; 429 RATE_LIMITED si se pidió otro hace menos de 60 s.
+ */
+export const useMfaSendEmailCode = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof mfaSendEmailCode>>, TError,void, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof mfaSendEmailCode>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getMfaSendEmailCodeMutationOptions(options), queryClient);
     }
