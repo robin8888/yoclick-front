@@ -2106,7 +2106,7 @@
       "title": "Escanear QR de asistencia",
       "subtitle": "Apunta al QR que te enseña la persona",
       "registeredBadge": "Asistencia registrada",
-      "alreadyRegisteredBadge": "Ya estaba registrada",
+      "alreadyRegisteredBadge": "Ya está en clase",
       "appointmentSummary": "{{serviceName}} · {{time}}",
       "scanAnotherAction": "Escanear otro",
       "openAction": "Escanea asistencia QR",
@@ -2125,7 +2125,8 @@
       "reasonPassExpired": "Su bono caducó el {{date}}",
       "reasonPassExpiredNoDate": "Su bono ha caducado",
       "reasonPassExhausted": "Se le han agotado las clases del bono",
-      "noAppointmentNow": "No tiene cita ahora, así que no se registra asistencia."
+      "noAppointmentNow": "No tiene cita ahora, así que no se registra asistencia.",
+      "alreadyRegisteredNote": "Su asistencia ya estaba confirmada: no se descuenta otra clase del bono."
     },
     "workQr": {
       "title": "Mi QR de trabajo",

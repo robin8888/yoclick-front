@@ -158,7 +158,8 @@ describe('ScanAttendanceScreen', () => {
 
     scanQr(QR_CONTENT);
 
-    expect(await screen.findByText('Ya estaba registrada')).toBeOnTheScreen();
+    expect(await screen.findByText('Ya está en clase')).toBeOnTheScreen();
+    expect(screen.getByText(/no se descuenta otra clase del bono/)).toBeOnTheScreen();
   });
 
   it('shows the server problem and lets the same QR be scanned again', async () => {

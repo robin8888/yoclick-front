@@ -75,6 +75,11 @@ function ClientArrivalDetails({
           time: formatTime24h(booking.startsAt, CENTER_TIME_ZONE),
         })}
       </Text>
+      {isFirstCheckIn ? null : (
+        <Text color="ink2" align="center">
+          {i18n.t('attendance.scan.alreadyRegisteredNote')}
+        </Text>
+      )}
     </>
   );
 }
