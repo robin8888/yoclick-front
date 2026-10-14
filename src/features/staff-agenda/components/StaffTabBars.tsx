@@ -10,15 +10,15 @@ interface StaffTabsRequest {
   unreadNoticeCount: number;
 }
 
-/** Prototipo `iagenda`: Agenda, Clientes, Avisos (con su contador) y Perfil. */
+/** Prototipo `iagenda`: Inicio (con la agenda), Clientes, Avisos (con su contador) y Perfil. */
 function listStaffTabs({ clientsLabel, unreadNoticeCount }: StaffTabsRequest): readonly PathTab[] {
   return [
     {
-      id: 'agenda',
-      label: i18n.t('staffAgenda.tabs.agenda'),
-      iconName: 'calendar',
+      id: 'home',
+      label: i18n.t('staffAgenda.tabs.home'),
+      iconName: 'home',
       href: '/(staff)/(tabs)/agenda',
-      activePaths: ['/agenda', '/sessions', '/scan'],
+      activePaths: ['/agenda', '/day-agenda', '/sessions', '/scan', '/work-qr', '/attendance'],
     },
     {
       id: 'clients',

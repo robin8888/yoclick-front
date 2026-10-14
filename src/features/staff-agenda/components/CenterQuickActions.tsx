@@ -1,33 +1,6 @@
-import { View } from 'react-native';
-
 import { i18n } from '@/shared/i18n';
-import { useTheme } from '@/shared/theme';
-import type { IconName } from '@/ui/atoms/Icon';
 
-import { PrimaryQuickAction, QuickActionTile } from './CenterQuickActionTile';
-import {
-  createQuickActionsRowStyle,
-  createQuickActionsStackStyle,
-} from './CenterQuickActions.styles';
-
-interface QuickAction {
-  id: string;
-  iconName: IconName;
-  label: string;
-  hint: string;
-  onPress: () => void;
-}
-
-const TILES_PER_ROW = 2;
-
-/** De dos en dos; si sobra uno, ocupa toda la fila: nunca queda un hueco ni un botón estrecho. */
-function chunkIntoRows(actions: readonly QuickAction[]): QuickAction[][] {
-  const rows: QuickAction[][] = [];
-  for (let index = 0; index < actions.length; index += TILES_PER_ROW) {
-    rows.push(actions.slice(index, index + TILES_PER_ROW));
-  }
-  return rows;
-}
+import { QuickActionsGrid, type QuickAction } from './QuickActionsGrid';
 
 interface CenterQuickActionsProps {
   /** «Salas y horarios» solo existe en los sectores con salas. */
@@ -92,19 +65,10 @@ function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
  * cuadrícula de tarjetas limpias, cada una con su icono, su nombre y una línea de apoyo.
  */
 export function CenterQuickActions(props: Readonly<CenterQuickActionsProps>): React.JSX.Element {
-  const theme = useTheme();
-  const { id: primaryId, ...primaryAction } = buildPrimaryAction(props);
-
   return (
-    <View style={createQuickActionsStackStyle(theme)}>
-      <PrimaryQuickAction key={primaryId} {...primaryAction} />
-      {chunkIntoRows(buildSecondaryActions(props)).map((row) => (
-        <View key={row.map(({ id }) => id).join('-')} style={createQuickActionsRowStyle(theme)}>
-          {row.map(({ id, ...tile }) => (
-            <QuickActionTile key={id} {...tile} />
-          ))}
-        </View>
-      ))}
-    </View>
+    <QuickActionsGrid
+      primaryAction={buildPrimaryAction(props)}
+      actions={buildSecondaryActions(props)}
+    />
   );
 }

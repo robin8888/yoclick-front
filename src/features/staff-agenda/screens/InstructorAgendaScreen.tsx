@@ -9,7 +9,6 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { AgendaDayStrip } from '../components/AgendaDayStrip';
 import { InstructorAgendaContent } from '../components/InstructorAgendaContent';
-import { InstructorAgendaHeader } from '../components/InstructorAgendaHeader';
 import { useAgendaDay } from '../hooks/useAgendaDay';
 import { useDayAgenda } from '../hooks/useDayAgenda';
 import { buildAgendaDays } from '../model/agenda-days';
@@ -33,15 +32,18 @@ function InstructorAgendaBody({
   return <InstructorAgendaContent agenda={agenda.data} />;
 }
 
-/** Prototipo `iagenda`: la primera pantalla del profesional, con su día hora a hora. */
+/** Prototipo `iagenda`: «Mi agenda», el día del profesional hora a hora; se abre desde Inicio. */
 export function InstructorAgendaScreen(): React.JSX.Element {
   const router = useRouter();
   const day = useAgendaDay();
   const agenda = useDayAgenda(day.isoDate);
 
   return (
-    <ScreenTemplate isHeaderHidden title={i18n.t('staffAgenda.agenda.staffTitle')}>
-      <InstructorAgendaHeader />
+    <ScreenTemplate
+      title={i18n.t('staffAgenda.agenda.staffTitle')}
+      onBackPress={router.back}
+      backLabel={i18n.t('actions.back')}
+    >
       <AgendaDayStrip
         days={buildAgendaDays(day.todayIsoDate)}
         selectedIsoDate={day.isoDate}

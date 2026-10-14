@@ -775,7 +775,8 @@
       "records": "Clases",
       "clients": "Clientes",
       "notifications": "Avisos",
-      "profile": "Perfil"
+      "profile": "Perfil",
+      "home": "Inicio"
     },
     "newAppointment": {
       "title": "Nueva cita",
@@ -864,7 +865,18 @@
       "closedLabel": "Cerrado",
       "newAppointmentAction": "Nueva cita",
       "scanAttendanceAction": "Escanear QR de asistencia",
-      "emptyDay": "Sin citas este día"
+      "emptyDay": "Sin citas este día",
+      "homeTitle": "Inicio",
+      "home": {
+        "agendaAction": "Mi agenda",
+        "agendaHint": "Tus clases y citas del día",
+        "workQrHint": "Para fichar tu entrada y salida",
+        "attendanceHint": "Tus horas del mes y el informe",
+        "scanHint": "Registra la llegada leyendo su QR",
+        "routinesHint": "Los planes que preparas",
+        "contentHint": "Vídeos y documentos",
+        "availabilityHint": "Tus horarios y ausencias"
+      }
     },
     "agenda": {
       "staffTitle": "Mi agenda",

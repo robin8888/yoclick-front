@@ -1,5 +1,5 @@
-import { InstructorAgendaScreen } from '@/features/staff-agenda';
+import { InstructorHomeScreen } from '@/features/staff-agenda';
 
-export default function StaffAgendaRoute(): React.JSX.Element {
-  return <InstructorAgendaScreen />;
+export default function StaffHomeRoute(): React.JSX.Element {
+  return <InstructorHomeScreen />;
 }

@@ -23,7 +23,13 @@ describe('CenterAgendaHeader', () => {
     mockApi({
       [`GET /v1/centers/${NORTE_CENTER_ID}/notifications`]: { unreadCount: 3, notifications: [] },
     });
-    renderScreen(<CenterAgendaHeader dateLabel="vie 9 oct" title="Agenda del centro" />);
+    renderScreen(
+      <CenterAgendaHeader
+        dateLabel="vie 9 oct"
+        title="Agenda del centro"
+        notificationsHref="/(admin)/(tabs)/notifications"
+      />,
+    );
 
     fireEvent.press(await screen.findByRole('button', { name: /3/ }));
 

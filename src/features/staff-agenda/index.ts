@@ -3,6 +3,7 @@ export { AgendaScreen } from './screens/AgendaScreen';
 export { CenterAgendaScreen } from './screens/CenterAgendaScreen';
 export { CenterDayAgendaScreen } from './screens/CenterDayAgendaScreen';
 export { InstructorAgendaScreen } from './screens/InstructorAgendaScreen';
+export { InstructorHomeScreen } from './screens/InstructorHomeScreen';
 export { ClassSessionScreen } from './screens/ClassSessionScreen';
 export { AdminTabBar, StaffTabBar } from './components/StaffTabBars';
 export { SessionRecordsScreen } from './screens/SessionRecordsScreen';

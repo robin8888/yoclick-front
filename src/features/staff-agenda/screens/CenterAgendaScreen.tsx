@@ -45,7 +45,11 @@ export function CenterAgendaScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate isHeaderHidden title={title}>
-      <CenterAgendaHeader dateLabel={formatLongDate(dayDate, 'UTC')} title={title} />
+      <CenterAgendaHeader
+        dateLabel={formatLongDate(dayDate, 'UTC')}
+        title={title}
+        notificationsHref="/(admin)/(tabs)/notifications"
+      />
       <CenterActions isoDate={day.isoDate} />
       <ScanAttendanceButton isCenterWide />
     </ScreenTemplate>
