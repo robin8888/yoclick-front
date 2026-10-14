@@ -49,6 +49,27 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (14 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 13 oct en lo que cambia.
+
+### Hecho el 14 de octubre
+- ✅ **Cobro online de bonos y alquileres con Stripe Connect** (API-401 en versión mínima): pagar bono o alquiler con la hoja de pago de Stripe, alta de cobros del centro Premium, listado de cobros, confirmación por webhook y `confirm`.
+- ✅ **Alta de cuentas conectadas con Accounts v2** (`/v2/core/accounts` y `/v2/core/account_links`): Stripe ya no deja crear cuentas v1; las cuentas antiguas caen al enlace v1.
+- ✅ **Email de contacto obligatorio** para activar cobros: `422 CENTER_CONTACT_EMAIL_REQUIRED` en lugar de un 500.
+- ✅ El log del gateway de Stripe muestra el motivo del rechazo (código y mensaje de Stripe).
+- ✅ Plugin `@stripe/stripe-react-native` con opciones explícitas (`enableGooglePay: false`).
+- ✅ Entorno de pruebas de Stripe preparado: Stripe CLI autorizada para el sandbox, webhook local con `stripe listen`, reconocimiento de responsabilidad por saldo negativo confirmado.
+
+### Pendiente
+1. ⬜ **Terminar el alta de «Academia Ninja Mortal»**: pulsar «activar pagos» (ya con Accounts v2), abrir el enlace de Stripe y rellenar con datos de prueba hasta que el centro pase a `ready`.
+2. ⬜ **Probar un cobro de punta a punta** con tarjeta `4242 4242 4242 4242` desde el móvil: pedir bono → pagar → webhook → bono activo. Con `stripe listen --events payment_intent.succeeded --forward-to localhost:3000/v1/webhooks/stripe` y `STRIPE_WEBHOOK_SECRET` en `.env`.
+3. ⬜ Comprobar que tras el alta la lectura de la cuenta v2 con `GET /v1/accounts/:id` deja el estado en `ready`; si no, leerla con `GET /v2/core/accounts/:id`.
+4. ⬜ Test e2e de `CENTER_CONTACT_EMAIL_REQUIRED` en `test/e2e/payments.e2e.spec.ts` y regenerar `openapi.yaml`.
+5. ⬜ Recibos con IVA y reembolsos (API-403, 405, 406); avisos al centro cuando se acaba un bono o asiste alguien sin él.
+6. ⬜ Lo pendiente del 13 oct que no cambia: probar en el móvil todo lo del 13 oct, fases 2 y 3 de `docs/spec/09`, descontar no presentados con proceso programado, correo a importados, claves push, textos legales, `yoclick.app`.
+7. ⬜ Subir los commits con `git push` en los dos repos.
+
 ## Estado de avance (13 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Detalle de bonos en `docs/spec/10-bonos.md`.
