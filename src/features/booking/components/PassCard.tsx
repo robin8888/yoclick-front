@@ -24,8 +24,8 @@ interface HomePassSummary {
 }
 
 /**
- * Lo que cuenta el billete de inicio: el bono que se gastará antes y cuántas clases puede aún
- * agendar (las que le quedan menos las ya agendadas), o «sin bono».
+ * Lo que cuenta el billete de inicio: el bono que se gastará antes con su saldo real (las que le
+ * quedan, igual que en «Mis bonos») y cuántas puede aún agendar, o «sin bono».
  */
 function useHomePassSummary(): HomePassSummary {
   const passes = useMyPasses().data?.passes ?? [];
@@ -47,8 +47,12 @@ function useHomePassSummary(): HomePassSummary {
       : [i18n.t('passes.expiresOn', { date: formatShortDate(homePass.expiresAt) })];
   return {
     title: homePass.name,
-    valueText: String(countBookableSessions(passes, upcoming)),
-    detailLines: [i18n.t('booking.home.passBookable'), ...expiry],
+    // La cifra es el saldo real, el mismo que en «Mis bonos»; lo agendable va como detalle.
+    valueText: String(homePass.remainingSessions),
+    detailLines: [
+      i18n.t('booking.home.passBookable', { count: countBookableSessions(passes, upcoming) }),
+      ...expiry,
+    ],
     serialText: `Nº ${homePass.id.replaceAll('-', '').slice(-SERIAL_LENGTH).toUpperCase()}`,
     stampText: i18n.t('passes.status.active'),
     isUsable: true,

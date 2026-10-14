@@ -636,7 +636,7 @@
       "weekGoalReached": "¡Objetivo semanal cumplido!",
       "passTitle": "Bono",
       "passEmpty": "Sin bono activo. Toca para pedir uno.",
-      "passBookable": "Clases que aún puedes agendar",
+      "passBookable": "Por agendar: {{count}}",
       "passRemaining_one": "Te queda {{count}} clase",
       "passRemaining_other": "Te quedan {{count}} clases"
     },
