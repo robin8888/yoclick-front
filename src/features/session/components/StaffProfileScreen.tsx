@@ -19,12 +19,14 @@ function capitalize(word: string): string {
 
 interface ProfileLink {
   label: string;
-  iconName: 'play' | 'file' | 'calendar' | 'user';
+  iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode';
   route:
     | '/(staff)/routines'
     | '/(staff)/content'
     | '/(staff)/public-profile'
     | '/(staff)/availability'
+    | '/(staff)/attendance'
+    | '/(staff)/work-qr'
     | '/(staff)/my-data';
 }
 
@@ -35,6 +37,8 @@ function StaffProfileLinks({
   const router = useRouter();
   const links: readonly ProfileLink[] = [
     { label: i18n.t('session.myData.title'), iconName: 'user', route: '/(staff)/my-data' },
+    { label: i18n.t('timeClock.title'), iconName: 'clock', route: '/(staff)/attendance' },
+    { label: i18n.t('timeClock.workQrAction'), iconName: 'qrCode', route: '/(staff)/work-qr' },
     { label: capitalize(routineWordPlural), iconName: 'play', route: '/(staff)/routines' },
     { label: i18n.t('content.admin.title'), iconName: 'file', route: '/(staff)/content' },
     {

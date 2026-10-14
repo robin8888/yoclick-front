@@ -2109,7 +2109,30 @@
       "alreadyRegisteredBadge": "Ya estaba registrada",
       "appointmentSummary": "{{serviceName}} · {{time}}",
       "scanAnotherAction": "Escanear otro",
-      "openAction": "Escanea asistencia QR"
+      "openAction": "Escanea asistencia QR",
+      "clockInBadge": "Entrada registrada",
+      "clockOutBadge": "Salida registrada",
+      "clockInSummary": "Entrada a las {{time}}",
+      "clockOutSummary": "Salida a las {{time}} · {{worked}} trabajadas",
+      "grantedHeadline": "Puede entrar",
+      "deniedHeadline": "No puede entrar",
+      "roleAdmin": "Administración",
+      "reasonValidPass": "Bono vigente: {{name}} · quedan {{remaining}} de {{total}}",
+      "reasonTeamMember": "Equipo del centro",
+      "reasonPassesNotRequired": "Este centro no controla los bonos",
+      "reasonNoPass": "No tiene ningún bono",
+      "reasonPassPending": "Su bono está pendiente de activar",
+      "reasonPassExpired": "Su bono caducó el {{date}}",
+      "reasonPassExpiredNoDate": "Su bono ha caducado",
+      "reasonPassExhausted": "Se le han agotado las clases del bono",
+      "noAppointmentNow": "No tiene cita ahora, así que no se registra asistencia."
+    },
+    "workQr": {
+      "title": "Mi QR de trabajo",
+      "subtitle": "Escanéalo al entrar y al salir",
+      "qrLabel": "Código QR de asistencia al trabajo",
+      "note": "El primer escaneo marca tu entrada y el siguiente tu salida. El código se renueva solo cada pocos minutos y no sirve en capturas de pantalla.",
+      "errorTitle": "No hemos podido generar tu QR"
     }
   },
   "videos": {
@@ -2433,6 +2456,64 @@
       "openFailed": "No hemos podido abrir el PDF. Inténtalo de nuevo.",
       "errorTitle": "No hemos podido abrir este contenido",
       "thumbnailLabel": "Vista previa de {{title}}"
+    }
+  },
+  "timeClock": {
+    "title": "Mi asistencia",
+    "subtitle": "Tus entradas y salidas del mes",
+    "workQrAction": "Mi QR de trabajo",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "workedLabel": "Trabajado",
+    "daysLabel": "Días",
+    "editedLabel": "Editados",
+    "hoursMinutes": "{{hours}} h {{minutes}} min",
+    "onlyHours": "{{hours}} h",
+    "onlyMinutes": "{{minutes}} min",
+    "entryRange": "{{inTime}} → {{outTime}}",
+    "entryOpen": "{{inTime}} → en curso",
+    "openBadge": "En curso",
+    "editedBadge": "Editado",
+    "manualBadge": "Añadido a mano",
+    "addAction": "Añadir un día olvidado",
+    "reportAction": "Informe del mes (PDF)",
+    "emptyTitle": "Sin fichajes este mes",
+    "emptyDescription": "Cuando escanees tu QR de trabajo al entrar y al salir, aparecerán aquí.",
+    "errorTitle": "No hemos podido cargar tu asistencia",
+    "editor": {
+      "addTitle": "Añadir un día",
+      "editTitle": "Editar fichaje",
+      "dateLabel": "Día",
+      "openCalendar": "Elegir día",
+      "datePlaceholder": "Elige el día",
+      "fromLabel": "Entrada",
+      "untilLabel": "Salida",
+      "fromAccessibility": "Hora de entrada",
+      "untilAccessibility": "Hora de salida",
+      "nextDayHint": "La salida cae al día siguiente.",
+      "originalValues": "Original: {{inTime}} → {{outTime}}",
+      "saveAction": "Guardar",
+      "deleteAction": "Eliminar fichaje"
+    },
+    "deleteConfirm": {
+      "title": "¿Eliminar este fichaje?",
+      "message": "Dejará de contar en tu informe del mes.",
+      "confirm": "Sí, eliminar"
+    },
+    "report": {
+      "title": "Informe de asistencia",
+      "staffLabel": "Nombre",
+      "centerLabel": "Centro",
+      "monthLabel": "Mes",
+      "dayColumn": "Día",
+      "inColumn": "Entrada",
+      "outColumn": "Salida",
+      "workedColumn": "Horas",
+      "totalLabel": "Total del mes",
+      "editedNote": "* Fichaje editado por la persona",
+      "openOut": "—",
+      "shareDialogTitle": "Enviar informe de asistencia",
+      "errorMessage": "No hemos podido crear el informe. Inténtalo de nuevo."
     }
   }
 }

@@ -9,7 +9,7 @@ import * as zod from 'zod';
 
 
 /**
- * @summary El QR de asistencia de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
+ * @summary El QR de asistencia (clientela) o de fichaje (equipo) de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
  */
 export const attendanceIssueCodePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -31,7 +31,7 @@ export const AttendanceIssueCodeResponse = zod.object({
 })
 
 /**
- * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada.
+ * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada. Si el QR es de una persona del equipo (owner/admin/staff) ficha su jornada: kind staff con su entrada o su salida (alterna; repetir en 30 s no duplica).
  */
 export const attendanceCheckInPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -52,6 +52,14 @@ export const AttendanceCheckInBody = zod.object({
   "qrContent": zod.string().min(1).max(attendanceCheckInBodyQrContentMax)
 })
 
+export const attendanceCheckInResponsePersonMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseAccessPassRemainingSessionsMin = -9007199254740991;
+export const attendanceCheckInResponseAccessPassRemainingSessionsMax = 9007199254740991;
+
+export const attendanceCheckInResponseAccessPassTotalSessionsMin = -9007199254740991;
+export const attendanceCheckInResponseAccessPassTotalSessionsMax = 9007199254740991;
+
+export const attendanceCheckInResponseAccessPassExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const attendanceCheckInResponseCheckedInAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const attendanceCheckInResponseBookingIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const attendanceCheckInResponseBookingStartsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -78,12 +86,44 @@ export const attendanceCheckInResponseBookingActualDurationSecondsMax = 90071992
 
 export const attendanceCheckInResponseBookingCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const attendanceCheckInResponseBookingCreatedByMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseStaffOccurredAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseStaffWorkedMinutesMin = -9007199254740991;
+export const attendanceCheckInResponseStaffWorkedMinutesMax = 9007199254740991;
+
+export const attendanceCheckInResponseStaffEntryIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseStaffEntryStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseStaffEntryClockInAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseStaffEntryClockOutAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseStaffEntryWorkedMinutesMin = -9007199254740991;
+export const attendanceCheckInResponseStaffEntryWorkedMinutesMax = 9007199254740991;
+
+export const attendanceCheckInResponseStaffEntryOriginalClockInAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseStaffEntryOriginalClockOutAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const attendanceCheckInResponseStaffEntryEditedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const AttendanceCheckInResponse = zod.object({
-  "clientFullName": zod.string(),
-  "checkedInAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseCheckedInAtRegExp),
-  "isFirstCheckIn": zod.boolean(),
+  "kind": zod.enum(['client', 'staff']),
+  "person": zod.object({
+  "membershipId": zod.uuid().regex(attendanceCheckInResponsePersonMembershipIdRegExp),
+  "fullName": zod.string(),
+  "photoUrl": zod.string().nullable(),
+  "role": zod.enum(['client', 'staff', 'admin', 'owner'])
+}),
+  "access": zod.object({
+  "isGranted": zod.boolean(),
+  "reason": zod.enum(['valid_pass', 'team_member', 'passes_not_required', 'no_pass', 'pass_pending', 'pass_expired', 'pass_exhausted']),
+  "pass": zod.object({
+  "name": zod.string(),
+  "remainingSessions": zod.int().min(attendanceCheckInResponseAccessPassRemainingSessionsMin).max(attendanceCheckInResponseAccessPassRemainingSessionsMax),
+  "totalSessions": zod.int().min(attendanceCheckInResponseAccessPassTotalSessionsMin).max(attendanceCheckInResponseAccessPassTotalSessionsMax),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseAccessPassExpiresAtRegExp).nullable()
+}).nullable()
+}),
+  "clientFullName": zod.string().optional(),
+  "checkedInAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseCheckedInAtRegExp).nullish(),
+  "isFirstCheckIn": zod.boolean().optional(),
   "booking": zod.object({
   "id": zod.uuid().regex(attendanceCheckInResponseBookingIdRegExp),
   "status": zod.enum(['confirmed', 'cancelled', 'attended', 'no_show']),
@@ -122,6 +162,28 @@ export const AttendanceCheckInResponse = zod.object({
   "fullName": zod.string(),
   "role": zod.enum(['owner', 'admin', 'staff', 'client'])
 }).nullable()
+}).optional(),
+  "staff": zod.object({
+  "membershipId": zod.uuid().regex(attendanceCheckInResponseStaffMembershipIdRegExp),
+  "fullName": zod.string(),
+  "action": zod.enum(['clock_in', 'clock_out']),
+  "occurredAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffOccurredAtRegExp),
+  "workedMinutes": zod.int().min(attendanceCheckInResponseStaffWorkedMinutesMin).max(attendanceCheckInResponseStaffWorkedMinutesMax).nullable(),
+  "entry": zod.object({
+  "id": zod.uuid().regex(attendanceCheckInResponseStaffEntryIdRegExp),
+  "staffMembershipId": zod.uuid().regex(attendanceCheckInResponseStaffEntryStaffMembershipIdRegExp),
+  "workDate": zod.string(),
+  "clockInAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffEntryClockInAtRegExp),
+  "clockOutAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffEntryClockOutAtRegExp).nullable(),
+  "isOpen": zod.boolean(),
+  "workedMinutes": zod.int().min(attendanceCheckInResponseStaffEntryWorkedMinutesMin).max(attendanceCheckInResponseStaffEntryWorkedMinutesMax),
+  "inSource": zod.enum(['qr', 'manual']),
+  "outSource": zod.union([zod.literal('qr'),zod.literal('manual'),zod.literal(null)]).nullable(),
+  "isEdited": zod.boolean(),
+  "originalClockInAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffEntryOriginalClockInAtRegExp).nullable(),
+  "originalClockOutAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffEntryOriginalClockOutAtRegExp).nullable(),
+  "editedAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseStaffEntryEditedAtRegExp).nullable()
 })
+}).optional()
 })
 

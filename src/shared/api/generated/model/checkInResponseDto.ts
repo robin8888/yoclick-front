@@ -5,12 +5,23 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { CheckInResponseDtoAccess } from './checkInResponseDtoAccess.ts';
 import type { CheckInResponseDtoBooking } from './checkInResponseDtoBooking.ts';
+import type { CheckInResponseDtoKind } from './checkInResponseDtoKind.ts';
+import type { CheckInResponseDtoPerson } from './checkInResponseDtoPerson.ts';
+import type { CheckInResponseDtoStaff } from './checkInResponseDtoStaff.ts';
 
 export interface CheckInResponseDto {
-  clientFullName: string;
-  /** @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$ */
-  checkedInAt: string;
-  isFirstCheckIn: boolean;
-  booking: CheckInResponseDtoBooking;
+  kind: CheckInResponseDtoKind;
+  person: CheckInResponseDtoPerson;
+  access: CheckInResponseDtoAccess;
+  clientFullName?: string;
+  /**
+     * @nullable
+     * @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$
+     */
+  checkedInAt?: string | null;
+  isFirstCheckIn?: boolean;
+  booking?: CheckInResponseDtoBooking;
+  staff?: CheckInResponseDtoStaff;
 }

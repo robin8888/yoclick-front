@@ -22,4 +22,5 @@ export * from './scheduling/scheduling.zod.ts';
 export * from './services/services.zod.ts';
 export * from './team/team.zod.ts';
 export * from './team-profiles/team-profiles.zod.ts';
+export * from './time-entries/time-entries.zod.ts';
 export * from './videos/videos.zod.ts';

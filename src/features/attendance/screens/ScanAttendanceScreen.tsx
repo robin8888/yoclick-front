@@ -6,14 +6,17 @@ import { i18n } from '@/shared/i18n';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { CheckInResultCard } from '../components/CheckInResultCard';
+import { ScanResultModal } from '../components/ScanResultModal';
 import { useCheckInScanner } from '../hooks/useCheckInScanner';
+import { useScanVerdict } from '../hooks/useScanVerdict';
 
 /** Prototipo `Escanear QR de asistencia`: la cámara solo se enciende aquí y no se guarda nada. */
 export function ScanAttendanceScreen(): React.JSX.Element {
   const router = useRouter();
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const scanner = useCheckInScanner();
+  const { scannedCheckIn } = scanner;
+  const verdict = useScanVerdict(scannedCheckIn);
 
   return (
     <ScreenTemplate
@@ -26,19 +29,20 @@ export function ScanAttendanceScreen(): React.JSX.Element {
       {scanner.problemMessage === null ? null : (
         <FormErrorBanner message={scanner.problemMessage} />
       )}
-      {scanner.scannedCheckIn === null ? (
-        <ScanCameraOrPermission
-          isGranted={cameraPermission?.granted === true}
-          canAskAgain={cameraPermission?.canAskAgain !== false}
-          isPaused={scanner.isRegistering}
-          onQrScan={scanner.handleQrScanned}
-          onRequestPermission={() => {
-            void requestCameraPermission();
-          }}
-        />
-      ) : (
-        <CheckInResultCard checkIn={scanner.scannedCheckIn} onScanAnother={scanner.scanAnother} />
-      )}
+      <ScanCameraOrPermission
+        isGranted={cameraPermission?.granted === true}
+        canAskAgain={cameraPermission?.canAskAgain !== false}
+        isPaused={scanner.isRegistering || scannedCheckIn !== null}
+        onQrScan={scanner.handleQrScanned}
+        onRequestPermission={() => {
+          void requestCameraPermission();
+        }}
+      />
+      <ScanResultModal
+        checkIn={scannedCheckIn}
+        verdict={verdict}
+        onScanAnother={scanner.scanAnother}
+      />
     </ScreenTemplate>
   );
 }

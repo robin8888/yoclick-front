@@ -39,7 +39,7 @@ export const getAttendanceIssueCodeUrl = (centerId: string,) => {
 }
 
 /**
- * @summary El QR de asistencia de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
+ * @summary El QR de asistencia (clientela) o de fichaje (equipo) de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
  */
 export const attendanceIssueCode = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<CheckInCodeResponseDto> => {
 
@@ -91,7 +91,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AttendanceIssueCodeMutationVariables = {centerId: string}
 
     /**
- * @summary El QR de asistencia de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
+ * @summary El QR de asistencia (clientela) o de fichaje (equipo) de quien lo pide en este centro: un JWT firmado de 5 minutos dentro de yoclick:checkin:<jwt>. La app lo dibuja tal cual y lo renueva antes de que caduque; nunca lo construye ella.
  */
 export const useAttendanceIssueCode = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof attendanceIssueCode>>, TError,AttendanceIssueCodeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -112,7 +112,7 @@ export const useAttendanceIssueCode = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada.
+ * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada. Si el QR es de una persona del equipo (owner/admin/staff) ficha su jornada: kind staff con su entrada o su salida (alterna; repetir en 30 s no duplica).
  */
 export const attendanceCheckIn = async (centerId: string,
     checkInRequestDto: CheckInRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<CheckInResponseDto> => {
@@ -179,7 +179,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type AttendanceCheckInMutationVariables = {centerId: string;data: CheckInRequestDto}
 
     /**
- * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada.
+ * @summary Registra la llegada de la clienta cuyo QR se ha escaneado, en su cita confirmada de ahora (desde 60 minutos antes hasta que termina). El personal solo en las clases que atiende; administración en cualquiera. 422 CHECKIN_CODE_INVALID si el código es falso, caduco o de otro centro; 409 CHECKIN_NO_BOOKING si no tiene cita para registrar. Repetirlo devuelve la misma llegada. Si el QR es de una persona del equipo (owner/admin/staff) ficha su jornada: kind staff con su entrada o su salida (alterna; repetir en 30 s no duplica).
  */
 export const useAttendanceCheckIn = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof attendanceCheckIn>>, TError,AttendanceCheckInMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
