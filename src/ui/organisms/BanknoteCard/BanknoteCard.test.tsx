@@ -20,7 +20,8 @@ describe('BanknoteCard', () => {
     renderInTheme(<BanknoteCard {...BASE_PROPS} />);
 
     expect(screen.getByText('Bono 10 clases')).toBeOnTheScreen();
-    expect(screen.getByText('6')).toBeOnTheScreen();
+    // La cifra sale grande y repetida en el recuadro del pie, como en un billete.
+    expect(screen.getAllByText('6')).toHaveLength(2);
     expect(screen.getByText('clases')).toBeOnTheScreen();
     expect(screen.getByText('Caduca el 1 dic')).toBeOnTheScreen();
     expect(screen.getByText('Nº 4F2A91')).toBeOnTheScreen();

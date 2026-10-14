@@ -3,52 +3,26 @@ import { Pressable, View } from 'react-native';
 import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
+import {
+  BanknoteFooter,
+  BanknoteIssuerBand,
+  BanknotePortrait,
+  BanknoteSeal,
+} from './BanknoteFaceParts';
+import { BanknoteOrnaments } from './BanknoteOrnaments';
 import { BanknotePattern } from './BanknotePattern';
 import { BanknoteWatermark } from './BanknoteWatermark';
 import {
-  BANKNOTE_FOOTER_STYLE,
-  BANKNOTE_HEADER_STYLE,
-  BANKNOTE_TITLE_STYLE,
-  BANKNOTE_VALUE_ROW_STYLE,
+  BANKNOTE_MIDDLE_ROW_STYLE,
+  BANKNOTE_SEAL_COLUMN_STYLE,
+  BANKNOTE_VALUE_COLUMN_STYLE,
   createBanknoteActionsStyle,
   createBanknoteBodyStyle,
-  createBanknoteFrameStyle,
-  createBanknoteStampStyle,
   createBanknoteStyle,
   resolveBanknoteColors,
   type BanknoteColors,
 } from './BanknoteCard.styles';
 import type { BanknoteCardProps } from './BanknoteCard.types';
-
-interface BanknoteHeaderProps {
-  title: string;
-  stampText: string;
-  colors: BanknoteColors;
-}
-
-/** Arriba: el nombre del bono a la izquierda y el sello a la derecha. */
-function BanknoteHeader({
-  title,
-  stampText,
-  colors,
-}: Readonly<BanknoteHeaderProps>): React.JSX.Element {
-  const theme = useTheme();
-
-  return (
-    <View style={BANKNOTE_HEADER_STYLE}>
-      <View style={BANKNOTE_TITLE_STYLE}>
-        <Text variant="bodyStrong" color="ink" numberOfLines={1}>
-          {title}
-        </Text>
-      </View>
-      <View style={createBanknoteStampStyle(theme, colors)}>
-        <Text variant="caption" color="ink">
-          {stampText}
-        </Text>
-      </View>
-    </View>
-  );
-}
 
 interface BanknoteValueProps {
   valueText: string;
@@ -56,21 +30,61 @@ interface BanknoteValueProps {
   isMuted: boolean;
 }
 
-/** La cifra grande y su unidad («6 clases»); apagada en un bono agotado o caducado. */
+/** La cifra grande y su unidad («6 de 10 clases»); apagada en un bono agotado o caducado. */
 function BanknoteValue({
   valueText,
   unitText,
   isMuted,
 }: Readonly<BanknoteValueProps>): React.JSX.Element {
   return (
-    <View style={BANKNOTE_VALUE_ROW_STYLE}>
+    <View style={BANKNOTE_VALUE_COLUMN_STYLE}>
       <Text variant="display" color={isMuted ? 'ink2' : 'brandInk'}>
         {valueText}
       </Text>
-      <Text variant="bodyStrong" color="ink2">
+      <Text variant="bodyStrong" color="ink2" align="center">
         {unitText}
       </Text>
     </View>
+  );
+}
+
+type BanknoteMiddleRowProps = Pick<
+  BanknoteCardProps,
+  'valueText' | 'unitText' | 'stampText' | 'watermark'
+> & { colors: BanknoteColors; isMuted: boolean };
+
+/** El centro del billete: sello del estado a la izquierda, óvalo con el logo y la cifra a la derecha. */
+function BanknoteMiddleRow({
+  valueText,
+  unitText,
+  stampText,
+  watermark,
+  colors,
+  isMuted,
+}: Readonly<BanknoteMiddleRowProps>): React.JSX.Element {
+  return (
+    <View style={BANKNOTE_MIDDLE_ROW_STYLE}>
+      <View style={BANKNOTE_SEAL_COLUMN_STYLE}>
+        <BanknoteSeal stampText={stampText} colors={colors} />
+      </View>
+      <BanknotePortrait colors={colors}>
+        {watermark === undefined ? null : <BanknoteWatermark {...watermark} />}
+      </BanknotePortrait>
+      <BanknoteValue valueText={valueText} unitText={unitText} isMuted={isMuted} />
+    </View>
+  );
+}
+
+/** La leyenda bajo el centro, como «This note is legal tender»: caducidad y servicios. */
+function BanknoteLegend({ lines }: Readonly<{ lines: readonly string[] }>): React.JSX.Element {
+  return (
+    <>
+      {lines.map((line) => (
+        <Text key={line} variant="caption" color="ink2" align="center" numberOfLines={2}>
+          {line}
+        </Text>
+      ))}
+    </>
   );
 }
 
@@ -79,38 +93,45 @@ type BanknoteFaceProps = Pick<
   'title' | 'valueText' | 'unitText' | 'detailLines' | 'serialText' | 'stampText' | 'watermark'
 > & { colors: BanknoteColors; isMuted: boolean };
 
-/** El anverso del billete: rejilla, marco, cabecera, cifra grande, detalles y número de serie. */
+/**
+ * El anverso, ordenado como un dólar: rótulo con la academia, nombre del bono, y en el centro el
+ * sello del estado, el óvalo con el logo y la cifra; abajo, la leyenda y el número de serie.
+ */
 function BanknoteFace({
   title,
-  valueText,
-  unitText,
   detailLines,
   serialText,
-  stampText,
   watermark,
   colors,
   isMuted,
+  ...valueProps
 }: Readonly<BanknoteFaceProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
     <>
       <BanknotePattern strokeColor={colors.accent} />
-      {watermark === undefined ? null : <BanknoteWatermark {...watermark} />}
-      <View style={createBanknoteFrameStyle(theme, colors)} />
+      <BanknoteOrnaments colors={colors} />
       <View style={createBanknoteBodyStyle(theme)}>
-        <BanknoteHeader title={title} stampText={stampText} colors={colors} />
-        <BanknoteValue valueText={valueText} unitText={unitText} isMuted={isMuted} />
-        {detailLines.map((line) => (
-          <Text key={line} variant="caption" color="ink2">
-            {line}
-          </Text>
-        ))}
-        <View style={BANKNOTE_FOOTER_STYLE}>
-          <Text variant="caption" color="ink2">
-            {serialText}
-          </Text>
-        </View>
+        {watermark === undefined ? null : (
+          <BanknoteIssuerBand issuerName={watermark.centerName} colors={colors} />
+        )}
+        <Text variant="titleMd" color="ink" align="center" numberOfLines={1}>
+          {title}
+        </Text>
+        <BanknoteMiddleRow
+          {...valueProps}
+          watermark={watermark}
+          colors={colors}
+          isMuted={isMuted}
+        />
+        <BanknoteLegend lines={detailLines} />
+        <BanknoteFooter
+          serialText={serialText}
+          valueText={valueProps.valueText}
+          isMuted={isMuted}
+          colors={colors}
+        />
       </View>
     </>
   );

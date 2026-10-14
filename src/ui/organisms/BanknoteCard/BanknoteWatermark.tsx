@@ -28,7 +28,7 @@ export function BanknoteWatermark({
         <Image
           source={{ uri: logoUrl }}
           style={BANKNOTE_WATERMARK_IMAGE_STYLE}
-          contentFit="contain"
+          contentFit="cover"
           accessible={false}
         />
       ) : (

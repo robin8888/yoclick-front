@@ -57,7 +57,7 @@ describe('MyPassesScreen', () => {
     renderScreen(<MyPassesScreen />);
 
     expect(await screen.findByText('Bono 10 clases')).toBeOnTheScreen();
-    expect(screen.getByText('6')).toBeOnTheScreen();
+    expect(screen.getAllByText('6')).toHaveLength(2);
     expect(screen.getByText('de 10 clases')).toBeOnTheScreen();
     expect(screen.getByText('Activo')).toBeOnTheScreen();
     expect(screen.getByText('Kárate')).toBeOnTheScreen();
