@@ -556,7 +556,9 @@
       "passRemainingLabel_one": "Podrás agendar {{count}} clase más",
       "passRemainingLabel_other": "Podrás agendar {{count}} clases más",
       "passStamp": "Te quedan",
-      "errorTitle": "No hemos podido cargar las horas libres"
+      "errorTitle": "No hemos podido cargar las horas libres",
+      "passClassesUnit": "clases",
+      "passForecast": "Después de esto te quedarían {{left}} por agendar"
     },
     "confirm": {
       "title": "Confirma tu cita",
