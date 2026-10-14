@@ -1,4 +1,9 @@
-import { buildBanknoteSerial, getServicePassBalance, useMyPasses } from '@/features/passes';
+import {
+  buildBanknoteSerial,
+  getServicePassBalance,
+  useBanknoteWatermark,
+  useMyPasses,
+} from '@/features/passes';
 import { i18n } from '@/shared/i18n';
 import { formatShortDate } from '@/shared/lib/format';
 import { BanknoteCard } from '@/ui/organisms/BanknoteCard';
@@ -20,6 +25,7 @@ export function PassBalanceNote({
   serviceId,
   pickedCount,
 }: Readonly<PassBalanceNoteProps>): React.JSX.Element | null {
+  const watermark = useBanknoteWatermark();
   const passes = useMyPasses().data?.passes ?? [];
   const upcoming = useMyBookings('upcoming').data?.bookings ?? [];
   const balance = getServicePassBalance(passes, serviceId, upcoming);
@@ -46,6 +52,7 @@ export function PassBalanceNote({
       detailLines={detailLines}
       serialText={buildBanknoteSerial(balance.passId)}
       stampText={i18n.t('booking.slot.passStamp')}
+      watermark={watermark}
       accessibilityLabel={`${balance.passName}. ${i18n.t('booking.slot.passRemainingLabel', {
         count: remainingAfter,
       })}. ${detailLines.join('. ')}`}
