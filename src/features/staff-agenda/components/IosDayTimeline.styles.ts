@@ -3,7 +3,8 @@ import type { ViewStyle } from 'react-native';
 import type { Theme } from '@/shared/theme';
 
 export const IOS_HOUR_HEIGHT = 64;
-export const IOS_LABEL_WIDTH = 48;
+/** Cabe «09:00» en una sola línea incluso con la letra grande del sistema. */
+export const IOS_LABEL_WIDTH = 64;
 const EVENT_ACCENT_WIDTH = 4;
 const EVENT_GAP = 2;
 const NOW_DOT_SIZE = 10;

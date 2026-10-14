@@ -147,7 +147,7 @@ function HourGrid({ layout }: Readonly<{ layout: IosDayLayout }>): React.JSX.Ele
         return (
           <View key={hour}>
             <View style={createHourLabelStyle(top)}>
-              <Text variant="caption" color="ink2">
+              <Text variant="caption" color="ink2" numberOfLines={1} adjustsFontSizeToFit>
                 {formatClock(hour * MINUTES_PER_HOUR)}
               </Text>
             </View>
