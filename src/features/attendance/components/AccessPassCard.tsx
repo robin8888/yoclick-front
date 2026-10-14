@@ -18,6 +18,8 @@ interface AccessPassCardProps {
   qrContent: string;
   nextAppointment: { serviceName: string; startsAt: string } | undefined;
   timeZone: string;
+  /** Su foto de perfil; sin ella, las iniciales. */
+  avatarPhotoUrl?: string | null | undefined;
 }
 
 /** Prototipo `checkin`: quién es, el QR y para qué cita lo enseña. */
@@ -27,12 +29,13 @@ export function AccessPassCard({
   qrContent,
   nextAppointment,
   timeZone,
+  avatarPhotoUrl,
 }: Readonly<AccessPassCardProps>): React.JSX.Element {
   const theme = useTheme();
 
   return (
     <View style={createAccessPassCardStyle(theme)}>
-      <Avatar name={fullName} size="xl" isDecorative />
+      <Avatar name={fullName} photoUrl={avatarPhotoUrl} size="xl" isDecorative />
       <View style={ACCESS_PASS_HOLDER_STYLE}>
         <Text variant="titleMd">{fullName}</Text>
         <Text variant="caption" color="ink2">

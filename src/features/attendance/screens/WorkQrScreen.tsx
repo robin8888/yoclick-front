@@ -1,7 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
 import { useActiveCenterSummary } from '@/features/auth';
 import { LoadErrorState } from '@/features/join';
+import { useMyPhoto } from '@/features/photos';
+import { getMeGetProfileQueryOptions } from '@/shared/api/generated/endpoints/me/me';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
@@ -18,8 +21,11 @@ const CENTER_TIME_ZONE = 'Europe/Madrid';
 export function WorkQrScreen(): React.JSX.Element {
   const router = useRouter();
   const checkInCode = useCheckInCode();
-  const fullName = useSessionStore((state) => state.user?.fullName) ?? '';
+  const sessionFullName = useSessionStore((state) => state.user?.fullName);
+  const profile = useQuery(getMeGetProfileQueryOptions());
+  const fullName = sessionFullName ?? profile.data?.fullName ?? '';
   const center = useActiveCenterSummary();
+  const { photoUrl } = useMyPhoto();
 
   return (
     <ScreenTemplate
@@ -45,6 +51,7 @@ export function WorkQrScreen(): React.JSX.Element {
           centerName={center.name}
           qrContent={checkInCode.data.qrContent}
           nextAppointment={undefined}
+          avatarPhotoUrl={photoUrl}
           timeZone={CENTER_TIME_ZONE}
         />
       )}
