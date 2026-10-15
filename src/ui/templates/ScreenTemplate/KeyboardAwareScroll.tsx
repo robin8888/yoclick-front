@@ -12,8 +12,19 @@ import { calculateRevealOffset, KeyboardRevealContext } from '@/ui/hooks/keyboar
 
 import { createContentStyle } from './ScreenTemplate.styles';
 
-/** Tras abrirse el teclado, la plantilla aún recoloca el pie: se mide después de ese cambio. */
-const REVEAL_DELAY_MS = 60;
+/**
+ * Tras abrirse el teclado, la plantilla aún recoloca el pie y el sistema ajusta el espacio del
+ * scroll: se mide varias veces, cada una tras un nuevo ajuste, porque una sola medida temprana
+ * dejaba el campo (sobre todo el último de un formulario largo) debajo del teclado.
+ */
+const FIRST_REVEAL_DELAY_MS = 60;
+const SECOND_REVEAL_DELAY_MS = 250;
+const THIRD_REVEAL_DELAY_MS = 500;
+const REVEAL_DELAYS_MS = [
+  FIRST_REVEAL_DELAY_MS,
+  SECOND_REVEAL_DELAY_MS,
+  THIRD_REVEAL_DELAY_MS,
+] as const;
 const SCROLL_EVENT_THROTTLE_MS = 16;
 
 interface KeyboardAwareScrollProps {
@@ -53,9 +64,11 @@ function useKeyboardReveal(): RevealTools & { reveal: () => void } {
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', (event) => {
       keyboardTopYRef.current = event.endCoordinates.screenY;
-      setTimeout(() => {
-        revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef });
-      }, REVEAL_DELAY_MS);
+      for (const delay of REVEAL_DELAYS_MS) {
+        setTimeout(() => {
+          revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef });
+        }, delay);
+      }
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
       keyboardTopYRef.current = null;
@@ -69,9 +82,11 @@ function useKeyboardReveal(): RevealTools & { reveal: () => void } {
   return {
     ...tools,
     reveal: () => {
-      setTimeout(() => {
-        revealFocusedInput(tools);
-      }, REVEAL_DELAY_MS);
+      for (const delay of REVEAL_DELAYS_MS) {
+        setTimeout(() => {
+          revealFocusedInput(tools);
+        }, delay);
+      }
     },
   };
 }
