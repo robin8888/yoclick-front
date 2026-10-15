@@ -35,6 +35,7 @@ function buildService(
     name: 'Inglés B1',
     description: null,
     hasSchedule: true,
+    schedules: [],
     kind: 'individual',
     mode: 'both',
     durationMinutes: 90,

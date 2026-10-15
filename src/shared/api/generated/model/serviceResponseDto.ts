@@ -9,6 +9,7 @@ import type { ServiceResponseDtoCurrency } from './serviceResponseDtoCurrency.ts
 import type { ServiceResponseDtoKind } from './serviceResponseDtoKind.ts';
 import type { ServiceResponseDtoMode } from './serviceResponseDtoMode.ts';
 import type { ServiceResponseDtoRoom } from './serviceResponseDtoRoom.ts';
+import type { ServiceResponseDtoSchedulesItem } from './serviceResponseDtoSchedulesItem.ts';
 import type { ServiceResponseDtoStaffItem } from './serviceResponseDtoStaffItem.ts';
 
 export interface ServiceResponseDto {
@@ -47,5 +48,6 @@ export interface ServiceResponseDto {
   /** @nullable */
   room: ServiceResponseDtoRoom;
   hasSchedule: boolean;
+  schedules: ServiceResponseDtoSchedulesItem[];
   staff: ServiceResponseDtoStaffItem[];
 }

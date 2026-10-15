@@ -9,6 +9,7 @@ import type { ServiceListResponseDtoServicesItemCurrency } from './serviceListRe
 import type { ServiceListResponseDtoServicesItemKind } from './serviceListResponseDtoServicesItemKind.ts';
 import type { ServiceListResponseDtoServicesItemMode } from './serviceListResponseDtoServicesItemMode.ts';
 import type { ServiceListResponseDtoServicesItemRoom } from './serviceListResponseDtoServicesItemRoom.ts';
+import type { ServiceListResponseDtoServicesItemSchedulesItem } from './serviceListResponseDtoServicesItemSchedulesItem.ts';
 import type { ServiceListResponseDtoServicesItemStaffItem } from './serviceListResponseDtoServicesItemStaffItem.ts';
 
 export type ServiceListResponseDtoServicesItem = {
@@ -47,5 +48,6 @@ export type ServiceListResponseDtoServicesItem = {
   /** @nullable */
   room: ServiceListResponseDtoServicesItemRoom;
   hasSchedule: boolean;
+  schedules: ServiceListResponseDtoServicesItemSchedulesItem[];
   staff: ServiceListResponseDtoServicesItemStaffItem[];
 };

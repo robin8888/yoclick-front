@@ -36,6 +36,10 @@ export const servicesListResponseServicesItemMinNoticeMinutesMin = -900719925474
 export const servicesListResponseServicesItemMinNoticeMinutesMax = 9007199254740991;
 
 export const servicesListResponseServicesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListResponseServicesItemSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesListResponseServicesItemSchedulesItemWeekdayMax = 7;
+
+export const servicesListResponseServicesItemSchedulesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesListResponseServicesItemStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesListResponseServicesItemStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -59,6 +63,17 @@ export const ServicesListResponse = zod.object({
   "name": zod.string()
 }).nullable(),
   "hasSchedule": zod.boolean(),
+  "schedules": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesListResponseServicesItemSchedulesItemIdRegExp),
+  "weekday": zod.int().min(1).max(servicesListResponseServicesItemSchedulesItemWeekdayMax),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "room": zod.object({
+  "id": zod.uuid().regex(servicesListResponseServicesItemSchedulesItemRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "teacherName": zod.string()
+})),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesListResponseServicesItemStaffItemMembershipIdRegExp),
   "fullName": zod.string(),
@@ -136,6 +151,10 @@ export const servicesCreateResponseMinNoticeMinutesMin = -9007199254740991;
 export const servicesCreateResponseMinNoticeMinutesMax = 9007199254740991;
 
 export const servicesCreateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesCreateResponseSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesCreateResponseSchedulesItemWeekdayMax = 7;
+
+export const servicesCreateResponseSchedulesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateResponseStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateResponseStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -158,6 +177,17 @@ export const ServicesCreateResponse = zod.object({
   "name": zod.string()
 }).nullable(),
   "hasSchedule": zod.boolean(),
+  "schedules": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesCreateResponseSchedulesItemIdRegExp),
+  "weekday": zod.int().min(1).max(servicesCreateResponseSchedulesItemWeekdayMax),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "room": zod.object({
+  "id": zod.uuid().regex(servicesCreateResponseSchedulesItemRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "teacherName": zod.string()
+})),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesCreateResponseStaffItemMembershipIdRegExp),
   "fullName": zod.string(),
@@ -236,6 +266,10 @@ export const servicesUpdateResponseMinNoticeMinutesMin = -9007199254740991;
 export const servicesUpdateResponseMinNoticeMinutesMax = 9007199254740991;
 
 export const servicesUpdateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesUpdateResponseSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const servicesUpdateResponseSchedulesItemWeekdayMax = 7;
+
+export const servicesUpdateResponseSchedulesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateResponseStaffItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateResponseStaffItemPhotosItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -258,6 +292,17 @@ export const ServicesUpdateResponse = zod.object({
   "name": zod.string()
 }).nullable(),
   "hasSchedule": zod.boolean(),
+  "schedules": zod.array(zod.object({
+  "id": zod.uuid().regex(servicesUpdateResponseSchedulesItemIdRegExp),
+  "weekday": zod.int().min(1).max(servicesUpdateResponseSchedulesItemWeekdayMax),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "room": zod.object({
+  "id": zod.uuid().regex(servicesUpdateResponseSchedulesItemRoomIdRegExp),
+  "name": zod.string()
+}).nullable(),
+  "teacherName": zod.string()
+})),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesUpdateResponseStaffItemMembershipIdRegExp),
   "fullName": zod.string(),

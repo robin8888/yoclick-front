@@ -6,6 +6,7 @@ import { EmptyState } from '@/ui/molecules/EmptyState';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
 import { buildServiceMetaLabel } from '../model/booking-labels';
+import { describeServiceSchedules } from '../model/service-schedule-labels';
 
 interface ServiceOptionListProps {
   services: readonly ServiceListResponseDtoServicesItem[];
@@ -14,6 +15,13 @@ interface ServiceOptionListProps {
   onRetry: () => void;
   /** No escribe «Individual»: el centro elige aparte si la cita es privada o grupal. */
   isKindHidden?: boolean;
+}
+
+/** Lo que dice el servicio de sí mismo y, debajo, cuándo y dónde se da. */
+function buildDescription(service: ServiceListResponseDtoServicesItem): string | undefined {
+  const lines = [service.description ?? '', ...describeServiceSchedules(service.schedules)];
+  const text = lines.filter((line) => line !== '').join('\n');
+  return text === '' ? undefined : text;
 }
 
 /** Los servicios reservables como opciones a elegir, o el vacío con reintento. */
@@ -44,7 +52,7 @@ export function ServiceOptionList({
           key={service.id}
           title={service.name}
           meta={buildServiceMetaLabel(service, { isKindHidden })}
-          description={service.description ?? undefined}
+          description={buildDescription(service)}
           isSelected={service.id === selectedServiceId}
           isDisabled={isScheduleRequired && !service.hasSchedule}
           disabledReason={i18n.t('booking.book.noScheduleYet')}
