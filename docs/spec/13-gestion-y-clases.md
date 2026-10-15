@@ -27,7 +27,8 @@ elegidos. El servidor sigue validando al guardar (y devuelve las fechas que no p
 
 Igual que hasta ahora: «Matricular» en la clase y el control de asistencia desde la agenda.
 **Solo se puede apuntar a quien tiene un bono en vigor y clases por agendar** para el servicio de la clase
-(`GET /passes/eligible?serviceId`).
+(`GET /passes/eligible?serviceId`). El servidor también lo exige: matricular a alguien sin bono
+le devuelve `no_active_pass` en `skipped` y no entra.
 
 ## Cambios de datos
 

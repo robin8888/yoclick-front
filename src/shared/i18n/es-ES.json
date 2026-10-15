@@ -2322,6 +2322,7 @@
       "skippedPersonReason": {
         "client_not_found": "no es cliente del centro",
         "already_enrolled": "ya estaba en el grupo",
+        "no_active_pass": "no tiene un bono en vigor para este servicio",
         "series_full": "no quedaban plazas"
       },
       "skippedDates_one": "{{count}} día con otra cita: ese día no entra",

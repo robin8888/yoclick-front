@@ -460,7 +460,7 @@ export const SchedulesEnrollResponse = zod.object({
 })),
   "skipped": zod.array(zod.object({
   "clientMembershipId": zod.uuid().regex(schedulesEnrollResponseSkippedItemClientMembershipIdRegExp),
-  "reason": zod.enum(['client_not_found', 'already_enrolled', 'series_full'])
+  "reason": zod.enum(['client_not_found', 'already_enrolled', 'series_full', 'no_active_pass'])
 })),
   "skippedDates": zod.array(zod.object({
   "clientMembershipId": zod.uuid().regex(schedulesEnrollResponseSkippedDatesItemClientMembershipIdRegExp),

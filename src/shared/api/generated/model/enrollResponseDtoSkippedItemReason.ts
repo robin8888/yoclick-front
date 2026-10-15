@@ -13,4 +13,5 @@ export const EnrollResponseDtoSkippedItemReason = {
   client_not_found: 'client_not_found',
   already_enrolled: 'already_enrolled',
   series_full: 'series_full',
+  no_active_pass: 'no_active_pass',
 } as const;
