@@ -4,17 +4,12 @@ import { i18n } from '@/shared/i18n';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { RoomFormValues } from '../model/room-form';
-import { Controller } from 'react-hook-form';
-
-import { RoomFixedServiceField } from './RoomFixedServiceField';
-import { RoomTeacherField } from './RoomTeacherField';
-import { ServiceSelectionField } from './ServiceSelectionField';
 
 interface RoomFormFieldsProps {
   control: Control<RoomFormValues>;
 }
 
-/** Nombre, aforo máximo, servicios, servicio fijo y profesor de un espacio. */
+/** Una sala es solo su nombre y su aforo: el profesor y el servicio se eligen en cada clase. */
 export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): React.JSX.Element {
   return (
     <>
@@ -31,20 +26,6 @@ export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): Reac
         helperText={i18n.t('centerAdmin.rooms.capacityHelper')}
         keyboardType="number-pad"
       />
-      <Controller
-        control={control}
-        name="serviceIds"
-        render={({ field }) => (
-          <ServiceSelectionField
-            title={i18n.t('centerAdmin.rooms.servicesLabel')}
-            helperText={i18n.t('centerAdmin.rooms.servicesHelper')}
-            selectedServiceIds={field.value}
-            onSelectedServiceIdsChange={field.onChange}
-          />
-        )}
-      />
-      <RoomFixedServiceField control={control} />
-      <RoomTeacherField control={control} />
     </>
   );
 }

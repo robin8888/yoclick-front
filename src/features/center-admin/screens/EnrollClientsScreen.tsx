@@ -2,7 +2,6 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { ClientPicker } from '@/features/clients';
 import type { EnrollResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
@@ -10,6 +9,7 @@ import { Chip } from '@/ui/atoms/Chip';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { EligibleEnrollPicker } from '../components/EligibleEnrollPicker';
 import { EnrollResultSheet } from '../components/EnrollResultSheet';
 import { useEnrollClients } from '../hooks/useEnrollClients';
 import { useScheduleSeriesList } from '../hooks/useScheduleSeriesList';
@@ -32,12 +32,14 @@ function toggleChosen(chosen: readonly ChosenClient[], client: ChosenClient): Ch
 
 interface ChosenClientsFieldProps {
   chosen: readonly ChosenClient[];
+  serviceId: string;
   onToggle: (client: ChosenClient) => void;
 }
 
 /** Quienes ya están elegidos (con su quitar) y el buscador para añadir a más personas. */
 function ChosenClientsField({
   chosen,
+  serviceId,
   onToggle,
 }: Readonly<ChosenClientsFieldProps>): React.JSX.Element {
   return (
@@ -60,11 +62,10 @@ function ChosenClientsField({
           ))}
         </View>
       )}
-      <ClientPicker
+      <EligibleEnrollPicker
+        serviceId={serviceId}
         selectedMembershipIds={chosen.map(({ membershipId }) => membershipId)}
-        onClientSelect={(client) => {
-          onToggle({ membershipId: client.membershipId, fullName: client.fullName });
-        }}
+        onClientToggle={onToggle}
       />
     </>
   );
@@ -106,7 +107,12 @@ function EnrollSubmitButton({
 function EnrollClientsContent({
   seriesId,
   seriesName,
-}: Readonly<{ seriesId: string; seriesName: string }>): React.JSX.Element {
+  serviceId,
+}: Readonly<{
+  seriesId: string;
+  seriesName: string;
+  serviceId: string;
+}>): React.JSX.Element {
   const router = useRouter();
   const [chosen, setChosen] = useState<ChosenClient[]>([]);
   const [result, setResult] = useState<EnrollResponseDto | null>(null);
@@ -121,6 +127,7 @@ function EnrollClientsContent({
     >
       <ChosenClientsField
         chosen={chosen}
+        serviceId={serviceId}
         onToggle={(client) => {
           setChosen((current) => toggleChosen(current, client));
         }}
@@ -149,6 +156,7 @@ export function EnrollClientsScreen(): React.JSX.Element {
     <EnrollClientsContent
       seriesId={params.data.seriesId}
       seriesName={series === undefined ? '' : describeSeriesName(series)}
+      serviceId={series?.service.id ?? ''}
     />
   );
 }

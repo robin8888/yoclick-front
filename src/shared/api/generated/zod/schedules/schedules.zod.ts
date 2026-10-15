@@ -53,6 +53,46 @@ export const SchedulesRepeatWeekResponse = zod.object({
 })
 
 /**
+ * @summary Las franjas de la semana que ya ocupan una sala y/o un profesor con clases activas: lo que no se puede elegir al crear una clase nueva.
+ */
+export const schedulesBusyTimesPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const SchedulesBusyTimesParams = zod.object({
+  "centerId": zod.uuid().regex(schedulesBusyTimesPathCenterIdRegExp)
+})
+
+export const schedulesBusyTimesQueryRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const schedulesBusyTimesQueryStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const SchedulesBusyTimesQueryParams = zod.object({
+  "roomId": zod.uuid().regex(schedulesBusyTimesQueryRoomIdRegExp).optional(),
+  "staffMembershipId": zod.uuid().regex(schedulesBusyTimesQueryStaffMembershipIdRegExp).optional()
+})
+
+export const SchedulesBusyTimesHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const schedulesBusyTimesResponseBusyItemWeekdayMin = -9007199254740991;
+export const schedulesBusyTimesResponseBusyItemWeekdayMax = 9007199254740991;
+
+
+
+export const SchedulesBusyTimesResponse = zod.object({
+  "busy": zod.array(zod.object({
+  "weekday": zod.int().min(schedulesBusyTimesResponseBusyItemWeekdayMin).max(schedulesBusyTimesResponseBusyItemWeekdayMax),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "source": zod.enum(['room', 'teacher']),
+  "className": zod.string(),
+  "startsOn": zod.string(),
+  "endsOn": zod.string().nullable()
+}))
+})
+
+/**
  * @summary Los horarios del centro (activos primero), cada uno con sus días de la semana, sala, profesor, modo, aforo y matriculados. De paso crea las sesiones que falten hasta 8 semanas por delante.
  */
 export const schedulesListPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');

@@ -13,7 +13,6 @@ import { ManagementScreen } from './ManagementScreen';
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 
 const ROOMS_PATH = `/v1/centers/${NORTE_CENTER_ID}/rooms`;
-const TEAM_PATH = `/v1/centers/${NORTE_CENTER_ID}/team`;
 const ROOM_ANA_ID = '0191d6a0-0000-7000-8000-0000000000f1';
 const ROOM_FREE_ID = '0191d6a0-0000-7000-8000-0000000000f2';
 const TEACHER_ANA_ID = '0191d6a0-0000-7000-8000-0000000000b1';
@@ -36,23 +35,6 @@ const ROOMS = {
       staff: null,
       fixedService: null,
       services: [],
-    },
-  ],
-};
-
-const TEAM = {
-  members: [
-    {
-      membershipId: TEACHER_ANA_ID,
-      userId: 'user-ana',
-      fullName: 'Ana Ruiz',
-      email: 'ana@example.com',
-      role: 'staff',
-      status: 'active',
-      staffTitle: null,
-      photoUrl: null,
-      permissions: [],
-      joinedAt: '2026-01-01T09:00:00.000Z',
     },
   ],
 };
@@ -131,25 +113,22 @@ describe('EditRoomScreen', () => {
     jest.mocked(useLocalSearchParams).mockReturnValue({ roomId: ROOM_FREE_ID });
   });
 
-  it('changes the teacher of the room and saves it', async () => {
+  it('only edits the name and capacity of the room and clears its old fixed teacher and service', async () => {
     mockApi({
       [`GET ${ROOMS_PATH}`]: ROOMS,
-      [`GET ${TEAM_PATH}`]: TEAM,
-      [`PATCH ${ROOMS_PATH}/${ROOM_FREE_ID}`]: {
-        ...ROOMS.rooms[1],
-        staff: { membershipId: TEACHER_ANA_ID, fullName: 'Ana Ruiz' },
-      },
+      [`PATCH ${ROOMS_PATH}/${ROOM_FREE_ID}`]: ROOMS.rooms[1],
     });
     renderScreen(<EditRoomScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Ana Ruiz' }));
+    fireEvent.changeText(await screen.findByLabelText('Aforo máximo'), '8');
+    expect(screen.queryByRole('button', { name: 'Ana Ruiz' })).toBeNull();
     fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
 
     await waitFor(() => {
       expect(findApiCall('PATCH', `${ROOMS_PATH}/${ROOM_FREE_ID}`)?.body).toEqual({
         name: 'Aula común',
-        capacity: 6,
-        staffMembershipId: TEACHER_ANA_ID,
+        capacity: 8,
+        staffMembershipId: null,
         serviceIds: [],
         serviceId: null,
       });

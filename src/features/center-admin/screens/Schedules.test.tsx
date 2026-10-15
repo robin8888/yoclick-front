@@ -22,7 +22,6 @@ const ROOMS_PATH = `${CENTER_PATH}/rooms`;
 const TEAM_PATH = `${CENTER_PATH}/team`;
 const SERVICES_PATH = `${CENTER_PATH}/services`;
 const SCHEDULES_PATH = `${CENTER_PATH}/schedules`;
-const CLIENTS_PATH = `${CENTER_PATH}/clients`;
 const SERIES_ID = '0191d6a0-0000-7000-8000-0000000000e1';
 const ENROLLMENT_ID = '0191d6a0-0000-7000-8000-0000000000e2';
 const ROOM_ID = '0191d6a0-0000-7000-8000-0000000000f1';
@@ -108,25 +107,6 @@ const ENROLLMENTS = {
       endsOn: null,
       status: 'active',
       createdAt: '2026-10-12T10:00:00.000Z',
-    },
-  ],
-};
-
-const CLIENTS = {
-  totalClientCount: 1,
-  matchingCount: 1,
-  clients: [
-    {
-      membershipId: MARTA_ID,
-      fullName: 'Marta Ruiz',
-      email: 'marta@example.com',
-      status: 'active',
-      activity: 'active',
-      level: null,
-      group: null,
-      joinedAt: '2026-01-10T09:00:00.000Z',
-      bookingCount: 2,
-      lastBookingAt: null,
     },
   ],
 };
@@ -317,7 +297,11 @@ describe('EnrollClientsScreen', () => {
   it('enrols the chosen people and sums up the result', async () => {
     mockApi({
       [`GET ${SCHEDULES_PATH}`]: { series: [SERIES] },
-      [`GET ${CLIENTS_PATH}`]: CLIENTS,
+      [`GET ${CENTER_PATH}/passes/eligible`]: {
+        clients: [
+          { membershipId: MARTA_ID, fullName: 'Marta Ruiz', photoUrl: null, bookableSessions: 4 },
+        ],
+      },
       [`POST ${SCHEDULES_PATH}/${SERIES_ID}/enrollments`]: {
         enrollments: ENROLLMENTS.enrollments,
         skipped: [],

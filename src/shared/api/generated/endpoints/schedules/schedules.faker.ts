@@ -10,6 +10,7 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  BusyTimesResponseDto,
   CancelSessionResponseDto,
   EndSeriesResponseDto,
   EnrollResponseDto,
@@ -22,6 +23,8 @@ import type {
 
 
 export const getSchedulesRepeatWeekResponseMock = (overrideResponse: Partial<Extract<RepeatWeekResponseDto, object>> = {}): RepeatWeekResponseDto => ({copiedSeriesCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), alreadyCopiedSeriesCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), failedSeriesCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), skipped: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({date: faker.date.past().toISOString().slice(0, 10), startsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), reason: faker.helpers.arrayElement(['holiday','absence','conflict','blocked'] as const)})), ...overrideResponse})
+
+export const getSchedulesBusyTimesResponseMock = (overrideResponse: Partial<Extract<BusyTimesResponseDto, object>> = {}): BusyTimesResponseDto => ({busy: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({weekday: faker.number.int({min: -9007199254740991, max: 9007199254740991}), startsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), endsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), source: faker.helpers.arrayElement(['room','teacher'] as const), className: faker.string.alpha({length: {min: 10, max: 20}}), startsOn: faker.string.alpha({length: {min: 10, max: 20}}), endsOn: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null])})), ...overrideResponse})
 
 export const getSchedulesListResponseMock = (overrideResponse: Partial<Extract<ScheduleSeriesListResponseDto, object>> = {}): ScheduleSeriesListResponseDto => ({series: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({seriesId: faker.string.uuid(), label: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), mode: faker.helpers.arrayElement(['private','group'] as const), capacity: faker.number.int({min: -9007199254740991, max: 9007199254740991}), status: faker.helpers.arrayElement(['active','ended'] as const), startsOn: faker.date.past().toISOString().slice(0, 10), endsOn: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 10), null]), service: {id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), color: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null])}, staff: {membershipId: faker.string.uuid(), fullName: faker.string.alpha({length: {min: 10, max: 20}})}, room: faker.helpers.arrayElement([{id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}})},null,]), days: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({scheduleId: faker.string.uuid(), weekday: faker.number.int({min: 1, max: 7}), startsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), endsAtTime: faker.string.alpha({length: {min: 10, max: 20}})})), enrolledCount: faker.number.int({min: -9007199254740991, max: 9007199254740991})})), ...overrideResponse})
 

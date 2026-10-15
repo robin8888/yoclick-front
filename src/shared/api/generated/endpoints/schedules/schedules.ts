@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BusyTimesResponseDto,
   CancelSessionRequestDto,
   CancelSessionResponseDto,
   CreateScheduleSeriesRequestDto,
@@ -37,6 +38,7 @@ import type {
   RepeatWeekResponseDto,
   ScheduleSeriesListResponseDto,
   ScheduleSeriesWriteResponseDto,
+  SchedulesBusyTimesParams,
   UnenrollResponseDto,
   UpdateScheduleSeriesRequestDto
 } from '../../model';
@@ -152,7 +154,122 @@ export const useSchedulesRepeatWeek = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getSchedulesRepeatWeekMutationOptions(options), queryClient);
     }
-    export const getSchedulesListUrl = (centerId: string,) => {
+    export const getSchedulesBusyTimesUrl = (centerId: string,
+    params?: SchedulesBusyTimesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/schedules/busy-times?${stringifiedParams}` : `/v1/centers/${centerId}/schedules/busy-times`
+}
+
+/**
+ * @summary Las franjas de la semana que ya ocupan una sala y/o un profesor con clases activas: lo que no se puede elegir al crear una clase nueva.
+ */
+export const schedulesBusyTimes = async (centerId: string,
+    params?: SchedulesBusyTimesParams, options?: Parameters<typeof apiMutator>[1]): Promise<BusyTimesResponseDto> => {
+
+  return apiMutator<BusyTimesResponseDto>(getSchedulesBusyTimesUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getSchedulesBusyTimesQueryKey = (centerId: string,
+    params?: SchedulesBusyTimesParams,) => {
+    return [
+    `/v1/centers/${centerId}/schedules/busy-times`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getSchedulesBusyTimesQueryOptions = <TData = Awaited<ReturnType<typeof schedulesBusyTimes>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params?: SchedulesBusyTimesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getSchedulesBusyTimesQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof schedulesBusyTimes>>> = ({ signal }) => schedulesBusyTimes(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type SchedulesBusyTimesQueryResult = NonNullable<Awaited<ReturnType<typeof schedulesBusyTimes>>>
+export type SchedulesBusyTimesQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useSchedulesBusyTimes<TData = Awaited<ReturnType<typeof schedulesBusyTimes>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: undefined |  SchedulesBusyTimesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof schedulesBusyTimes>>,
+          TError,
+          Awaited<ReturnType<typeof schedulesBusyTimes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSchedulesBusyTimes<TData = Awaited<ReturnType<typeof schedulesBusyTimes>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: SchedulesBusyTimesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof schedulesBusyTimes>>,
+          TError,
+          Awaited<ReturnType<typeof schedulesBusyTimes>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useSchedulesBusyTimes<TData = Awaited<ReturnType<typeof schedulesBusyTimes>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: SchedulesBusyTimesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las franjas de la semana que ya ocupan una sala y/o un profesor con clases activas: lo que no se puede elegir al crear una clase nueva.
+ */
+
+export function useSchedulesBusyTimes<TData = Awaited<ReturnType<typeof schedulesBusyTimes>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: SchedulesBusyTimesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof schedulesBusyTimes>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getSchedulesBusyTimesQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getSchedulesListUrl = (centerId: string,) => {
 
 
 

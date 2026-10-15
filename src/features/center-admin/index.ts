@@ -23,6 +23,7 @@ export { OpeningHoursEditorScreen } from './screens/OpeningHoursEditorScreen';
 export { NewRoomScreen } from './screens/NewRoomScreen';
 export { EditRoomScreen } from './screens/EditRoomScreen';
 export { ManagementScreen } from './screens/ManagementScreen';
+export { CreateClassScreen } from './screens/CreateClassScreen';
 export { NewScheduleScreen } from './screens/NewScheduleScreen';
 export { ScheduleSeriesScreen } from './screens/ScheduleSeriesScreen';
 export { EditScheduleScreen } from './screens/EditScheduleScreen';

@@ -14,6 +14,7 @@ import type {
 } from 'msw';
 
 import type {
+  BusyTimesResponseDto,
   CancelSessionResponseDto,
   EndSeriesResponseDto,
   EnrollResponseDto,
@@ -25,6 +26,7 @@ import type {
 } from '../../model';
 
 import {
+  getSchedulesBusyTimesResponseMock,
   getSchedulesCreateResponseMock,
   getSchedulesEndResponseMock,
   getSchedulesEnrollResponseMock,
@@ -36,7 +38,7 @@ import {
   getSessionsCancelResponseMock
 } from './schedules.faker.ts';
 
-export { getSchedulesRepeatWeekResponseMock, getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock } from './schedules.faker.ts';
+export { getSchedulesRepeatWeekResponseMock, getSchedulesBusyTimesResponseMock, getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock } from './schedules.faker.ts';
 
 
 export const getSchedulesRepeatWeekMockHandler = (overrideResponse?: RepeatWeekResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<RepeatWeekResponseDto> | RepeatWeekResponseDto), options?: RequestHandlerOptions) => {
@@ -46,6 +48,18 @@ export const getSchedulesRepeatWeekMockHandler = (overrideResponse?: RepeatWeekR
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getSchedulesRepeatWeekResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getSchedulesBusyTimesMockHandler = (overrideResponse?: BusyTimesResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<BusyTimesResponseDto> | BusyTimesResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/schedules/busy-times', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getSchedulesBusyTimesResponseMock(),
       { status: 200
       })
   }, options)
@@ -148,6 +162,7 @@ export const getSessionsCancelMockHandler = (overrideResponse?: CancelSessionRes
 }
 export const getSchedulesMock = () => [
   getSchedulesRepeatWeekMockHandler(),
+  getSchedulesBusyTimesMockHandler(),
   getSchedulesListMockHandler(),
   getSchedulesCreateMockHandler(),
   getSchedulesUpdateMockHandler(),
