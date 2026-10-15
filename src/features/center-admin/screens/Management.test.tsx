@@ -56,8 +56,8 @@ describe('ManagementScreen', () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Crear sala' }));
-    fireEvent.press(screen.getByRole('button', { name: 'Crear servicio' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Crear y editar sala' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Crear y editar servicio' }));
     fireEvent.press(screen.getByRole('button', { name: 'Crear clase' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/rooms/new');
@@ -72,7 +72,7 @@ describe('ManagementScreen', () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    expect(await screen.findByRole('button', { name: 'Crear sala' })).toBeOnTheScreen();
+    expect(await screen.findByRole('button', { name: 'Crear y editar sala' })).toBeOnTheScreen();
     expect(screen.queryByText('Editar salas')).toBeNull();
     expect(screen.queryByText('Alquiler y mantenimiento')).toBeNull();
     expect(screen.queryByText('Horario fijo')).toBeNull();

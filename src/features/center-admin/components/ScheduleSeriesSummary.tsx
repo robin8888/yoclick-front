@@ -48,7 +48,7 @@ export function ScheduleSeriesSummary({
       />
       <SummaryLine
         label={i18n.t('centerAdmin.schedules.summaryTeacher')}
-        value={series.staff.fullName}
+        value={series.staff?.fullName ?? i18n.t('centerAdmin.schedules.noTeacher')}
       />
       <SummaryLine label={i18n.t('centerAdmin.schedules.summaryMode')} value={modeLabel} />
       <SummaryLine

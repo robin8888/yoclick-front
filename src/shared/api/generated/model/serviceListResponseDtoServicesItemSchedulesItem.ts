@@ -19,5 +19,6 @@ export type ServiceListResponseDtoServicesItemSchedulesItem = {
   endsAtTime: string;
   /** @nullable */
   room: ServiceListResponseDtoServicesItemSchedulesItemRoom;
-  teacherName: string;
+  /** @nullable */
+  teacherName: string | null;
 };

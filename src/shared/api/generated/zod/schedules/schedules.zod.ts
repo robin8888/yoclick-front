@@ -140,7 +140,7 @@ export const SchedulesListResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(schedulesListResponseSeriesItemStaffMembershipIdRegExp),
   "fullName": zod.string()
-}),
+}).nullable(),
   "room": zod.object({
   "id": zod.uuid().regex(schedulesListResponseSeriesItemRoomIdRegExp),
   "name": zod.string()
@@ -235,7 +235,7 @@ export const SchedulesCreateResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(schedulesCreateResponseSeriesStaffMembershipIdRegExp),
   "fullName": zod.string()
-}),
+}).nullable(),
   "room": zod.object({
   "id": zod.uuid().regex(schedulesCreateResponseSeriesRoomIdRegExp),
   "name": zod.string()
@@ -325,7 +325,7 @@ export const SchedulesUpdateResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(schedulesUpdateResponseSeriesStaffMembershipIdRegExp),
   "fullName": zod.string()
-}),
+}).nullable(),
   "room": zod.object({
   "id": zod.uuid().regex(schedulesUpdateResponseSeriesRoomIdRegExp),
   "name": zod.string()

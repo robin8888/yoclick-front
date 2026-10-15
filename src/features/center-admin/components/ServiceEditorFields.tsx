@@ -1,4 +1,4 @@
-import { Controller } from 'react-hook-form';
+import { Controller, useWatch } from 'react-hook-form';
 import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
@@ -21,6 +21,8 @@ const VISIBILITY_ROW_STYLE = {
   justifyContent: 'space-between',
   gap: 12,
 } as const;
+
+const RENTAL_FIELD_STYLE = { gap: 4 } as const;
 
 interface ServiceEditorFieldsProps {
   form: ServiceEditorForm;
@@ -45,11 +47,38 @@ function VisibilityField({ form }: Readonly<ServiceEditorFieldsProps>): React.JS
   );
 }
 
+function RentalField({ form }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
+  return (
+    <Controller
+      control={form.control}
+      name="isRental"
+      render={({ field }) => (
+        <View style={RENTAL_FIELD_STYLE}>
+          <View style={VISIBILITY_ROW_STYLE}>
+            <Text variant="bodyStrong">{i18n.t('centerAdmin.serviceEditor.rentalLabel')}</Text>
+            <Switch
+              isOn={field.value}
+              onToggle={field.onChange}
+              accessibilityLabel={i18n.t('centerAdmin.serviceEditor.rentalLabel')}
+            />
+          </View>
+          <Text variant="caption" color="ink2">
+            {i18n.t('centerAdmin.serviceEditor.rentalHelper')}
+          </Text>
+        </View>
+      )}
+    />
+  );
+}
+
 function ServiceAssignmentFields({ form }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
+  const isRental = useWatch({ control: form.control, name: 'isRental' });
+
   return (
     <>
       <ServiceModeField form={form} />
-      <ServiceStaffField form={form} />
+      <RentalField form={form} />
+      {isRental ? null : <ServiceStaffField form={form} />}
       <ServiceRoomField form={form} />
     </>
   );

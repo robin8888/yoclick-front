@@ -8,6 +8,7 @@ import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
 import { canJoinSession, hasSessionEnded, type RoomSession } from '../model/room-agenda';
+import { describeTeacherLine } from '../model/teacher-line';
 import { createEntryCardStyle } from './AgendaEntryCard.styles';
 import { AttendeeRow } from './AttendeeRow';
 import { CancelSessionDayControl } from './CancelSessionDayControl';
@@ -138,9 +139,7 @@ export function RoomSessionDetail({
       <Text variant="bodyStrong" {...tint}>
         {session.service.name}
       </Text>
-      <Text {...tint}>
-        {i18n.t('staffAgenda.rooms.teacherLine', { teacher: session.teacher.fullName })}
-      </Text>
+      <Text {...tint}>{describeTeacherLine(session.teacher)}</Text>
       <Text color="ink2" {...tint}>
         {i18n.t('staffAgenda.rooms.seats', {
           booked: session.bookedCount,

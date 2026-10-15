@@ -160,7 +160,9 @@ describe('ServiceEditorScreen', () => {
       durationMinutes: 30,
       priceCents: 2550,
       isVisible: true,
+      isRental: false,
       mode: 'private',
+      staffMembershipIds: [],
     });
   });
 
@@ -184,11 +186,12 @@ describe('ServiceEditorScreen', () => {
     });
   });
 
-  it('shows who already gives an existing service and will not leave it with nobody', async () => {
+  it('shows who already gives an existing service and lets it have nobody', async () => {
     jest.mocked(useLocalSearchParams).mockReturnValue({ serviceId: SERVICE_ID });
     mockApi({
       [`GET ${SERVICES_PATH}`]: { services: [buildService()] },
       [`GET ${TEAM_PATH}`]: { members: TEAM_MEMBERS },
+      [`PATCH ${SERVICES_PATH}/${SERVICE_ID}`]: buildService(),
     });
     renderScreen(<ServiceEditorScreen />);
 
@@ -199,8 +202,11 @@ describe('ServiceEditorScreen', () => {
     fireEvent.press(currentStaffCheckbox);
     fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
 
-    expect(await screen.findByText('Elige al menos una persona')).toBeOnTheScreen();
-    expect(findApiCall('PATCH', `${SERVICES_PATH}/${SERVICE_ID}`)).toBeUndefined();
+    await waitFor(() => {
+      expect(findApiCall('PATCH', `${SERVICES_PATH}/${SERVICE_ID}`)?.body).toMatchObject({
+        staffMembershipIds: [],
+      });
+    });
   });
 
   it('archives an existing service', async () => {

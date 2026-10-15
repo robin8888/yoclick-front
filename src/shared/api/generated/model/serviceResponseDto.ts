@@ -45,6 +45,7 @@ export interface ServiceResponseDto {
      */
   minNoticeMinutes: number;
   isVisible: boolean;
+  isRental: boolean;
   /** @nullable */
   room: ServiceResponseDtoRoom;
   hasSchedule: boolean;

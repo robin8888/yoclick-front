@@ -60,8 +60,10 @@ describe('service form mapping', () => {
       durationMinutes: 60,
       priceCents: null,
       isVisible: true,
+      isRental: false,
       mode: 'private',
       roomId: null,
+      staffMembershipIds: [],
     });
   });
 
@@ -70,7 +72,9 @@ describe('service form mapping', () => {
       name: 'Valoración',
       durationMinutes: 60,
       isVisible: true,
+      isRental: false,
       mode: 'private',
+      staffMembershipIds: [],
     });
   });
 
@@ -82,6 +86,7 @@ describe('service form mapping', () => {
         durationMinutes: '30',
         priceInEuros: '25',
         isVisible: false,
+        isRental: false,
         mode: 'both',
         staffMembershipIds: [],
         roomId: '',
@@ -92,7 +97,23 @@ describe('service form mapping', () => {
       durationMinutes: 30,
       priceCents: 2500,
       isVisible: false,
+      isRental: false,
       mode: 'both',
+      staffMembershipIds: [],
+    });
+  });
+
+  it('sends no teacher for a rental even if some were chosen', () => {
+    const rentalForm = {
+      ...buildEmptyServiceForm(),
+      name: 'Alquiler',
+      isRental: true,
+      staffMembershipIds: ['member-1'],
+    };
+
+    expect(mapFormToCreateRequest(rentalForm)).toMatchObject({
+      isRental: true,
+      staffMembershipIds: [],
     });
   });
 

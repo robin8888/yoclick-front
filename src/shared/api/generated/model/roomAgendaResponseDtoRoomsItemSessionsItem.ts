@@ -30,6 +30,7 @@ export type RoomAgendaResponseDtoRoomsItemSessionsItem = {
      */
   bookedCount: number;
   service: RoomAgendaResponseDtoRoomsItemSessionsItemService;
+  /** @nullable */
   teacher: RoomAgendaResponseDtoRoomsItemSessionsItemTeacher;
   /** @nullable */
   schedule: RoomAgendaResponseDtoRoomsItemSessionsItemSchedule;

@@ -27,6 +27,7 @@ export function buildService(
     bookingWindowDays: 30,
     minNoticeMinutes: 120,
     isVisible: true,
+    isRental: false,
     room: null,
     staff: [
       { membershipId: STAFF_MEMBERSHIP_ID, fullName: 'Álex Moreno', photoUrl: null, photos: [] },

@@ -72,6 +72,9 @@ function TeacherChoice({ form }: Readonly<{ form: CreateClassForm }>): React.JSX
   return (
     <View style={SECTION_STYLE}>
       <SectionTitle title={i18n.t('centerAdmin.createClass.teacherTitle')} />
+      {form.isTeacherOptional ? (
+        <Text color="ink2">{i18n.t('centerAdmin.createClass.teacherOptionalHint')}</Text>
+      ) : null}
       {form.teachers.length === 0 ? (
         <Text color="ink2">{i18n.t('centerAdmin.createClass.noTeachers')}</Text>
       ) : null}

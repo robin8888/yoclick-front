@@ -58,6 +58,7 @@ export const ServicesListResponse = zod.object({
   "bookingWindowDays": zod.int().min(servicesListResponseServicesItemBookingWindowDaysMin).max(servicesListResponseServicesItemBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesListResponseServicesItemMinNoticeMinutesMin).max(servicesListResponseServicesItemMinNoticeMinutesMax),
   "isVisible": zod.boolean(),
+  "isRental": zod.boolean(),
   "room": zod.object({
   "id": zod.uuid().regex(servicesListResponseServicesItemRoomIdRegExp),
   "name": zod.string()
@@ -72,7 +73,7 @@ export const ServicesListResponse = zod.object({
   "id": zod.uuid().regex(servicesListResponseServicesItemSchedulesItemRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
-  "teacherName": zod.string()
+  "teacherName": zod.string().nullable()
 })),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesListResponseServicesItemStaffItemMembershipIdRegExp),
@@ -133,8 +134,9 @@ export const ServicesCreateBody = zod.object({
   "bookingWindowDays": zod.int().min(1).max(servicesCreateBodyBookingWindowDaysMax).optional(),
   "minNoticeMinutes": zod.int().min(servicesCreateBodyMinNoticeMinutesMin).max(servicesCreateBodyMinNoticeMinutesMax).optional(),
   "isVisible": zod.boolean().optional(),
+  "isRental": zod.boolean().optional(),
   "roomId": zod.uuid().regex(servicesCreateBodyRoomIdRegExp).optional(),
-  "staffMembershipIds": zod.array(zod.uuid().regex(servicesCreateBodyStaffMembershipIdsItemRegExp)).min(1).max(servicesCreateBodyStaffMembershipIdsMax).optional()
+  "staffMembershipIds": zod.array(zod.uuid().regex(servicesCreateBodyStaffMembershipIdsItemRegExp)).max(servicesCreateBodyStaffMembershipIdsMax).optional()
 })
 
 export const servicesCreateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -172,6 +174,7 @@ export const ServicesCreateResponse = zod.object({
   "bookingWindowDays": zod.int().min(servicesCreateResponseBookingWindowDaysMin).max(servicesCreateResponseBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesCreateResponseMinNoticeMinutesMin).max(servicesCreateResponseMinNoticeMinutesMax),
   "isVisible": zod.boolean(),
+  "isRental": zod.boolean(),
   "room": zod.object({
   "id": zod.uuid().regex(servicesCreateResponseRoomIdRegExp),
   "name": zod.string()
@@ -186,7 +189,7 @@ export const ServicesCreateResponse = zod.object({
   "id": zod.uuid().regex(servicesCreateResponseSchedulesItemRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
-  "teacherName": zod.string()
+  "teacherName": zod.string().nullable()
 })),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesCreateResponseStaffItemMembershipIdRegExp),
@@ -248,8 +251,9 @@ export const ServicesUpdateBody = zod.object({
   "bookingWindowDays": zod.int().min(1).max(servicesUpdateBodyBookingWindowDaysMax).optional(),
   "minNoticeMinutes": zod.int().min(servicesUpdateBodyMinNoticeMinutesMin).max(servicesUpdateBodyMinNoticeMinutesMax).optional(),
   "isVisible": zod.boolean().optional(),
+  "isRental": zod.boolean().optional(),
   "roomId": zod.uuid().regex(servicesUpdateBodyRoomIdRegExp).nullish(),
-  "staffMembershipIds": zod.array(zod.uuid().regex(servicesUpdateBodyStaffMembershipIdsItemRegExp)).min(1).max(servicesUpdateBodyStaffMembershipIdsMax).optional()
+  "staffMembershipIds": zod.array(zod.uuid().regex(servicesUpdateBodyStaffMembershipIdsItemRegExp)).max(servicesUpdateBodyStaffMembershipIdsMax).optional()
 })
 
 export const servicesUpdateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -287,6 +291,7 @@ export const ServicesUpdateResponse = zod.object({
   "bookingWindowDays": zod.int().min(servicesUpdateResponseBookingWindowDaysMin).max(servicesUpdateResponseBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesUpdateResponseMinNoticeMinutesMin).max(servicesUpdateResponseMinNoticeMinutesMax),
   "isVisible": zod.boolean(),
+  "isRental": zod.boolean(),
   "room": zod.object({
   "id": zod.uuid().regex(servicesUpdateResponseRoomIdRegExp),
   "name": zod.string()
@@ -301,7 +306,7 @@ export const ServicesUpdateResponse = zod.object({
   "id": zod.uuid().regex(servicesUpdateResponseSchedulesItemRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
-  "teacherName": zod.string()
+  "teacherName": zod.string().nullable()
 })),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesUpdateResponseStaffItemMembershipIdRegExp),

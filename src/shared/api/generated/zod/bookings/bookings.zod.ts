@@ -1446,7 +1446,7 @@ export const AgendaGetRoomDayResponse = zod.object({
   "teacher": zod.object({
   "membershipId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemTeacherMembershipIdRegExp),
   "fullName": zod.string()
-}),
+}).nullable(),
   "schedule": zod.object({
   "seriesId": zod.uuid().regex(agendaGetRoomDayResponseRoomsItemSessionsItemScheduleSeriesIdRegExp),
   "label": zod.string().nullable()
@@ -1484,7 +1484,7 @@ export const AgendaGetRoomDayResponse = zod.object({
   "teacher": zod.object({
   "membershipId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemTeacherMembershipIdRegExp),
   "fullName": zod.string()
-}),
+}).nullable(),
   "schedule": zod.object({
   "seriesId": zod.uuid().regex(agendaGetRoomDayResponseSessionsWithoutRoomItemScheduleSeriesIdRegExp),
   "label": zod.string().nullable()

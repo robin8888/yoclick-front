@@ -6,6 +6,8 @@ import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsG
 interface CenterQuickActionsProps {
   /** «Salas y horarios» solo existe en los sectores con salas. */
   canManageSpaces: boolean;
+  /** «clases», «sesiones»…: la palabra del sector para lo que se da en las salas. */
+  sessionsWord: string;
   onAgendaPress: () => void;
   onAssignAppointmentPress: () => void;
   onManagementPress: () => void;
@@ -53,8 +55,8 @@ function buildManagementActions(props: CenterQuickActionsProps): QuickAction[] {
     {
       id: 'management',
       iconName: 'settings',
-      label: i18n.t('staffAgenda.center.managementAction'),
-      hint: i18n.t('staffAgenda.center.managementHint'),
+      label: i18n.t('staffAgenda.center.managementAction', { sessions: props.sessionsWord }),
+      hint: i18n.t('staffAgenda.center.managementHint', { sessions: props.sessionsWord }),
       onPress: props.onManagementPress,
     },
   ];

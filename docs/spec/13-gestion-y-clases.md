@@ -40,3 +40,10 @@ para que no impidan crear clases con otros servicios.
 - La hora de inicio y la de fin se eligen con ruedas (como el iPhone); el fin siempre es posterior al inicio.
 - Se validan contra el horario del centro (día cerrado, fuera de horario) y contra lo que ya ocupa la sala o el profesor (franjas visibles debajo de las ruedas). Mientras no valgan, no se puede guardar.
 - Cada semana: fecha de inicio y de fin (atajos de 1–4 semanas o «sin fin»). Solo una vez: un único día.
+
+## Alquileres sin profesor y botones de Gestión (2026-10-15)
+
+- El servicio tiene la casilla «Es un alquiler (sin profesor)» (`isRental`). En un alquiler, «Crear clase» no pide profesor y la clase/sesión queda con `staff = null` (back: `staff_membership_id` nullable en `session_schedules` y `class_sessions`; un disparador impide reservar una sesión sin profesor).
+- El profesor del servicio es opcional: sin nadie asignado, cualquiera del equipo puede darlo (en «Crear clase» salen todos).
+- Gestión: «Crear clase», «Crear y editar sala» y «Crear y editar servicio»; la lista de lo ya creado, para editarlo, va debajo de cada formulario de creación.
+- Inicio del centro: el acceso «Salas y {clases|sesiones}» usa la palabra del sector.

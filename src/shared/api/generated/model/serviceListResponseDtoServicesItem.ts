@@ -45,6 +45,7 @@ export type ServiceListResponseDtoServicesItem = {
      */
   minNoticeMinutes: number;
   isVisible: boolean;
+  isRental: boolean;
   /** @nullable */
   room: ServiceListResponseDtoServicesItemRoom;
   hasSchedule: boolean;

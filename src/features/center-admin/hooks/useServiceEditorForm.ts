@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { useForm, useWatch, type Control, type UseFormSetValue } from 'react-hook-form';
 
 import type { ServiceListResponseDtoServicesItem } from '@/shared/api/generated/model';
-import { i18n } from '@/shared/i18n';
 
 import {
   buildEmptyServiceForm,
@@ -30,7 +29,7 @@ export function useServiceEditorForm(
   service: ServiceListResponseDtoServicesItem | undefined,
 ): ServiceEditorForm {
   const router = useRouter();
-  const { control, setValue, handleSubmit, getValues, setError } = useForm<ServiceFormValues>({
+  const { control, setValue, handleSubmit } = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceFormSchema),
     values: service === undefined ? buildEmptyServiceForm() : mapServiceToForm(service),
   });
@@ -48,15 +47,6 @@ export function useServiceEditorForm(
     setValue,
     watchedDurationMinutes: useWatch({ control, name: 'durationMinutes' }),
     submitService: () => {
-      // Al editar, un servicio sin nadie que lo dé no tendría horas que reservar. Al crear, el
-      // servidor lo asigna a quien lo crea, así que no se exige.
-      const hasNobodyChosen = getValues('staffMembershipIds').length === 0;
-      if (service !== undefined && assignableStaff.members.length > 0 && hasNobodyChosen) {
-        setError('staffMembershipIds', {
-          message: i18n.t('centerAdmin.serviceEditor.staffRequired'),
-        });
-        return;
-      }
       void handleSubmit(saveService)();
     },
     archiveService,

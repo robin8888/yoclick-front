@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 
 import { formatLongDate } from '@/features/booking';
 import { useActiveCenterSectorId } from '@/features/join';
-import { hasRoomManagement, i18n } from '@/shared/i18n';
+import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { CenterAgendaHeader } from '../components/CenterAgendaHeader';
@@ -10,7 +10,7 @@ import { CenterQuickActions } from '../components/CenterQuickActions';
 import { ScanAttendanceButton } from '../components/ScanAttendanceButton';
 import { useAgendaDay } from '../hooks/useAgendaDay';
 
-/** La agenda, asignar citas, salas y horarios, servicios y bonos: los accesos del centro. */
+/** La agenda, asignar citas, salas y clases, servicios y bonos: los accesos del centro. */
 function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.Element {
   const router = useRouter();
   const sectorId = useActiveCenterSectorId();
@@ -18,6 +18,7 @@ function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.El
   return (
     <CenterQuickActions
       canManageSpaces={hasRoomManagement(sectorId)}
+      sessionsWord={getSectorVocabulary(sectorId).session.plural}
       onAgendaPress={() => {
         router.push('/(admin)/day-agenda');
       }}

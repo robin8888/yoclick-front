@@ -45,6 +45,7 @@ function buildService(
     bookingWindowDays: 30,
     minNoticeMinutes: 60,
     isVisible: true,
+    isRental: false,
     room: null,
     staff: [],
     ...overrides,

@@ -32,6 +32,7 @@ export type ScheduleSeriesListResponseDtoSeriesItem = {
      */
   endsOn: string | null;
   service: ScheduleSeriesListResponseDtoSeriesItemService;
+  /** @nullable */
   staff: ScheduleSeriesListResponseDtoSeriesItemStaff;
   /** @nullable */
   room: ScheduleSeriesListResponseDtoSeriesItemRoom;

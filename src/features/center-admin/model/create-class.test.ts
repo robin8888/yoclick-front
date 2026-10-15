@@ -94,7 +94,7 @@ describe('toOpenRangesByWeekday', () => {
 });
 
 describe('buildCreateClassRequest', () => {
-  const service = { mode: 'both' as const };
+  const service = { mode: 'both' as const, isRental: false };
   const base = {
     label: ' Kickboxing adultos ',
     roomId: 'room-1',
@@ -135,8 +135,20 @@ describe('buildCreateClassRequest', () => {
     expect(request).toMatchObject({ weekdays: [2], startsOn: '2026-10-20', endsOn: '2026-10-20' });
   });
 
+  it('lets a rental be created without a teacher', () => {
+    const request = buildCreateClassRequest(
+      { ...base, staffMembershipId: null },
+      { mode: 'group', isRental: true },
+      2,
+    );
+
+    expect(request).not.toBeNull();
+    expect(request).not.toHaveProperty('staffMembershipId');
+  });
+
   it('is null while something is missing or reversed', () => {
     expect(buildCreateClassRequest({ ...base, roomId: null }, service, 2)).toBeNull();
+    expect(buildCreateClassRequest({ ...base, staffMembershipId: null }, service, 2)).toBeNull();
     expect(buildCreateClassRequest({ ...base, weekdays: [] }, service, 2)).toBeNull();
     expect(buildCreateClassRequest({ ...base, endsOn: '2026-10-01' }, service, 2)).toBeNull();
   });

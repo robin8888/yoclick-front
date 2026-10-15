@@ -64,9 +64,11 @@ export const serviceFormSchema = z.object({
       error: () => i18n.t('centerAdmin.serviceEditor.priceInvalid'),
     }),
   isVisible: z.boolean(),
+  /** Alquiler de sala: sus clases se crean sin profesor. */
+  isRental: z.boolean(),
   /** Solo en privado, solo en grupo o de las dos formas; la clientela no elige el modo. */
   mode: z.enum(['private', 'group', 'both']),
-  /** Quién da el servicio; vacío en un alta = quien lo crea (lo decide el servidor). */
+  /** Quién da el servicio; es opcional: vacío = cualquiera del equipo puede darlo. */
   staffMembershipIds: z.array(z.string()),
   /** Sala o recurso donde se da; vacío = sin sala fija. */
   roomId: z.string(),
@@ -96,6 +98,7 @@ export function buildEmptyServiceForm(): ServiceFormValues {
     durationMinutes: String(DEFAULT_SERVICE_DURATION_MINUTES),
     priceInEuros: '',
     isVisible: true,
+    isRental: false,
     mode: 'private',
     staffMembershipIds: [],
     roomId: '',
@@ -109,6 +112,7 @@ export function mapServiceToForm(service: ServiceListResponseDtoServicesItem): S
     durationMinutes: String(service.durationMinutes),
     priceInEuros: formatPriceForInput(service.priceCents),
     isVisible: service.isVisible,
+    isRental: service.isRental,
     mode: service.mode,
     staffMembershipIds: service.staff.map((staffMember) => staffMember.membershipId),
     roomId: service.room?.id ?? '',
@@ -122,9 +126,10 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
   durationMinutes: number;
   priceCents: number | null;
   isVisible: boolean;
+  isRental: boolean;
   mode: ServiceFormValues['mode'];
   roomId: string | null;
-  staffMembershipIds?: string[];
+  staffMembershipIds: string[];
 } {
   return {
     name: formValues.name,
@@ -132,11 +137,11 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
     durationMinutes: Number(formValues.durationMinutes),
     priceCents: formValues.priceInEuros === '' ? null : parsePriceInCents(formValues.priceInEuros),
     isVisible: formValues.isVisible,
+    isRental: formValues.isRental,
     mode: formValues.mode,
     roomId: formValues.roomId === '' ? null : formValues.roomId,
-    ...(formValues.staffMembershipIds.length === 0
-      ? {}
-      : { staffMembershipIds: formValues.staffMembershipIds }),
+    // Un alquiler no lleva profesor; en el resto es opcional y vacío significa «cualquiera».
+    staffMembershipIds: formValues.isRental ? [] : formValues.staffMembershipIds,
   };
 }
 

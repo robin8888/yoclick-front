@@ -66,12 +66,22 @@ export function buildScheduleEditForm(series: ScheduleSeries): ScheduleEditValue
     startsOn: series.startsOn,
     endsOn: series.endsOn ?? NO_END_VALUE,
     roomId: series.room?.id ?? NO_ROOM_VALUE,
-    staffMembershipId: series.staff.membershipId,
+    staffMembershipId: series.staff?.membershipId ?? '',
   };
 }
 
 function toNullableText(text: string): string | null {
   return text === '' ? null : text;
+}
+
+/** El profesor solo se envía si se ha elegido uno distinto; un alquiler sigue sin profesor. */
+function readTeacherChange(
+  formValues: ScheduleEditValues,
+  series: ScheduleSeries,
+): { staffMembershipId?: string } {
+  const { staffMembershipId } = formValues;
+  const isUnchanged = staffMembershipId === (series.staff?.membershipId ?? '');
+  return isUnchanged || staffMembershipId === '' ? {} : { staffMembershipId };
 }
 
 /** Solo lo que cambia: el servidor rechaza una edición vacía y no toca lo que no se envía. */
@@ -95,9 +105,7 @@ export function mapScheduleEditToUpdateRequest(
       : {}),
     ...(endsOn === series.endsOn ? {} : { endsOn }),
     ...(roomId === (series.room?.id ?? null) ? {} : { roomId }),
-    ...(formValues.staffMembershipId === series.staff.membershipId
-      ? {}
-      : { staffMembershipId: formValues.staffMembershipId }),
+    ...readTeacherChange(formValues, series),
   };
 }
 

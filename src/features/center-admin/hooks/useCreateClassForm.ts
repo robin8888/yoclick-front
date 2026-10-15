@@ -27,6 +27,7 @@ import { useBusyTimes } from './useBusyTimes';
 import { useCenterSettings } from './useCenterSettings';
 import { getDeviceTimeZone } from './useCenterTimeZone';
 import { useCreateScheduleSeries } from './useCreateScheduleSeries';
+import { useAssignableStaff } from './useAssignableStaff';
 import { useRoomList } from './useRoomList';
 import { useServiceCatalog } from './useServiceCatalog';
 
@@ -49,6 +50,8 @@ export interface CreateClassForm {
   openRanges: OpenRangesByWeekday | null;
   service: ServiceListResponseDtoServicesItem | undefined;
   canSave: boolean;
+  /** Un alquiler se da sin profesor. */
+  isTeacherOptional: boolean;
   isSaving: boolean;
   errorMessage: string | null;
   skipped: ScheduleSeriesWriteResponseDtoSkippedItem[] | null;
@@ -225,12 +228,23 @@ function useSubmission(request: CreateScheduleSeriesRequestDto | null): Submissi
   };
 }
 
+/** Quienes dan el servicio; si no tiene a nadie asignado, cualquiera del equipo puede darlo. */
+function useTeachersOfService(
+  service: ServiceListResponseDtoServicesItem | undefined,
+): { membershipId: string; fullName: string }[] {
+  const team = useAssignableStaff().members;
+  if (service === undefined) return [];
+  if (service.staff.length > 0) return service.staff;
+  return team.map(({ membershipId, fullName }) => ({ membershipId, fullName }));
+}
+
 /** El formulario de «Crear clase»: nombre, sala, servicio, profesor y cuándo (días, fechas y horas). */
 export function useCreateClassForm(presetRoomId?: string): CreateClassForm {
   const { draft, actions } = useClassDraftState(presetRoomId);
   const rooms = useRoomList().data?.rooms ?? [];
   const services = useServiceCatalog().data?.services ?? [];
   const service = services.find(({ id }) => id === draft.serviceId);
+  const teachers = useTeachersOfService(service);
   const checks = useChecks(draft);
   const request =
     service === undefined || checks.hoursProblem !== null
@@ -247,12 +261,13 @@ export function useCreateClassForm(presetRoomId?: string): CreateClassForm {
     draft,
     rooms,
     services,
-    teachers: service?.staff ?? [],
+    teachers,
     busy: checks.busy,
     weekdays: checks.weekdays,
     hoursProblem: checks.hoursProblem,
     openRanges: checks.openRanges,
     service,
     canSave: request !== null,
+    isTeacherOptional: service?.isRental === true,
   };
 }

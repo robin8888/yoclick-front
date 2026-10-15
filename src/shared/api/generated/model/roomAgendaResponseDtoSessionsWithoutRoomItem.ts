@@ -30,6 +30,7 @@ export type RoomAgendaResponseDtoSessionsWithoutRoomItem = {
      */
   bookedCount: number;
   service: RoomAgendaResponseDtoSessionsWithoutRoomItemService;
+  /** @nullable */
   teacher: RoomAgendaResponseDtoSessionsWithoutRoomItemTeacher;
   /** @nullable */
   schedule: RoomAgendaResponseDtoSessionsWithoutRoomItemSchedule;

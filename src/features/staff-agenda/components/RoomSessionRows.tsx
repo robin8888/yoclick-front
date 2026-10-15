@@ -41,10 +41,12 @@ function RoomSessionRow({
         />
       </View>
       <Text>
-        {i18n.t('staffAgenda.rooms.classAndTeacher', {
-          service: session.service.name,
-          teacher: session.teacher.fullName,
-        })}
+        {session.teacher === null
+          ? session.service.name
+          : i18n.t('staffAgenda.rooms.classAndTeacher', {
+              service: session.service.name,
+              teacher: session.teacher.fullName,
+            })}
       </Text>
       <Text variant="caption" color="ink2">
         {i18n.t('staffAgenda.rooms.seats', {

@@ -152,25 +152,33 @@ export function resolvePeriod(draft: ClassDraft): Period {
   return { startsOn: draft.startsOn, endsOn: draft.endsOn === NO_END_DATE ? null : draft.endsOn };
 }
 
+/** Un alquiler se da sin profesor: es lo único que puede faltar. */
+function isTeacherMissing(draft: ClassDraft, service: { isRental: boolean }): boolean {
+  return draft.staffMembershipId === null && !service.isRental;
+}
+
+function isPeriodReversed(period: Period): boolean {
+  return period.endsOn !== null && period.endsOn < period.startsOn;
+}
+
 /** Con todo elegido, lo que se envía al servidor; `null` mientras falte algo. */
 export function buildCreateClassRequest(
   draft: ClassDraft,
-  service: Pick<ServiceListResponseDtoServicesItem, 'mode'>,
+  service: Pick<ServiceListResponseDtoServicesItem, 'mode' | 'isRental'>,
   weekdayOfStartsOn: number,
 ): CreateScheduleSeriesRequestDto | null {
   const { roomId, serviceId, staffMembershipId } = draft;
   const weekdays = resolveWeekdays(draft, weekdayOfStartsOn);
   const period = resolvePeriod(draft);
-  const isIncomplete = roomId === null || serviceId === null || staffMembershipId === null;
-  const isPeriodReversed = period.endsOn !== null && period.endsOn < period.startsOn;
-  if (isIncomplete || draft.startsOn === '' || weekdays.length === 0 || isPeriodReversed) {
+  const isIncomplete = roomId === null || serviceId === null || isTeacherMissing(draft, service);
+  if (isIncomplete || draft.startsOn === '' || weekdays.length === 0 || isPeriodReversed(period)) {
     return null;
   }
   const label = draft.label.trim();
   return {
     serviceId,
     roomId,
-    staffMembershipId,
+    ...(staffMembershipId === null ? {} : { staffMembershipId }),
     weekdays,
     startsAtTime: draft.startsAtTime,
     endsAtTime: draft.endsAtTime,

@@ -19,7 +19,9 @@ export function countFreeSeats(session: Pick<RoomSession, 'capacity' | 'bookedCo
 
 /** Los profesores que dan clase en la sala ese día, sin repetir y por orden de hora. */
 export function listTeachersOfRoomDay(room: RoomDay): string[] {
-  const names = room.sessions.map((session) => session.teacher.fullName);
+  const names = room.sessions.flatMap((session) =>
+    session.teacher === null ? [] : [session.teacher.fullName],
+  );
   return [...new Set(names)];
 }
 

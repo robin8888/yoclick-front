@@ -65,7 +65,7 @@ export function describeSeriesPlace(series: ScheduleSeries): string {
   );
   return [
     series.room?.name ?? i18n.t('centerAdmin.schedules.noRoom'),
-    series.staff.fullName,
+    series.staff?.fullName ?? i18n.t('centerAdmin.schedules.noTeacher'),
     modeLabel,
     i18n.t('centerAdmin.schedules.enrolledOfCapacity', {
       enrolled: series.enrolledCount,

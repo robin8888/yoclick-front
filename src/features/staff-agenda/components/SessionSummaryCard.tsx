@@ -7,6 +7,7 @@ import { Icon, type IconName } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
 import { canJoinSession, type FoundSession } from '../model/room-agenda';
+import { describeTeacherLine } from '../model/teacher-line';
 import {
   createFactRowStyle,
   createSeatsFillStyle,
@@ -52,10 +53,7 @@ export function SessionSummaryCard({
     <View style={createSessionCardStyle(theme)}>
       <Text variant="titleMd">{session.service.name}</Text>
       <Fact iconName="clock" text={timeRange} />
-      <Fact
-        iconName="user"
-        text={i18n.t('staffAgenda.rooms.teacherLine', { teacher: session.teacher.fullName })}
-      />
+      <Fact iconName="user" text={describeTeacherLine(session.teacher)} />
       {roomName === null ? null : <Fact iconName="mapPin" text={roomName} />}
       <View style={createSeatsTrackStyle(theme)} accessibilityElementsHidden>
         <View style={createSeatsFillStyle(theme, { fillPercent, isFull })} />
