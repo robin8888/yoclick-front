@@ -1,5 +1,6 @@
 import type { ServiceListResponseDtoServicesItem } from '@/shared/api/generated/model';
-import { i18n } from '@/shared/i18n';
+import { useActiveCenterSectorId } from '@/features/join';
+import { hasRoomManagement, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { EmptyState } from '@/ui/molecules/EmptyState';
 import { OptionCard } from '@/ui/molecules/OptionCard';
@@ -23,6 +24,8 @@ export function ServiceOptionList({
   onRetry,
   isKindHidden = false,
 }: Readonly<ServiceOptionListProps>): React.JSX.Element {
+  // En los centros con salas, un servicio solo se reserva cuando el centro le ha dado sala y horario.
+  const isScheduleRequired = hasRoomManagement(useActiveCenterSectorId());
   if (services.length === 0) {
     return (
       <EmptyState
@@ -43,6 +46,8 @@ export function ServiceOptionList({
           meta={buildServiceMetaLabel(service, { isKindHidden })}
           description={service.description ?? undefined}
           isSelected={service.id === selectedServiceId}
+          isDisabled={isScheduleRequired && !service.hasSchedule}
+          disabledReason={i18n.t('booking.book.noScheduleYet')}
           onPress={() => {
             onServiceSelect(service.id);
           }}

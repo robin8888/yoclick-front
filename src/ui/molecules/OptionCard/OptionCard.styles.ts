@@ -8,6 +8,9 @@ const RADIO_DOT_SIZE = 12;
 const HALF = 0.5;
 const CHECKBOX_RADIUS = 6;
 
+/** Una opción que aún no se puede elegir: se ve, pero apagada. */
+export const DISABLED_STYLE: ViewStyle = { opacity: 0.5 };
+
 export function createOptionCardStyle(theme: Theme, isSelected: boolean): ViewStyle {
   return {
     flexDirection: 'row',

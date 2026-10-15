@@ -12,5 +12,8 @@ export interface OptionCardProps {
   leading?: ReactNode;
   selectionMode?: OptionSelectionMode;
   isSelected: boolean;
+  /** Atenuada y sin respuesta al toque; `disabledReason` dice por qué. */
+  isDisabled?: boolean;
+  disabledReason?: string | undefined;
   onPress: () => void;
 }

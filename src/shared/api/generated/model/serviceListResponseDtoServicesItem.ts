@@ -46,5 +46,6 @@ export type ServiceListResponseDtoServicesItem = {
   isVisible: boolean;
   /** @nullable */
   room: ServiceListResponseDtoServicesItemRoom;
+  hasSchedule: boolean;
   staff: ServiceListResponseDtoServicesItemStaffItem[];
 };

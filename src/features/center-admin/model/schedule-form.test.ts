@@ -34,6 +34,7 @@ function buildService(
     id: 'service-english',
     name: 'Inglés B1',
     description: null,
+    hasSchedule: true,
     kind: 'individual',
     mode: 'both',
     durationMinutes: 90,

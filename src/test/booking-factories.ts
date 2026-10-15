@@ -16,6 +16,7 @@ export function buildService(
     id: SERVICE_ID,
     name: 'Entrenamiento personal',
     description: null,
+    hasSchedule: true,
     kind: 'individual',
     mode: 'private',
     durationMinutes: 60,

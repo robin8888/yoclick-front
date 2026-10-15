@@ -46,5 +46,6 @@ export interface ServiceResponseDto {
   isVisible: boolean;
   /** @nullable */
   room: ServiceResponseDtoRoom;
+  hasSchedule: boolean;
   staff: ServiceResponseDtoStaffItem[];
 }

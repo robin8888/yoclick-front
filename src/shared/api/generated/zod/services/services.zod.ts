@@ -58,6 +58,7 @@ export const ServicesListResponse = zod.object({
   "id": zod.uuid().regex(servicesListResponseServicesItemRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
+  "hasSchedule": zod.boolean(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesListResponseServicesItemStaffItemMembershipIdRegExp),
   "fullName": zod.string(),
@@ -156,6 +157,7 @@ export const ServicesCreateResponse = zod.object({
   "id": zod.uuid().regex(servicesCreateResponseRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
+  "hasSchedule": zod.boolean(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesCreateResponseStaffItemMembershipIdRegExp),
   "fullName": zod.string(),
@@ -255,6 +257,7 @@ export const ServicesUpdateResponse = zod.object({
   "id": zod.uuid().regex(servicesUpdateResponseRoomIdRegExp),
   "name": zod.string()
 }).nullable(),
+  "hasSchedule": zod.boolean(),
   "staff": zod.array(zod.object({
   "membershipId": zod.uuid().regex(servicesUpdateResponseStaffItemMembershipIdRegExp),
   "fullName": zod.string(),

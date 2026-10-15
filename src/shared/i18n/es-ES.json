@@ -528,6 +528,7 @@
         "individual": "Individual"
       },
       "free": "Gratis",
+      "noScheduleYet": "Aún sin sala ni horario: el centro te avisará cuando esté disponible",
       "emptyTitle": "Aún no hay servicios",
       "emptyDescription": "Tu centro todavía no tiene servicios reservables. Vuelve más tarde.",
       "errorTitle": "No hemos podido cargar los servicios",
