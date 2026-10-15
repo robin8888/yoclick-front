@@ -3,6 +3,8 @@ export type PaymentSheetResult = 'paid' | 'canceled' | 'failed' | 'unavailable';
 interface PaymentSheetRequest {
   /** Clave pública de Stripe que entrega la API junto al cobro. */
   publishableKey: string;
+  /** Cuenta de Stripe del centro: el cobro vive en ella (cobro directo) y la hoja debe abrirse en ella. */
+  connectedAccountId: string;
   /** Secreto del cobro; vive solo mientras la hoja está abierta. */
   clientSecret: string;
   /** El nombre del centro, que es quien cobra. */
@@ -29,7 +31,10 @@ export async function presentPaymentSheet(
   const stripe = loadStripeModule();
   if (stripe === null) return 'unavailable';
   try {
-    await stripe.initStripe({ publishableKey: request.publishableKey });
+    await stripe.initStripe({
+      publishableKey: request.publishableKey,
+      stripeAccountId: request.connectedAccountId,
+    });
     const initialization = await stripe.initPaymentSheet({
       paymentIntentClientSecret: request.clientSecret,
       merchantDisplayName: request.merchantName,

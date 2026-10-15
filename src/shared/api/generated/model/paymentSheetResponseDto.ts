@@ -11,6 +11,7 @@ export interface PaymentSheetResponseDto {
   paymentId: string;
   clientSecret: string;
   publishableKey: string;
+  connectedAccountId: string;
   /**
      * @minimum -9007199254740991
      * @maximum 9007199254740991

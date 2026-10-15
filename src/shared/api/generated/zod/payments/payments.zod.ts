@@ -105,6 +105,7 @@ export const PaymentsPayPassResponse = zod.object({
   "paymentId": zod.uuid().regex(paymentsPayPassResponsePaymentIdRegExp),
   "clientSecret": zod.string(),
   "publishableKey": zod.string(),
+  "connectedAccountId": zod.string(),
   "amountCents": zod.int().min(paymentsPayPassResponseAmountCentsMin).max(paymentsPayPassResponseAmountCentsMax),
   "merchantName": zod.string()
 })
@@ -135,6 +136,7 @@ export const PaymentsPayRoomRentalResponse = zod.object({
   "paymentId": zod.uuid().regex(paymentsPayRoomRentalResponsePaymentIdRegExp),
   "clientSecret": zod.string(),
   "publishableKey": zod.string(),
+  "connectedAccountId": zod.string(),
   "amountCents": zod.int().min(paymentsPayRoomRentalResponseAmountCentsMin).max(paymentsPayRoomRentalResponseAmountCentsMax),
   "merchantName": zod.string()
 })
