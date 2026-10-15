@@ -1383,6 +1383,7 @@
     "setupGuide": {
       "title": "Primeros pasos",
       "subtitle": "Sigue este orden y tu centro funcionará del todo con la app.",
+      "premiumBadge": "Premium",
       "groups": {
         "prepare": "Prepara tu centro",
         "teamAndPasses": "Equipo y bonos",

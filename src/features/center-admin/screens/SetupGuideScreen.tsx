@@ -5,9 +5,9 @@ import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { Text } from '@/ui/atoms/Text';
-import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { SetupGuideStepCard } from '../components/SetupGuideStepCard';
 import { buildSetupGuideGroups, type SetupGuideStep } from '../model/setup-guide-steps';
 import { SECTION_STYLE } from './AdminMoreScreen.styles';
 
@@ -29,13 +29,15 @@ function SetupGuideStepRow({
   words,
   onPress,
 }: Readonly<SetupGuideStepRowProps>): React.JSX.Element {
-  const title = i18n.t(`centerAdmin.setupGuide.steps.${step.id}.title`, { ...words });
+  const isPremiumStep = step.id === 'onlinePayments';
 
   return (
-    <ListItem
-      leadingIconName={step.iconName}
-      title={`${String(step.position)}. ${title}`}
-      subtitle={i18n.t(`centerAdmin.setupGuide.steps.${step.id}.description`, { ...words })}
+    <SetupGuideStepCard
+      position={step.position}
+      iconName={step.iconName}
+      title={i18n.t(`centerAdmin.setupGuide.steps.${step.id}.title`, { ...words })}
+      description={i18n.t(`centerAdmin.setupGuide.steps.${step.id}.description`, { ...words })}
+      badgeLabel={isPremiumStep ? i18n.t('centerAdmin.setupGuide.premiumBadge') : undefined}
       onPress={onPress}
     />
   );
