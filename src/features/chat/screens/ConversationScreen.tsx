@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { FlatList, KeyboardAvoidingView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
 import { LoadErrorState } from '@/features/join';
@@ -7,36 +9,54 @@ import { useBackAction } from '@/shared/hooks/useBackAction';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { formatTime24h } from '@/shared/lib/format/format-time';
+import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
-import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ChatHeader } from '../components/ChatHeader';
 import { MessageBubble } from '../components/MessageBubble';
 import { MessageComposer } from '../components/MessageComposer';
+import {
+  createScreenStyle,
+  createThreadContentStyle,
+  createThreadStyle,
+  FILL_STYLE,
+} from './ConversationScreen.styles';
 import { useCenterName } from '../hooks/useCenterName';
 import { useMarkConversationRead, useSendMessage } from '../hooks/useChatMutations';
 import { useConversationMessages, useConversations } from '../hooks/useChatQueries';
 import { useSendAttachment } from '../hooks/useSendAttachment';
 import { describeCounterpartName } from '../model/conversation-text';
 
+type ThreadMessage = MessageListResponseDto['messages'][number];
+
 interface ConversationScreenProps {
   conversationId: string;
 }
 
+interface CounterpartSummary {
+  name: string;
+  photoUrl: string | null;
+}
+
 /** Con quién se habla, sacado de la bandeja (que ya está en caché al llegar aquí). */
-function useCounterpartName(conversationId: string): string {
+function useCounterpart(conversationId: string): CounterpartSummary {
   const centerName = useCenterName();
   const { data } = useConversations();
   const conversation = data?.conversations.find(({ id }) => id === conversationId);
-  if (conversation === undefined) return i18n.t('chat.title');
-  return describeCounterpartName(conversation.counterpart, centerName);
+  if (conversation === undefined) return { name: i18n.t('chat.title'), photoUrl: null };
+  const { counterpart } = conversation;
+  return {
+    name: describeCounterpartName(counterpart, centerName),
+    photoUrl: counterpart.kind === 'person' ? counterpart.photoUrl : null,
+  };
 }
 
 /** Sincroniza con el servidor: lo que llega de la otra parte, mientras se mira, queda leído. */
 function useMarkReadWhenOtherSideWrites(
   conversationId: string,
-  messages: MessageListResponseDto['messages'] | undefined,
+  messages: readonly ThreadMessage[] | undefined,
 ): void {
   const markRead = useMarkConversationRead(conversationId);
   const newestMessage = messages?.[0];
@@ -50,34 +70,46 @@ function useMarkReadWhenOtherSideWrites(
   }, [newestMessageId, isFromOtherSide]);
 }
 
+/** Lo más reciente abajo: la lista va invertida y el servidor ya manda lo más nuevo primero. */
 function MessageThread({
   messages,
-}: Readonly<{ messages: MessageListResponseDto['messages'] }>): React.JSX.Element {
-  if (messages.length === 0) {
-    return (
-      <Text variant="body" color="ink2">
-        {i18n.t('chat.threadEmptyDescription')}
-      </Text>
-    );
-  }
+}: Readonly<{ messages: readonly ThreadMessage[] }>): React.JSX.Element {
+  const theme = useTheme();
+
   return (
-    <>
-      {messages.map((message) => (
+    <FlatList
+      inverted
+      data={messages}
+      keyExtractor={(message) => message.id}
+      style={createThreadStyle(theme)}
+      contentContainerStyle={createThreadContentStyle(theme)}
+      keyboardShouldPersistTaps="handled"
+      ListEmptyComponent={
+        <Text variant="body" color="ink2" align="center">
+          {i18n.t('chat.threadEmptyDescription')}
+        </Text>
+      }
+      renderItem={({ item }) => (
         <MessageBubble
-          key={message.id}
-          message={message}
-          timeLabel={formatTime24h(message.createdAt, DEFAULT_CENTER_TIME_ZONE)}
+          message={item}
+          timeLabel={formatTime24h(item.createdAt, DEFAULT_CENTER_TIME_ZONE)}
         />
-      ))}
-    </>
+      )}
+    />
   );
 }
 
-/** El hilo de una conversación: lo más reciente arriba, y abajo el campo para escribir. */
+/**
+ * El hilo, como en WhatsApp: cabecera con la otra persona, mensajes con lo más reciente abajo y la
+ * barra de escribir pegada al teclado. No usa `ScreenTemplate`: su pie se vuelve a montar al salir
+ * el teclado y el campo perdía el foco.
+ */
 export function ConversationScreen({
   conversationId,
 }: Readonly<ConversationScreenProps>): React.JSX.Element {
+  const theme = useTheme();
   const onBackPress = useBackAction();
+  const counterpart = useCounterpart(conversationId);
   const { data, isPending, isError, error, refetch } = useConversationMessages(conversationId);
   const { send, isSending, errorMessage: sendError } = useSendMessage(conversationId);
   const { attach, isUploading, errorMessage: attachError } = useSendAttachment(conversationId);
@@ -85,23 +117,31 @@ export function ConversationScreen({
   const failureMessage = sendError ?? attachError;
 
   return (
-    <ScreenTemplate
-      title={useCounterpartName(conversationId)}
-      onBackPress={onBackPress}
-      footer={<MessageComposer isBusy={isSending || isUploading} onSend={send} onAttach={attach} />}
-    >
-      {failureMessage === null ? null : <FormErrorBanner message={failureMessage} />}
-      {isPending ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
-      {isError ? (
-        <LoadErrorState
-          title={i18n.t('chat.errorTitle')}
-          error={error}
-          onRetry={() => {
-            void refetch();
-          }}
+    <SafeAreaView edges={['top']} style={createScreenStyle(theme)}>
+      <KeyboardAvoidingView style={FILL_STYLE} behavior="padding">
+        <ChatHeader
+          name={counterpart.name}
+          photoUrl={counterpart.photoUrl}
+          onBackPress={onBackPress}
         />
-      ) : null}
-      {data === undefined ? null : <MessageThread messages={data.messages} />}
-    </ScreenTemplate>
+        {failureMessage === null ? null : (
+          <View>
+            <FormErrorBanner message={failureMessage} />
+          </View>
+        )}
+        {isPending ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
+        {isError ? (
+          <LoadErrorState
+            title={i18n.t('chat.errorTitle')}
+            error={error}
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        ) : null}
+        {data === undefined ? null : <MessageThread messages={data.messages} />}
+        <MessageComposer isBusy={isSending || isUploading} onSend={send} onAttach={attach} />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

@@ -46,6 +46,7 @@ interface QuickAccessGridProps {
   onBookPress: () => void;
   onBookingsPress: () => void;
   onTeamPress: () => void;
+  onMessagesPress: () => void;
 }
 
 /** «Accesos rápidos» del prototipo `home` que ya existen: reservar y ver mis citas. */
@@ -53,6 +54,7 @@ export function QuickAccessGrid({
   onBookPress,
   onBookingsPress,
   onTeamPress,
+  onMessagesPress,
 }: Readonly<QuickAccessGridProps>): React.JSX.Element {
   const theme = useTheme();
 
@@ -76,6 +78,11 @@ export function QuickAccessGrid({
           iconName="users"
           label={i18n.t('booking.home.teamAction')}
           onPress={onTeamPress}
+        />
+        <QuickAccessTile
+          iconName="messageCircle"
+          label={i18n.t('chat.title')}
+          onPress={onMessagesPress}
         />
       </View>
     </View>

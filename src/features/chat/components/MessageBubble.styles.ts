@@ -15,7 +15,11 @@ export function createBubbleStyle(theme: Theme, isMine: boolean): ViewStyle {
     gap: theme.space[1],
     padding: theme.space[3],
     borderRadius: theme.radius.lg,
-    backgroundColor: isMine ? theme.colors.brand : theme.colors.surface2,
+    backgroundColor: isMine ? theme.colors.brand : theme.colors.surface,
+    // La esquina del lado de quien habla, casi recta: el «pico» de la burbuja.
+    ...(isMine
+      ? { borderBottomRightRadius: theme.radius.sm }
+      : { borderBottomLeftRadius: theme.radius.sm }),
   };
 }
 

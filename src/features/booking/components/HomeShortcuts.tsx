@@ -29,6 +29,9 @@ export function HomeShortcuts({ nextBooking }: Readonly<HomeShortcutsProps>): Re
         onTeamPress={() => {
           router.push('/(client)/team');
         }}
+        onMessagesPress={() => {
+          router.push('/(client)/messages');
+        }}
       />
     </>
   );

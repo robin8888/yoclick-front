@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import { View } from 'react-native';
+import { TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { IconButton } from '@/ui/atoms/IconButton';
-import { Input } from '@/ui/atoms/Input';
+import { useTextStyle } from '@/ui/atoms/Text';
 
 import type { AttachmentSource } from '../hooks/useSendAttachment';
-import { COMPOSER_INPUT_STYLE, createComposerStyle } from './MessageComposer.styles';
+import {
+  createComposerBarStyle,
+  createComposerFieldStyle,
+  createComposerPillStyle,
+} from './MessageComposer.styles';
 
 const MAX_MESSAGE_LENGTH = 2000;
 
@@ -43,28 +48,36 @@ function AttachButtons({
   );
 }
 
-/** La barra de abajo del hilo: un campo de texto, dos adjuntos (foto, PDF) y enviar. */
+/**
+ * La barra de abajo del hilo, como en WhatsApp: una píldora con el campo y los adjuntos (foto y
+ * PDF) y, al lado, el botón redondo de enviar. Vive fuera de `ScreenTemplate`: su pie se vuelve a
+ * montar al salir el teclado y el campo perdería el foco.
+ */
 export function MessageComposer({
   isBusy,
   onSend,
   onAttach,
 }: Readonly<MessageComposerProps>): React.JSX.Element {
   const theme = useTheme();
+  const { bottom: bottomInset } = useSafeAreaInsets();
+  const textStyle = useTextStyle({ variant: 'body', color: 'ink' });
   const [draft, setDraft] = useState('');
   const trimmedDraft = draft.trim();
 
   return (
-    <View style={createComposerStyle(theme)}>
-      <AttachButtons isBusy={isBusy} onAttach={onAttach} />
-      <View style={COMPOSER_INPUT_STYLE}>
-        <Input
+    <View style={createComposerBarStyle(theme, bottomInset)}>
+      <View style={createComposerPillStyle(theme)}>
+        <TextInput
           value={draft}
           onChangeText={setDraft}
           accessibilityLabel={i18n.t('chat.messageLabel')}
           placeholder={i18n.t('chat.messagePlaceholder')}
-          isMultiline
+          placeholderTextColor={theme.colors.ink2}
+          multiline
           maxLength={MAX_MESSAGE_LENGTH}
+          style={createComposerFieldStyle(textStyle)}
         />
+        <AttachButtons isBusy={isBusy} onAttach={onAttach} />
       </View>
       <IconButton
         iconName="send"

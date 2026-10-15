@@ -36,6 +36,9 @@ function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.El
       onSetupGuidePress={() => {
         router.push('/(admin)/setup-guide');
       }}
+      onMessagesPress={() => {
+        router.push('/(admin)/messages');
+      }}
     />
   );
 }

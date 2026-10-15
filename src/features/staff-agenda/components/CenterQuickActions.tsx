@@ -11,6 +11,7 @@ interface CenterQuickActionsProps {
   onServicesPress: () => void;
   onPassesPress: () => void;
   onSetupGuidePress: () => void;
+  onMessagesPress: () => void;
 }
 
 function buildPrimaryAction(props: CenterQuickActionsProps): QuickAction {
@@ -30,6 +31,16 @@ function buildSetupGuideAction(props: CenterQuickActionsProps): QuickAction {
     label: i18n.t('staffAgenda.center.setupGuideAction'),
     hint: i18n.t('staffAgenda.center.setupGuideHint'),
     onPress: props.onSetupGuidePress,
+  };
+}
+
+function buildMessagesAction(props: CenterQuickActionsProps): QuickAction {
+  return {
+    id: 'messages',
+    iconName: 'messageCircle',
+    label: i18n.t('chat.title'),
+    hint: i18n.t('staffAgenda.center.messagesHint'),
+    onPress: props.onMessagesPress,
   };
 }
 
@@ -67,6 +78,7 @@ function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
       hint: i18n.t('staffAgenda.center.servicesHint'),
       onPress: props.onServicesPress,
     },
+    buildMessagesAction(props),
     ...management,
     buildSetupGuideAction(props),
   ];

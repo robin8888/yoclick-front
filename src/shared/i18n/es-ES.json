@@ -892,7 +892,8 @@
         "scanHint": "Registra la llegada leyendo su QR",
         "routinesHint": "Los planes que preparas",
         "contentHint": "Vídeos y documentos",
-        "availabilityHint": "Tus horarios y ausencias"
+        "availabilityHint": "Tus horarios y ausencias",
+        "messagesHint": "Escribe a tus alumnos y al centro"
       }
     },
     "agenda": {
@@ -932,6 +933,7 @@
       "passesHint": "Pedidos y activos",
       "setupGuideAction": "Primeros pasos",
       "setupGuideHint": "Cómo dejar tu centro listo",
+      "messagesHint": "Habla con tus alumnos y tu equipo",
       "byStaffTitle": "Por {{staffWord}}",
       "noAppointments": "Sin citas este día",
       "appointmentCount_one": "{{count}} cita",

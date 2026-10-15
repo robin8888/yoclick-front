@@ -17,6 +17,7 @@ interface ActionSpec {
     | 'attendance.scan.openAction'
     | 'content.admin.title'
     | 'session.profile.availabilityAction'
+    | 'chat.title'
     | null;
   hintKey:
     | 'staffAgenda.instructor.home.agendaHint'
@@ -25,7 +26,8 @@ interface ActionSpec {
     | 'staffAgenda.instructor.home.scanHint'
     | 'staffAgenda.instructor.home.routinesHint'
     | 'staffAgenda.instructor.home.contentHint'
-    | 'staffAgenda.instructor.home.availabilityHint';
+    | 'staffAgenda.instructor.home.availabilityHint'
+    | 'staffAgenda.instructor.home.messagesHint';
 }
 
 /** Mi agenda es lo que más se usa: va arriba, a todo el ancho. */
@@ -72,6 +74,13 @@ const SECONDARY_SPECS: readonly ActionSpec[] = [
     route: '/(staff)/content',
     labelKey: 'content.admin.title',
     hintKey: 'staffAgenda.instructor.home.contentHint',
+  },
+  {
+    id: 'messages',
+    iconName: 'messageCircle',
+    route: '/(staff)/messages',
+    labelKey: 'chat.title',
+    hintKey: 'staffAgenda.instructor.home.messagesHint',
   },
   {
     id: 'availability',
