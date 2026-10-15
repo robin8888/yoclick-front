@@ -563,7 +563,7 @@ export const usePaymentsStartOnboarding = <TError = ErrorType<ProblemDetailsDto>
 }
 
 /**
- * @summary Enlace de un solo uso al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
+ * @summary Enlace al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
  */
 export const paymentsOpenDashboard = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<OnboardingLinkResponseDto> => {
 
@@ -615,7 +615,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type PaymentsOpenDashboardMutationVariables = {centerId: string}
 
     /**
- * @summary Enlace de un solo uso al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
+ * @summary Enlace al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
  */
 export const usePaymentsOpenDashboard = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsOpenDashboard>>, TError,PaymentsOpenDashboardMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

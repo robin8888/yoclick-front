@@ -36,4 +36,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   pass_activated: 'pass_activated',
   room_rental_assigned: 'room_rental_assigned',
   payment_received: 'payment_received',
+  pass_running_low: 'pass_running_low',
+  pass_exhausted: 'pass_exhausted',
 } as const;

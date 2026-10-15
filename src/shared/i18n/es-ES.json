@@ -1140,6 +1140,10 @@
     "roomRentalAssignedDescription": "Tienes alquilada la sala {{roomName}} el {{when}}{{priceSuffix}}. Si tu centro cobra online, puedes pagarlo desde Mis bonos.",
     "paymentReceivedTitle": "Pago recibido",
     "paymentReceivedDescription": "{{clientName}} ha pagado {{rateName}} ({{price}}).",
+    "passRunningLowTitle": "Tu bono se está acabando",
+    "passRunningLowDescription": "Te queda una sola sesión en tu bono {{rateName}}. Pide uno nuevo para no quedarte sin plaza.",
+    "passExhaustedTitle": "Tu bono se ha agotado",
+    "passExhaustedDescription": "Has usado todas las sesiones de tu bono {{rateName}}. Pide uno nuevo para seguir reservando.",
     "priceSuffix": " por {{price}}"
   },
   "clients": {

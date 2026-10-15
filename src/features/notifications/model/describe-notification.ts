@@ -48,6 +48,8 @@ const TITLE_KEYS = {
   pass_activated: 'notifications.passActivatedTitle',
   room_rental_assigned: 'notifications.roomRentalAssignedTitle',
   payment_received: 'notifications.paymentReceivedTitle',
+  pass_running_low: 'notifications.passRunningLowTitle',
+  pass_exhausted: 'notifications.passExhaustedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -77,6 +79,8 @@ const DESCRIPTION_KEYS = {
   pass_activated: 'notifications.passActivatedDescription',
   room_rental_assigned: 'notifications.roomRentalAssignedDescription',
   payment_received: 'notifications.paymentReceivedDescription',
+  pass_running_low: 'notifications.passRunningLowDescription',
+  pass_exhausted: 'notifications.passExhaustedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
