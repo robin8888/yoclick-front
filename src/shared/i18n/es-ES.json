@@ -1241,7 +1241,8 @@
     },
     "tabs": {
       "clients": "{{clientWord}} ({{count}})",
-      "groups": "Grupos ({{count}})"
+      "groups": "Grupos ({{count}})",
+      "families": "Familias ({{count}})"
     },
     "inviteAction": "Invitar {{clientWord}}",
     "search": {
@@ -1277,7 +1278,9 @@
       "addAction": "Añadir tutor",
       "removeLabel": "Quitar a {{name}} como tutor",
       "linkTitle": "Elegir tutor",
-      "linkSubtitle": "Elige a la persona adulta responsable de este menor."
+      "linkSubtitle": "Elige a la persona adulta responsable de este menor.",
+      "isStudentLabel": "Cuenta como alumno",
+      "isStudentHint": "Apágalo si solo es tutor: no cuenta para el plan ni sale en la lista de alumnos."
     },
     "groups": {
       "emptyTitle": "Aún no tienes grupos",
@@ -1599,6 +1602,8 @@
       "moneySection": "Dinero",
       "subscriptionTitle": "Mi suscripción",
       "subscriptionSubtitle": "Tu plan y el uso de tu centro",
+      "inviteGuardianTitle": "Invitar a un tutor",
+      "inviteGuardianSubtitle": "Madre, padre o tutor: no cuenta como alumno",
       "inviteStudentTitle": "Invitar como {{clientSingular}}",
       "inviteStudentSubtitle": "Código por WhatsApp, SMS o correo",
       "inviteInstructorTitle": "Invitar como {{staffSingular}}",
@@ -2015,6 +2020,7 @@
       "problem": "La hora de cierre debe ser posterior a la de apertura y los tramos no pueden solaparse."
     },
     "team": {
+      "guardianWord": "tutor",
       "inviteAction": "Invitar",
       "loadError": "No hemos podido cargar el equipo",
       "memberTitle": "Equipo",

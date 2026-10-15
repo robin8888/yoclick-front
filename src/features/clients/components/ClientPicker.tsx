@@ -25,6 +25,8 @@ interface ClientPickerProps {
   onClientSelect: (client: PickableClient) => void;
   /** Quienes ya están elegidos: salen marcados (con check y fondo de marca) y se pueden volver a pulsar. */
   selectedMembershipIds?: readonly string[];
+  /** Por defecto, alumnos; con `all` salen también las familias (elegir a un tutor). */
+  kind?: 'students' | 'guardians' | 'all';
 }
 
 interface PickerRowProps {
@@ -105,12 +107,14 @@ function PickerList({
 export function ClientPicker({
   onClientSelect,
   selectedMembershipIds = [],
+  kind,
 }: Readonly<ClientPickerProps>): React.JSX.Element {
   const filters = useClientFilters();
   const list = useClientList({
     searchText: filters.searchText,
     statusFilter: 'all',
     scope: 'center',
+    ...(kind === undefined ? {} : { kind }),
   });
 
   return (

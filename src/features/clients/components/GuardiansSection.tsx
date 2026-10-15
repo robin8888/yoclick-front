@@ -5,14 +5,42 @@ import { i18n } from '@/shared/i18n';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { IconButton } from '@/ui/atoms/IconButton';
+import { Switch } from '@/ui/atoms/Switch';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 
+import { useClient } from '../hooks/useClient';
 import { useGuardianLinking, useGuardians } from '../hooks/useGuardians';
+import { useSetIsStudent } from '../hooks/useSetIsStudent';
 
 const STACK_STYLE = { gap: 8 } as const;
 const ROW_STYLE = { flexDirection: 'row', alignItems: 'center', gap: 12 } as const;
 const GROW_STYLE = { flex: 1 } as const;
+
+/** «Cuenta como alumno»: un tutor que no da clase no es alumno (no cuenta para el plan ni en los informes). */
+function IsStudentRow({
+  membershipId,
+}: Readonly<{ membershipId: string }>): React.JSX.Element | null {
+  const client = useClient(membershipId).data;
+  const student = useSetIsStudent(membershipId);
+  if (client === undefined) return null;
+
+  return (
+    <View style={ROW_STYLE}>
+      <View style={GROW_STYLE}>
+        <Text variant="bodyStrong">{i18n.t('clients.guardians.isStudentLabel')}</Text>
+        <Text variant="caption" color="ink2">
+          {i18n.t('clients.guardians.isStudentHint')}
+        </Text>
+      </View>
+      <Switch
+        isOn={client.isStudent}
+        accessibilityLabel={i18n.t('clients.guardians.isStudentLabel')}
+        onToggle={student.setIsStudent}
+      />
+    </View>
+  );
+}
 
 function GuardianRows({
   guardians,
@@ -68,6 +96,7 @@ export function GuardiansSection({
       <Text variant="caption" color="ink2">
         {i18n.t('clients.guardians.hint')}
       </Text>
+      <IsStudentRow membershipId={membershipId} />
       <GuardianRows guardians={list} linking={linking} />
       {linking.errorMessage === null ? null : <FormErrorBanner message={linking.errorMessage} />}
       <Button

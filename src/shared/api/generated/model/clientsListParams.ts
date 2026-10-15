@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { ClientsListKind } from './clientsListKind.ts';
 import type { ClientsListScope } from './clientsListScope.ts';
 import type { ClientsListStatus } from './clientsListStatus.ts';
 
@@ -19,6 +20,7 @@ status?: ClientsListStatus;
  */
 groupId?: string;
 scope?: ClientsListScope;
+kind?: ClientsListKind;
 /**
  * @minimum 1
  * @maximum 100

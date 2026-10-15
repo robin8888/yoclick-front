@@ -25,11 +25,15 @@ interface ClientListRequest {
   groupId?: string;
   /** El personal ve por defecto solo a quienes han reservado con él; `center` los trae a todos. */
   scope?: 'mine' | 'center';
+  /** Alumnos (por defecto), familias (quienes no son alumnos) o todos. */
+  kind?: 'students' | 'guardians' | 'all';
 }
 
 export interface ClientListPages {
   /** Todos los clientes del centro (la cifra de «Alumnos (212)»), sin filtros. */
   totalClientCount: number;
+  /** Personas que no son alumnos (la pestaña «Familias»). */
+  guardianCount: number;
   matchingCount: number;
   clients: ClientListResponseDto['clients'];
 }
@@ -43,6 +47,7 @@ function buildParams(request: ClientListRequest, search: string): ClientsListPar
     ...(status === undefined ? {} : { status }),
     ...(request.groupId === undefined ? {} : { groupId: request.groupId }),
     ...(request.scope === undefined ? {} : { scope: request.scope }),
+    ...(request.kind === undefined ? {} : { kind: request.kind }),
   };
 }
 

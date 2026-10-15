@@ -22,6 +22,7 @@ export const clientsListQuerySearchMax = 80;
 
 export const clientsListQueryGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const clientsListQueryScopeDefault = `mine`;
+export const clientsListQueryKindDefault = `students`;
 export const clientsListQueryLimitDefault = 50;
 export const clientsListQueryLimitMax = 100;
 
@@ -36,6 +37,7 @@ export const ClientsListQueryParams = zod.object({
   "status": zod.enum(['active', 'new', 'inactive', 'blocked']).optional(),
   "groupId": zod.uuid().regex(clientsListQueryGroupIdRegExp).optional(),
   "scope": zod.enum(['mine', 'center']).default(clientsListQueryScopeDefault),
+  "kind": zod.enum(['students', 'guardians', 'all']).default(clientsListQueryKindDefault),
   "limit": zod.int().min(1).max(clientsListQueryLimitMax).default(clientsListQueryLimitDefault),
   "offset": zod.int().min(clientsListQueryOffsetMin).max(clientsListQueryOffsetMax).default(clientsListQueryOffsetDefault)
 })
@@ -50,6 +52,9 @@ export const clientsListResponseTotalClientCountMax = 9007199254740991;
 export const clientsListResponseMatchingCountMin = -9007199254740991;
 export const clientsListResponseMatchingCountMax = 9007199254740991;
 
+export const clientsListResponseGuardianCountMin = -9007199254740991;
+export const clientsListResponseGuardianCountMax = 9007199254740991;
+
 export const clientsListResponseClientsItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const clientsListResponseClientsItemGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const clientsListResponseClientsItemJoinedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
@@ -63,6 +68,7 @@ export const clientsListResponseClientsItemNextBookingAtRegExp = new RegExp('^(?
 export const ClientsListResponse = zod.object({
   "totalClientCount": zod.int().min(clientsListResponseTotalClientCountMin).max(clientsListResponseTotalClientCountMax),
   "matchingCount": zod.int().min(clientsListResponseMatchingCountMin).max(clientsListResponseMatchingCountMax),
+  "guardianCount": zod.int().min(clientsListResponseGuardianCountMin).max(clientsListResponseGuardianCountMax),
   "clients": zod.array(zod.object({
   "membershipId": zod.uuid().regex(clientsListResponseClientsItemMembershipIdRegExp),
   "fullName": zod.string(),
@@ -71,6 +77,7 @@ export const ClientsListResponse = zod.object({
   "status": zod.enum(['active', 'blocked']),
   "activity": zod.enum(['new', 'active', 'inactive']),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
+  "isStudent": zod.boolean(),
   "group": zod.object({
   "id": zod.uuid().regex(clientsListResponseClientsItemGroupIdRegExp),
   "name": zod.string()
@@ -175,6 +182,7 @@ export const ClientsGetResponse = zod.object({
   "status": zod.enum(['active', 'blocked']),
   "activity": zod.enum(['new', 'active', 'inactive']),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
+  "isStudent": zod.boolean(),
   "group": zod.object({
   "id": zod.uuid().regex(clientsGetResponseGroupIdRegExp),
   "name": zod.string()
@@ -206,7 +214,8 @@ export const clientsUpdateBodyGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a
 
 export const ClientsUpdateBody = zod.object({
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullish(),
-  "groupId": zod.uuid().regex(clientsUpdateBodyGroupIdRegExp).nullish()
+  "groupId": zod.uuid().regex(clientsUpdateBodyGroupIdRegExp).nullish(),
+  "isStudent": zod.boolean().optional()
 })
 
 export const clientsUpdateResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -227,6 +236,7 @@ export const ClientsUpdateResponse = zod.object({
   "status": zod.enum(['active', 'blocked']),
   "activity": zod.enum(['new', 'active', 'inactive']),
   "level": zod.union([zod.literal('beginner'),zod.literal('intermediate'),zod.literal('advanced'),zod.literal(null)]).nullable(),
+  "isStudent": zod.boolean(),
   "group": zod.object({
   "id": zod.uuid().regex(clientsUpdateResponseGroupIdRegExp),
   "name": zod.string()

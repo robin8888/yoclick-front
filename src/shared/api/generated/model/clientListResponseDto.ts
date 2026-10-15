@@ -18,5 +18,10 @@ export interface ClientListResponseDto {
      * @maximum 9007199254740991
      */
   matchingCount: number;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  guardianCount: number;
   clients: ClientListResponseDtoClientsItem[];
 }

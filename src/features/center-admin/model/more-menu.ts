@@ -16,6 +16,7 @@ export type MoreMenuTextKey =
   | 'passes'
   | 'subscription'
   | 'inviteStudent'
+  | 'inviteGuardian'
   | 'inviteInstructor'
   | 'myProfile'
   | 'teamProfiles'
@@ -47,6 +48,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
       { textKey: 'centerDetails', route: '/(admin)/center', iconName: 'edit' },
       { textKey: 'inviteClients', route: '/(admin)/invite-clients', iconName: 'qrCode' },
       { textKey: 'inviteStudent', route: buildInvitePersonRoute('client'), iconName: 'mail' },
+      { textKey: 'inviteGuardian', route: buildInvitePersonRoute('guardian'), iconName: 'users' },
       { textKey: 'routines', route: '/(admin)/routines', iconName: 'play' },
       { textKey: 'importClients', route: '/(admin)/clients/import', iconName: 'file' },
       { textKey: 'brand', route: '/(admin)/(tabs)/brand', iconName: 'palette' },

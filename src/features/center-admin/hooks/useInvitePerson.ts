@@ -39,8 +39,12 @@ function resolveErrorMessage(error: unknown): string | null {
   return error === null || error === undefined ? null : getApiErrorMessage(error);
 }
 
-function buildRequestBody(contact: InviteContact, role: InvitedRole) {
-  return contact.kind === 'email' ? { email: contact.email, role } : { phone: contact.phone, role };
+function buildRequestBody(contact: InviteContact, invitedRole: InvitedRole) {
+  const role = invitedRole === 'guardian' ? 'client' : invitedRole;
+  const studentFlag = invitedRole === 'guardian' ? { isStudent: false } : {};
+  return contact.kind === 'email'
+    ? { email: contact.email, role, ...studentFlag }
+    : { phone: contact.phone, role, ...studentFlag };
 }
 
 /** Invitar a una persona con un rol (alumno o instructor) y ver las invitaciones pendientes de ese rol. */
@@ -65,7 +69,7 @@ export function useInvitePerson(role: InvitedRole): InvitePerson {
 
   return {
     pendingInvitations: (pendingQuery.data?.invitations ?? []).filter(
-      (invitation) => invitation.role === role,
+      (invitation) => invitation.role === (role === 'guardian' ? 'client' : role),
     ),
     createdInvitation: inviteMutation.data,
     invite: (contact) => {

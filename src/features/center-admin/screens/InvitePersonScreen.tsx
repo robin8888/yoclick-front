@@ -12,11 +12,19 @@ import { PendingInvitationsList } from '../components/PendingInvitationsList';
 import { useInvitePerson } from '../hooks/useInvitePerson';
 import { parseInvitePersonParams, type InvitedRole } from '../model/invite-person-route';
 
+function describeInvitedRole(
+  role: InvitedRole,
+  vocabulary: ReturnType<typeof getSectorVocabulary>,
+): string {
+  if (role === 'guardian') return i18n.t('centerAdmin.team.guardianWord');
+  return (role === 'client' ? vocabulary.client : vocabulary.staff).singular;
+}
+
 function InvitePersonContent({ role }: Readonly<{ role: InvitedRole }>): React.JSX.Element {
   const router = useRouter();
   const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
   const centerName = useCenterIdentity()?.name ?? '';
-  const roleWord = (role === 'client' ? vocabulary.client : vocabulary.staff).singular;
+  const roleWord = describeInvitedRole(role, vocabulary);
   const invitation = useInvitePerson(role);
 
   return (

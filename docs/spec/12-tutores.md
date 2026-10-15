@@ -15,6 +15,16 @@ una persona cliente activa del centro. RLS: la administración y el equipo ven t
 
 La RLS de `bookings` y `client_passes` deja además a un tutor leer lo de sus hijos.
 
+## Tutor no es alumno
+
+Una persona del centro lleva `isStudent` (por defecto `true`). Un tutor que no da clase tiene `isStudent = false`:
+no sale en la lista de **Alumnos**, no cuenta para el límite de clientes del plan, ni en los informes de
+alumnos. Se ve en la pestaña **Familias**. Quien además da clase se deja como alumno y tutor a la vez.
+
+- El centro la marca en la ficha («Cuenta como alumno»).
+- Se invita directamente como tutor (`isStudent: false` en la invitación): **Más → Invitar a un tutor**.
+- `GET /clients?kind=students|guardians|all` (por defecto, alumnos) y `PATCH /clients/:id { isStudent }`.
+
 ## Qué hace el tutor
 
 - **Mis hijos** (inicio del alumno, solo si es tutor de alguien): sus próximas clases y las clases que les

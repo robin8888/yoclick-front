@@ -19,4 +19,5 @@ export interface InviteRequestDto {
      */
   phone?: string;
   role: InviteRequestDtoRole;
+  isStudent?: boolean;
 }

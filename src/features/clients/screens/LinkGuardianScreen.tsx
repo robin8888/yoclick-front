@@ -26,6 +26,7 @@ function LinkGuardianContent({
     >
       {linking.errorMessage === null ? null : <FormErrorBanner message={linking.errorMessage} />}
       <ClientPicker
+        kind="all"
         onClientSelect={(client) => {
           linking.link(client.membershipId, router.back);
         }}

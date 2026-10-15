@@ -149,6 +149,7 @@ export * from './clientResponseDtoActivity.ts';
 export * from './clientResponseDtoGroup.ts';
 export * from './clientResponseDtoLevel.ts';
 export * from './clientResponseDtoStatus.ts';
+export * from './clientsListKind.ts';
 export * from './clientsListParams.ts';
 export * from './clientsListScope.ts';
 export * from './clientsListStatus.ts';

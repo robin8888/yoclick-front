@@ -158,7 +158,8 @@ export const invitationsCreateBodyPhoneMax = 24;
 export const InvitationsCreateBody = zod.object({
   "email": zod.email().max(invitationsCreateBodyEmailMax).regex(invitationsCreateBodyEmailRegExp).optional(),
   "phone": zod.string().min(1).max(invitationsCreateBodyPhoneMax).optional(),
-  "role": zod.enum(['admin', 'staff', 'client'])
+  "role": zod.enum(['admin', 'staff', 'client']),
+  "isStudent": zod.boolean().optional()
 })
 
 export const invitationsCreateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
