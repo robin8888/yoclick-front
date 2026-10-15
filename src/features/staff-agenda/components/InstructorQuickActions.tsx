@@ -1,5 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
 
+import { useUnreadMessageCount } from '@/features/chat';
+
 import { i18n } from '@/shared/i18n';
 import type { IconName } from '@/ui/atoms/Icon';
 
@@ -101,11 +103,13 @@ export function InstructorQuickActions({
   routineLabel,
 }: Readonly<InstructorQuickActionsProps>): React.JSX.Element {
   const router = useRouter();
+  const unreadMessageCount = useUnreadMessageCount();
   const toAction = (spec: ActionSpec): QuickAction => ({
     id: spec.id,
     iconName: spec.iconName,
     label: spec.labelKey === null ? routineLabel : i18n.t(spec.labelKey),
     hint: i18n.t(spec.hintKey),
+    ...(spec.id === 'messages' ? { badgeCount: unreadMessageCount } : {}),
     onPress: () => {
       router.push(spec.route);
     },

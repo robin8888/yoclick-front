@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 
+import { useUnreadMessageCount } from '@/features/chat';
 import { useMyChildren } from '@/features/guardians';
 import { i18n } from '@/shared/i18n';
 import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
@@ -23,12 +24,26 @@ function buildChildrenAction(
   ];
 }
 
+function buildMessagesAction(
+  open: (route: Route) => () => void,
+  unreadMessageCount: number,
+): QuickAction {
+  return {
+    id: 'messages',
+    iconName: 'messageCircle',
+    label: i18n.t('chat.title'),
+    hint: i18n.t('booking.home.messagesHint'),
+    badgeCount: unreadMessageCount,
+    onPress: open('/(client)/messages'),
+  };
+}
+
 function buildSecondaryActions(
   open: (route: Route) => () => void,
-  hasChildren: boolean,
+  options: { hasChildren: boolean; unreadMessageCount: number },
 ): QuickAction[] {
   return [
-    ...buildChildrenAction(open, hasChildren),
+    ...buildChildrenAction(open, options.hasChildren),
     {
       id: 'bookings',
       iconName: 'calendar',
@@ -50,13 +65,7 @@ function buildSecondaryActions(
       hint: i18n.t('booking.home.teamHint'),
       onPress: open('/(client)/team'),
     },
-    {
-      id: 'messages',
-      iconName: 'messageCircle',
-      label: i18n.t('chat.title'),
-      hint: i18n.t('booking.home.messagesHint'),
-      onPress: open('/(client)/messages'),
-    },
+    buildMessagesAction(open, options.unreadMessageCount),
   ];
 }
 
@@ -67,6 +76,7 @@ function buildSecondaryActions(
 export function ClientQuickActions(): React.JSX.Element {
   const router = useRouter();
   const hasChildren = (useMyChildren().data?.children.length ?? 0) > 0;
+  const unreadMessageCount = useUnreadMessageCount();
   const open = (route: Route) => () => {
     router.push(route);
   };
@@ -80,7 +90,7 @@ export function ClientQuickActions(): React.JSX.Element {
         hint: i18n.t('booking.home.bookHint'),
         onPress: open('/(client)/(tabs)/book'),
       }}
-      actions={buildSecondaryActions(open, hasChildren)}
+      actions={buildSecondaryActions(open, { hasChildren, unreadMessageCount })}
     />
   );
 }

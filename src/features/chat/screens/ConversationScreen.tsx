@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { FlatList, KeyboardAvoidingView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
 import { LoadErrorState } from '@/features/join';
 import type { MessageListResponseDto } from '@/shared/api/generated/model';
 import { useBackAction } from '@/shared/hooks/useBackAction';
@@ -29,6 +28,9 @@ import { useMarkConversationRead, useSendMessage } from '../hooks/useChatMutatio
 import { useConversationMessages, useConversations } from '../hooks/useChatQueries';
 import { useSendAttachment } from '../hooks/useSendAttachment';
 import { describeCounterpartName } from '../model/conversation-text';
+
+/** La hora de los mensajes se muestra en la zona del centro (hoy una sola, la de España). */
+const DEFAULT_CENTER_TIME_ZONE = 'Europe/Madrid';
 
 type ThreadMessage = MessageListResponseDto['messages'][number];
 

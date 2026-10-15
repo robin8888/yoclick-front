@@ -15,6 +15,8 @@ export interface QuickAction {
   label: string;
   /** Una línea que aclara para qué sirve el acceso. */
   hint: string;
+  /** Pendientes (mensajes sin leer): sale como un círculo con el número. */
+  badgeCount?: number | undefined;
   onPress: () => void;
 }
 

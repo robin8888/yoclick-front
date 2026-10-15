@@ -1,3 +1,4 @@
+import { useUnreadMessageCount } from '@/features/chat';
 import { i18n } from '@/shared/i18n';
 
 import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
@@ -34,28 +35,35 @@ function buildSetupGuideAction(props: CenterQuickActionsProps): QuickAction {
   };
 }
 
-function buildMessagesAction(props: CenterQuickActionsProps): QuickAction {
+function buildMessagesAction(props: CenterQuickActionsProps, unreadCount: number): QuickAction {
   return {
     id: 'messages',
     iconName: 'messageCircle',
     label: i18n.t('chat.title'),
     hint: i18n.t('staffAgenda.center.messagesHint'),
+    badgeCount: unreadCount,
     onPress: props.onMessagesPress,
   };
 }
 
-function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
-  const management: QuickAction[] = props.canManageSpaces
-    ? [
-        {
-          id: 'management',
-          iconName: 'settings',
-          label: i18n.t('staffAgenda.center.managementAction'),
-          hint: i18n.t('staffAgenda.center.managementHint'),
-          onPress: props.onManagementPress,
-        },
-      ]
-    : [];
+/** «Gestión» solo existe en los sectores con salas. */
+function buildManagementActions(props: CenterQuickActionsProps): QuickAction[] {
+  if (!props.canManageSpaces) return [];
+  return [
+    {
+      id: 'management',
+      iconName: 'settings',
+      label: i18n.t('staffAgenda.center.managementAction'),
+      hint: i18n.t('staffAgenda.center.managementHint'),
+      onPress: props.onManagementPress,
+    },
+  ];
+}
+
+function buildSecondaryActions(
+  props: CenterQuickActionsProps,
+  unreadMessageCount: number,
+): QuickAction[] {
   return [
     {
       id: 'agenda',
@@ -78,8 +86,8 @@ function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
       hint: i18n.t('staffAgenda.center.servicesHint'),
       onPress: props.onServicesPress,
     },
-    buildMessagesAction(props),
-    ...management,
+    buildMessagesAction(props, unreadMessageCount),
+    ...buildManagementActions(props),
     buildSetupGuideAction(props),
   ];
 }
@@ -89,10 +97,12 @@ function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
  * cuadrícula de tarjetas limpias, cada una con su icono, su nombre y una línea de apoyo.
  */
 export function CenterQuickActions(props: Readonly<CenterQuickActionsProps>): React.JSX.Element {
+  const unreadMessageCount = useUnreadMessageCount();
+
   return (
     <QuickActionsGrid
       primaryAction={buildPrimaryAction(props)}
-      actions={buildSecondaryActions(props)}
+      actions={buildSecondaryActions(props, unreadMessageCount)}
     />
   );
 }

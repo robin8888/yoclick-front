@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { motionTokens, usePressableStyle, useTheme } from '@/shared/theme';
+import { CountBadge } from '@/ui/atoms/CountBadge';
 import { Icon, type IconName } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
@@ -19,14 +20,23 @@ export interface QuickActionTileProps {
   label: string;
   /** Una línea que aclara para qué sirve el acceso. */
   hint: string;
+  /** Cuántas cosas pendientes tiene (mensajes sin leer): un círculo con el número en la esquina. */
+  badgeCount?: number | undefined;
   onPress: () => void;
 }
+
+const TILE_TOP_ROW_STYLE = {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+} as const;
 
 /** Acceso secundario: tarjeta clara con el icono en una pastilla de marca suave. */
 export function QuickActionTile({
   iconName,
   label,
   hint,
+  badgeCount,
   onPress,
 }: Readonly<QuickActionTileProps>): React.JSX.Element {
   const theme = useTheme();
@@ -39,13 +49,18 @@ export function QuickActionTile({
   return (
     <Pressable
       role="button"
-      accessibilityLabel={label}
+      accessibilityLabel={
+        badgeCount === undefined || badgeCount === 0 ? label : `${label}: ${String(badgeCount)}`
+      }
       accessibilityHint={hint}
       onPress={onPress}
       style={style}
     >
-      <View style={createIconBadgeStyle(theme)}>
-        <Icon name={iconName} size="navigation" color="brandInk" />
+      <View style={TILE_TOP_ROW_STYLE}>
+        <View style={createIconBadgeStyle(theme)}>
+          <Icon name={iconName} size="navigation" color="brandInk" />
+        </View>
+        <CountBadge count={badgeCount ?? 0} />
       </View>
       <View style={createTileTextStyle(theme)}>
         <Text variant="bodyStrong" numberOfLines={1}>
