@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -46,6 +47,7 @@ function SetupGuideStepRow({
  */
 export function SetupGuideScreen(): React.JSX.Element {
   const router = useRouter();
+  const onBackPress = useBackAction();
   const sectorId = useActiveCenterSectorId();
   const { client, staff } = getSectorVocabulary(sectorId);
   const words = {
@@ -59,6 +61,7 @@ export function SetupGuideScreen(): React.JSX.Element {
     <ScreenTemplate
       title={i18n.t('centerAdmin.setupGuide.title')}
       subtitle={i18n.t('centerAdmin.setupGuide.subtitle')}
+      onBackPress={onBackPress}
     >
       {groups.map((group) => (
         <View key={group.id} style={SECTION_STYLE}>

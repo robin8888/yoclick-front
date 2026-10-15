@@ -1,4 +1,5 @@
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { RoomBlocksManagementSection } from '../components/RoomBlocksManagementSection';
@@ -10,8 +11,11 @@ import { ScheduleWeekSection } from '../components/ScheduleWeekSection';
  * horario fijo semanal (clases que se repiten, con su grupo fijo). Los bloqueos cuelgan de cada espacio.
  */
 export function ManagementScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
+
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       title={i18n.t('centerAdmin.management.title')}
       subtitle={i18n.t('centerAdmin.management.subtitle')}
     >

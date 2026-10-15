@@ -1,6 +1,7 @@
 import { Redirect, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -17,12 +18,14 @@ interface CenterLogoContentProps {
 }
 
 function CenterLogoContent({ createdCenter }: Readonly<CenterLogoContentProps>): React.JSX.Element {
+  const onBackPress = useBackAction();
   const signOut = useSignOutFlow();
   const router = useRouter();
   const flow = useCenterLogoFlow(createdCenter);
 
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       hasPlatformHeroBackground
       isHeaderCentered
       isLoading={flow.isBusy || signOut.isSigningOut}

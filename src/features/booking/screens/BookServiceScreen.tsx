@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { LoadErrorState } from '@/features/join';
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { StepProgress } from '@/ui/molecules/StepProgress';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
@@ -15,11 +16,13 @@ const BOOKING_STEP_COUNT = 2;
 
 /** Prototipo `book1`: paso 1 de 3, el servicio que se quiere reservar con su duración y precio. */
 export function BookServiceScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const services = useCenterServices();
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
 
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       title={i18n.t('booking.book.title')}
       subtitle={i18n.t('booking.book.subtitle')}
       footer={<ContinueToClassesButton selectedServiceId={selectedServiceId} />}

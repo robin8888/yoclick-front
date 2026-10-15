@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { LoadErrorState } from '@/features/join';
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
@@ -18,12 +19,13 @@ const RANGE_OPTIONS = [
 
 /** El propietario ve qué clases dio cada profesional, con su hora real frente a la prevista. */
 export function SessionRecordsScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const [rangeDays, setRangeDays] = useState<RecordsRangeDays>('7');
   const range = useRecordsRange(rangeDays);
   const records = useSessionRecords(range);
 
   return (
-    <ScreenTemplate title={i18n.t('staffAgenda.records.title')}>
+    <ScreenTemplate onBackPress={onBackPress} title={i18n.t('staffAgenda.records.title')}>
       <SegmentedControl
         options={RANGE_OPTIONS}
         selectedValue={rangeDays}

@@ -4,6 +4,7 @@ import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
 import { LoadErrorState } from '@/features/join';
 import type { NotificationListResponseDtoNotificationsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { ConfirmSheet } from '@/ui/organisms/ConfirmSheet';
@@ -166,6 +167,7 @@ function DeleteAllSheet({
 
 /** Prototipo `inotifs`: los avisos, con «Marcar leídos», la papelera de cada uno y «Borrar todos». */
 export function NotificationsScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const notifications = useNotifications();
   const marker = useMarkNotificationsRead();
   const deletion = useDeleteNotifications();
@@ -173,7 +175,7 @@ export function NotificationsScreen(): React.JSX.Element {
   const list = notifications.data?.notifications ?? [];
 
   return (
-    <ScreenTemplate title={i18n.t('notifications.title')}>
+    <ScreenTemplate onBackPress={onBackPress} title={i18n.t('notifications.title')}>
       <PushPermissionCard />
       <NoticeActions
         unreadCount={notifications.data?.unreadCount ?? 0}

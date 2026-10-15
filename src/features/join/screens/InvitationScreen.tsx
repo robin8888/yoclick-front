@@ -1,5 +1,6 @@
 import { getApiErrorMessage } from '@/shared/api/errors';
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Logo } from '@/ui/atoms/Logo';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
@@ -17,13 +18,35 @@ const MAX_INVITATION_CODE_LENGTH = 24;
 // Logotipo completo en blanco, del mismo tamaño que en el inicio de sesión y el registro.
 const INVITATION_LOGO_HEIGHT = 110;
 
+type InvitationFlow = ReturnType<typeof useInvitationFlow>;
+
+/** El campo del código mientras no hay invitación y, con ella, su vista previa. */
+function InvitationBody({
+  invitation,
+  form,
+}: Readonly<Pick<InvitationFlow, 'invitation' | 'form'>>): React.JSX.Element {
+  if (invitation !== undefined) return <InvitationPreview invitation={invitation} />;
+  return (
+    <LargeCodeField
+      control={form.control}
+      name="invitationCode"
+      label={i18n.t('join.invitation.fieldLabel')}
+      placeholder={i18n.t('join.invitation.placeholder')}
+      maxLength={MAX_INVITATION_CODE_LENGTH}
+      onSubmitEditing={form.submitCode}
+    />
+  );
+}
+
 /** Quien es instructor o profesor entra a su centro con el código (o enlace) que le dieron. */
 export function InvitationScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const signOut = useSignOutFlow();
   const { form, acceptance, invitation, failure, handleSecondaryPress } = useInvitationFlow();
 
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       isLoading={acceptance.isLoadingPreview || acceptance.isAccepting || signOut.isSigningOut}
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('join.invitation.title')}
@@ -43,18 +66,7 @@ export function InvitationScreen(): React.JSX.Element {
       }
     >
       {failure === null ? null : <FormErrorBanner message={getApiErrorMessage(failure)} />}
-      {invitation === undefined ? (
-        <LargeCodeField
-          control={form.control}
-          name="invitationCode"
-          label={i18n.t('join.invitation.fieldLabel')}
-          placeholder={i18n.t('join.invitation.placeholder')}
-          maxLength={MAX_INVITATION_CODE_LENGTH}
-          onSubmitEditing={form.submitCode}
-        />
-      ) : (
-        <InvitationPreview invitation={invitation} />
-      )}
+      <InvitationBody invitation={invitation} form={form} />
       <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );

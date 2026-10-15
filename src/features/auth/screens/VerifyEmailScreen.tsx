@@ -1,6 +1,7 @@
 import { Redirect } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { IconBadge } from '@/ui/atoms/IconBadge';
@@ -15,6 +16,7 @@ import { useVerifyEmailForm } from '../hooks/useVerifyEmailForm';
 
 /** Verificación del correo con un código de 6 dígitos (5 intentos, 15 minutos). */
 export function VerifyEmailScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const form = useVerifyEmailForm();
   const hasPlatformLook = useHasPlatformLook();
 
@@ -22,6 +24,7 @@ export function VerifyEmailScreen(): React.JSX.Element {
   if (form.email === null) return <Redirect href="/(auth)/login" />;
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       hasPlatformHeroBackground={hasPlatformLook}
       isHeaderCentered
       headerAccessory={<IconBadge iconName="mail" />}
