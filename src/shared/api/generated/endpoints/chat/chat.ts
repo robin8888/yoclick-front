@@ -434,7 +434,7 @@ export const useChatMarkRead = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
  */
 export const chatBroadcastToGroup = async (centerId: string,
     groupBroadcastRequestDto: GroupBroadcastRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<GroupBroadcastResponseDto> => {
@@ -501,7 +501,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ChatBroadcastToGroupMutationVariables = {centerId: string;data: GroupBroadcastRequestDto}
 
     /**
- * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
  */
 export const useChatBroadcastToGroup = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBroadcastToGroup>>, TError,ChatBroadcastToGroupMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

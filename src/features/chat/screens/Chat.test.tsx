@@ -135,6 +135,7 @@ describe('chat', () => {
   it('sends one message to every person of the chosen group', async () => {
     const groupId = '0198f4a0-0000-7000-8000-000000000030';
     mockApi({
+      [`GET /v1/centers/${NORTE_CENTER_ID}/schedules`]: { series: [] },
       [`GET /v1/centers/${NORTE_CENTER_ID}/groups`]: {
         groups: [{ id: groupId, name: 'Grupo mañanas', memberCount: 4 }],
       },

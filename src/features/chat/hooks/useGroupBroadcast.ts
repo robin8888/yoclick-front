@@ -7,13 +7,26 @@ import {
   getChatListConversationsQueryKey,
 } from '@/shared/api/generated/endpoints/chat/chat';
 import { getGroupsListQueryOptions } from '@/shared/api/generated/endpoints/clients/clients';
-import type { GroupListResponseDto } from '@/shared/api/generated/model';
+import { getSchedulesListQueryOptions } from '@/shared/api/generated/endpoints/schedules/schedules';
+import type {
+  GroupListResponseDto,
+  ScheduleSeriesListResponseDto,
+} from '@/shared/api/generated/model';
 
 import { useActiveCenterId } from './useActiveCenterId';
 
-/** Los grupos del centro, para elegir a quién se escribe. */
+/** A quién se escribe: un grupo de clientes o una clase fija de «Gestión» (sus apuntados). */
+export type BroadcastTarget =
+  { kind: 'group'; groupId: string } | { kind: 'series'; seriesId: string };
+
+/** Los grupos de clientes del centro, para elegir a quién se escribe. */
 export function useBroadcastGroups(): UseQueryResult<GroupListResponseDto, ErrorType> {
   return useQuery(getGroupsListQueryOptions(useActiveCenterId()));
+}
+
+/** Las clases fijas de «Gestión» (en una sala, a una hora), para escribir a sus apuntados. */
+export function useBroadcastSeries(): UseQueryResult<ScheduleSeriesListResponseDto, ErrorType> {
+  return useQuery(getSchedulesListQueryOptions(useActiveCenterId()));
 }
 
 export interface BroadcastResult {
@@ -22,19 +35,24 @@ export interface BroadcastResult {
 }
 
 interface GroupBroadcast {
-  send: (request: { groupId: string; body: string }, onSent: () => void) => void;
+  send: (request: { target: BroadcastTarget; body: string }, onSent: () => void) => void;
   isSending: boolean;
   result: BroadcastResult | null;
   errorMessage: string | null;
 }
 
-/** Escribe a todas las personas de un grupo; no es optimista: espera al servidor. */
+/** Escribe a todas las personas de un grupo o de una clase; no es optimista: espera al servidor. */
 export function useGroupBroadcast(): GroupBroadcast {
   const centerId = useActiveCenterId();
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (request: { groupId: string; body: string }) =>
-      chatBroadcastToGroup(centerId, request),
+    mutationFn: ({ target, body }: { target: BroadcastTarget; body: string }) =>
+      chatBroadcastToGroup(
+        centerId,
+        target.kind === 'group'
+          ? { groupId: target.groupId, body }
+          : { seriesId: target.seriesId, body },
+      ),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: getChatListConversationsQueryKey(centerId) });
     },

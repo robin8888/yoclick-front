@@ -147,7 +147,7 @@ export const ChatMarkReadHeader = zod.object({
 export const ChatMarkReadResponse = zod.void()
 
 /**
- * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
  */
 export const chatBroadcastToGroupPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -161,12 +161,14 @@ export const ChatBroadcastToGroupHeader = zod.object({
 })
 
 export const chatBroadcastToGroupBodyGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatBroadcastToGroupBodySeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const chatBroadcastToGroupBodyBodyMax = 2000;
 
 
 
 export const ChatBroadcastToGroupBody = zod.object({
-  "groupId": zod.uuid().regex(chatBroadcastToGroupBodyGroupIdRegExp),
+  "groupId": zod.uuid().regex(chatBroadcastToGroupBodyGroupIdRegExp).optional(),
+  "seriesId": zod.uuid().regex(chatBroadcastToGroupBodySeriesIdRegExp).optional(),
   "body": zod.string().min(1).max(chatBroadcastToGroupBodyBodyMax)
 })
 

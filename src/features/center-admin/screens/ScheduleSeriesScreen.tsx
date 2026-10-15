@@ -52,6 +52,26 @@ function EndSeriesSheet({
   );
 }
 
+/** Escribir a todas las personas apuntadas a esta clase (apagado si aún no hay ninguna). */
+function WriteToClassButton({ series }: Readonly<{ series: ScheduleSeries }>): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <Button
+      isFullWidth
+      leadingIconName="messageCircle"
+      label={i18n.t('centerAdmin.schedules.writeToClassAction')}
+      isDisabled={series.enrolledCount === 0}
+      onPress={() => {
+        router.push({
+          pathname: '/(admin)/messages/group',
+          params: { seriesId: series.seriesId, className: describeSeriesName(series) },
+        });
+      }}
+    />
+  );
+}
+
 /** «Editar horario» y «Terminar horario» (con su confirmación). */
 function SeriesActions({ series }: Readonly<{ series: ScheduleSeries }>): React.JSX.Element {
   const router = useRouter();
@@ -59,6 +79,7 @@ function SeriesActions({ series }: Readonly<{ series: ScheduleSeries }>): React.
 
   return (
     <>
+      <WriteToClassButton series={series} />
       <Button
         isFullWidth
         variant="outline"

@@ -33,7 +33,42 @@ function useOpenSeries(seriesId: string) {
     openEditor: () => {
       router.push({ pathname: '/(admin)/schedules/edit/[seriesId]', params: { seriesId } });
     },
+    writeToClass: (className: string) => {
+      router.push({ pathname: '/(admin)/messages/group', params: { seriesId, className } });
+    },
   };
+}
+
+interface RowActionsProps {
+  name: string;
+  timeRange: string;
+  onWriteToClass: () => void;
+  onEdit: () => void;
+}
+
+/** A la derecha de la fila: escribir a los apuntados y editar el horario. */
+function RowActions({
+  name,
+  timeRange,
+  onWriteToClass,
+  onEdit,
+}: Readonly<RowActionsProps>): React.JSX.Element {
+  return (
+    <>
+      <IconButton
+        iconName="messageCircle"
+        variant="tonal"
+        accessibilityLabel={i18n.t('centerAdmin.schedules.writeToClassRowLabel', { name })}
+        onPress={onWriteToClass}
+      />
+      <IconButton
+        iconName="edit"
+        variant="tonal"
+        accessibilityLabel={i18n.t('centerAdmin.schedules.editRowLabel', { time: timeRange, name })}
+        onPress={onEdit}
+      />
+    </>
+  );
 }
 
 /**
@@ -66,11 +101,13 @@ export function ScheduleSeriesRow({ entry }: Readonly<ScheduleSeriesRowProps>): 
           {describeSeriesPlace(series)}
         </Text>
       </Pressable>
-      <IconButton
-        iconName="edit"
-        variant="tonal"
-        accessibilityLabel={i18n.t('centerAdmin.schedules.editRowLabel', { time: timeRange, name })}
-        onPress={open.openEditor}
+      <RowActions
+        name={name}
+        timeRange={timeRange}
+        onWriteToClass={() => {
+          open.writeToClass(name);
+        }}
+        onEdit={open.openEditor}
       />
     </View>
   );
