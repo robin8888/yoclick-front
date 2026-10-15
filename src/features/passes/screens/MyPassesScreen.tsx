@@ -16,6 +16,7 @@ import { useMyPasses } from '../hooks/useMyPasses';
 import { usePaymentsStatus } from '../hooks/usePaymentsStatus';
 import { useRateOffers } from '../hooks/useRateOffers';
 import { useRequestPass } from '../hooks/useRequestPass';
+import { pickHomePass } from '../model/pass-summary';
 
 function RateOffersSection(): React.JSX.Element {
   const offers = useRateOffers();
@@ -50,13 +51,55 @@ function RateOffersSection(): React.JSX.Element {
   );
 }
 
+type MyPass = ReturnType<typeof useMyPasses>['data'] extends infer Data
+  ? Data extends { passes: readonly (infer Item)[] }
+    ? Item
+    : never
+  : never;
+
+/** El bono actual (el que sale en el inicio) arriba y, debajo, los demás. */
+function MyPassList({
+  passes,
+  canPayOnline,
+}: Readonly<{ passes: readonly MyPass[]; canPayOnline: boolean }>): React.JSX.Element {
+  const currentPass = pickHomePass(passes);
+  const otherPasses = passes.filter(({ id }) => id !== currentPass?.id);
+  const renderPass = (pass: MyPass): React.JSX.Element => (
+    <MyPassCard
+      key={pass.id}
+      pass={pass}
+      actions={canPayOnline && pass.status === 'pending' ? <PayPassAction pass={pass} /> : null}
+    />
+  );
+
+  return (
+    <>
+      {currentPass === null ? null : (
+        <>
+          <Text variant="titleMd" role="heading">
+            {i18n.t('passes.currentTitle')}
+          </Text>
+          {renderPass(currentPass)}
+        </>
+      )}
+      {otherPasses.length === 0 ? null : (
+        <>
+          <Text variant="titleMd" role="heading">
+            {i18n.t('passes.othersTitle')}
+          </Text>
+          {otherPasses.map(renderPass)}
+        </>
+      )}
+    </>
+  );
+}
+
 /** Prototipo `wallet`: mis bonos (clases que quedan y caducidad) y los que puedo pedir. */
 export function MyPassesScreen(): React.JSX.Element {
   const router = useRouter();
   const passes = useMyPasses();
   const myPasses = (passes.data?.passes ?? []).filter(({ status }) => status !== 'rejected');
   const canPayOnline = usePaymentsStatus() === 'ready';
-
   return (
     <ScreenTemplate
       title={i18n.t('passes.title')}
@@ -77,13 +120,7 @@ export function MyPassesScreen(): React.JSX.Element {
       {passes.isSuccess && myPasses.length === 0 ? (
         <Text color="ink2">{i18n.t('passes.empty')}</Text>
       ) : null}
-      {myPasses.map((pass) => (
-        <MyPassCard
-          key={pass.id}
-          pass={pass}
-          actions={canPayOnline && pass.status === 'pending' ? <PayPassAction pass={pass} /> : null}
-        />
-      ))}
+      <MyPassList passes={myPasses} canPayOnline={canPayOnline} />
       <MyRentalsSection />
       <RateOffersSection />
     </ScreenTemplate>
