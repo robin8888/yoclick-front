@@ -16,3 +16,12 @@ export function createThreadContentStyle(theme: Theme): ViewStyle {
 export function createScreenStyle(theme: Theme): ViewStyle {
   return { flex: 1, backgroundColor: theme.colors.surface };
 }
+
+export function createEmptyThreadStyle(theme: Theme): ViewStyle {
+  return {
+    flex: 1,
+    justifyContent: 'center',
+    padding: theme.space[6],
+    backgroundColor: theme.colors.surface2,
+  };
+}

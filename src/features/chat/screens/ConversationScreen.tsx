@@ -18,6 +18,7 @@ import { ChatHeader } from '../components/ChatHeader';
 import { MessageBubble } from '../components/MessageBubble';
 import { MessageComposer } from '../components/MessageComposer';
 import {
+  createEmptyThreadStyle,
   createScreenStyle,
   createThreadContentStyle,
   createThreadStyle,
@@ -76,6 +77,17 @@ function MessageThread({
 }: Readonly<{ messages: readonly ThreadMessage[] }>): React.JSX.Element {
   const theme = useTheme();
 
+  // Fuera de la lista: una lista invertida también da la vuelta a su «vacío».
+  if (messages.length === 0) {
+    return (
+      <View style={createEmptyThreadStyle(theme)}>
+        <Text variant="body" color="ink2" align="center">
+          {i18n.t('chat.threadEmptyDescription')}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <FlatList
       inverted
@@ -84,11 +96,6 @@ function MessageThread({
       style={createThreadStyle(theme)}
       contentContainerStyle={createThreadContentStyle(theme)}
       keyboardShouldPersistTaps="handled"
-      ListEmptyComponent={
-        <Text variant="body" color="ink2" align="center">
-          {i18n.t('chat.threadEmptyDescription')}
-        </Text>
-      }
       renderItem={({ item }) => (
         <MessageBubble
           message={item}
