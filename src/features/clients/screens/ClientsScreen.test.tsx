@@ -80,8 +80,8 @@ describe('ClientsScreen', () => {
     expect(screen.getByText(`${INTERMEDIATE_LEVEL_WORD} · Grupo: Mañanas`)).toBeOnTheScreen();
     expect(screen.getByText('Sin nivel · Grupo: —')).toBeOnTheScreen();
     expect(screen.getByText('Inactivo 30 d')).toBeOnTheScreen();
-    expect(screen.getByRole('tab', { name: /Clientes \(212\)/ })).toBeOnTheScreen();
-    expect(await screen.findByRole('tab', { name: /Grupos \(1\)/ })).toBeOnTheScreen();
+    expect(screen.getByRole('tab', { name: 'Clientes: 212' })).toBeOnTheScreen();
+    expect(await screen.findByRole('tab', { name: 'Grupos: 1' })).toBeOnTheScreen();
   });
 
   it('searches by name and filters by status on the server', async () => {
@@ -129,7 +129,7 @@ describe('ClientsScreen', () => {
     renderScreen(<ClientsScreen />);
     await screen.findByText('Marta Ruiz');
 
-    fireEvent.press(await screen.findByRole('tab', { name: /Grupos \(1\)/ }));
+    fireEvent.press(await screen.findByRole('tab', { name: 'Grupos: 1' }));
 
     expect(await screen.findByText('Mañanas')).toBeOnTheScreen();
     expect(
