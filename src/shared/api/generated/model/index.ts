@@ -233,6 +233,8 @@ export * from './exerciseLibraryResponseDto.ts';
 export * from './exerciseLibraryResponseDtoExercisesItem.ts';
 export * from './exportDataRequestDto.ts';
 export * from './forgotPasswordRequestDto.ts';
+export * from './groupBroadcastRequestDto.ts';
+export * from './groupBroadcastResponseDto.ts';
 export * from './groupListResponseDto.ts';
 export * from './groupListResponseDtoGroupsItem.ts';
 export * from './groupListResponseDtoGroupsItemInstructor.ts';

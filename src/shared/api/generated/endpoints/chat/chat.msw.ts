@@ -16,12 +16,14 @@ import type {
 import type {
   ContactListResponseDto,
   ConversationListResponseDto,
+  GroupBroadcastResponseDto,
   MessageListResponseDto,
   MessageResponseDto,
   OpenConversationResponseDto
 } from '../../model';
 
 import {
+  getChatBroadcastToGroupResponseMock,
   getChatListContactsResponseMock,
   getChatListConversationsResponseMock,
   getChatListMessagesResponseMock,
@@ -30,7 +32,7 @@ import {
   getChatSendMessageResponseMock
 } from './chat.faker.ts';
 
-export { getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
+export { getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatBroadcastToGroupResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
 
 
 export const getChatListConversationsMockHandler = (overrideResponse?: ConversationListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ConversationListResponseDto> | ConversationListResponseDto), options?: RequestHandlerOptions) => {
@@ -79,6 +81,18 @@ export const getChatMarkReadMockHandler = (overrideResponse?: void | ((info: Par
   }, options)
 }
 
+export const getChatBroadcastToGroupMockHandler = (overrideResponse?: GroupBroadcastResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<GroupBroadcastResponseDto> | GroupBroadcastResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/conversations/broadcast', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatBroadcastToGroupResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
 export const getChatListMessagesMockHandler = (overrideResponse?: MessageListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MessageListResponseDto> | MessageListResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/conversations/:conversationId/messages', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -119,6 +133,7 @@ export const getChatMock = () => [
   getChatOpenConversationMockHandler(),
   getChatListContactsMockHandler(),
   getChatMarkReadMockHandler(),
+  getChatBroadcastToGroupMockHandler(),
   getChatListMessagesMockHandler(),
   getChatSendMessageMockHandler(),
   getChatSendAttachmentMockHandler()

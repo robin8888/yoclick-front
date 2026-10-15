@@ -7,6 +7,7 @@ import { renderScreen } from '@/test/render-screen';
 
 import { ConversationScreen } from './ConversationScreen';
 import { ConversationsScreen } from './ConversationsScreen';
+import { GroupMessageScreen } from './GroupMessageScreen';
 import { NewConversationScreen } from './NewConversationScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
@@ -129,6 +130,26 @@ describe('chat', () => {
       expect(findApiCall('POST', `${BASE}/${CONVERSATION_ID}/messages`)?.body).toEqual({
         body: 'Vale',
       });
+    });
+  });
+  it('sends one message to every person of the chosen group', async () => {
+    const groupId = '0198f4a0-0000-7000-8000-000000000030';
+    mockApi({
+      [`GET /v1/centers/${NORTE_CENTER_ID}/groups`]: {
+        groups: [{ id: groupId, name: 'Grupo mañanas', memberCount: 4 }],
+      },
+      [`POST ${BASE}/broadcast`]: { sentCount: 4, skippedMinorCount: 1 },
+    });
+    renderScreen(<GroupMessageScreen />);
+
+    fireEvent.press(await screen.findByRole('radio', { name: /Grupo mañanas/ }));
+    fireEvent.changeText(screen.getByLabelText('Mensaje'), 'Mañana no hay clase');
+    fireEvent.press(screen.getByRole('button', { name: 'Enviar al grupo' }));
+
+    expect(await screen.findByText('Enviado a 4 personas')).toBeOnTheScreen();
+    expect(findApiCall('POST', `${BASE}/broadcast`)?.body).toEqual({
+      groupId,
+      body: 'Mañana no hay clase',
     });
   });
 });

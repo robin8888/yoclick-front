@@ -41,6 +41,7 @@ sirven con enlace firmado de corta vida.
 - `GET|POST /centers/:id/conversations/:cid/messages` · hilo (más reciente primero, `before` pagina) y envío.
 - `POST /centers/:id/conversations/:cid/attachments?fileName=` · cuerpo = el fichero.
 - `POST /centers/:id/conversations/:cid/read`.
+- `POST /centers/:id/conversations/broadcast` `{ groupId, body }` · la administración escribe a todo un grupo: cada persona lo recibe en su conversación con el centro y las respuestas vuelven por separado; los menores no reciben.
 
 Errores: `CHAT_NOT_ALLOWED`, `CHAT_MINOR_REQUIRES_GUARDIAN`, `CHAT_ATTACHMENT_UNSUPPORTED`,
 `CHAT_ATTACHMENT_TOO_LARGE`.

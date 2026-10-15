@@ -7,6 +7,9 @@ export default function AdminNewMessageRoute(): React.JSX.Element {
 
   return (
     <NewConversationScreen
+      onGroupMessagePress={() => {
+        router.push('/(admin)/messages/group');
+      }}
       onConversationOpened={(conversationId) => {
         router.replace({
           pathname: '/(admin)/messages/[conversationId]',

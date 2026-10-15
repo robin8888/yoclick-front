@@ -12,6 +12,7 @@ import {
 import type {
   ContactListResponseDto,
   ConversationListResponseDto,
+  GroupBroadcastResponseDto,
   MessageListResponseDto,
   MessageResponseDto,
   OpenConversationResponseDto
@@ -23,6 +24,8 @@ export const getChatListConversationsResponseMock = (overrideResponse: Partial<E
 export const getChatOpenConversationResponseMock = (overrideResponse: Partial<Extract<OpenConversationResponseDto, object>> = {}): OpenConversationResponseDto => ({conversationId: faker.string.uuid(), ...overrideResponse})
 
 export const getChatListContactsResponseMock = (overrideResponse: Partial<Extract<ContactListResponseDto, object>> = {}): ContactListResponseDto => ({canWriteToCenter: faker.datatype.boolean(), people: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({membershipId: faker.string.uuid(), fullName: faker.string.alpha({length: {min: 10, max: 20}}), role: faker.helpers.arrayElement(['owner','admin','staff','client'] as const), photoUrl: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null])})), ...overrideResponse})
+
+export const getChatBroadcastToGroupResponseMock = (overrideResponse: Partial<Extract<GroupBroadcastResponseDto, object>> = {}): GroupBroadcastResponseDto => ({sentCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), skippedMinorCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), ...overrideResponse})
 
 export const getChatListMessagesResponseMock = (overrideResponse: Partial<Extract<MessageListResponseDto, object>> = {}): MessageListResponseDto => ({messages: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), conversationId: faker.string.uuid(), senderMembershipId: faker.string.uuid(), senderName: faker.string.alpha({length: {min: 10, max: 20}}), isMine: faker.datatype.boolean(), body: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), attachment: faker.helpers.arrayElement([{kind: faker.helpers.arrayElement(['image','pdf'] as const), name: faker.string.alpha({length: {min: 10, max: 20}}), sizeBytes: faker.number.int({min: -9007199254740991, max: 9007199254740991}), url: faker.string.alpha({length: {min: 10, max: 20}})},null,]), createdAt: faker.date.past().toISOString().slice(0, 19) + 'Z'})), ...overrideResponse})
 

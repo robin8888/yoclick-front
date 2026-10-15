@@ -1093,6 +1093,21 @@
     "previewMine": "Tú: {{content}}",
     "unreadCount_one": "{{count}} mensaje sin leer",
     "unreadCount_other": "{{count}} mensajes sin leer",
+    "group": {
+      "entryTitle": "Escribir a un grupo",
+      "entrySubtitle": "Un mismo mensaje para todas las personas del grupo",
+      "title": "Mensaje a un grupo",
+      "subtitle": "Lo recibe cada persona en su conversación con el centro; las respuestas llegan por separado.",
+      "noGroups": "Aún no tienes grupos. Créalos en la ficha de tus {{clientWord}}.",
+      "memberCount_one": "{{count}} persona",
+      "memberCount_other": "{{count}} personas",
+      "messageLabel": "Mensaje",
+      "send": "Enviar al grupo",
+      "sent_one": "Enviado a {{count}} persona",
+      "sent_other": "Enviado a {{count}} personas",
+      "skippedMinors_one": "{{count}} menor no lo ha recibido: solo se les escribe a través de su tutor.",
+      "skippedMinors_other": "{{count}} menores no lo han recibido: solo se les escribe a través de su tutor."
+    },
     "entryTitle": "Mensajes",
     "entryDescription": "Escribe al centro o a tu equipo."
   },

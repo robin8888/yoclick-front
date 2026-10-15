@@ -29,6 +29,8 @@ import type {
   ChatSendAttachmentParams,
   ContactListResponseDto,
   ConversationListResponseDto,
+  GroupBroadcastRequestDto,
+  GroupBroadcastResponseDto,
   MessageListResponseDto,
   MessageResponseDto,
   OpenConversationRequestDto,
@@ -422,6 +424,94 @@ export const useChatMarkRead = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getChatMarkReadMutationOptions(options), queryClient);
+    }
+    export const getChatBroadcastToGroupUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/conversations/broadcast`
+}
+
+/**
+ * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ */
+export const chatBroadcastToGroup = async (centerId: string,
+    groupBroadcastRequestDto: GroupBroadcastRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<GroupBroadcastResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<GroupBroadcastResponseDto>(getChatBroadcastToGroupUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(groupBroadcastRequestDto)
+  }
+);}
+
+
+
+
+
+export const getChatBroadcastToGroupMutationKey = () => ['chatBroadcastToGroup'] as const;
+
+export const getChatBroadcastToGroupMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBroadcastToGroup>>, TError,ChatBroadcastToGroupMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatBroadcastToGroup>>, TError,ChatBroadcastToGroupMutationVariables, TContext> => {
+
+const mutationKey = getChatBroadcastToGroupMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatBroadcastToGroup>>, ChatBroadcastToGroupMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  chatBroadcastToGroup(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatBroadcastToGroupMutationResult = NonNullable<Awaited<ReturnType<typeof chatBroadcastToGroup>>>
+    export type ChatBroadcastToGroupMutationBody = GroupBroadcastRequestDto
+    export type ChatBroadcastToGroupMutationError = ErrorType<ProblemDetailsDto>
+    export type ChatBroadcastToGroupMutationVariables = {centerId: string;data: GroupBroadcastRequestDto}
+
+    /**
+ * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ */
+export const useChatBroadcastToGroup = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBroadcastToGroup>>, TError,ChatBroadcastToGroupMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatBroadcastToGroup>>,
+        TError,
+        ChatBroadcastToGroupMutationVariables,
+        TContext
+      > => {
+      return useMutation(getChatBroadcastToGroupMutationOptions(options), queryClient);
     }
     export const getChatListMessagesUrl = (centerId: string,
     conversationId: string,

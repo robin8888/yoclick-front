@@ -16,14 +16,35 @@ import { useChatContacts } from '../hooks/useChatQueries';
 interface NewConversationScreenProps {
   /** Ya existe (o se acaba de crear) la conversación elegida: la app abre su hilo. */
   onConversationOpened: (conversationId: string) => void;
+  /** Solo la administración: escribir a todas las personas de un grupo. */
+  onGroupMessagePress?: (() => void) | undefined;
 }
 
 interface ContactListProps {
   contacts: ContactListResponseDto;
   onContactPress: (membershipId: string | null) => void;
+  onGroupMessagePress: (() => void) | undefined;
 }
 
-function ContactList({ contacts, onContactPress }: Readonly<ContactListProps>): React.JSX.Element {
+function GroupMessageEntry({
+  onPress,
+}: Readonly<{ onPress: (() => void) | undefined }>): React.JSX.Element | null {
+  if (onPress === undefined) return null;
+  return (
+    <ListItem
+      leadingIconName="users"
+      title={i18n.t('chat.group.entryTitle')}
+      subtitle={i18n.t('chat.group.entrySubtitle')}
+      onPress={onPress}
+    />
+  );
+}
+
+function ContactList({
+  contacts,
+  onContactPress,
+  onGroupMessagePress,
+}: Readonly<ContactListProps>): React.JSX.Element {
   const centerName = useCenterName();
   const { client, staff } = getSectorVocabulary(useActiveCenterSectorId());
   const hasNobody = contacts.people.length === 0 && !contacts.canWriteToCenter;
@@ -31,6 +52,7 @@ function ContactList({ contacts, onContactPress }: Readonly<ContactListProps>): 
 
   return (
     <>
+      <GroupMessageEntry onPress={onGroupMessagePress} />
       {contacts.canWriteToCenter ? (
         <ListItem
           leadingIconName="messageCircle"
@@ -59,6 +81,7 @@ function ContactList({ contacts, onContactPress }: Readonly<ContactListProps>): 
 /** «Nuevo mensaje»: el centro (si se puede) y las personas a las que quien mira puede escribir. */
 export function NewConversationScreen({
   onConversationOpened,
+  onGroupMessagePress,
 }: Readonly<NewConversationScreenProps>): React.JSX.Element {
   const onBackPress = useBackAction();
   const { data, isPending, isError, error, refetch } = useChatContacts();
@@ -86,6 +109,7 @@ export function NewConversationScreen({
       {data === undefined ? null : (
         <ContactList
           contacts={data}
+          onGroupMessagePress={onGroupMessagePress}
           onContactPress={(membershipId) => {
             open(membershipId, onConversationOpened);
           }}

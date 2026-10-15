@@ -147,6 +147,43 @@ export const ChatMarkReadHeader = zod.object({
 export const ChatMarkReadResponse = zod.void()
 
 /**
+ * @summary La administración escribe a todas las personas de un grupo; cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si el grupo no existe.
+ */
+export const chatBroadcastToGroupPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatBroadcastToGroupParams = zod.object({
+  "centerId": zod.uuid().regex(chatBroadcastToGroupPathCenterIdRegExp)
+})
+
+export const ChatBroadcastToGroupHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatBroadcastToGroupBodyGroupIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatBroadcastToGroupBodyBodyMax = 2000;
+
+
+
+export const ChatBroadcastToGroupBody = zod.object({
+  "groupId": zod.uuid().regex(chatBroadcastToGroupBodyGroupIdRegExp),
+  "body": zod.string().min(1).max(chatBroadcastToGroupBodyBodyMax)
+})
+
+export const chatBroadcastToGroupResponseSentCountMin = -9007199254740991;
+export const chatBroadcastToGroupResponseSentCountMax = 9007199254740991;
+
+export const chatBroadcastToGroupResponseSkippedMinorCountMin = -9007199254740991;
+export const chatBroadcastToGroupResponseSkippedMinorCountMax = 9007199254740991;
+
+
+
+export const ChatBroadcastToGroupResponse = zod.object({
+  "sentCount": zod.int().min(chatBroadcastToGroupResponseSentCountMin).max(chatBroadcastToGroupResponseSentCountMax),
+  "skippedMinorCount": zod.int().min(chatBroadcastToGroupResponseSkippedMinorCountMin).max(chatBroadcastToGroupResponseSkippedMinorCountMax)
+})
+
+/**
  * @summary Los mensajes de una conversación, del más reciente al más antiguo (`before` pagina hacia atrás). 404 si no existe o no es tuya.
  */
 export const chatListMessagesPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
