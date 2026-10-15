@@ -1,7 +1,9 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Keyboard,
+  Platform,
   ScrollView,
+  View,
   TextInput,
   type HostInstance,
   type NativeScrollEvent,
@@ -18,14 +20,17 @@ import { createContentStyle } from './ScreenTemplate.styles';
  * dejaba el campo (sobre todo el último de un formulario largo) debajo del teclado.
  */
 const FIRST_REVEAL_DELAY_MS = 60;
-const SECOND_REVEAL_DELAY_MS = 250;
-const THIRD_REVEAL_DELAY_MS = 500;
+const SECOND_REVEAL_DELAY_MS = 200;
+const THIRD_REVEAL_DELAY_MS = 400;
+const FOURTH_REVEAL_DELAY_MS = 700;
 const REVEAL_DELAYS_MS = [
   FIRST_REVEAL_DELAY_MS,
   SECOND_REVEAL_DELAY_MS,
   THIRD_REVEAL_DELAY_MS,
+  FOURTH_REVEAL_DELAY_MS,
 ] as const;
 const SCROLL_EVENT_THROTTLE_MS = 16;
+const FRAME_STYLE = { flex: 1 } as const;
 
 interface KeyboardAwareScrollProps {
   isContentCentered: boolean;
@@ -54,41 +59,66 @@ function revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef }: RevealTo
   });
 }
 
+/**
+ * Cuánto del scroll queda tapado por el teclado. En iOS se mide aquí (y no con
+ * `automaticallyAdjustKeyboardInsets`) porque el sistema lo calcula antes de que la plantilla mueva
+ * el botón fijo dentro del scroll, y el hueco salía corto: el último campo de un formulario largo no
+ * se podía subir por encima del teclado.
+ */
+function measureKeyboardOverlap(
+  frameRef: React.RefObject<View | null>,
+  keyboardTopY: number,
+  onMeasured: (overlap: number) => void,
+): void {
+  frameRef.current?.measureInWindow((...frame) => {
+    const [, top, , height] = frame;
+    onMeasured(Math.max(0, Math.round(top + height - keyboardTopY)));
+  });
+}
+
 /** Escucha al teclado (sistema externo): guarda dónde empieza y, al abrirse, enseña el campo enfocado. */
-function useKeyboardReveal(): RevealTools & { reveal: () => void } {
+function useKeyboardReveal(): RevealTools & {
+  frameRef: React.RefObject<View | null>;
+  reveal: () => void;
+  keyboardOverlap: number;
+} {
   const scrollRef = useRef<ScrollView | null>(null);
+  // El marco del scroll se mide en esta vista que lo envuelve: `ScrollView` no expone `measureInWindow`.
+  const frameRef = useRef<View | null>(null);
   const offsetYRef = useRef(0);
   const keyboardTopYRef = useRef<number | null>(null);
+  const [keyboardOverlap, setKeyboardOverlap] = useState(0);
   const tools = { scrollRef, offsetYRef, keyboardTopYRef };
+
+  const settle = (): void => {
+    const keyboardTopY = keyboardTopYRef.current;
+    if (keyboardTopY !== null && Platform.OS === 'ios') {
+      measureKeyboardOverlap(frameRef, keyboardTopY, setKeyboardOverlap);
+    }
+    revealFocusedInput(tools);
+  };
+  const settleSeveralTimes = (): void => {
+    for (const delay of REVEAL_DELAYS_MS) setTimeout(settle, delay);
+  };
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', (event) => {
       keyboardTopYRef.current = event.endCoordinates.screenY;
-      for (const delay of REVEAL_DELAYS_MS) {
-        setTimeout(() => {
-          revealFocusedInput({ scrollRef, offsetYRef, keyboardTopYRef });
-        }, delay);
-      }
+      settleSeveralTimes();
     });
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
       keyboardTopYRef.current = null;
+      setKeyboardOverlap(0);
     });
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
     };
+    // `settleSeveralTimes` solo usa refs y el setter: no cambia el comportamiento.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
-    ...tools,
-    reveal: () => {
-      for (const delay of REVEAL_DELAYS_MS) {
-        setTimeout(() => {
-          revealFocusedInput(tools);
-        }, delay);
-      }
-    },
-  };
+  return { ...tools, frameRef, reveal: settleSeveralTimes, keyboardOverlap };
 }
 
 /**
@@ -103,24 +133,30 @@ export function KeyboardAwareScroll({
   children,
 }: Readonly<KeyboardAwareScrollProps>): React.JSX.Element {
   const theme = useTheme();
-  const { scrollRef, offsetYRef, reveal } = useKeyboardReveal();
+  const { scrollRef, frameRef, offsetYRef, reveal, keyboardOverlap } = useKeyboardReveal();
 
   return (
     <KeyboardRevealContext.Provider value={reveal}>
-      <ScrollView
-        ref={scrollRef}
-        contentContainerStyle={createContentStyle(theme, isContentCentered)}
-        automaticallyAdjustKeyboardInsets
-        keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
-        scrollEventThrottle={SCROLL_EVENT_THROTTLE_MS}
-        onScroll={(event: { nativeEvent: NativeScrollEvent }) => {
-          offsetYRef.current = event.nativeEvent.contentOffset.y;
-        }}
-      >
-        {children}
-        {trailingContent}
-      </ScrollView>
+      <View ref={frameRef} style={FRAME_STYLE} collapsable={false}>
+        <ScrollView
+          ref={scrollRef}
+          contentContainerStyle={[
+            createContentStyle(theme, isContentCentered),
+            // En iOS el hueco del teclado lo pone la plantilla (ver `measureKeyboardOverlap`).
+            Platform.OS === 'ios' ? { paddingBottom: theme.space[5] + keyboardOverlap } : null,
+          ]}
+          automaticallyAdjustKeyboardInsets={false}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          scrollEventThrottle={SCROLL_EVENT_THROTTLE_MS}
+          onScroll={(event: { nativeEvent: NativeScrollEvent }) => {
+            offsetYRef.current = event.nativeEvent.contentOffset.y;
+          }}
+        >
+          {children}
+          {trailingContent}
+        </ScrollView>
+      </View>
     </KeyboardRevealContext.Provider>
   );
 }

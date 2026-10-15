@@ -36,6 +36,8 @@ function buildService(id: string, name: string) {
     minNoticeMinutes: 0,
     isVisible: true,
     room: null,
+    hasSchedule: true,
+    schedules: [],
     staff: [],
   };
 }

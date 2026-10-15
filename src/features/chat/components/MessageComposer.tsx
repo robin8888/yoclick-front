@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
+import { useIsKeyboardVisible } from '@/ui/hooks/useIsKeyboardVisible';
 import { IconButton } from '@/ui/atoms/IconButton';
 import { useTextStyle } from '@/ui/atoms/Text';
 
@@ -23,6 +24,12 @@ interface MessageComposerProps {
   onAttach?: ((source: AttachmentSource) => void) | undefined;
   /** Con el centro sin nadie elegido todavía, no se puede enviar. */
   isSendDisabled?: boolean;
+}
+
+/** Con el teclado abierto ya no hay barra de inicio debajo: sin hueco extra sobre las teclas. */
+function useComposerBottomInset(): number {
+  const { bottom: safeAreaBottom } = useSafeAreaInsets();
+  return useIsKeyboardVisible() ? 0 : safeAreaBottom;
 }
 
 function AttachButtons({
@@ -67,7 +74,7 @@ export function MessageComposer({
   isSendDisabled = false,
 }: Readonly<MessageComposerProps>): React.JSX.Element {
   const theme = useTheme();
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const bottomInset = useComposerBottomInset();
   const textStyle = useTextStyle({ variant: 'body', color: 'ink' });
   const [draft, setDraft] = useState('');
   const trimmedDraft = draft.trim();
