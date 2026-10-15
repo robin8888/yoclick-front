@@ -44,6 +44,9 @@ export const ICON_NAMES = [
   'palette',
   'more',
   'moon',
+  'messageCircle',
+  'paperclip',
+  'send',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

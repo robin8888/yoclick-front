@@ -20,7 +20,7 @@ function capitalize(word: string): string {
 
 interface ProfileLink {
   label: string;
-  iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode';
+  iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode' | 'messageCircle';
   route:
     | '/(staff)/routines'
     | '/(staff)/content'
@@ -28,7 +28,8 @@ interface ProfileLink {
     | '/(staff)/availability'
     | '/(staff)/attendance'
     | '/(staff)/work-qr'
-    | '/(staff)/my-data';
+    | '/(staff)/my-data'
+    | '/(staff)/messages';
 }
 
 /** Los accesos del perfil del equipo: sus rutinas (o prácticas, tareas…), los contenidos y su disponibilidad. */
@@ -37,6 +38,7 @@ function StaffProfileLinks({
 }: Readonly<{ routineWordPlural: string }>): React.JSX.Element {
   const router = useRouter();
   const links: readonly ProfileLink[] = [
+    { label: i18n.t('chat.title'), iconName: 'messageCircle', route: '/(staff)/messages' },
     { label: i18n.t('session.myData.title'), iconName: 'user', route: '/(staff)/my-data' },
     { label: i18n.t('timeClock.title'), iconName: 'clock', route: '/(staff)/attendance' },
     { label: i18n.t('timeClock.workQrAction'), iconName: 'qrCode', route: '/(staff)/work-qr' },

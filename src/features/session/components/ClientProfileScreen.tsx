@@ -73,11 +73,15 @@ function DarkThemeRow(): React.JSX.Element {
 }
 
 interface ProfileLinkEntry {
-  iconName: 'mapPin' | 'user' | 'bell' | 'lock';
+  iconName: 'mapPin' | 'user' | 'bell' | 'lock' | 'messageCircle';
   title: string;
   subtitle?: string;
   route:
-    '/(client)/centers' | '/(client)/my-data' | '/(client)/notifications' | '/(client)/privacy';
+    | '/(client)/centers'
+    | '/(client)/my-data'
+    | '/(client)/notifications'
+    | '/(client)/privacy'
+    | '/(client)/messages';
 }
 
 function useClientProfileEntries(): readonly ProfileLinkEntry[] {
@@ -102,6 +106,7 @@ function useClientProfileEntries(): readonly ProfileLinkEntry[] {
       subtitle: i18n.t('session.profile.myDataSubtitle'),
       route: '/(client)/my-data',
     },
+    { iconName: 'messageCircle', title: i18n.t('chat.title'), route: '/(client)/messages' },
     { iconName: 'bell', title: i18n.t('notifications.title'), route: '/(client)/notifications' },
     { iconName: 'lock', title: i18n.t('privacy.title'), route: '/(client)/privacy' },
   ];

@@ -38,4 +38,5 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   payment_received: 'payment_received',
   pass_running_low: 'pass_running_low',
   pass_exhausted: 'pass_exhausted',
+  message_received: 'message_received',
 } as const;

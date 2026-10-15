@@ -3,6 +3,7 @@ export * from './attendance/attendance.zod.ts';
 export * from './auth/auth.zod.ts';
 export * from './bookings/bookings.zod.ts';
 export * from './centers/centers.zod.ts';
+export * from './chat/chat.zod.ts';
 export * from './clients/clients.zod.ts';
 export * from './content/content.zod.ts';
 export * from './health/health.zod.ts';

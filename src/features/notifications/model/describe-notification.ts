@@ -50,6 +50,7 @@ const TITLE_KEYS = {
   payment_received: 'notifications.paymentReceivedTitle',
   pass_running_low: 'notifications.passRunningLowTitle',
   pass_exhausted: 'notifications.passExhaustedTitle',
+  message_received: 'notifications.messageReceivedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -81,6 +82,7 @@ const DESCRIPTION_KEYS = {
   payment_received: 'notifications.paymentReceivedDescription',
   pass_running_low: 'notifications.passRunningLowDescription',
   pass_exhausted: 'notifications.passExhaustedDescription',
+  message_received: 'notifications.messageReceivedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -162,6 +164,7 @@ interface NoticeTexts {
   roomSuffix: string;
   rateName: string;
   roomName: string;
+  senderName: string;
   /** «45 €», o vacío si el aviso no trae precio. */
   price: string;
   /** « por 45 €», o vacío: para frases donde el precio es opcional. */
@@ -208,6 +211,7 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
     roomSuffix: describeRoomSuffix(noticeData.roomName),
     rateName: textOf(noticeData.rateName),
     roomName: textOf(noticeData.roomName),
+    senderName: textOf(noticeData.senderName),
     ...describePrice(noticeData.priceCents),
   };
 }

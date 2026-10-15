@@ -5,6 +5,7 @@ import type { IconName } from '@/ui/atoms/Icon';
 import { buildInvitePersonRoute } from './invite-person-route';
 
 export type MoreMenuTextKey =
+  | 'messages'
   | 'centerDetails'
   | 'brand'
   | 'services'
@@ -42,6 +43,7 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
   {
     id: 'center',
     entries: [
+      { textKey: 'messages', route: '/(admin)/messages', iconName: 'messageCircle' },
       { textKey: 'centerDetails', route: '/(admin)/center', iconName: 'edit' },
       { textKey: 'inviteClients', route: '/(admin)/invite-clients', iconName: 'qrCode' },
       { textKey: 'inviteStudent', route: buildInvitePersonRoute('client'), iconName: 'mail' },

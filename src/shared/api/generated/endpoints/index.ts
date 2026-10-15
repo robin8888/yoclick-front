@@ -3,6 +3,7 @@ export * from './attendance/attendance.ts';
 export * from './auth/auth.ts';
 export * from './bookings/bookings.ts';
 export * from './centers/centers.ts';
+export * from './chat/chat.ts';
 export * from './clients/clients.ts';
 export * from './content/content.ts';
 export * from './health/health.ts';
