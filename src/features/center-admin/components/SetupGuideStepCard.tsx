@@ -7,11 +7,14 @@ import { Text } from '@/ui/atoms/Text';
 
 import {
   createStepCardStyle,
-  createStepIconTileStyle,
-  createStepNumberPillStyle,
+  createStepContentStyle,
+  createStepNumberStyle,
   createStepTextStyle,
   createStepTitleRowStyle,
 } from './SetupGuideStepCard.styles';
+
+/** Tope del escalado: un número enorme con letra grande rompería la tarjeta. */
+const NUMBER_MAX_FONT_SIZE_MULTIPLIER = 1.2;
 
 interface SetupGuideStepCardProps {
   position: number;
@@ -23,19 +26,27 @@ interface SetupGuideStepCardProps {
   onPress: () => void;
 }
 
-function StepNumberPill({ position }: Readonly<{ position: number }>): React.JSX.Element {
+/** Decorativo: el número ya va en la etiqueta accesible de la tarjeta. */
+function StepNumber({ position }: Readonly<{ position: number }>): React.JSX.Element {
   const theme = useTheme();
 
   return (
-    <View style={createStepNumberPillStyle(theme)}>
-      <Text variant="caption" color="onBrand">
+    <View
+      style={createStepNumberStyle(theme)}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Text variant="display" color="ink2" maxFontSizeMultiplier={NUMBER_MAX_FONT_SIZE_MULTIPLIER}>
         {String(position)}
       </Text>
     </View>
   );
 }
 
-/** Un paso de «Primeros pasos»: su icono con el número, qué hacer y una flecha que lo abre. */
+/**
+ * Un paso de «Primeros pasos»: el número grande y en gris claro a la izquierda y, a su lado, el
+ * icono delante del título, qué hacer y una flecha que lo abre.
+ */
 export function SetupGuideStepCard({
   position,
   iconName,
@@ -58,20 +69,20 @@ export function SetupGuideStepCard({
       onPress={onPress}
       style={style}
     >
-      <View style={createStepIconTileStyle(theme)}>
-        <Icon name={iconName} size="navigation" color="brandInk" />
-        <StepNumberPill position={position} />
-      </View>
-      <View style={createStepTextStyle(theme)}>
-        <View style={createStepTitleRowStyle(theme)}>
-          <Text variant="bodyStrong">{title}</Text>
-          {badgeLabel === undefined ? null : <Badge label={badgeLabel} tone="brand" />}
+      <StepNumber position={position} />
+      <View style={createStepContentStyle(theme)}>
+        <View style={createStepTextStyle(theme)}>
+          <View style={createStepTitleRowStyle(theme)}>
+            <Icon name={iconName} color="brandInk" />
+            <Text variant="bodyStrong">{title}</Text>
+            {badgeLabel === undefined ? null : <Badge label={badgeLabel} tone="brand" />}
+          </View>
+          <Text variant="caption" color="ink2">
+            {description}
+          </Text>
         </View>
-        <Text variant="caption" color="ink2">
-          {description}
-        </Text>
+        <Icon name="chevronRight" color="ink2" />
       </View>
-      <Icon name="chevronRight" color="ink2" />
     </Pressable>
   );
 }
