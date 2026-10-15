@@ -1,6 +1,6 @@
 import { i18n } from '@/shared/i18n';
 
-import { QuickActionsGrid, type QuickAction } from './QuickActionsGrid';
+import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
 
 interface CenterQuickActionsProps {
   /** «Salas y horarios» solo existe en los sectores con salas. */

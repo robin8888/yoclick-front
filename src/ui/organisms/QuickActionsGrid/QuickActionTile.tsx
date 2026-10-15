@@ -12,7 +12,7 @@ import {
   createQuickActionTileStyle,
   createTileTextStyle,
   PRIMARY_ACTION_TEXT_STYLE,
-} from './CenterQuickActions.styles';
+} from './QuickActionsGrid.styles';
 
 export interface QuickActionTileProps {
   iconName: IconName;

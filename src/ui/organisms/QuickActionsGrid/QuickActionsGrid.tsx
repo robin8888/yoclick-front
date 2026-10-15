@@ -3,11 +3,11 @@ import { View } from 'react-native';
 import { useTheme } from '@/shared/theme';
 import type { IconName } from '@/ui/atoms/Icon';
 
-import { PrimaryQuickAction, QuickActionTile } from './CenterQuickActionTile';
+import { PrimaryQuickAction, QuickActionTile } from './QuickActionTile';
 import {
   createQuickActionsRowStyle,
   createQuickActionsStackStyle,
-} from './CenterQuickActions.styles';
+} from './QuickActionsGrid.styles';
 
 export interface QuickAction {
   id: string;

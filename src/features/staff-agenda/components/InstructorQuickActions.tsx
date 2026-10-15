@@ -3,7 +3,7 @@ import { useRouter, type Href } from 'expo-router';
 import { i18n } from '@/shared/i18n';
 import type { IconName } from '@/ui/atoms/Icon';
 
-import { QuickActionsGrid, type QuickAction } from './QuickActionsGrid';
+import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
 
 interface ActionSpec {
   id: string;
