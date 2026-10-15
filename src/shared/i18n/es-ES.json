@@ -2186,7 +2186,7 @@
       "timeTitle": "Hora (solo las libres)",
       "timeNeedsPlace": "Elige sala, servicio y profesor para ver las horas libres.",
       "checkingTimes": "Comprobando las horas libres…",
-      "noFreeTimes": "No hay horas libres con esa sala, ese profesor y esos días. Prueba con otros.",
+      "noFreeTimes": "No hay horas libres dentro del horario del centro con esa sala, ese profesor y esos días. Prueba con otros.",
       "chosenTime": "De {{start}} a {{end}}",
       "saveAction": "Crear clase"
     },
@@ -2332,6 +2332,7 @@
     "roomBlocks": {
       "title": "Bloqueos",
       "subtitle": "{{room}}: alquiler, mantenimiento o eventos",
+      "editRoomAction": "Editar sala (nombre y aforo)",
       "addAction": "Nuevo bloqueo",
       "empty": "Sin bloqueos en las próximas 8 semanas",
       "loadError": "No hemos podido cargar los bloqueos",

@@ -4,12 +4,11 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ManagementActions } from '../components/ManagementActions';
 import { RoomBlocksManagementSection } from '../components/RoomBlocksManagementSection';
-import { RoomsManagementSection } from '../components/RoomsManagementSection';
 import { ScheduleWeekSection } from '../components/ScheduleWeekSection';
 
 /**
- * «Gestión» (docs/spec/09): los espacios del centro con su aforo, profesor y servicio fijos, y el
- * horario fijo semanal (clases que se repiten, con su grupo fijo). Los bloqueos cuelgan de cada espacio.
+ * «Gestión» (docs/spec/13): tres botones para crear sala, servicio y clase; debajo, los bloqueos de
+ * cada sala (alquiler, mantenimiento) y las clases fijas de la semana.
  */
 export function ManagementScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
@@ -21,7 +20,6 @@ export function ManagementScreen(): React.JSX.Element {
       subtitle={i18n.t('centerAdmin.management.subtitle')}
     >
       <ManagementActions />
-      <RoomsManagementSection />
       <RoomBlocksManagementSection />
       <ScheduleWeekSection />
     </ScreenTemplate>

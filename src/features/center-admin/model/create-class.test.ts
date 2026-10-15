@@ -96,6 +96,65 @@ describe('listFreeStartTimes', () => {
   });
 });
 
+describe('listFreeStartTimes · opening hours', () => {
+  const period = { startsOn: '2026-10-20', endsOn: null };
+
+  it('only offers starts inside the hours of the center, so the class ends before it closes', () => {
+    const times = listFreeStartTimes({
+      durationMinutes: 60,
+      weekdays: [1],
+      busy: [],
+      period,
+      openRanges: { 1: [{ opensAt: '09:00', closesAt: '20:00' }] },
+    });
+
+    expect(times[0]).toBe('09:00');
+    expect(times.at(-1)).toBe('19:00');
+    expect(times).not.toContain('06:00');
+    expect(times).not.toContain('19:30');
+  });
+
+  it('respects a split day and offers nothing on a closed one', () => {
+    const split = listFreeStartTimes({
+      durationMinutes: 60,
+      weekdays: [2],
+      busy: [],
+      period,
+      openRanges: {
+        2: [
+          { opensAt: '09:00', closesAt: '13:00' },
+          { opensAt: '16:00', closesAt: '20:00' },
+        ],
+      },
+    });
+    const closed = listFreeStartTimes({
+      durationMinutes: 60,
+      weekdays: [7],
+      busy: [],
+      period,
+      openRanges: { 1: [{ opensAt: '09:00', closesAt: '20:00' }] },
+    });
+
+    expect(split).toContain('12:00');
+    expect(split).not.toContain('12:30');
+    expect(split).not.toContain('14:00');
+    expect(split).toContain('16:00');
+    expect(closed).toEqual([]);
+  });
+
+  it('does not restrict anything while the opening hours are not configured', () => {
+    const times = listFreeStartTimes({
+      durationMinutes: 60,
+      weekdays: [1],
+      busy: [],
+      period,
+      openRanges: null,
+    });
+
+    expect(times[0]).toBe('06:00');
+  });
+});
+
 describe('buildCreateClassRequest', () => {
   const service = { durationMinutes: 90, mode: 'both' as const };
   const base = {

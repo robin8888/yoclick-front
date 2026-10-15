@@ -1,4 +1,5 @@
 import type {
+  CenterSettingsResponseDtoOpeningHours,
   CreateScheduleSeriesRequestDto,
   ServiceListResponseDtoServicesItem,
 } from '@/shared/api/generated/model';
@@ -40,11 +41,45 @@ function doPeriodsCross(first: Period, second: Period): boolean {
   return isBeforeOtherEnd && isAfterOtherStart;
 }
 
+/** Las franjas en que el centro está abierto cada día de la semana (1 = lunes … 7 = domingo). */
+export type OpenRangesByWeekday = Readonly<
+  Record<number, readonly { opensAt: string; closesAt: string }[]>
+>;
+
+const OPENING_DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+
+/**
+ * El horario del centro por día de la semana; `null` si aún no lo ha configurado (entonces no hay
+ * nada que respetar). Un día sin franjas es un día cerrado.
+ */
+export function toOpenRangesByWeekday(
+  openingHours: CenterSettingsResponseDtoOpeningHours | undefined,
+): OpenRangesByWeekday | null {
+  if (openingHours === null || openingHours === undefined) return null;
+  return Object.fromEntries(
+    OPENING_DAY_KEYS.map((day, index) => [index + 1, openingHours[day] ?? []]),
+  );
+}
+
 interface FreeTimesRequest {
   durationMinutes: number;
   weekdays: readonly number[];
   busy: readonly BusySlot[];
   period: Period;
+  /** El horario del centro: la clase tiene que caber dentro de una franja de cada día elegido. */
+  openRanges?: OpenRangesByWeekday | null;
+}
+
+function isInsideOpeningHours(startMinutes: number, request: FreeTimesRequest): boolean {
+  const { openRanges } = request;
+  if (openRanges === null || openRanges === undefined) return true;
+  const endMinutes = startMinutes + request.durationMinutes;
+  return request.weekdays.every((weekday) =>
+    (openRanges[weekday] ?? []).some(
+      (range) =>
+        startMinutes >= timeToMinutes(range.opensAt) && endMinutes <= timeToMinutes(range.closesAt),
+    ),
+  );
 }
 
 function isStartFree(startMinutes: number, request: FreeTimesRequest): boolean {
@@ -70,7 +105,9 @@ export function listFreeStartTimes(request: FreeTimesRequest): string[] {
     start + request.durationMinutes <= LAST_END_MINUTES;
     start += GRID_STEP_MINUTES
   ) {
-    if (isStartFree(start, request)) times.push(minutesToTime(start));
+    if (isInsideOpeningHours(start, request) && isStartFree(start, request)) {
+      times.push(minutesToTime(start));
+    }
   }
   return times;
 }

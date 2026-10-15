@@ -14,11 +14,13 @@ import {
   listFreeStartTimes,
   type BusySlot,
   type ClassDraft,
+  toOpenRangesByWeekday,
   type ClassRepeat,
 } from '../model/create-class';
 import { toggleWeekday, type ScheduleWeekday } from '../model/schedule-form';
 import { useBusyTimes } from './useBusyTimes';
 import { getDeviceTimeZone } from './useCenterTimeZone';
+import { useCenterSettings } from './useCenterSettings';
 import { useCreateScheduleSeries } from './useCreateScheduleSeries';
 import { useRoomList } from './useRoomList';
 import { useServiceCatalog } from './useServiceCatalog';
@@ -136,6 +138,7 @@ function useAvailability(
     roomId: draft.roomId,
     staffMembershipId: draft.staffMembershipId,
   });
+  const openingHours = useCenterSettings().data?.openingHours;
   const weekdayOfDate = getWeekdayOfIsoDate(draft.startsOn) ?? 1;
   const weekdays = draft.repeat === 'once' ? [weekdayOfDate] : draft.weekdays;
   const hasPlace =
@@ -145,6 +148,7 @@ function useAvailability(
         durationMinutes: service.durationMinutes,
         weekdays,
         busy: busyTimes.busy,
+        openRanges: toOpenRangesByWeekday(openingHours),
         period: {
           startsOn: draft.startsOn,
           endsOn: draft.repeat === 'once' ? draft.startsOn : null,

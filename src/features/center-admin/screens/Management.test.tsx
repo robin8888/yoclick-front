@@ -52,30 +52,28 @@ describe('ManagementScreen', () => {
     signInToCenter();
   });
 
-  it('lists the rooms with their capacity and the teacher who gives class in each', async () => {
+  it('has one button for each thing to create: room, service and class', async () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    expect(await screen.findAllByText('Sala de baile')).toHaveLength(2);
-    expect(screen.getByText('Aforo 12 · Da clase Ana Ruiz · Solo Salsa')).toBeOnTheScreen();
-    expect(screen.getAllByText('Aula común')).toHaveLength(2);
-    expect(screen.getByText('Aforo 6 · Cualquiera del equipo')).toBeOnTheScreen();
-  });
-
-  it('explains what the rooms are for when there are none', async () => {
-    mockApi({ [`GET ${ROOMS_PATH}`]: { rooms: [] } });
-    renderScreen(<ManagementScreen />);
-
-    expect(await screen.findByText('Aún no hay espacios')).toBeOnTheScreen();
-  });
-
-  it('opens the form to add a room', async () => {
-    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
-    renderScreen(<ManagementScreen />);
-
-    fireEvent.press(await screen.findByRole('button', { name: 'Nuevo espacio' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Crear sala' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Crear servicio' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Crear clase' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/rooms/new');
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(admin)/services/[serviceId]',
+      params: { serviceId: 'new' },
+    });
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/schedules/new');
+  });
+
+  it('no longer lists the rooms in a section of their own', async () => {
+    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
+    renderScreen(<ManagementScreen />);
+
+    expect(await screen.findByText('Alquiler y mantenimiento')).toBeOnTheScreen();
+    expect(screen.queryByText('Nuevo espacio')).toBeNull();
   });
 
   it('offers to block a room for rental or maintenance from this screen', async () => {
@@ -89,18 +87,6 @@ describe('ManagementScreen', () => {
 
     expect(getMockRouter().push).toHaveBeenCalledWith({
       pathname: '/(admin)/room-blocks/[roomId]',
-      params: { roomId: ROOM_ANA_ID },
-    });
-  });
-
-  it('opens a room to edit it', async () => {
-    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
-    renderScreen(<ManagementScreen />);
-
-    fireEvent.press(await screen.findByRole('button', { name: /Sala de baile, aforo 12/ }));
-
-    expect(getMockRouter().push).toHaveBeenCalledWith({
-      pathname: '/(admin)/rooms/[roomId]',
       params: { roomId: ROOM_ANA_ID },
     });
   });

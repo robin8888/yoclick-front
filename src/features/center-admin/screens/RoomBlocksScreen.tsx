@@ -113,6 +113,15 @@ function RoomBlocksContent({ roomId }: Readonly<{ roomId: string }>): React.JSX.
           router.push({ pathname: '/(admin)/room-blocks/new/[roomId]', params: { roomId } });
         }}
       />
+      <Button
+        isFullWidth
+        variant="outline"
+        leadingIconName="edit"
+        label={i18n.t('centerAdmin.roomBlocks.editRoomAction')}
+        onPress={() => {
+          router.push({ pathname: '/(admin)/rooms/[roomId]', params: { roomId } });
+        }}
+      />
       <BlockList roomId={roomId} timeZone={timeZone} onBlockPress={setBlockToRemove} />
       <RemoveBlockSheet
         roomId={roomId}
