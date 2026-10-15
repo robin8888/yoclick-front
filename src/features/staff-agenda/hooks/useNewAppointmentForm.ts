@@ -72,6 +72,8 @@ export interface NewAppointmentForm {
   /** Marca o desmarca a una persona; si no caben varias, elegir a otra sustituye a la anterior. */
   toggleClient: (client: ChosenClient, options: { canChooseSeveral: boolean }) => void;
   clearClients: () => void;
+  /** Quita de lo elegido a quienes no pueden apuntarse (p. ej. sin bono para ese servicio). */
+  dropClients: (membershipIds: ReadonlySet<string>) => void;
   selectStaff: (staffMembershipId: string) => void;
   selectService: (serviceId: string) => void;
   selectSlot: (slot: SlotOption) => void;
@@ -196,6 +198,9 @@ function useChoices() {
     },
     clearClients: () => {
       setClients([]);
+    },
+    dropClients: (membershipIds: ReadonlySet<string>) => {
+      setClients((current) => current.filter((client) => !membershipIds.has(client.membershipId)));
     },
     selectStaff: (nextStaffMembershipId: string) => {
       setStaffMembershipId(nextStaffMembershipId);

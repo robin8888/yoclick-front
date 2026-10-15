@@ -823,6 +823,8 @@
       "loadingClasses": "Buscando las clases de este servicio…",
       "swipeToChooseTime": "Desliza las ruedas o toca una hora para elegirla",
       "clientsLabel": "Personas",
+      "removeWithoutPass": "Quitar a quien no tiene bono",
+      "withoutPass": "Sin bono en vigor para este servicio: {{names}}. Quítalo de la cita o actívale un bono.",
       "severalClientsHint": "Puedes elegir a varias personas para la misma clase.",
       "noEligibleClients": "Ninguna persona tiene un bono en vigor con clases para este servicio. Da un bono desde la ficha de la persona para poder apuntarla.",
       "eligibleError": "No hemos podido cargar a las personas con bono",

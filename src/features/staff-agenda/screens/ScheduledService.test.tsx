@@ -96,6 +96,12 @@ const COMMON_API = {
     sessions: [],
     nextOpenStartsAt: null,
   },
+  [`GET ${CENTER_PATH}/passes/eligible`]: {
+    clients: [
+      { membershipId: MARTA_ID, fullName: 'Marta Ruiz', photoUrl: null, bookableSessions: 4 },
+      { membershipId: LUIS_ID, fullName: 'Luis Gil', photoUrl: null, bookableSessions: 2 },
+    ],
+  },
   [`POST ${JOIN_PATH}`]: {},
 };
 
@@ -136,6 +142,27 @@ describe('NewAppointmentScreen · service with a room schedule', () => {
       .map((call) => call.body as { clientMembershipId: string; classSessionId: string })
       .map(({ clientMembershipId, classSessionId }) => `${clientMembershipId}:${classSessionId}`);
     expect(joinedClientIds).toEqual([`${MARTA_ID}:${SESSION_ID}`, `${LUIS_ID}:${SESSION_ID}`]);
+  });
+
+  it('only offers people with an active pass for a scheduled service, and warns about the chosen without one', async () => {
+    mockApi({
+      ...COMMON_API,
+      [`GET ${CENTER_PATH}/passes/eligible`]: {
+        clients: [
+          { membershipId: LUIS_ID, fullName: 'Luis Gil', photoUrl: null, bookableSessions: 2 },
+        ],
+      },
+    });
+    renderScreen(<NewAppointmentScreen />);
+
+    fireEvent.press(await screen.findByText('Marta Ruiz'));
+    fireEvent.press(await screen.findByText('Karate'));
+
+    expect(
+      await screen.findByText(/Sin bono en vigor para este servicio: Marta Ruiz/),
+    ).toBeOnTheScreen();
+    expect(screen.getByText('Luis Gil')).toBeOnTheScreen();
+    expect(screen.queryByText('Ana Ruiz')).toBeNull();
   });
 
   it('keeps the free hour flow for a service that has no room schedule', async () => {

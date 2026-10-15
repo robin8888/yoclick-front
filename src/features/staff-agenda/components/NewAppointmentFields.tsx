@@ -1,6 +1,7 @@
 import { ServiceOptionList } from '@/features/booking';
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
@@ -12,6 +13,7 @@ import { GroupRoomOptionsList } from './GroupRoomOptionsList';
 import { AppointmentTimePicker } from './AppointmentTimePicker';
 import { ScheduledServiceFields } from './ScheduledServiceFields';
 import { useServiceSessions } from '@/features/booking';
+import { useEligibleClients } from '../hooks/useEligibleClients';
 import type { NewAppointmentForm } from '../hooks/useNewAppointmentForm';
 
 function StaffChoices({ form }: Readonly<{ form: NewAppointmentForm }>): React.JSX.Element {
@@ -31,14 +33,75 @@ function StaffChoices({ form }: Readonly<{ form: NewAppointmentForm }>): React.J
   );
 }
 
+/**
+ * Con un servicio de horario de sala solo se apunta a quien tiene un bono en vigor y clases por
+ * agendar. Si ya había gente elegida sin bono para ese servicio, se avisa y se puede quitar de un toque.
+ */
+function ClientsWithoutPassWarning({
+  form,
+  serviceId,
+}: Readonly<{ form: NewAppointmentForm; serviceId: string }>): React.JSX.Element | null {
+  const eligible = useEligibleClients(serviceId).data;
+  if (eligible === undefined) return null;
+  const eligibleIds = new Set(eligible.clients.map((client) => client.membershipId));
+  const withoutPass = form.clients.filter((client) => !eligibleIds.has(client.membershipId));
+  if (withoutPass.length === 0) return null;
+
+  return (
+    <>
+      <Text color="danger" role="alert">
+        {i18n.t('staffAgenda.newAppointment.withoutPass', {
+          names: withoutPass.map((client) => client.fullName).join(', '),
+        })}
+      </Text>
+      <Button
+        variant="outline"
+        label={i18n.t('staffAgenda.newAppointment.removeWithoutPass')}
+        onPress={() => {
+          form.dropClients(new Set(withoutPass.map((client) => client.membershipId)));
+        }}
+      />
+    </>
+  );
+}
+
 function ClientChoice({
   form,
   canChooseSeveral,
-}: Readonly<{ form: NewAppointmentForm; canChooseSeveral: boolean }>): React.JSX.Element {
+  requiredPassServiceId,
+}: Readonly<{
+  form: NewAppointmentForm;
+  canChooseSeveral: boolean;
+  requiredPassServiceId: string | undefined;
+}>): React.JSX.Element {
+  return (
+    <>
+      {requiredPassServiceId === undefined ? null : (
+        <ClientsWithoutPassWarning form={form} serviceId={requiredPassServiceId} />
+      )}
+      <ClientChoiceBody
+        form={form}
+        canChooseSeveral={canChooseSeveral}
+        requiredPassServiceId={requiredPassServiceId}
+      />
+    </>
+  );
+}
+
+function ClientChoiceBody({
+  form,
+  canChooseSeveral,
+  requiredPassServiceId,
+}: Readonly<{
+  form: NewAppointmentForm;
+  canChooseSeveral: boolean;
+  requiredPassServiceId: string | undefined;
+}>): React.JSX.Element {
   return (
     <ClientChoiceField
       clients={form.clients}
       canChooseSeveral={canChooseSeveral}
+      requiredPassServiceId={requiredPassServiceId}
       onClientToggle={(client) => {
         form.toggleClient(client, { canChooseSeveral });
       }}
@@ -196,7 +259,11 @@ export function NewAppointmentFields({
 
   return (
     <>
-      <ClientChoice form={form} canChooseSeveral={form.mode === 'group' || isScheduledService} />
+      <ClientChoice
+        form={form}
+        canChooseSeveral={form.mode === 'group' || isScheduledService}
+        requiredPassServiceId={isScheduledService ? (form.serviceId ?? undefined) : undefined}
+      />
       <ServiceChoice form={form} />
       <AfterService form={form} serviceSessions={serviceSessions} />
       <AppointmentSummary form={form} />
