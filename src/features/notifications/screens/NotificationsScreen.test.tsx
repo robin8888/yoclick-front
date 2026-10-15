@@ -4,6 +4,7 @@ import type { NotificationListResponseDtoNotificationsItem } from '@/shared/api/
 import { useSessionStore } from '@/shared/auth/session-store';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { findApiCall, mockApi } from '@/test/mock-api';
+import { getMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { NotificationsScreen } from './NotificationsScreen';
@@ -43,7 +44,7 @@ describe('NotificationsScreen', () => {
       [LIST_PATH]: { notifications: [buildNotification()], unreadCount: 0 },
       [DELETE_ONE_PATH]: undefined,
     });
-    renderScreen(<NotificationsScreen />);
+    renderScreen(<NotificationsScreen audience="admin" />);
 
     fireEvent.press(await screen.findByRole('button', { name: 'Borrar aviso: Nueva reserva' }));
 
@@ -57,7 +58,7 @@ describe('NotificationsScreen', () => {
       [LIST_PATH]: { notifications: [buildNotification()], unreadCount: 0 },
       [DELETE_ALL_PATH]: undefined,
     });
-    renderScreen(<NotificationsScreen />);
+    renderScreen(<NotificationsScreen audience="admin" />);
 
     fireEvent.press(await screen.findByRole('button', { name: 'Borrar todos' }));
     expect(await screen.findByText('¿Borrar todos los avisos?')).toBeOnTheScreen();
@@ -67,5 +68,13 @@ describe('NotificationsScreen', () => {
     await waitFor(() => {
       expect(findApiCall('DELETE', DELETE_ALL_PATH.replace('DELETE ', ''))).toBeDefined();
     });
+  });
+  it('takes the person to the screen the notice is about', async () => {
+    mockApi({ [LIST_PATH]: { notifications: [buildNotification()], unreadCount: 0 } });
+    renderScreen(<NotificationsScreen audience="admin" />);
+
+    fireEvent.press(await screen.findByText('Nueva reserva'));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/day-agenda');
   });
 });

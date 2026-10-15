@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
 import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
@@ -22,10 +23,14 @@ import {
   formatNotificationAge,
   isCancellationNotification,
 } from '../model/describe-notification';
+import {
+  resolveNotificationDestination,
+  type NotificationAudience,
+} from '../model/notification-destination';
 
 interface NotificationListProps {
   notifications: readonly NotificationListResponseDtoNotificationsItem[];
-  onNoticeOpen: (notificationId: string) => void;
+  onNoticeOpen: (notification: NotificationListResponseDtoNotificationsItem) => void;
   onNoticeDelete: (notificationId: string) => void;
 }
 
@@ -50,7 +55,7 @@ function NotificationList({
             isRead={notification.isRead}
             isCancellation={isCancellationNotification(notification.kind)}
             onPress={() => {
-              if (!notification.isRead) onNoticeOpen(notification.id);
+              onNoticeOpen(notification);
             }}
             onDeletePress={() => {
               onNoticeDelete(notification.id);
@@ -165,13 +170,46 @@ function DeleteAllSheet({
   );
 }
 
+function useDeleteAllSheetState(): { isVisible: boolean; open: () => void; close: () => void } {
+  const [isVisible, setIsVisible] = useState(false);
+  return {
+    isVisible,
+    open: () => {
+      setIsVisible(true);
+    },
+    close: () => {
+      setIsVisible(false);
+    },
+  };
+}
+
+/** Al tocar un aviso se marca como leído y se abre la pantalla a la que se refiere. */
+function useOpenNotification(
+  audience: NotificationAudience,
+  markOneRead: (notificationId: string) => void,
+): (notification: NotificationListResponseDtoNotificationsItem) => void {
+  const router = useRouter();
+
+  return (notification) => {
+    if (!notification.isRead) markOneRead(notification.id);
+    const destination = resolveNotificationDestination(notification.kind, {
+      audience,
+      noticeData: notification.data,
+    });
+    if (destination !== null) router.push(destination);
+  };
+}
+
 /** Prototipo `inotifs`: los avisos, con «Marcar leídos», la papelera de cada uno y «Borrar todos». */
-export function NotificationsScreen(): React.JSX.Element {
+export function NotificationsScreen({
+  audience,
+}: Readonly<{ audience: NotificationAudience }>): React.JSX.Element {
   const onBackPress = useBackAction();
   const notifications = useNotifications();
   const marker = useMarkNotificationsRead();
+  const openNotification = useOpenNotification(audience, marker.markOneRead);
   const deletion = useDeleteNotifications();
-  const [isConfirmingDeleteAll, setIsConfirmingDeleteAll] = useState(false);
+  const deleteAllSheet = useDeleteAllSheetState();
   const list = notifications.data?.notifications ?? [];
 
   return (
@@ -182,27 +220,21 @@ export function NotificationsScreen(): React.JSX.Element {
         hasNotices={list.length > 0}
         isBusy={marker.isMarking || deletion.isDeleting}
         onMarkAllRead={marker.markAllRead}
-        onDeleteAll={() => {
-          setIsConfirmingDeleteAll(true);
-        }}
+        onDeleteAll={deleteAllSheet.open}
       />
       <NotificationsState notifications={notifications} />
       <NotificationList
         notifications={list}
-        onNoticeOpen={marker.markOneRead}
+        onNoticeOpen={openNotification}
         onNoticeDelete={deletion.deleteOne}
       />
       <DeleteAllSheet
-        isVisible={isConfirmingDeleteAll}
+        isVisible={deleteAllSheet.isVisible}
         isDeleting={deletion.isDeleting}
         onConfirm={() => {
-          deletion.deleteAll(() => {
-            setIsConfirmingDeleteAll(false);
-          });
+          deletion.deleteAll(deleteAllSheet.close);
         }}
-        onDismiss={() => {
-          setIsConfirmingDeleteAll(false);
-        }}
+        onDismiss={deleteAllSheet.close}
       />
     </ScreenTemplate>
   );
