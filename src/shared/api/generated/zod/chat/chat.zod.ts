@@ -147,7 +147,51 @@ export const ChatMarkReadHeader = zod.object({
 export const ChatMarkReadResponse = zod.void()
 
 /**
- * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
+ * @summary A qué grupos de clientes y clases fijas puede escribir quien pregunta: todos la administración, solo los suyos un profesor.
+ */
+export const chatListBroadcastTargetsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatListBroadcastTargetsParams = zod.object({
+  "centerId": zod.uuid().regex(chatListBroadcastTargetsPathCenterIdRegExp)
+})
+
+export const ChatListBroadcastTargetsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatListBroadcastTargetsResponseGroupsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatListBroadcastTargetsResponseGroupsItemMemberCountMin = -9007199254740991;
+export const chatListBroadcastTargetsResponseGroupsItemMemberCountMax = 9007199254740991;
+
+export const chatListBroadcastTargetsResponseClassesItemSeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatListBroadcastTargetsResponseClassesItemWeekdaysItemMin = -9007199254740991;
+export const chatListBroadcastTargetsResponseClassesItemWeekdaysItemMax = 9007199254740991;
+
+export const chatListBroadcastTargetsResponseClassesItemEnrolledCountMin = -9007199254740991;
+export const chatListBroadcastTargetsResponseClassesItemEnrolledCountMax = 9007199254740991;
+
+
+
+export const ChatListBroadcastTargetsResponse = zod.object({
+  "groups": zod.array(zod.object({
+  "id": zod.uuid().regex(chatListBroadcastTargetsResponseGroupsItemIdRegExp),
+  "name": zod.string(),
+  "memberCount": zod.int().min(chatListBroadcastTargetsResponseGroupsItemMemberCountMin).max(chatListBroadcastTargetsResponseGroupsItemMemberCountMax)
+})),
+  "classes": zod.array(zod.object({
+  "seriesId": zod.uuid().regex(chatListBroadcastTargetsResponseClassesItemSeriesIdRegExp),
+  "name": zod.string(),
+  "roomName": zod.string().nullable(),
+  "weekdays": zod.array(zod.int().min(chatListBroadcastTargetsResponseClassesItemWeekdaysItemMin).max(chatListBroadcastTargetsResponseClassesItemWeekdaysItemMax)),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "enrolledCount": zod.int().min(chatListBroadcastTargetsResponseClassesItemEnrolledCountMin).max(chatListBroadcastTargetsResponseClassesItemEnrolledCountMax)
+}))
+})
+
+/**
+ * @summary Escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija (`seriesId`). La administración lo hace en nombre del centro; un profesor, en persona y solo a lo suyo. Cada una lo recibe en su conversación y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe o no es suyo.
  */
 export const chatBroadcastToGroupPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 

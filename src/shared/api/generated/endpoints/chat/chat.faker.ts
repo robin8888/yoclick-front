@@ -10,6 +10,7 @@ import {
 } from '@faker-js/faker';
 
 import type {
+  BroadcastTargetsResponseDto,
   ContactListResponseDto,
   ConversationListResponseDto,
   GroupBroadcastResponseDto,
@@ -24,6 +25,8 @@ export const getChatListConversationsResponseMock = (overrideResponse: Partial<E
 export const getChatOpenConversationResponseMock = (overrideResponse: Partial<Extract<OpenConversationResponseDto, object>> = {}): OpenConversationResponseDto => ({conversationId: faker.string.uuid(), ...overrideResponse})
 
 export const getChatListContactsResponseMock = (overrideResponse: Partial<Extract<ContactListResponseDto, object>> = {}): ContactListResponseDto => ({canWriteToCenter: faker.datatype.boolean(), people: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({membershipId: faker.string.uuid(), fullName: faker.string.alpha({length: {min: 10, max: 20}}), role: faker.helpers.arrayElement(['owner','admin','staff','client'] as const), photoUrl: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null])})), ...overrideResponse})
+
+export const getChatListBroadcastTargetsResponseMock = (overrideResponse: Partial<Extract<BroadcastTargetsResponseDto, object>> = {}): BroadcastTargetsResponseDto => ({groups: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), memberCount: faker.number.int({min: -9007199254740991, max: 9007199254740991})})), classes: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({seriesId: faker.string.uuid(), name: faker.string.alpha({length: {min: 10, max: 20}}), roomName: faker.helpers.arrayElement([faker.string.alpha({length: {min: 10, max: 20}}), null]), weekdays: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => (faker.number.int({min: -9007199254740991, max: 9007199254740991}))), startsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), endsAtTime: faker.string.alpha({length: {min: 10, max: 20}}), enrolledCount: faker.number.int({min: -9007199254740991, max: 9007199254740991})})), ...overrideResponse})
 
 export const getChatBroadcastToGroupResponseMock = (overrideResponse: Partial<Extract<GroupBroadcastResponseDto, object>> = {}): GroupBroadcastResponseDto => ({sentCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), skippedMinorCount: faker.number.int({min: -9007199254740991, max: 9007199254740991}), ...overrideResponse})
 

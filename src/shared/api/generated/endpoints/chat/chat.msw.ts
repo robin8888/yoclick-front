@@ -14,6 +14,7 @@ import type {
 } from 'msw';
 
 import type {
+  BroadcastTargetsResponseDto,
   ContactListResponseDto,
   ConversationListResponseDto,
   GroupBroadcastResponseDto,
@@ -24,6 +25,7 @@ import type {
 
 import {
   getChatBroadcastToGroupResponseMock,
+  getChatListBroadcastTargetsResponseMock,
   getChatListContactsResponseMock,
   getChatListConversationsResponseMock,
   getChatListMessagesResponseMock,
@@ -32,7 +34,7 @@ import {
   getChatSendMessageResponseMock
 } from './chat.faker.ts';
 
-export { getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatBroadcastToGroupResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
+export { getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatListBroadcastTargetsResponseMock, getChatBroadcastToGroupResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
 
 
 export const getChatListConversationsMockHandler = (overrideResponse?: ConversationListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ConversationListResponseDto> | ConversationListResponseDto), options?: RequestHandlerOptions) => {
@@ -77,6 +79,18 @@ export const getChatMarkReadMockHandler = (overrideResponse?: void | ((info: Par
 
     return new HttpResponse(null,
       { status: 204
+      })
+  }, options)
+}
+
+export const getChatListBroadcastTargetsMockHandler = (overrideResponse?: BroadcastTargetsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<BroadcastTargetsResponseDto> | BroadcastTargetsResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/conversations/broadcast/targets', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatListBroadcastTargetsResponseMock(),
+      { status: 200
       })
   }, options)
 }
@@ -133,6 +147,7 @@ export const getChatMock = () => [
   getChatOpenConversationMockHandler(),
   getChatListContactsMockHandler(),
   getChatMarkReadMockHandler(),
+  getChatListBroadcastTargetsMockHandler(),
   getChatBroadcastToGroupMockHandler(),
   getChatListMessagesMockHandler(),
   getChatSendMessageMockHandler(),

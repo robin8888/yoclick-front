@@ -25,6 +25,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BroadcastTargetsResponseDto,
   ChatListMessagesParams,
   ChatSendAttachmentParams,
   ContactListResponseDto,
@@ -425,7 +426,107 @@ export const useChatMarkRead = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getChatMarkReadMutationOptions(options), queryClient);
     }
-    export const getChatBroadcastToGroupUrl = (centerId: string,) => {
+    export const getChatListBroadcastTargetsUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/conversations/broadcast/targets`
+}
+
+/**
+ * @summary A qué grupos de clientes y clases fijas puede escribir quien pregunta: todos la administración, solo los suyos un profesor.
+ */
+export const chatListBroadcastTargets = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<BroadcastTargetsResponseDto> => {
+
+  return apiMutator<BroadcastTargetsResponseDto>(getChatListBroadcastTargetsUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getChatListBroadcastTargetsQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/conversations/broadcast/targets`
+    ] as const;
+    }
+
+
+export const getChatListBroadcastTargetsQueryOptions = <TData = Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getChatListBroadcastTargetsQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatListBroadcastTargets>>> = ({ signal }) => chatListBroadcastTargets(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ChatListBroadcastTargetsQueryResult = NonNullable<Awaited<ReturnType<typeof chatListBroadcastTargets>>>
+export type ChatListBroadcastTargetsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useChatListBroadcastTargets<TData = Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListBroadcastTargets>>,
+          TError,
+          Awaited<ReturnType<typeof chatListBroadcastTargets>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListBroadcastTargets<TData = Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListBroadcastTargets>>,
+          TError,
+          Awaited<ReturnType<typeof chatListBroadcastTargets>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListBroadcastTargets<TData = Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary A qué grupos de clientes y clases fijas puede escribir quien pregunta: todos la administración, solo los suyos un profesor.
+ */
+
+export function useChatListBroadcastTargets<TData = Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBroadcastTargets>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getChatListBroadcastTargetsQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getChatBroadcastToGroupUrl = (centerId: string,) => {
 
 
 
@@ -434,7 +535,7 @@ export const useChatMarkRead = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
+ * @summary Escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija (`seriesId`). La administración lo hace en nombre del centro; un profesor, en persona y solo a lo suyo. Cada una lo recibe en su conversación y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe o no es suyo.
  */
 export const chatBroadcastToGroup = async (centerId: string,
     groupBroadcastRequestDto: GroupBroadcastRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<GroupBroadcastResponseDto> => {
@@ -501,7 +602,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ChatBroadcastToGroupMutationVariables = {centerId: string;data: GroupBroadcastRequestDto}
 
     /**
- * @summary La administración escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija de «Gestión» (`seriesId`); cada una lo recibe en su conversación con el centro y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe.
+ * @summary Escribe a todas las personas de un grupo de clientes (`groupId`) o de una clase fija (`seriesId`). La administración lo hace en nombre del centro; un profesor, en persona y solo a lo suyo. Cada una lo recibe en su conversación y las respuestas vuelven por separado. Los menores no reciben. 404 si no existe o no es suyo.
  */
 export const useChatBroadcastToGroup = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBroadcastToGroup>>, TError,ChatBroadcastToGroupMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

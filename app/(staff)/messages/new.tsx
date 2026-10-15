@@ -7,6 +7,9 @@ export default function StaffNewMessageRoute(): React.JSX.Element {
 
   return (
     <NewConversationScreen
+      onGroupMessagePress={() => {
+        router.push('/(staff)/messages/group');
+      }}
       onConversationOpened={(conversationId) => {
         router.replace({
           pathname: '/(staff)/messages/[conversationId]',

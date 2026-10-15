@@ -9,8 +9,7 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 
 import {
-  useBroadcastGroups,
-  useBroadcastSeries,
+  useBroadcastTargets,
   type BroadcastResult,
   type BroadcastTarget,
   type useGroupBroadcast,
@@ -41,28 +40,25 @@ function TargetChoice({
   clientWord: string;
   onChoose: (target: BroadcastTarget) => void;
 }>): React.JSX.Element {
-  const groups = useBroadcastGroups();
-  const series = useBroadcastSeries();
+  const targets = useBroadcastTargets();
 
-  if (groups.isPending || series.isPending) {
+  if (targets.isPending) {
     return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
   }
-  if (groups.isError || series.isError) {
+  if (targets.isError) {
     return (
       <LoadErrorState
         title={i18n.t('chat.errorTitle')}
-        error={groups.error ?? series.error}
+        error={targets.error}
         onRetry={() => {
-          void groups.refetch();
-          void series.refetch();
+          void targets.refetch();
         }}
       />
     );
   }
   return (
     <BroadcastTargetOptions
-      groups={groups.data.groups}
-      series={series.data.series}
+      targets={targets.data}
       chosenTarget={chosenTarget}
       clientWord={clientWord}
       onChoose={onChoose}

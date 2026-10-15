@@ -4,14 +4,10 @@ import type { ErrorType } from '@/shared/api/api-mutator';
 import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   chatBroadcastToGroup,
+  getChatListBroadcastTargetsQueryOptions,
   getChatListConversationsQueryKey,
 } from '@/shared/api/generated/endpoints/chat/chat';
-import { getGroupsListQueryOptions } from '@/shared/api/generated/endpoints/clients/clients';
-import { getSchedulesListQueryOptions } from '@/shared/api/generated/endpoints/schedules/schedules';
-import type {
-  GroupListResponseDto,
-  ScheduleSeriesListResponseDto,
-} from '@/shared/api/generated/model';
+import type { BroadcastTargetsResponseDto } from '@/shared/api/generated/model';
 
 import { useActiveCenterId } from './useActiveCenterId';
 
@@ -19,14 +15,9 @@ import { useActiveCenterId } from './useActiveCenterId';
 export type BroadcastTarget =
   { kind: 'group'; groupId: string } | { kind: 'series'; seriesId: string };
 
-/** Los grupos de clientes del centro, para elegir a quién se escribe. */
-export function useBroadcastGroups(): UseQueryResult<GroupListResponseDto, ErrorType> {
-  return useQuery(getGroupsListQueryOptions(useActiveCenterId()));
-}
-
-/** Las clases fijas de «Gestión» (en una sala, a una hora), para escribir a sus apuntados. */
-export function useBroadcastSeries(): UseQueryResult<ScheduleSeriesListResponseDto, ErrorType> {
-  return useQuery(getSchedulesListQueryOptions(useActiveCenterId()));
+/** Los grupos y las clases a los que puede escribir quien mira: todos el centro, los suyos un profesor. */
+export function useBroadcastTargets(): UseQueryResult<BroadcastTargetsResponseDto, ErrorType> {
+  return useQuery(getChatListBroadcastTargetsQueryOptions(useActiveCenterId()));
 }
 
 export interface BroadcastResult {

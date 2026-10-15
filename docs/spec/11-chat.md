@@ -10,6 +10,7 @@ Decidido el 2026-10-15 con el dueño del producto. Construido en back (`src/modu
 | Profesor | Cualquier alumno del centro | Sin más condición |
 | Alumno / profesor | El centro | Siempre (la bandeja del centro la atiende la administración) |
 | Dueño / administración | Alumno o profesor | Siempre; habla en nombre del centro |
+| Profesor | Los alumnos de **sus** grupos y de **sus** clases fijas | Habla en persona; no lo ve la administración |
 
 Nunca: alumno con alumno, profesor con profesor, ni nadie con un **menor**.
 
@@ -41,6 +42,7 @@ sirven con enlace firmado de corta vida.
 - `GET|POST /centers/:id/conversations/:cid/messages` · hilo (más reciente primero, `before` pagina) y envío.
 - `POST /centers/:id/conversations/:cid/attachments?fileName=` · cuerpo = el fichero.
 - `POST /centers/:id/conversations/:cid/read`.
+- `GET /centers/:id/conversations/broadcast/targets` · a qué grupos y clases puede escribir quien pregunta (todos la administración, los suyos un profesor).
 - `POST /centers/:id/conversations/broadcast` `{ groupId | seriesId, body }` · la administración escribe a todo un grupo de clientes (`groupId`) o a todos los apuntados a una clase fija de «Gestión» (`seriesId`, su sala y hora): cada persona lo recibe en su conversación con el centro y las respuestas vuelven por separado; los menores no reciben.
 
 Errores: `CHAT_NOT_ALLOWED`, `CHAT_MINOR_REQUIRES_GUARDIAN`, `CHAT_ATTACHMENT_UNSUPPORTED`,
