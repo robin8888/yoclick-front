@@ -1,41 +1,17 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { useSignOut } from '@/features/auth';
+import { useActiveCenterSummary, useSignOut } from '@/features/auth';
+import { DarkThemeRow, ProfileFooter, ProfileHeader } from '@/features/session';
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
-import { useTheme, useThemePreference } from '@/shared/theme';
-import { Button } from '@/ui/atoms/Button';
-import { Icon } from '@/ui/atoms/Icon';
-import { Switch } from '@/ui/atoms/Switch';
 import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { MORE_MENU_GROUPS } from '../model/more-menu';
-import { createThemeRowStyle, SECTION_STYLE, THEME_ROW_TEXT_STYLE } from './AdminMoreScreen.styles';
-
-function DarkThemeRow(): React.JSX.Element {
-  const theme = useTheme();
-  const { setThemePreference } = useThemePreference();
-
-  return (
-    <View style={createThemeRowStyle(theme)}>
-      <Icon name="moon" color="ink2" />
-      <View style={THEME_ROW_TEXT_STYLE}>
-        <Text variant="bodyStrong">{i18n.t('centerAdmin.more.darkThemeTitle')}</Text>
-      </View>
-      <Switch
-        isOn={theme.mode === 'dark'}
-        accessibilityLabel={i18n.t('centerAdmin.more.darkThemeTitle')}
-        onToggle={(isOn) => {
-          setThemePreference(isOn ? 'dark' : 'light');
-        }}
-      />
-    </View>
-  );
-}
+import { SECTION_STYLE } from './AdminMoreScreen.styles';
 
 /** Las palabras del sector que llevan los textos del menú. */
 interface MoreMenuWords {
@@ -82,10 +58,11 @@ function MoreMenuGroups({ words }: Readonly<{ words: MoreMenuWords }>): React.JS
   );
 }
 
-/** Prototipo `amore`: los accesos de administración agrupados, el tema y cerrar sesión. */
+/** Prototipo `amore`: igual que el perfil del alumno y el del profesor, con los accesos de administración. */
 export function AdminMoreScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
   const { signOut, isSigningOut } = useSignOut();
+  const center = useActiveCenterSummary();
   const words = useMoreMenuWords();
 
   return (
@@ -94,16 +71,13 @@ export function AdminMoreScreen(): React.JSX.Element {
       title={i18n.t('centerAdmin.more.title')}
       isLoading={isSigningOut}
     >
+      <ProfileHeader
+        roleLabel={i18n.t('session.profile.administrationRole')}
+        centerName={center.name}
+      />
       <MoreMenuGroups words={words} />
       <DarkThemeRow />
-      <Button
-        variant="outline"
-        isFullWidth
-        leadingIconName="logOut"
-        label={i18n.t('actions.signOut')}
-        isLoading={isSigningOut}
-        onPress={signOut}
-      />
+      <ProfileFooter isSigningOut={isSigningOut} onSignOut={signOut} />
     </ScreenTemplate>
   );
 }

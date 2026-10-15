@@ -1,18 +1,18 @@
+import type { ParseKeys } from 'i18next';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import { useActiveCenterSummary } from '@/features/auth';
 import { useActiveCenterSectorId } from '@/features/join';
-import { MyPhotoAvatar } from '@/features/photos';
-import { useSessionStore } from '@/shared/auth/session-store';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
-import { Button } from '@/ui/atoms/Button';
-import { Text } from '@/ui/atoms/Text';
+import { useTheme } from '@/shared/theme';
+import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { PROFILE_HEADER_STYLE } from './StaffProfileScreen.styles';
+import { createProfileListStyle } from './ClientProfileScreen.styles';
+import { DarkThemeRow, ProfileFooter, ProfileHeader } from './ProfileParts';
 
 function capitalize(word: string): string {
   return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
@@ -20,6 +20,7 @@ function capitalize(word: string): string {
 
 interface ProfileLink {
   label: string;
+  hint?: string;
   iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode' | 'messageCircle';
   route:
     | '/(staff)/routines'
@@ -32,55 +33,104 @@ interface ProfileLink {
     | '/(staff)/messages';
 }
 
-/** Los accesos del perfil del equipo: sus rutinas (o prácticas, tareas…), los contenidos y su disponibilidad. */
+interface ProfileLinkSpec {
+  /** `null`: el nombre es la palabra del sector (rutinas, tareas…). */
+  labelKey: ParseKeys | null;
+  hintKey: ParseKeys | null;
+  iconName: ProfileLink['iconName'];
+  route: ProfileLink['route'];
+}
+
+/** Los accesos del perfil del equipo, con una línea que aclara para qué sirve cada uno. */
+const STAFF_LINK_SPECS: readonly ProfileLinkSpec[] = [
+  {
+    labelKey: 'chat.title',
+    hintKey: 'staffAgenda.instructor.home.messagesHint',
+    iconName: 'messageCircle',
+    route: '/(staff)/messages',
+  },
+  {
+    labelKey: 'session.myData.title',
+    hintKey: 'session.profile.myDataSubtitle',
+    iconName: 'user',
+    route: '/(staff)/my-data',
+  },
+  {
+    labelKey: 'timeClock.title',
+    hintKey: 'staffAgenda.instructor.home.attendanceHint',
+    iconName: 'clock',
+    route: '/(staff)/attendance',
+  },
+  {
+    labelKey: 'timeClock.workQrAction',
+    hintKey: 'staffAgenda.instructor.home.workQrHint',
+    iconName: 'qrCode',
+    route: '/(staff)/work-qr',
+  },
+  {
+    labelKey: null,
+    hintKey: 'staffAgenda.instructor.home.routinesHint',
+    iconName: 'play',
+    route: '/(staff)/routines',
+  },
+  {
+    labelKey: 'content.admin.title',
+    hintKey: 'staffAgenda.instructor.home.contentHint',
+    iconName: 'file',
+    route: '/(staff)/content',
+  },
+  {
+    labelKey: 'teamProfiles.editor.title',
+    hintKey: null,
+    iconName: 'user',
+    route: '/(staff)/public-profile',
+  },
+  {
+    labelKey: 'session.profile.availabilityAction',
+    hintKey: 'staffAgenda.instructor.home.availabilityHint',
+    iconName: 'calendar',
+    route: '/(staff)/availability',
+  },
+];
+
+function buildStaffLinks(routineWordPlural: string): readonly ProfileLink[] {
+  return STAFF_LINK_SPECS.map((spec) => ({
+    label: spec.labelKey === null ? capitalize(routineWordPlural) : i18n.t(spec.labelKey),
+    ...(spec.hintKey === null ? {} : { hint: i18n.t(spec.hintKey) }),
+    iconName: spec.iconName,
+    route: spec.route,
+  }));
+}
+
 function StaffProfileLinks({
   routineWordPlural,
 }: Readonly<{ routineWordPlural: string }>): React.JSX.Element {
   const router = useRouter();
-  const links: readonly ProfileLink[] = [
-    { label: i18n.t('chat.title'), iconName: 'messageCircle', route: '/(staff)/messages' },
-    { label: i18n.t('session.myData.title'), iconName: 'user', route: '/(staff)/my-data' },
-    { label: i18n.t('timeClock.title'), iconName: 'clock', route: '/(staff)/attendance' },
-    { label: i18n.t('timeClock.workQrAction'), iconName: 'qrCode', route: '/(staff)/work-qr' },
-    { label: capitalize(routineWordPlural), iconName: 'play', route: '/(staff)/routines' },
-    { label: i18n.t('content.admin.title'), iconName: 'file', route: '/(staff)/content' },
-    {
-      label: i18n.t('teamProfiles.editor.title'),
-      iconName: 'play',
-      route: '/(staff)/public-profile',
-    },
-    {
-      label: i18n.t('session.profile.availabilityAction'),
-      iconName: 'calendar',
-      route: '/(staff)/availability',
-    },
-  ];
-
+  const theme = useTheme();
+  const links = buildStaffLinks(routineWordPlural);
   return (
-    <>
+    <View style={createProfileListStyle(theme)}>
       {links.map((link) => (
-        <Button
+        <ListItem
           key={link.route}
-          variant="outline"
           leadingIconName={link.iconName}
-          label={link.label}
-          isFullWidth
+          title={link.label}
+          subtitle={link.hint}
           onPress={() => {
             router.push(link.route);
           }}
         />
       ))}
-    </>
+      <DarkThemeRow />
+    </View>
   );
 }
 
-/** Prototipo `iagenda` › Perfil: quién eres, en qué centro y cómo cerrar la sesión. */
+/** Prototipo `iagenda` › Perfil: igual que el del alumno y el del centro. */
 export function StaffProfileScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
-  const user = useSessionStore((state) => state.user);
   const center = useActiveCenterSummary();
   const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
-  const staffWord = vocabulary.staff.singular;
   const { signOut, isSigningOut } = useSignOutFlow();
 
   return (
@@ -89,26 +139,9 @@ export function StaffProfileScreen(): React.JSX.Element {
       title={i18n.t('session.profile.title')}
       isLoading={isSigningOut}
     >
-      <View style={PROFILE_HEADER_STYLE}>
-        <MyPhotoAvatar name={user?.fullName ?? ''} />
-        <Text variant="titleLg">{user?.fullName ?? ''}</Text>
-        <Text color="ink2">{user?.email ?? ''}</Text>
-        <Text variant="caption" color="ink2">
-          {i18n.t('session.profile.roleAtCenter', {
-            role: capitalize(staffWord),
-            centerName: center.name,
-          })}
-        </Text>
-      </View>
+      <ProfileHeader roleLabel={capitalize(vocabulary.staff.singular)} centerName={center.name} />
       <StaffProfileLinks routineWordPlural={vocabulary.routine.plural} />
-      <Button
-        variant="outline"
-        leadingIconName="logOut"
-        label={i18n.t('actions.signOut')}
-        isFullWidth
-        isLoading={isSigningOut}
-        onPress={signOut}
-      />
+      <ProfileFooter isSigningOut={isSigningOut} onSignOut={signOut} />
     </ScreenTemplate>
   );
 }

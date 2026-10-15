@@ -768,6 +768,7 @@
       "availabilityAction": "Mi disponibilidad",
       "title": "Perfil",
       "roleAtCenter": "{{role}} en {{centerName}}",
+      "administrationRole": "Administración",
       "centersSubtitle_one": "{{count}} centro · actual: {{centerName}}",
       "centersSubtitle_other": "{{count}} centros · actual: {{centerName}}",
       "darkTheme": "Tema oscuro",
