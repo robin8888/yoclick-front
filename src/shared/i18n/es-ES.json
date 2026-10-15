@@ -1242,7 +1242,9 @@
     "tabs": {
       "clients": "{{clientWord}} ({{count}})",
       "groups": "Grupos ({{count}})",
-      "families": "Familias ({{count}})"
+      "families": "Familias ({{count}})",
+      "groupsLabel": "Grupos",
+      "familiesLabel": "Familias"
     },
     "inviteAction": "Invitar {{clientWord}}",
     "search": {

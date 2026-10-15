@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
-import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
+import { CountTabs } from '@/ui/molecules/CountTabs';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ClientFilters } from '../components/ClientFilters';
@@ -25,12 +25,9 @@ function buildTabs(
   counts: { clients: number; groups: number; families: number },
 ) {
   return [
-    {
-      value: 'clients',
-      label: i18n.t('clients.tabs.clients', { clientWord, count: counts.clients }),
-    },
-    { value: 'groups', label: i18n.t('clients.tabs.groups', { count: counts.groups }) },
-    { value: 'families', label: i18n.t('clients.tabs.families', { count: counts.families }) },
+    { value: 'clients', label: clientWord, count: counts.clients },
+    { value: 'groups', label: i18n.t('clients.tabs.groupsLabel'), count: counts.groups },
+    { value: 'families', label: i18n.t('clients.tabs.familiesLabel'), count: counts.families },
   ] as const;
 }
 
@@ -115,7 +112,7 @@ export function ClientsScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate onBackPress={onBackPress} title={i18n.t('clients.title', { clientWord })}>
-      <SegmentedControl options={tabs} selectedValue={tab} onValueChange={setTab} />
+      <CountTabs options={tabs} selectedValue={tab} onValueChange={setTab} />
       <TabContent
         tab={tab}
         sectorId={sectorId}
