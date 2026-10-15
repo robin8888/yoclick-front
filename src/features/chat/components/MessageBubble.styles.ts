@@ -11,6 +11,8 @@ export function createBubbleRowStyle(isMine: boolean): ViewStyle {
 
 export function createBubbleStyle(theme: Theme, isMine: boolean): ViewStyle {
   return {
+    // Sin `flexShrink` una línea sin espacios empuja la burbuja fuera de la pantalla.
+    flexShrink: 1,
     maxWidth: MAX_BUBBLE_WIDTH_PERCENT,
     gap: theme.space[1],
     padding: theme.space[3],
