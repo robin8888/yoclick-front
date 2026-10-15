@@ -1066,6 +1066,18 @@
       "allServices": "Todos los servicios"
     }
   },
+  "guardians": {
+    "title": "Mis hijos",
+    "subtitle": "Sus próximas clases y lo que les queda en el bono.",
+    "homeHint": "Sus clases y su bono",
+    "upcomingTitle": "Próximas clases",
+    "noUpcoming": "No tiene clases reservadas.",
+    "remainingSessions_one": "Le queda {{count}} clase",
+    "remainingSessions_other": "Le quedan {{count}} clases",
+    "loadError": "No hemos podido cargar a tus hijos",
+    "emptyTitle": "Aún no tienes a nadie a tu cargo",
+    "emptyDescription": "Cuando el centro te enlace como tutor de un menor, lo verás aquí."
+  },
   "chat": {
     "title": "Mensajes",
     "subtitle": "Habla con tu centro y con tu equipo.",
@@ -1259,6 +1271,14 @@
     "noResultsTitle": "Nadie coincide con la búsqueda",
     "noResultsDescription": "Prueba con otro nombre o cambia el estado.",
     "loadMore": "Ver más",
+    "guardians": {
+      "title": "Tutores",
+      "hint": "Un menor no escribe ni reserva por sí mismo: lo hace su tutor. Enlaza aquí a la persona responsable.",
+      "addAction": "Añadir tutor",
+      "removeLabel": "Quitar a {{name}} como tutor",
+      "linkTitle": "Elegir tutor",
+      "linkSubtitle": "Elige a la persona adulta responsable de este menor."
+    },
     "groups": {
       "emptyTitle": "Aún no tienes grupos",
       "emptyDescription": "Un grupo reúne a {{clientWord}} del mismo nivel con quien lo da.",

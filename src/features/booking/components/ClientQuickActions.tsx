@@ -1,12 +1,34 @@
 import { useRouter } from 'expo-router';
 
+import { useMyChildren } from '@/features/guardians';
 import { i18n } from '@/shared/i18n';
 import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
 
 type Route = Parameters<ReturnType<typeof useRouter>['push']>[0];
 
-function buildSecondaryActions(open: (route: Route) => () => void): QuickAction[] {
+/** «Mis hijos» solo sale a quien es tutor de alguien. */
+function buildChildrenAction(
+  open: (route: Route) => () => void,
+  hasChildren: boolean,
+): QuickAction[] {
+  if (!hasChildren) return [];
   return [
+    {
+      id: 'children',
+      iconName: 'users',
+      label: i18n.t('guardians.title'),
+      hint: i18n.t('guardians.homeHint'),
+      onPress: open('/(client)/children'),
+    },
+  ];
+}
+
+function buildSecondaryActions(
+  open: (route: Route) => () => void,
+  hasChildren: boolean,
+): QuickAction[] {
+  return [
+    ...buildChildrenAction(open, hasChildren),
     {
       id: 'bookings',
       iconName: 'calendar',
@@ -44,6 +66,7 @@ function buildSecondaryActions(open: (route: Route) => () => void): QuickAction[
  */
 export function ClientQuickActions(): React.JSX.Element {
   const router = useRouter();
+  const hasChildren = (useMyChildren().data?.children.length ?? 0) > 0;
   const open = (route: Route) => () => {
     router.push(route);
   };
@@ -57,7 +80,7 @@ export function ClientQuickActions(): React.JSX.Element {
         hint: i18n.t('booking.home.bookHint'),
         onPress: open('/(client)/(tabs)/book'),
       }}
-      actions={buildSecondaryActions(open)}
+      actions={buildSecondaryActions(open, hasChildren)}
     />
   );
 }

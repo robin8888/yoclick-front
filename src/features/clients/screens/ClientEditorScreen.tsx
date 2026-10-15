@@ -7,6 +7,7 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ClientDataExportSection } from '../components/ClientDataExportSection';
+import { GuardiansSection } from '../components/GuardiansSection';
 import { ClientEditorFields } from '../components/ClientEditorFields';
 import { useClientEditor } from '../hooks/useClientEditor';
 import { parseClientRouteParams } from '../model/client-route-params';
@@ -46,6 +47,7 @@ function ClientEditorContent({
         onGroupChoose={editor.chooseGroup}
       />
       {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
+      <GuardiansSection membershipId={membershipId} />
       <ClientPassesSection clientMembershipId={membershipId} />
       <ClientDataExportSection membershipId={membershipId} />
     </ScreenTemplate>

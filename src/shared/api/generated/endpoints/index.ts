@@ -6,6 +6,7 @@ export * from './centers/centers.ts';
 export * from './chat/chat.ts';
 export * from './clients/clients.ts';
 export * from './content/content.ts';
+export * from './guardians/guardians.ts';
 export * from './health/health.ts';
 export * from './join/join.ts';
 export * from './me/me.ts';
