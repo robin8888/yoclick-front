@@ -11,6 +11,7 @@ import {
   createStepNumberStyle,
   createStepTextStyle,
   createStepTitleRowStyle,
+  createStepTitleStyle,
 } from './SetupGuideStepCard.styles';
 
 /** Tope del escalado: un número enorme con letra grande rompería la tarjeta. */
@@ -74,7 +75,9 @@ export function SetupGuideStepCard({
         <View style={createStepTextStyle(theme)}>
           <View style={createStepTitleRowStyle(theme)}>
             <Icon name={iconName} color="brandInk" />
-            <Text variant="bodyStrong">{title}</Text>
+            <View style={createStepTitleStyle()}>
+              <Text variant="bodyStrong">{title}</Text>
+            </View>
             {badgeLabel === undefined ? null : <Badge label={badgeLabel} tone="brand" />}
           </View>
           <Text variant="caption" color="ink2">

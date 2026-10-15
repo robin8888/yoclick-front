@@ -56,5 +56,10 @@ export function createStepTextStyle(theme: Theme): ViewStyle {
 
 /** El icono va delante del título, en la misma línea. */
 export function createStepTitleRowStyle(theme: Theme): ViewStyle {
-  return { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: theme.space[2] };
+  return { flexDirection: 'row', alignItems: 'center', gap: theme.space[2] };
+}
+
+/** Deja que el título se parta en varias líneas sin bajar el icono encima. */
+export function createStepTitleStyle(): ViewStyle {
+  return { flexShrink: 1 };
 }
