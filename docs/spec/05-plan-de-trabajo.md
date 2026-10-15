@@ -49,6 +49,29 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (15 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 14 oct en lo que cambia; lo de Stripe del 14 oct sigue pendiente igual.
+
+### Hecho el 15 de octubre
+- ✅ **Avisos de bono** al gastarse clases (`pass_running_low`, `pass_exhausted`).
+- ✅ **Chat** (`docs/spec/11-chat.md`): alumno ↔ profesor ↔ centro, adjuntos, difusión a grupos y clases fijas, contador de no leídos en los tres inicios, aviso `message_received`; los menores solo por su tutor.
+- ✅ **Tutores** (`docs/spec/12-tutores.md`): vínculo tutor↔menor, pestaña «Familias», «Cuenta como alumno», actuar en nombre del menor (`X-Acting-For`), avisos del menor copiados al tutor.
+- ✅ **Gestión** (`docs/spec/13-gestion-y-clases.md`): tres filas (Crear clase, Crear y editar sala, Crear y editar servicio) con la lista para editar bajo cada formulario; salas solo nombre y aforo.
+- ✅ **Crear clase**: ruedas de hora de inicio y fin validadas con el horario del centro y lo ocupado, fecha de inicio y de fin, salas con los colores de la agenda.
+- ✅ **Alquileres sin profesor**: casilla `isRental` en el servicio, clases sin profesor, profesor del servicio opcional; no se puede reservar una sesión sin profesor.
+- ✅ Matricular y «Nueva cita» solo con bono en vigor para el servicio; botón «Salas y clases/sesiones» según el sector.
+- 🟡 Teclado en iOS: medido por la plantilla; falta verificar en iPhone y Android reales.
+
+### Pendiente
+1. ⬜ Probar en el móvil todo lo del 15 oct (reiniciar el back por las migraciones nuevas).
+2. ⬜ Decidir dónde viven ahora el bloqueo de salas (alquiler/mantenimiento) y «repetir semana»: se quitaron de Gestión y no tienen acceso en la app.
+3. ⬜ Tutor crea a un menor desde la app (con aprobación del centro), RGPD de menores, reembolsos en la app, lista de espera, chat en tiempo real, recibos con IVA, aviso de bono a punto de caducar, silenciar/borrar mensajes.
+4. ⬜ Lo pendiente del 14 oct (alta Stripe, cobro de punta a punta, e2e de `CENTER_CONTACT_EMAIL_REQUIRED`, recibos y reembolsos).
+5. ⬜ Subir los commits con `git push` en los dos repos (34 en el front, 17 en el back).
+
+---
+
 ## Estado de avance (14 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 13 oct en lo que cambia.
