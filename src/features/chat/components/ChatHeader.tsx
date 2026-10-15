@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { Avatar } from '@/ui/atoms/Avatar';
+import { Icon, type IconName } from '@/ui/atoms/Icon';
 import { IconButton } from '@/ui/atoms/IconButton';
 import { Text } from '@/ui/atoms/Text';
 
@@ -11,6 +12,8 @@ import { createChatHeaderStyle } from './ChatHeader.styles';
 interface ChatHeaderProps {
   name: string;
   photoUrl: string | null;
+  /** En lugar de la foto: un icono (la cabecera de «mensaje a un grupo»). */
+  iconName?: IconName | undefined;
   onBackPress: (() => void) | undefined;
 }
 
@@ -18,6 +21,7 @@ interface ChatHeaderProps {
 export function ChatHeader({
   name,
   photoUrl,
+  iconName,
   onBackPress,
 }: Readonly<ChatHeaderProps>): React.JSX.Element {
   const theme = useTheme();
@@ -31,7 +35,11 @@ export function ChatHeader({
           onPress={onBackPress}
         />
       )}
-      <Avatar name={name} photoUrl={photoUrl} size="sm" isDecorative />
+      {iconName === undefined ? (
+        <Avatar name={name} photoUrl={photoUrl} size="sm" isDecorative />
+      ) : (
+        <Icon name={iconName} color="brandInk" />
+      )}
       <Text variant="titleMd" role="heading" numberOfLines={1}>
         {name}
       </Text>

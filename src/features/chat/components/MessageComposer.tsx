@@ -19,13 +19,20 @@ const MAX_MESSAGE_LENGTH = 2000;
 interface MessageComposerProps {
   isBusy: boolean;
   onSend: (body: string, onSent: () => void) => void;
-  onAttach: (source: AttachmentSource) => void;
+  /** Sin él no salen los botones de foto y PDF (el mensaje a un grupo es solo texto). */
+  onAttach?: ((source: AttachmentSource) => void) | undefined;
+  /** Con el centro sin nadie elegido todavía, no se puede enviar. */
+  isSendDisabled?: boolean;
 }
 
 function AttachButtons({
   isBusy,
   onAttach,
-}: Readonly<Pick<MessageComposerProps, 'isBusy' | 'onAttach'>>): React.JSX.Element {
+}: Readonly<{
+  isBusy: boolean;
+  onAttach: ((source: AttachmentSource) => void) | undefined;
+}>): React.JSX.Element | null {
+  if (onAttach === undefined) return null;
   return (
     <>
       <IconButton
@@ -57,6 +64,7 @@ export function MessageComposer({
   isBusy,
   onSend,
   onAttach,
+  isSendDisabled = false,
 }: Readonly<MessageComposerProps>): React.JSX.Element {
   const theme = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -83,7 +91,7 @@ export function MessageComposer({
         iconName="send"
         variant="brand"
         accessibilityLabel={i18n.t('chat.send')}
-        isDisabled={isBusy || trimmedDraft === ''}
+        isDisabled={isBusy || isSendDisabled || trimmedDraft === ''}
         onPress={() => {
           onSend(trimmedDraft, () => {
             setDraft('');

@@ -1,25 +1,30 @@
 import { useState } from 'react';
+import { KeyboardAvoidingView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { GroupListResponseDtoGroupsItem } from '@/shared/api/generated/model';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { Button } from '@/ui/atoms/Button';
+import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
-import { FormField } from '@/ui/molecules/FormField';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
-import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ChatHeader } from '../components/ChatHeader';
+import { MessageComposer } from '../components/MessageComposer';
 import {
   useBroadcastGroups,
   useGroupBroadcast,
   type BroadcastResult,
 } from '../hooks/useGroupBroadcast';
-
-const MAX_MESSAGE_LENGTH = 2000;
+import {
+  createGroupListContentStyle,
+  createScreenStyle,
+  FILL_STYLE,
+} from './ConversationScreen.styles';
 
 function GroupOptions({
   groups,
@@ -104,63 +109,74 @@ function GroupChoice({
   );
 }
 
-interface BroadcastFormProps {
-  clientWord: string;
+interface BroadcastBodyProps {
   broadcast: ReturnType<typeof useGroupBroadcast>;
+  clientWord: string;
+  selectedGroupId: string | null;
+  onSelect: (groupId: string) => void;
 }
 
-/** Elegir el grupo, escribir el mensaje y enviarlo. */
-function BroadcastForm({ clientWord, broadcast }: Readonly<BroadcastFormProps>): React.JSX.Element {
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
-  const [draft, setDraft] = useState('');
-  const trimmedDraft = draft.trim();
-  const canSend = selectedGroupId !== null && trimmedDraft !== '';
+/** Lo que se desplaza: la explicación, los grupos a elegir y el resultado del envío. */
+function BroadcastBody({
+  broadcast,
+  clientWord,
+  selectedGroupId,
+  onSelect,
+}: Readonly<BroadcastBodyProps>): React.JSX.Element {
+  const theme = useTheme();
 
   return (
-    <>
-      <GroupChoice
-        selectedGroupId={selectedGroupId}
-        clientWord={clientWord}
-        onSelect={setSelectedGroupId}
-      />
-      <FormField
-        label={i18n.t('chat.group.messageLabel')}
-        value={draft}
-        onChangeText={setDraft}
-        isMultiline
-        maxLength={MAX_MESSAGE_LENGTH}
-      />
-      <Button
-        label={i18n.t('chat.group.send')}
-        isDisabled={!canSend || broadcast.isSending}
-        onPress={() => {
-          if (selectedGroupId === null) return;
-          broadcast.send({ groupId: selectedGroupId, body: trimmedDraft });
-        }}
-      />
-    </>
-  );
-}
-
-/** Escribir a todas las personas de un grupo: cada una lo recibe en su conversación con el centro. */
-export function GroupMessageScreen(): React.JSX.Element {
-  const onBackPress = useBackAction();
-  const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
-  const broadcast = useGroupBroadcast();
-
-  return (
-    <ScreenTemplate
-      title={i18n.t('chat.group.title')}
-      subtitle={i18n.t('chat.group.subtitle', { clientWord })}
-      onBackPress={onBackPress}
-      isLoading={broadcast.isSending}
-      loadingLabel={getSharedStateCopy().loadingLabel}
+    <ScrollView
+      style={FILL_STYLE}
+      contentContainerStyle={createGroupListContentStyle(theme)}
+      keyboardShouldPersistTaps="handled"
     >
-      <BroadcastForm clientWord={clientWord} broadcast={broadcast} />
+      <Text color="ink2">{i18n.t('chat.group.subtitle', { clientWord })}</Text>
+      <GroupChoice selectedGroupId={selectedGroupId} clientWord={clientWord} onSelect={onSelect} />
       {broadcast.errorMessage === null ? null : (
         <FormErrorBanner message={broadcast.errorMessage} />
       )}
       {broadcast.result === null ? null : <BroadcastSummary result={broadcast.result} />}
-    </ScreenTemplate>
+    </ScrollView>
+  );
+}
+
+/**
+ * Escribir a todas las personas de un grupo: cada una lo recibe en su conversación con el centro.
+ * Tiene el mismo marco que el hilo (campo fijo pegado al teclado): dentro de `ScreenTemplate` el
+ * campo quedaba tapado por el teclado.
+ */
+export function GroupMessageScreen(): React.JSX.Element {
+  const theme = useTheme();
+  const onBackPress = useBackAction();
+  const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
+  const broadcast = useGroupBroadcast();
+  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+
+  return (
+    <SafeAreaView edges={['top']} style={createScreenStyle(theme)}>
+      <KeyboardAvoidingView style={FILL_STYLE} behavior="padding">
+        <ChatHeader
+          name={i18n.t('chat.group.title')}
+          photoUrl={null}
+          iconName="users"
+          onBackPress={onBackPress}
+        />
+        <BroadcastBody
+          broadcast={broadcast}
+          clientWord={clientWord}
+          selectedGroupId={selectedGroupId}
+          onSelect={setSelectedGroupId}
+        />
+        <MessageComposer
+          isBusy={broadcast.isSending}
+          isSendDisabled={selectedGroupId === null}
+          onSend={(body, onSent) => {
+            if (selectedGroupId === null) return;
+            broadcast.send({ groupId: selectedGroupId, body }, onSent);
+          }}
+        />
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

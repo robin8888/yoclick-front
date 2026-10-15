@@ -143,8 +143,8 @@ describe('chat', () => {
     renderScreen(<GroupMessageScreen />);
 
     fireEvent.press(await screen.findByRole('radio', { name: /Grupo mañanas/ }));
-    fireEvent.changeText(screen.getByLabelText('Mensaje'), 'Mañana no hay clase');
-    fireEvent.press(screen.getByRole('button', { name: 'Enviar al grupo' }));
+    fireEvent.changeText(screen.getByLabelText('Escribe un mensaje'), 'Mañana no hay clase');
+    fireEvent.press(screen.getByRole('button', { name: 'Enviar mensaje' }));
 
     expect(await screen.findByText('Enviado a 4 personas')).toBeOnTheScreen();
     expect(findApiCall('POST', `${BASE}/broadcast`)?.body).toEqual({

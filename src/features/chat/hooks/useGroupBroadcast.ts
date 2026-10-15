@@ -22,7 +22,7 @@ export interface BroadcastResult {
 }
 
 interface GroupBroadcast {
-  send: (request: { groupId: string; body: string }) => void;
+  send: (request: { groupId: string; body: string }, onSent: () => void) => void;
   isSending: boolean;
   result: BroadcastResult | null;
   errorMessage: string | null;
@@ -41,8 +41,8 @@ export function useGroupBroadcast(): GroupBroadcast {
   });
 
   return {
-    send: (request) => {
-      mutation.mutate(request);
+    send: (request, onSent) => {
+      mutation.mutate(request, { onSuccess: onSent });
     },
     isSending: mutation.isPending,
     result: mutation.data ?? null,

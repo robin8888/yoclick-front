@@ -25,3 +25,7 @@ export function createEmptyThreadStyle(theme: Theme): ViewStyle {
     backgroundColor: theme.colors.surface2,
   };
 }
+
+export function createGroupListContentStyle(theme: Theme): ViewStyle {
+  return { padding: theme.space[4], gap: theme.space[3] };
+}
