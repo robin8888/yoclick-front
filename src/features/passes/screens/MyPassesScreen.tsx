@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 
+import { ActingForSelector } from '@/features/guardians';
 import { LoadErrorState } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
@@ -106,6 +107,7 @@ export function MyPassesScreen(): React.JSX.Element {
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
     >
+      <ActingForSelector />
       {passes.isPending ? (
         <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />
       ) : null}

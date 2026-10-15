@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 
-import { DEFAULT_CENTER_TIME_ZONE } from '@/features/booking';
 import { LoadErrorState } from '@/features/join';
 import type { MyChildrenResponseDto } from '@/shared/api/generated/model';
 import { useBackAction } from '@/shared/hooks/useBackAction';
@@ -20,6 +19,9 @@ import { useMyChildren } from '../hooks/useMyChildren';
 import { createChildCardStyle, CHILD_HEADER_STYLE, GROW_STYLE } from './MyChildrenScreen.styles';
 
 type Child = MyChildrenResponseDto['children'][number];
+
+/** La hora de las clases se muestra en la zona del centro (hoy una sola, la de España). */
+const DEFAULT_CENTER_TIME_ZONE = 'Europe/Madrid';
 
 function ChildCard({ child }: Readonly<{ child: Child }>): React.JSX.Element {
   const theme = useTheme();

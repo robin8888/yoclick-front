@@ -84,6 +84,7 @@ function wireApiClient(config: SessionServicesConfig): ClientWiring {
     transport,
     getAccessToken: () => useSessionStore.getState().accessToken,
     getActiveCenterId: () => useSessionStore.getState().activeCenterId,
+    getActingForMembershipId: () => useSessionStore.getState().actingFor?.membershipId ?? null,
     refreshAccessToken,
   });
   return { apiClient, refreshAccessToken, signOutLocally };

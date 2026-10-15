@@ -6,6 +6,11 @@ export interface SessionUser {
   readonly fullName: string;
 }
 
+export interface ActingFor {
+  readonly membershipId: string;
+  readonly fullName: string;
+}
+
 // `restoring`: arranque, aún no sabemos si hay un refresh token válido en SecureStore.
 export type SessionStatus = 'restoring' | 'signedIn' | 'signedOut';
 
@@ -15,12 +20,15 @@ interface SessionState {
   readonly accessToken: string | null;
   readonly user: SessionUser | null;
   readonly activeCenterId: string | null;
+  /** El hijo en cuyo nombre actúa un tutor; `null`, actúa por sí mismo. Solo en memoria. */
+  readonly actingFor: ActingFor | null;
 }
 
 interface SessionActions {
   startSession: (session: { accessToken: string; user: SessionUser | null }) => void;
   replaceAccessToken: (accessToken: string) => void;
   selectActiveCenter: (centerId: string | null) => void;
+  setActingFor: (child: ActingFor | null) => void;
   resetSession: () => void;
 }
 
@@ -29,6 +37,7 @@ const SIGNED_OUT_STATE: SessionState = {
   accessToken: null,
   user: null,
   activeCenterId: null,
+  actingFor: null,
 };
 
 export const useSessionStore = create<SessionState & SessionActions>((set) => ({
@@ -41,7 +50,11 @@ export const useSessionStore = create<SessionState & SessionActions>((set) => ({
     set({ accessToken, status: 'signedIn' });
   },
   selectActiveCenter: (centerId) => {
-    set({ activeCenterId: centerId });
+    // Otro centro, otros hijos: nunca se arrastra a quien se representaba.
+    set({ activeCenterId: centerId, actingFor: null });
+  },
+  setActingFor: (child) => {
+    set({ actingFor: child });
   },
   resetSession: () => {
     set(SIGNED_OUT_STATE);
@@ -50,6 +63,10 @@ export const useSessionStore = create<SessionState & SessionActions>((set) => ({
 
 export function getAccessToken(): string | null {
   return useSessionStore.getState().accessToken;
+}
+
+export function getActingForMembershipId(): string | null {
+  return useSessionStore.getState().actingFor?.membershipId ?? null;
 }
 
 export function getActiveCenterId(): string | null {

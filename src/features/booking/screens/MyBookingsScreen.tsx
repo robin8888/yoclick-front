@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
+import { ActingForSelector } from '@/features/guardians';
 import { LoadErrorState } from '@/features/join';
 import type { MyBookingsResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
@@ -95,6 +96,7 @@ export function MyBookingsScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate onBackPress={onBackPress} title={i18n.t('booking.list.title')}>
+      <ActingForSelector />
       <SegmentedControl options={SCOPE_OPTIONS} selectedValue={scope} onValueChange={setScope} />
       <BookingsOutcome scope={scope} />
     </ScreenTemplate>

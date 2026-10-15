@@ -41,4 +41,12 @@ describe('resolveNotificationDestination', () => {
       resolveNotificationDestination('message_received', { audience: 'client', noticeData: {} }),
     ).toEqual({ pathname: '/(client)/messages', params: {} });
   });
+  it('takes a guardian to My children for the notice of a child', () => {
+    expect(
+      resolveNotificationDestination('booking_cancelled_by_team', {
+        audience: 'client',
+        noticeData: { forChildName: 'Lucía' },
+      }),
+    ).toBe('/(client)/children');
+  });
 });

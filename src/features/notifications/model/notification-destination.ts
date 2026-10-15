@@ -109,5 +109,12 @@ export function resolveNotificationDestination(
   kind: NoticeKind,
   context: DestinationContext,
 ): Href | null {
-  return DESTINATION_BY_KIND[kind](context) as Href | null;
+  // El aviso de un hijo lleva al tutor a «Mis hijos», no a sus propias reservas.
+  const isAboutChild = (context.noticeData.forChildName ?? '') !== '';
+  const isChildNoticeOfGuardian =
+    isAboutChild && context.audience === 'client' && kind !== 'message_received';
+  const destination: Destination | null = isChildNoticeOfGuardian
+    ? '/(client)/children'
+    : DESTINATION_BY_KIND[kind](context);
+  return destination as Href | null;
 }

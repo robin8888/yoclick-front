@@ -2,6 +2,7 @@ import { isApiError } from './api-error';
 import type { HttpTransport, TransportRequestInit } from './http-transport';
 
 export const CENTER_ID_HEADER = 'X-Center-Id';
+export const ACTING_FOR_HEADER = 'X-Acting-For';
 export const IDEMPOTENCY_KEY_HEADER = 'Idempotency-Key';
 
 const UNAUTHORIZED_STATUS = 401;
@@ -15,6 +16,8 @@ export interface ApiClientDependencies {
   transport: HttpTransport;
   getAccessToken: () => string | null;
   getActiveCenterId: () => string | null;
+  /** El hijo en cuyo nombre actúa un tutor; sin él (o `null`), la persona actúa por sí misma. */
+  getActingForMembershipId?: () => string | null;
   /** Renueva la sesión una sola vez aunque haya varias llamadas; `null` si ya no es válida. */
   refreshAccessToken: () => Promise<string | null>;
 }
@@ -44,6 +47,7 @@ function isCenterScopedPath(path: string): boolean {
 interface HeaderContext {
   accessToken: string | null;
   activeCenterId: string | null;
+  actingForMembershipId: string | null;
 }
 
 function buildHeaders(path: string, init: TransportRequestInit, context: HeaderContext): Headers {
@@ -59,6 +63,9 @@ function buildHeaders(path: string, init: TransportRequestInit, context: HeaderC
     !headers.has(CENTER_ID_HEADER)
   ) {
     headers.set(CENTER_ID_HEADER, context.activeCenterId);
+    if (context.actingForMembershipId !== null && !headers.has(ACTING_FOR_HEADER)) {
+      headers.set(ACTING_FOR_HEADER, context.actingForMembershipId);
+    }
   }
   return headers;
 }
@@ -68,6 +75,7 @@ export function createApiClient(dependencies: ApiClientDependencies): ApiClient 
     const headers = buildHeaders(path, init, {
       accessToken,
       activeCenterId: dependencies.getActiveCenterId(),
+      actingForMembershipId: dependencies.getActingForMembershipId?.() ?? null,
     });
     return dependencies.transport.send(path, { ...init, headers });
   }

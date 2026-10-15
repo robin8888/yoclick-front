@@ -8,6 +8,8 @@ import { StepProgress } from '@/ui/molecules/StepProgress';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { ActingForSelector } from '@/features/guardians';
+
 import { ContinueToClassesButton } from '../components/ContinueToClassesButton';
 import { ServiceOptionList } from '../components/ServiceOptionList';
 import { useCenterServices } from '../hooks/useCenterServices';
@@ -27,6 +29,7 @@ export function BookServiceScreen(): React.JSX.Element {
       subtitle={i18n.t('booking.book.subtitle')}
       footer={<ContinueToClassesButton selectedServiceId={selectedServiceId} />}
     >
+      <ActingForSelector />
       <StepProgress
         currentStep={1}
         stepCount={BOOKING_STEP_COUNT}

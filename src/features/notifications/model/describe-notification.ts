@@ -229,7 +229,14 @@ export function describeNotification(
   if (kind === 'absence_added') return { title, description: describeAbsence(noticeData) };
 
   const texts = buildNoticeTexts(notification, timeZone);
-  return { title, description: i18n.t(resolveDescriptionKey(kind, noticeData), { ...texts }) };
+  const description = i18n.t(resolveDescriptionKey(kind, noticeData), { ...texts });
+  // La copia que recibe un tutor de un aviso de su hijo dice de quién es.
+  const childName = noticeData.forChildName;
+  if (childName === undefined || childName === '') return { title, description };
+  return {
+    title,
+    description: i18n.t('guardians.noticeForChild', { name: childName, description }),
+  };
 }
 
 /** «Ahora», «hace 5 min», «hace 3 h» o la fecha corta para lo que tiene más de un día. */
