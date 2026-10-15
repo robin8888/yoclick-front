@@ -33,6 +33,9 @@ function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.El
       onPassesPress={() => {
         router.push('/(admin)/passes');
       }}
+      onSetupGuidePress={() => {
+        router.push('/(admin)/setup-guide');
+      }}
     />
   );
 }

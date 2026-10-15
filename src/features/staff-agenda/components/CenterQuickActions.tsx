@@ -10,6 +10,7 @@ interface CenterQuickActionsProps {
   onManagementPress: () => void;
   onServicesPress: () => void;
   onPassesPress: () => void;
+  onSetupGuidePress: () => void;
 }
 
 function buildPrimaryAction(props: CenterQuickActionsProps): QuickAction {
@@ -19,6 +20,16 @@ function buildPrimaryAction(props: CenterQuickActionsProps): QuickAction {
     label: i18n.t('staffAgenda.center.assignAppointmentsAction'),
     hint: i18n.t('staffAgenda.center.assignAppointmentsHint'),
     onPress: props.onAssignAppointmentPress,
+  };
+}
+
+function buildSetupGuideAction(props: CenterQuickActionsProps): QuickAction {
+  return {
+    id: 'setupGuide',
+    iconName: 'checkCircle',
+    label: i18n.t('staffAgenda.center.setupGuideAction'),
+    hint: i18n.t('staffAgenda.center.setupGuideHint'),
+    onPress: props.onSetupGuidePress,
   };
 }
 
@@ -57,6 +68,7 @@ function buildSecondaryActions(props: CenterQuickActionsProps): QuickAction[] {
       onPress: props.onServicesPress,
     },
     ...management,
+    buildSetupGuideAction(props),
   ];
 }
 

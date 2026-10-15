@@ -930,6 +930,8 @@
       "servicesHint": "Qué ofreces y su precio",
       "passesAction": "Bonos",
       "passesHint": "Pedidos y activos",
+      "setupGuideAction": "Primeros pasos",
+      "setupGuideHint": "Cómo dejar tu centro listo",
       "byStaffTitle": "Por {{staffWord}}",
       "noAppointments": "Sin citas este día",
       "appointmentCount_one": "{{count}} cita",
@@ -1378,6 +1380,61 @@
     }
   },
   "centerAdmin": {
+    "setupGuide": {
+      "title": "Primeros pasos",
+      "subtitle": "Sigue este orden y tu centro funcionará del todo con la app.",
+      "groups": {
+        "prepare": "Prepara tu centro",
+        "teamAndPasses": "Equipo y bonos",
+        "open": "Abre las puertas"
+      },
+      "steps": {
+        "centerDetails": {
+          "title": "Completa los datos del centro",
+          "description": "Nombre, dirección, teléfono y el email de contacto, que Stripe necesita para cobrar."
+        },
+        "brand": {
+          "title": "Pon tu marca",
+          "description": "Elige tu color y tu logotipo: así te verán tus {{clientWord}} en la app."
+        },
+        "openingHours": {
+          "title": "Define tu horario de apertura",
+          "description": "Los días y las horas en que atiendes. Solo se ofrecen citas dentro de él."
+        },
+        "services": {
+          "title": "Crea tus servicios",
+          "description": "Qué ofreces, cuánto dura y cuánto cuesta. Sin servicios nadie puede reservar."
+        },
+        "rooms": {
+          "title": "Añade tus salas",
+          "description": "Cada espacio con su aforo y, si quieres, un horario fijo semanal."
+        },
+        "team": {
+          "title": "Invita a tu equipo",
+          "description": "Da de alta a tus {{staffWord}} para que tengan su agenda y confirmen la asistencia."
+        },
+        "passes": {
+          "title": "Crea tus bonos",
+          "description": "Packs de clases que tus {{clientWord}} piden y gastan al reservar."
+        },
+        "onlinePayments": {
+          "title": "Activa los cobros online",
+          "description": "Solo plan Premium: cobra con tarjeta o Bizum. El alta en Stripe se hace desde Bonos."
+        },
+        "inviteClients": {
+          "title": "Invita a tus {{clientWord}}",
+          "description": "Comparte el código o el QR del centro, imprime el cartel o importa tu lista."
+        },
+        "privacy": {
+          "title": "Revisa privacidad y textos legales",
+          "description": "Lo que aceptan tus {{clientWord}} al unirse al centro."
+        },
+        "firstAppointment": {
+          "title": "Haz una cita de prueba",
+          "description": "Asígnala desde Inicio y comprueba cómo la ve {{clientSingular}}."
+        }
+      }
+    },
     "onlinePayments": {
       "title": "Cobros online",
       "not_included": "Cobrar los bonos y los alquileres desde la app con tarjeta es del plan Premium. Mientras tanto, activa cada bono cuando lo cobres a mano.",

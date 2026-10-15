@@ -33,3 +33,4 @@ export { CenterDetailsScreen } from './screens/CenterDetailsScreen';
 export { ReceptionPosterScreen } from './screens/ReceptionPosterScreen';
 export { AccountSecurityScreen } from './screens/AccountSecurityScreen';
 export { PrivacyLegalScreen } from './screens/PrivacyLegalScreen';
+export { SetupGuideScreen } from './screens/SetupGuideScreen';
