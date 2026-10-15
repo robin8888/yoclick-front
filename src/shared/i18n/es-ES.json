@@ -1417,6 +1417,10 @@
           "title": "Crea tus bonos",
           "description": "Packs de clases que tus {{clientWord}} piden y gastan al reservar."
         },
+        "content": {
+          "title": "Sube contenido",
+          "description": "En Contenido: pulsa «Subir contenido» y elige vídeo (MP4, hasta 500 MB), PDF (hasta 50 MB) o imagen. Luego pulsa «Asignar» para dárselo a todos, a un nivel, a un grupo o a un {{clientSingular}}."
+        },
         "onlinePayments": {
           "title": "Activa los cobros online",
           "description": "Solo plan Premium: cobra con tarjeta o Bizum. El alta en Stripe se hace desde Bonos."

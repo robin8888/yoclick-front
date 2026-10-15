@@ -19,6 +19,7 @@ describe('buildSetupGuideGroups', () => {
         'rooms',
         'team',
         'passes',
+        'content',
         'onlinePayments',
         'inviteClients',
         'privacy',
@@ -35,6 +36,7 @@ describe('buildSetupGuideGroups', () => {
         'services',
         'team',
         'passes',
+        'content',
         'onlinePayments',
         'inviteClients',
         'privacy',
@@ -50,7 +52,7 @@ describe('buildSetupGuideGroups', () => {
       group.steps.map((step) => step.position),
     );
 
-    expect(positions).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    expect(positions).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
   });
 
   it('never repeats a step', () => {

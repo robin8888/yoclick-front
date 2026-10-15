@@ -3,6 +3,7 @@ import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import { usePickCenterLogo } from '@/features/onboarding';
 import { resolveApiAssetUrl } from '@/shared/api/asset-url';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -12,8 +13,24 @@ import { PublishBrandButton } from '../components/PublishBrandButton';
 import { useBrandDraft } from '../hooks/useBrandDraft';
 import { usePublishBrand } from '../hooks/usePublishBrand';
 
+/** El esqueleto mientras carga la marca y, si falla, el error con su reintento. */
+function BrandLoadFeedback({
+  brand,
+}: Readonly<{ brand: ReturnType<typeof useBrandDraft> }>): React.JSX.Element | null {
+  if (brand.isLoading) return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
+  if (!brand.hasFailed) return null;
+  return (
+    <LoadErrorState
+      title={i18n.t('branding.errorTitle')}
+      error={brand.error}
+      onRetry={brand.retry}
+    />
+  );
+}
+
 /** Prototipo `abrand`: logo, color y nombre con vista previa en vivo y «Publicar cambios». */
 export function BrandScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const brand = useBrandDraft();
   const logoPicker = usePickCenterLogo();
   const publication = usePublishBrand();
@@ -22,6 +39,7 @@ export function BrandScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       title={i18n.t('branding.title')}
       subtitle={i18n.t('branding.subtitle', { clientWord })}
       isLoading={publication.isPublishing || logoPicker.isPreparing}
@@ -33,14 +51,7 @@ export function BrandScreen(): React.JSX.Element {
         />
       }
     >
-      {brand.isLoading ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
-      {brand.hasFailed ? (
-        <LoadErrorState
-          title={i18n.t('branding.errorTitle')}
-          error={brand.error}
-          onRetry={brand.retry}
-        />
-      ) : null}
+      <BrandLoadFeedback brand={brand} />
       {brand.draft === null ? null : (
         <BrandEditor
           brand={brand}

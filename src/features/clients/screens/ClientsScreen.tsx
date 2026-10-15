@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -28,6 +29,7 @@ function buildTabs(clientWord: string, clientCount: number, groupCount: number) 
 
 /** Prototipo `aclients`: «Alumnos (n)» y «Grupos (n)», con buscador por nombre y filtro por estado. */
 export function ClientsScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const router = useRouter();
   const sectorId = useActiveCenterSectorId();
   const clientWord = capitalize(getSectorVocabulary(sectorId).client.plural);
@@ -42,7 +44,7 @@ export function ClientsScreen(): React.JSX.Element {
   );
 
   return (
-    <ScreenTemplate title={i18n.t('clients.title', { clientWord })}>
+    <ScreenTemplate onBackPress={onBackPress} title={i18n.t('clients.title', { clientWord })}>
       <SegmentedControl options={tabs} selectedValue={tab} onValueChange={setTab} />
       {tab === 'groups' ? (
         <GroupListSection groups={groups} sectorId={sectorId} />

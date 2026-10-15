@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { ClientListResponseDtoClientsItem } from '@/shared/api/generated/model';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { useTheme } from '@/shared/theme';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
@@ -132,8 +133,21 @@ function StaffClientList({
   return <StaffClientRows list={list} clients={clients} vocabulary={vocabulary} />;
 }
 
+function buildStaffClientsSubtitle(
+  activeCount: number | undefined,
+  vocabulary: ReturnType<typeof getSectorVocabulary>,
+): string | undefined {
+  if (activeCount === undefined) return undefined;
+  const { singular, plural } = vocabulary.client;
+  return i18n.t('clients.staffSubtitle', {
+    count: activeCount,
+    clientWord: activeCount === 1 ? singular : plural,
+  });
+}
+
 /** Prototipo `iclients`: «Mis clientes», las personas que han reservado contigo, con buscador. */
 export function StaffClientsScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const sectorId = useActiveCenterSectorId();
   const filters = useClientFilters();
   const list = useClientList({ searchText: filters.searchText, statusFilter: 'all' });
@@ -142,15 +156,9 @@ export function StaffClientsScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate
+      onBackPress={onBackPress}
       title={i18n.t('clients.staffTitle', { clientWord: vocabulary.client.plural })}
-      subtitle={
-        activeCount === undefined
-          ? undefined
-          : i18n.t('clients.staffSubtitle', {
-              count: activeCount,
-              clientWord: activeCount === 1 ? vocabulary.client.singular : vocabulary.client.plural,
-            })
-      }
+      subtitle={buildStaffClientsSubtitle(activeCount, vocabulary)}
     >
       <Input
         value={filters.searchText}

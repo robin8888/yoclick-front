@@ -7,6 +7,7 @@ import { useActiveCenterSectorId, useMyCenters } from '@/features/join';
 import { MyPhotoAvatar } from '@/features/photos';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { useTheme, useThemePreference } from '@/shared/theme';
 import { Badge } from '@/ui/atoms/Badge';
 import { Button } from '@/ui/atoms/Button';
@@ -131,11 +132,16 @@ function ClientProfileLinks(): React.JSX.Element {
 
 /** Prototipo `profile`: foto, nombre y correo, accesos (centros, avisos, privacidad), tema y cerrar sesión. */
 export function ClientProfileScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const { signOut, isSigningOut } = useSignOut();
   const appVersion = Constants.expoConfig?.version ?? '1.0';
 
   return (
-    <ScreenTemplate title={i18n.t('session.profile.title')} isLoading={isSigningOut}>
+    <ScreenTemplate
+      onBackPress={onBackPress}
+      title={i18n.t('session.profile.title')}
+      isLoading={isSigningOut}
+    >
       <ClientProfileHeader />
       <ClientProfileLinks />
       <Button

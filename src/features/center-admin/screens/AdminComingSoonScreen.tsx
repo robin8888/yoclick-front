@@ -1,4 +1,5 @@
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -10,8 +11,9 @@ interface AdminComingSoonScreenProps {
 export function AdminComingSoonScreen({
   title,
 }: Readonly<AdminComingSoonScreenProps>): React.JSX.Element {
+  const onBackPress = useBackAction();
   return (
-    <ScreenTemplate title={title}>
+    <ScreenTemplate onBackPress={onBackPress} title={title}>
       <Text color="ink2">{i18n.t('centerAdmin.comingSoon.description')}</Text>
     </ScreenTemplate>
   );

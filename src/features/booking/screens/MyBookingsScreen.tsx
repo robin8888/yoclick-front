@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { LoadErrorState } from '@/features/join';
 import type { MyBookingsResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
@@ -89,10 +90,11 @@ function BookingsOutcome({ scope }: Readonly<{ scope: BookingScope }>): React.JS
 
 /** Prototipo `appts`: próximas e historial; cancelar con confirmación. */
 export function MyBookingsScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const [scope, setScope] = useState<BookingScope>('upcoming');
 
   return (
-    <ScreenTemplate title={i18n.t('booking.list.title')}>
+    <ScreenTemplate onBackPress={onBackPress} title={i18n.t('booking.list.title')}>
       <SegmentedControl options={SCOPE_OPTIONS} selectedValue={scope} onValueChange={setScope} />
       <BookingsOutcome scope={scope} />
     </ScreenTemplate>

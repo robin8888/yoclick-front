@@ -7,6 +7,7 @@ import { MyPhotoAvatar } from '@/features/photos';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -73,6 +74,7 @@ function StaffProfileLinks({
 
 /** Prototipo `iagenda` › Perfil: quién eres, en qué centro y cómo cerrar la sesión. */
 export function StaffProfileScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
   const user = useSessionStore((state) => state.user);
   const center = useActiveCenterSummary();
   const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
@@ -80,7 +82,11 @@ export function StaffProfileScreen(): React.JSX.Element {
   const { signOut, isSigningOut } = useSignOutFlow();
 
   return (
-    <ScreenTemplate title={i18n.t('session.profile.title')} isLoading={isSigningOut}>
+    <ScreenTemplate
+      onBackPress={onBackPress}
+      title={i18n.t('session.profile.title')}
+      isLoading={isSigningOut}
+    >
       <View style={PROFILE_HEADER_STYLE}>
         <MyPhotoAvatar name={user?.fullName ?? ''} />
         <Text variant="titleLg">{user?.fullName ?? ''}</Text>

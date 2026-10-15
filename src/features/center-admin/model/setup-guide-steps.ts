@@ -12,6 +12,7 @@ export type SetupGuideStepId =
   | 'rooms'
   | 'team'
   | 'passes'
+  | 'content'
   | 'onlinePayments'
   | 'inviteClients'
   | 'privacy'
@@ -49,6 +50,7 @@ const PREPARE_STEPS: readonly SetupGuideStepDefinition[] = [
 const TEAM_AND_PASSES_STEPS: readonly SetupGuideStepDefinition[] = [
   { id: 'team', iconName: 'users', route: buildInvitePersonRoute('staff') },
   { id: 'passes', iconName: 'creditCard', route: '/(admin)/passes' },
+  { id: 'content', iconName: 'upload', route: '/(admin)/(tabs)/content' },
   { id: 'onlinePayments', iconName: 'lock', route: '/(admin)/passes' },
 ];
 

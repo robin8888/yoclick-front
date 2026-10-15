@@ -1,3 +1,4 @@
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -34,8 +35,10 @@ interface ContentLibraryScreenProps {
 /** Prototipo `acontent`: subir vídeos y PDF, y asignarlos por nivel, por grupo o por persona. */
 export function ContentLibraryScreen({
   canManageLibrary = true,
-  onBackPress,
+  onBackPress: onBackPressFromParent,
 }: Readonly<ContentLibraryScreenProps>): React.JSX.Element {
+  const defaultBackPress = useBackAction();
+  const onBackPress = onBackPressFromParent ?? defaultBackPress;
   const { clientWordPlural } = useContentVocabulary();
   const uploadKind = useVisibility();
   const assigning = useSelectedContent();

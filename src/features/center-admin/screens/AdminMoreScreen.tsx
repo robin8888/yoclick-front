@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { useSignOut } from '@/features/auth';
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { useBackAction } from '@/shared/hooks/useBackAction';
 import { useTheme, useThemePreference } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/atoms/Icon';
@@ -54,14 +55,11 @@ function useMoreMenuWords(): MoreMenuWords {
   };
 }
 
-/** Prototipo `amore`: los accesos de administración agrupados, el tema y cerrar sesión. */
-export function AdminMoreScreen(): React.JSX.Element {
+function MoreMenuGroups({ words }: Readonly<{ words: MoreMenuWords }>): React.JSX.Element {
   const router = useRouter();
-  const { signOut, isSigningOut } = useSignOut();
-  const words = useMoreMenuWords();
 
   return (
-    <ScreenTemplate title={i18n.t('centerAdmin.more.title')} isLoading={isSigningOut}>
+    <>
       {MORE_MENU_GROUPS.map((group) => (
         <View key={group.id} style={SECTION_STYLE}>
           <Text variant="overline" color="ink2">
@@ -80,6 +78,23 @@ export function AdminMoreScreen(): React.JSX.Element {
           ))}
         </View>
       ))}
+    </>
+  );
+}
+
+/** Prototipo `amore`: los accesos de administración agrupados, el tema y cerrar sesión. */
+export function AdminMoreScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
+  const { signOut, isSigningOut } = useSignOut();
+  const words = useMoreMenuWords();
+
+  return (
+    <ScreenTemplate
+      onBackPress={onBackPress}
+      title={i18n.t('centerAdmin.more.title')}
+      isLoading={isSigningOut}
+    >
+      <MoreMenuGroups words={words} />
       <DarkThemeRow />
       <Button
         variant="outline"
