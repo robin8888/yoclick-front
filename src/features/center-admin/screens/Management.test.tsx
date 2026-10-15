@@ -68,27 +68,14 @@ describe('ManagementScreen', () => {
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/schedules/new');
   });
 
-  it('no longer lists the rooms in a section of their own', async () => {
+  it('no longer shows the rental and maintenance or the fixed schedule sections', async () => {
     mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
     renderScreen(<ManagementScreen />);
 
-    expect(await screen.findByText('Alquiler y mantenimiento')).toBeOnTheScreen();
-    expect(screen.queryByText('Nuevo espacio')).toBeNull();
-  });
-
-  it('offers to block a room for rental or maintenance from this screen', async () => {
-    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS });
-    renderScreen(<ManagementScreen />);
-
-    expect(await screen.findByText('Alquiler y mantenimiento')).toBeOnTheScreen();
-    fireEvent.press(
-      screen.getByRole('button', { name: /Sala de baile\. Bloquear horas por alquiler/ }),
-    );
-
-    expect(getMockRouter().push).toHaveBeenCalledWith({
-      pathname: '/(admin)/room-blocks/[roomId]',
-      params: { roomId: ROOM_ANA_ID },
-    });
+    expect(await screen.findByRole('button', { name: 'Crear sala' })).toBeOnTheScreen();
+    expect(screen.queryByText('Editar salas')).toBeNull();
+    expect(screen.queryByText('Alquiler y mantenimiento')).toBeNull();
+    expect(screen.queryByText('Horario fijo')).toBeNull();
   });
 });
 

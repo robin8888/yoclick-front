@@ -5,6 +5,7 @@ import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
+import { RoomCard } from './RoomCard';
 import type { CreateClassForm } from '../hooks/useCreateClassForm';
 
 const SECTION_STYLE = { gap: 8 } as const;
@@ -25,11 +26,13 @@ function RoomChoice({ form }: Readonly<{ form: CreateClassForm }>): React.JSX.El
       {form.rooms.length === 0 ? (
         <Text color="ink2">{i18n.t('centerAdmin.createClass.noRooms')}</Text>
       ) : null}
-      {form.rooms.map((room) => (
-        <OptionCard
+      {form.rooms.map((room, position) => (
+        <RoomCard
           key={room.id}
-          title={room.name}
-          meta={i18n.t('centerAdmin.createClass.roomCapacity', { count: room.capacity })}
+          name={room.name}
+          position={position}
+          subtitle={i18n.t('centerAdmin.createClass.roomCapacity', { count: room.capacity })}
+          accessibilityLabel={room.name}
           isSelected={form.draft.roomId === room.id}
           onPress={() => {
             form.chooseRoom(room.id);

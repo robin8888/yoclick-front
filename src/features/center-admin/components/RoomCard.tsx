@@ -19,6 +19,8 @@ interface RoomCardProps {
   /** «Aforo 12 · Da clase Ana Ruiz · Solo Salsa». */
   subtitle: string;
   accessibilityLabel: string;
+  /** Si se usa para elegir una sala: marca la elegida con un check en vez de la flecha. */
+  isSelected?: boolean | undefined;
   onPress: () => void;
 }
 
@@ -28,6 +30,7 @@ export function RoomCard({
   position,
   subtitle,
   accessibilityLabel,
+  isSelected,
   onPress,
 }: Readonly<RoomCardProps>): React.JSX.Element {
   const theme = useTheme();
@@ -37,8 +40,9 @@ export function RoomCard({
     <Pressable
       role="button"
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={isSelected === undefined ? undefined : { selected: isSelected }}
       onPress={onPress}
-      style={createRoomCardStyle(theme, color.background)}
+      style={createRoomCardStyle(theme, color.background, isSelected === true)}
     >
       <View style={createRoomLetterStyle(color.background)} accessibilityElementsHidden>
         <Text variant="bodyStrong" tintColor={color.text}>
@@ -53,7 +57,11 @@ export function RoomCard({
           {subtitle}
         </Text>
       </View>
-      <Icon name="chevronRight" size="inline" color="ink2" />
+      <Icon
+        name={isSelected === true ? 'check' : 'chevronRight'}
+        size="inline"
+        color={isSelected === true ? 'brandInk' : 'ink2'}
+      />
     </Pressable>
   );
 }

@@ -2,14 +2,10 @@ import { i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { EditRoomsSection, EditServicesSection } from '../components/ManagementEditSections';
 import { ManagementActions } from '../components/ManagementActions';
-import { RoomBlocksManagementSection } from '../components/RoomBlocksManagementSection';
-import { ScheduleWeekSection } from '../components/ScheduleWeekSection';
 
 /**
- * «Gestión» (docs/spec/13): tres botones para crear sala, servicio y clase; debajo, los bloqueos de
- * cada sala (alquiler, mantenimiento) y las clases fijas de la semana.
+ * «Gestión» (docs/spec/13): tres botones para crear sala, servicio y clase. Editar lo ya creado está debajo de cada formulario de creación.
  */
 export function ManagementScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
@@ -21,10 +17,6 @@ export function ManagementScreen(): React.JSX.Element {
       subtitle={i18n.t('centerAdmin.management.subtitle')}
     >
       <ManagementActions />
-      <EditRoomsSection />
-      <EditServicesSection />
-      <RoomBlocksManagementSection />
-      <ScheduleWeekSection />
     </ScreenTemplate>
   );
 }

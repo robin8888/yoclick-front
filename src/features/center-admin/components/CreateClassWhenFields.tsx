@@ -2,26 +2,13 @@ import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { Text } from '@/ui/atoms/Text';
-import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 
 import type { CreateClassForm } from '../hooks/useCreateClassForm';
-import {
-  NO_END_DATE,
-  type BusySlot,
-  type ClassRepeat,
-  type HoursProblem,
-} from '../model/create-class';
-import { ScheduleWeekdaysField } from './ScheduleWeekdaysField';
+import { NO_END_DATE, type BusySlot, type HoursProblem } from '../model/create-class';
 import { SchedulePeriodFields } from './SchedulePeriodFields';
-import { SpanishDateField } from './SpanishDateField';
 import { TimeRangeStepFields } from './TimeRangeStepFields';
 
 const SECTION_STYLE = { gap: 8 } as const;
-
-const REPEAT_OPTIONS = [
-  { value: 'weekly', label: i18n.t('centerAdmin.createClass.repeatWeekly') },
-  { value: 'once', label: i18n.t('centerAdmin.createClass.repeatOnce') },
-] as const;
 
 function describeProblem(problem: HoursProblem): string {
   switch (problem.kind) {
@@ -73,22 +60,9 @@ function BusyLines({
   );
 }
 
-/** Desde cuándo y hasta cuándo se da: cada semana (con o sin fin) o un solo día. */
+/** Desde cuándo y hasta cuándo se da; el día de la semana es el de la fecha de inicio. */
 function DatesFields({ form }: Readonly<{ form: CreateClassForm }>): React.JSX.Element {
   const { draft } = form;
-  if (draft.repeat === 'once') {
-    return (
-      <View style={SECTION_STYLE}>
-        <Text variant="bodyStrong">{i18n.t('centerAdmin.createClass.dayLabel')}</Text>
-        <SpanishDateField
-          value={draft.startsOn}
-          onValueChange={form.chooseStartsOn}
-          accessibilityLabel={i18n.t('centerAdmin.createClass.dayLabel')}
-          isInitiallyOpen={false}
-        />
-      </View>
-    );
-  }
   return (
     <SchedulePeriodFields
       startsOn={draft.startsOn}
@@ -121,27 +95,12 @@ function TimesFields({ form }: Readonly<{ form: CreateClassForm }>): React.JSX.E
   );
 }
 
-/** Cada semana (días, desde y hasta) o una sola vez (un día), y la hora de inicio y de fin. */
+/** Cuándo se da la clase: desde y hasta qué fecha, y de qué hora a qué hora. */
 export function CreateClassWhenFields({
   form,
 }: Readonly<{ form: CreateClassForm }>): React.JSX.Element {
-  const { draft } = form;
-
   return (
     <>
-      <View style={SECTION_STYLE}>
-        <Text variant="titleMd" role="heading">
-          {i18n.t('centerAdmin.createClass.whenTitle')}
-        </Text>
-        <SegmentedControl<ClassRepeat>
-          options={REPEAT_OPTIONS}
-          selectedValue={draft.repeat}
-          onValueChange={form.chooseRepeat}
-        />
-      </View>
-      {draft.repeat === 'weekly' ? (
-        <ScheduleWeekdaysField selectedWeekdays={draft.weekdays} onWeekdayToggle={form.toggleDay} />
-      ) : null}
       <DatesFields form={form} />
       <TimesFields form={form} />
     </>

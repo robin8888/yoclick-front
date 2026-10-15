@@ -7,7 +7,11 @@ const ROOM_LETTER_SIZE = 36;
 const HALF = 2;
 
 /** Tarjeta de un espacio: borde fino y una franja con el color que tiene en la agenda. */
-export function createRoomCardStyle(theme: Theme, accentColor: string): ViewStyle {
+export function createRoomCardStyle(
+  theme: Theme,
+  accentColor: string,
+  isSelected = false,
+): ViewStyle {
   return {
     flexDirection: 'row',
     alignItems: 'center',
@@ -17,7 +21,7 @@ export function createRoomCardStyle(theme: Theme, accentColor: string): ViewStyl
     borderRadius: theme.radius.lg,
     borderWidth: 1,
     borderLeftWidth: ROOM_ACCENT_WIDTH,
-    borderColor: theme.colors.line,
+    borderColor: isSelected ? theme.colors.brand : theme.colors.line,
     borderLeftColor: accentColor,
     backgroundColor: theme.colors.surface,
   };

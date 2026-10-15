@@ -5,10 +5,22 @@ import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { EditServicesSection } from '../components/ManagementEditSections';
 import { ServiceEditorFields } from '../components/ServiceEditorFields';
 import { useServiceCatalog } from '../hooks/useServiceCatalog';
 import { useServiceEditorForm } from '../hooks/useServiceEditorForm';
 import { parseServiceRouteParams } from '../model/service-route-params';
+
+function ArchiveServiceButton({ onPress }: Readonly<{ onPress: () => void }>): React.JSX.Element {
+  return (
+    <Button
+      variant="danger"
+      leadingIconName="trash"
+      label={i18n.t('centerAdmin.serviceEditor.archiveAction')}
+      onPress={onPress}
+    />
+  );
+}
 
 /** Prototipo `asvcedit`: crear o editar un servicio; «se publica al guardar». */
 export function ServiceEditorScreen(): React.JSX.Element {
@@ -19,7 +31,6 @@ export function ServiceEditorScreen(): React.JSX.Element {
     (catalogService) => catalogService.id === routeParams?.serviceId,
   );
   const form = useServiceEditorForm(editedService);
-
   if (routeParams === null) return <Redirect href="/(admin)/services" />;
   const isNewService = routeParams.serviceId === 'new';
 
@@ -42,14 +53,8 @@ export function ServiceEditorScreen(): React.JSX.Element {
     >
       <ServiceEditorFields form={form} />
       {form.saveErrorMessage === null ? null : <FormErrorBanner message={form.saveErrorMessage} />}
-      {editedService === undefined ? null : (
-        <Button
-          variant="danger"
-          leadingIconName="trash"
-          label={i18n.t('centerAdmin.serviceEditor.archiveAction')}
-          onPress={form.archiveService}
-        />
-      )}
+      {isNewService ? <EditServicesSection /> : null}
+      {editedService === undefined ? null : <ArchiveServiceButton onPress={form.archiveService} />}
     </ScreenTemplate>
   );
 }

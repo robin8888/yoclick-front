@@ -7,6 +7,7 @@ import { Button } from '@/ui/atoms/Button';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { EditRoomsSection } from '../components/ManagementEditSections';
 import { RoomFormFields } from '../components/RoomFormFields';
 import { useCreateRoom } from '../hooks/useCreateRoom';
 import {
@@ -51,6 +52,7 @@ export function NewRoomScreen(): React.JSX.Element {
     >
       <RoomFormFields control={control} />
       {creation.errorMessage === null ? null : <FormErrorBanner message={creation.errorMessage} />}
+      <EditRoomsSection />
     </ScreenTemplate>
   );
 }

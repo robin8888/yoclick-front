@@ -6,12 +6,10 @@ import { getTodayIsoDate } from '@/shared/lib/format';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
-import { freezeClockAt, restoreClock } from '@/test/freeze-clock';
 import { renderScreen } from '@/test/render-screen';
 
 import { getDeviceTimeZone } from '../hooks/useCenterTimeZone';
 import { EnrollClientsScreen } from './EnrollClientsScreen';
-import { ManagementScreen } from './ManagementScreen';
 import { NewScheduleScreen } from './NewScheduleScreen';
 import { ScheduleSeriesScreen } from './ScheduleSeriesScreen';
 
@@ -117,44 +115,6 @@ function signInToCenter(): void {
     useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
   });
 }
-
-describe('ManagementScreen · fixed schedules', () => {
-  beforeEach(() => {
-    resetMockRouter();
-    signInToCenter();
-    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS, [`GET ${SCHEDULES_PATH}`]: { series: [SERIES] } });
-  });
-
-  it('shows the schedules of the chosen weekday with place, teacher, mode and seats', async () => {
-    renderScreen(<ManagementScreen />);
-
-    fireEvent.press(await screen.findByRole('radio', { name: 'Lunes' }));
-
-    expect(await screen.findByText('Inglés B1')).toBeOnTheScreen();
-    expect(screen.getByText('18:00 – 19:30')).toBeOnTheScreen();
-    expect(
-      screen.getByText('Aula 2 · Ana Ruiz · En grupo · 8 de 12 matriculados'),
-    ).toBeOnTheScreen();
-
-    fireEvent.press(screen.getByRole('radio', { name: 'Martes' }));
-
-    expect(screen.getByText('Nada programado el Martes')).toBeOnTheScreen();
-  });
-
-  it('opens a schedule and the form for a new one', async () => {
-    renderScreen(<ManagementScreen />);
-    fireEvent.press(await screen.findByRole('radio', { name: 'Lunes' }));
-
-    fireEvent.press(await screen.findByRole('button', { name: /18:00–19:30, Inglés B1/ }));
-    fireEvent.press(screen.getByRole('button', { name: 'Nuevo horario' }));
-
-    expect(getMockRouter().push).toHaveBeenCalledWith({
-      pathname: '/(admin)/schedules/[seriesId]',
-      params: { seriesId: SERIES_ID },
-    });
-    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/schedules/new');
-  });
-});
 
 describe('NewScheduleScreen', () => {
   beforeEach(() => {
@@ -318,57 +278,5 @@ describe('EnrollClientsScreen', () => {
     expect(findApiCall('POST', `${SCHEDULES_PATH}/${SERIES_ID}/enrollments`)?.body).toEqual({
       clientMembershipIds: [MARTA_ID],
     });
-  });
-});
-
-describe('ManagementScreen · repeat a configured week', () => {
-  const WEEK_ONLY_SERIES = { ...SERIES, startsOn: '2026-10-12', endsOn: '2026-10-18' };
-
-  beforeEach(() => {
-    resetMockRouter();
-    signInToCenter();
-    freezeClockAt('2026-10-14T09:00:00.000Z');
-  });
-
-  afterEach(() => {
-    restoreClock();
-  });
-
-  it('copies the classes of the week to the next one with a single button', async () => {
-    mockApi({
-      [`GET ${ROOMS_PATH}`]: ROOMS,
-      [`GET ${SCHEDULES_PATH}`]: { series: [WEEK_ONLY_SERIES] },
-      [`POST ${SCHEDULES_PATH}/repeat-week`]: {
-        copiedSeriesCount: 1,
-        alreadyCopiedSeriesCount: 0,
-        failedSeriesCount: 0,
-        skipped: [],
-      },
-    });
-    renderScreen(<ManagementScreen />);
-
-    const repeatButton = await screen.findByRole('button', {
-      name: 'Repetir en la semana siguiente',
-    });
-    await waitFor(() => {
-      expect(repeatButton).toBeEnabled();
-    });
-    fireEvent.press(repeatButton);
-
-    await waitFor(() => {
-      expect(findApiCall('POST', `${SCHEDULES_PATH}/repeat-week`)?.body).toEqual({
-        weekStart: '2026-10-12',
-      });
-    });
-    expect(await screen.findByText('Copiado 1 horario a la semana siguiente.')).toBeOnTheScreen();
-  });
-
-  it('has nothing to copy when the schedules repeat without an end', async () => {
-    mockApi({ [`GET ${ROOMS_PATH}`]: ROOMS, [`GET ${SCHEDULES_PATH}`]: { series: [SERIES] } });
-    renderScreen(<ManagementScreen />);
-
-    expect(
-      await screen.findByRole('button', { name: 'Repetir en la semana siguiente' }),
-    ).toBeDisabled();
   });
 });

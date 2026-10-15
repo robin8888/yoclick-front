@@ -184,7 +184,8 @@ function useChecks(draft: ClassDraft): Checks {
   });
   const openRanges = toOpenRangesByWeekday(useCenterSettings().data?.openingHours);
   const weekdayOfDate = getWeekdayOfIsoDate(draft.startsOn) ?? 1;
-  const weekdays = draft.repeat === 'once' ? [weekdayOfDate] : [...draft.weekdays];
+  // El día de la semana es el de la fecha de inicio: no se elige aparte.
+  const weekdays = [weekdayOfDate];
   const hoursProblem = findHoursProblem({
     startsAtTime: draft.startsAtTime,
     endsAtTime: draft.endsAtTime,
@@ -234,7 +235,11 @@ export function useCreateClassForm(presetRoomId?: string): CreateClassForm {
   const request =
     service === undefined || checks.hoursProblem !== null
       ? null
-      : buildCreateClassRequest(draft, service, checks.weekdayOfDate);
+      : buildCreateClassRequest(
+          { ...draft, repeat: 'weekly', weekdays: checks.weekdays },
+          service,
+          checks.weekdayOfDate,
+        );
 
   return {
     ...actions,
