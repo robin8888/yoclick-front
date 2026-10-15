@@ -22,11 +22,13 @@ export const getPaymentsGetStatusResponseMock = (overrideResponse: Partial<Extra
 
 export const getPaymentsListResponseMock = (overrideResponse: Partial<Extract<PaymentListResponseDto, object>> = {}): PaymentListResponseDto => ({payments: Array.from({ length: faker.number.int({min: 1, max: 10}) }, (_, i) => i + 1).map(() => ({id: faker.string.uuid(), kind: faker.helpers.arrayElement(['pass','room_rental'] as const), label: faker.string.alpha({length: {min: 10, max: 20}}), clientName: faker.string.alpha({length: {min: 10, max: 20}}), amountCents: faker.number.int({min: -9007199254740991, max: 9007199254740991}), status: faker.helpers.arrayElement(['pending','succeeded','failed'] as const), createdAt: faker.date.past().toISOString().slice(0, 19) + 'Z', paidAt: faker.helpers.arrayElement([faker.date.past().toISOString().slice(0, 19) + 'Z', null])})), ...overrideResponse})
 
-export const getPaymentsStartOnboardingResponseMock = (overrideResponse: Partial<Extract<OnboardingLinkResponseDto, object>> = {}): OnboardingLinkResponseDto => ({url: faker.internet.url(), ...overrideResponse})
-
 export const getPaymentsPayPassResponseMock = (overrideResponse: Partial<Extract<PaymentSheetResponseDto, object>> = {}): PaymentSheetResponseDto => ({paymentId: faker.string.uuid(), clientSecret: faker.string.alpha({length: {min: 10, max: 20}}), publishableKey: faker.string.alpha({length: {min: 10, max: 20}}), connectedAccountId: faker.string.alpha({length: {min: 10, max: 20}}), amountCents: faker.number.int({min: -9007199254740991, max: 9007199254740991}), merchantName: faker.string.alpha({length: {min: 10, max: 20}}), ...overrideResponse})
 
 export const getPaymentsPayRoomRentalResponseMock = (overrideResponse: Partial<Extract<PaymentSheetResponseDto, object>> = {}): PaymentSheetResponseDto => ({paymentId: faker.string.uuid(), clientSecret: faker.string.alpha({length: {min: 10, max: 20}}), publishableKey: faker.string.alpha({length: {min: 10, max: 20}}), connectedAccountId: faker.string.alpha({length: {min: 10, max: 20}}), amountCents: faker.number.int({min: -9007199254740991, max: 9007199254740991}), merchantName: faker.string.alpha({length: {min: 10, max: 20}}), ...overrideResponse})
 
 export const getPaymentsConfirmResponseMock = (overrideResponse: Partial<Extract<PaymentConfirmationResponseDto, object>> = {}): PaymentConfirmationResponseDto => ({paymentId: faker.string.uuid(), status: faker.helpers.arrayElement(['succeeded','pending','failed'] as const), ...overrideResponse})
+
+export const getPaymentsStartOnboardingResponseMock = (overrideResponse: Partial<Extract<OnboardingLinkResponseDto, object>> = {}): OnboardingLinkResponseDto => ({url: faker.internet.url(), ...overrideResponse})
+
+export const getPaymentsOpenDashboardResponseMock = (overrideResponse: Partial<Extract<OnboardingLinkResponseDto, object>> = {}): OnboardingLinkResponseDto => ({url: faker.internet.url(), ...overrideResponse})
 

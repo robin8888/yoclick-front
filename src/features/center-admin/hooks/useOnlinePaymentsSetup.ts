@@ -5,6 +5,7 @@ import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   getPaymentsGetStatusQueryKey,
   getPaymentsGetStatusQueryOptions,
+  paymentsOpenDashboard,
   paymentsStartOnboarding,
 } from '@/shared/api/generated/endpoints/payments/payments';
 import { useSessionStore } from '@/shared/auth/session-store';
@@ -17,6 +18,8 @@ interface OnlinePaymentsSetup {
   status: OnlinePaymentsStatus | null;
   /** Abre el formulario de alta de Stripe en el navegador. */
   startOnboarding: () => void;
+  /** Abre el panel de Stripe del centro (reembolsos, disputas, pagos a su banco). */
+  openDashboard: () => void;
   /** Vuelve a preguntar a Stripe, p. ej. al regresar del formulario de alta. */
   refreshStatus: () => void;
   isBusy: boolean;
@@ -36,6 +39,15 @@ export function useOnlinePaymentsSetup(): OnlinePaymentsSetup {
     },
   });
 
+  const dashboard = useMutation({
+    mutationFn: () => paymentsOpenDashboard(centerId),
+    onSuccess: ({ url }) => {
+      void Linking.openURL(url);
+    },
+  });
+
+  const failedMutation = [onboarding, dashboard].find((mutation) => mutation.isError);
+
   return {
     status:
       ONLINE_PAYMENTS_STATUSES.find((candidate) => candidate === String(status.data?.status)) ??
@@ -43,10 +55,13 @@ export function useOnlinePaymentsSetup(): OnlinePaymentsSetup {
     startOnboarding: () => {
       onboarding.mutate();
     },
+    openDashboard: () => {
+      dashboard.mutate();
+    },
     refreshStatus: () => {
       void status.refetch();
     },
-    isBusy: onboarding.isPending || status.isFetching,
-    errorMessage: onboarding.isError ? getApiErrorMessage(onboarding.error) : null,
+    isBusy: onboarding.isPending || dashboard.isPending || status.isFetching,
+    errorMessage: failedMutation === undefined ? null : getApiErrorMessage(failedMutation.error),
   };
 }

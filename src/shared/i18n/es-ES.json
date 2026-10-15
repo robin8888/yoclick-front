@@ -1387,7 +1387,9 @@
       "startAction": "Activar cobros con Stripe",
       "continueAction": "Continuar el alta en Stripe",
       "refreshAction": "Comprobar",
-      "viewPaymentsAction": "Ver cobros"
+      "viewPaymentsAction": "Ver cobros",
+      "dashboardAction": "Reembolsos y pagos en Stripe",
+      "dashboardHint": "Los reembolsos, las disputas y los ingresos en tu banco se gestionan desde tu panel de Stripe."
     },
     "payments": {
       "title": "Cobros online",

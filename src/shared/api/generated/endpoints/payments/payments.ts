@@ -256,80 +256,7 @@ export function usePaymentsList<TData = Awaited<ReturnType<typeof paymentsList>>
 
 
 
-export const getPaymentsStartOnboardingUrl = (centerId: string,) => {
-
-
-
-
-  return `/v1/centers/${centerId}/payments/connect/onboarding-link`
-}
-
-/**
- * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
- */
-export const paymentsStartOnboarding = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<OnboardingLinkResponseDto> => {
-
-  return apiMutator<OnboardingLinkResponseDto>(getPaymentsStartOnboardingUrl(centerId),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getPaymentsStartOnboardingMutationKey = () => ['paymentsStartOnboarding'] as const;
-
-export const getPaymentsStartOnboardingMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
-): UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext> => {
-
-const mutationKey = getPaymentsStartOnboardingMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof paymentsStartOnboarding>>, PaymentsStartOnboardingMutationVariables> = (props) => {
-          const {centerId} = props ?? {};
-
-          return  paymentsStartOnboarding(centerId,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PaymentsStartOnboardingMutationResult = NonNullable<Awaited<ReturnType<typeof paymentsStartOnboarding>>>
-
-    export type PaymentsStartOnboardingMutationError = ErrorType<ProblemDetailsDto>
-    export type PaymentsStartOnboardingMutationVariables = {centerId: string}
-
-    /**
- * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
- */
-export const usePaymentsStartOnboarding = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof paymentsStartOnboarding>>,
-        TError,
-        PaymentsStartOnboardingMutationVariables,
-        TContext
-      > => {
-      return useMutation(getPaymentsStartOnboardingMutationOptions(options), queryClient);
-    }
-    export const getPaymentsPayPassUrl = (centerId: string,
+export const getPaymentsPayPassUrl = (centerId: string,
     passId: string,) => {
 
 
@@ -553,6 +480,152 @@ export const usePaymentsConfirm = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getPaymentsConfirmMutationOptions(options), queryClient);
+    }
+    export const getPaymentsStartOnboardingUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/payments/connect/onboarding-link`
+}
+
+/**
+ * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
+ */
+export const paymentsStartOnboarding = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<OnboardingLinkResponseDto> => {
+
+  return apiMutator<OnboardingLinkResponseDto>(getPaymentsStartOnboardingUrl(centerId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getPaymentsStartOnboardingMutationKey = () => ['paymentsStartOnboarding'] as const;
+
+export const getPaymentsStartOnboardingMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext> => {
+
+const mutationKey = getPaymentsStartOnboardingMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof paymentsStartOnboarding>>, PaymentsStartOnboardingMutationVariables> = (props) => {
+          const {centerId} = props ?? {};
+
+          return  paymentsStartOnboarding(centerId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PaymentsStartOnboardingMutationResult = NonNullable<Awaited<ReturnType<typeof paymentsStartOnboarding>>>
+
+    export type PaymentsStartOnboardingMutationError = ErrorType<ProblemDetailsDto>
+    export type PaymentsStartOnboardingMutationVariables = {centerId: string}
+
+    /**
+ * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
+ */
+export const usePaymentsStartOnboarding = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsStartOnboarding>>, TError,PaymentsStartOnboardingMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof paymentsStartOnboarding>>,
+        TError,
+        PaymentsStartOnboardingMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPaymentsStartOnboardingMutationOptions(options), queryClient);
+    }
+    export const getPaymentsOpenDashboardUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/payments/connect/dashboard-link`
+}
+
+/**
+ * @summary Enlace de un solo uso al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
+ */
+export const paymentsOpenDashboard = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<OnboardingLinkResponseDto> => {
+
+  return apiMutator<OnboardingLinkResponseDto>(getPaymentsOpenDashboardUrl(centerId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getPaymentsOpenDashboardMutationKey = () => ['paymentsOpenDashboard'] as const;
+
+export const getPaymentsOpenDashboardMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsOpenDashboard>>, TError,PaymentsOpenDashboardMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof paymentsOpenDashboard>>, TError,PaymentsOpenDashboardMutationVariables, TContext> => {
+
+const mutationKey = getPaymentsOpenDashboardMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof paymentsOpenDashboard>>, PaymentsOpenDashboardMutationVariables> = (props) => {
+          const {centerId} = props ?? {};
+
+          return  paymentsOpenDashboard(centerId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PaymentsOpenDashboardMutationResult = NonNullable<Awaited<ReturnType<typeof paymentsOpenDashboard>>>
+
+    export type PaymentsOpenDashboardMutationError = ErrorType<ProblemDetailsDto>
+    export type PaymentsOpenDashboardMutationVariables = {centerId: string}
+
+    /**
+ * @summary Enlace de un solo uso al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
+ */
+export const usePaymentsOpenDashboard = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof paymentsOpenDashboard>>, TError,PaymentsOpenDashboardMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof paymentsOpenDashboard>>,
+        TError,
+        PaymentsOpenDashboardMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPaymentsOpenDashboardMutationOptions(options), queryClient);
     }
     export const getWebhooksStripeUrl = () => {
 

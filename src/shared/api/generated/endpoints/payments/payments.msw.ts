@@ -25,12 +25,13 @@ import {
   getPaymentsConfirmResponseMock,
   getPaymentsGetStatusResponseMock,
   getPaymentsListResponseMock,
+  getPaymentsOpenDashboardResponseMock,
   getPaymentsPayPassResponseMock,
   getPaymentsPayRoomRentalResponseMock,
   getPaymentsStartOnboardingResponseMock
 } from './payments.faker.ts';
 
-export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsPayPassResponseMock, getPaymentsPayRoomRentalResponseMock, getPaymentsConfirmResponseMock } from './payments.faker.ts';
+export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsPayPassResponseMock, getPaymentsPayRoomRentalResponseMock, getPaymentsConfirmResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsOpenDashboardResponseMock } from './payments.faker.ts';
 
 
 export const getPaymentsGetStatusMockHandler = (overrideResponse?: PaymentsStatusResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentsStatusResponseDto> | PaymentsStatusResponseDto), options?: RequestHandlerOptions) => {
@@ -53,18 +54,6 @@ export const getPaymentsListMockHandler = (overrideResponse?: PaymentListRespons
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getPaymentsListResponseMock(),
       { status: 200
-      })
-  }, options)
-}
-
-export const getPaymentsStartOnboardingMockHandler = (overrideResponse?: OnboardingLinkResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<OnboardingLinkResponseDto> | OnboardingLinkResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/payments/connect/onboarding-link', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getPaymentsStartOnboardingResponseMock(),
-      { status: 201
       })
   }, options)
 }
@@ -105,6 +94,30 @@ export const getPaymentsConfirmMockHandler = (overrideResponse?: PaymentConfirma
   }, options)
 }
 
+export const getPaymentsStartOnboardingMockHandler = (overrideResponse?: OnboardingLinkResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<OnboardingLinkResponseDto> | OnboardingLinkResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/payments/connect/onboarding-link', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPaymentsStartOnboardingResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getPaymentsOpenDashboardMockHandler = (overrideResponse?: OnboardingLinkResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<OnboardingLinkResponseDto> | OnboardingLinkResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/payments/connect/dashboard-link', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPaymentsOpenDashboardResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
 export const getWebhooksStripeMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
   return http.post('*/v1/webhooks/stripe', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
@@ -117,9 +130,10 @@ export const getWebhooksStripeMockHandler = (overrideResponse?: void | ((info: P
 export const getPaymentsMock = () => [
   getPaymentsGetStatusMockHandler(),
   getPaymentsListMockHandler(),
-  getPaymentsStartOnboardingMockHandler(),
   getPaymentsPayPassMockHandler(),
   getPaymentsPayRoomRentalMockHandler(),
   getPaymentsConfirmMockHandler(),
+  getPaymentsStartOnboardingMockHandler(),
+  getPaymentsOpenDashboardMockHandler(),
   getWebhooksStripeMockHandler()
 ]

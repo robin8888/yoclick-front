@@ -62,24 +62,6 @@ export const PaymentsListResponse = zod.object({
 })
 
 /**
- * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
- */
-export const paymentsStartOnboardingPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const PaymentsStartOnboardingParams = zod.object({
-  "centerId": zod.uuid().regex(paymentsStartOnboardingPathCenterIdRegExp)
-})
-
-export const PaymentsStartOnboardingHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const PaymentsStartOnboardingResponse = zod.object({
-  "url": zod.url()
-})
-
-/**
  * @summary Prepara el pago online de un bono pendiente de la propia persona. 409 PAYMENTS_NOT_READY si el centro no terminó el alta.
  */
 export const paymentsPayPassPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -163,6 +145,42 @@ export const paymentsConfirmResponsePaymentIdRegExp = new RegExp('^([0-9a-fA-F]{
 export const PaymentsConfirmResponse = zod.object({
   "paymentId": zod.uuid().regex(paymentsConfirmResponsePaymentIdRegExp),
   "status": zod.enum(['succeeded', 'pending', 'failed'])
+})
+
+/**
+ * @summary Abre (o retoma) el alta de cobros del centro en Stripe y devuelve el enlace de un solo uso. 403 PAYMENTS_NOT_INCLUDED si el plan no es Premium.
+ */
+export const paymentsStartOnboardingPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PaymentsStartOnboardingParams = zod.object({
+  "centerId": zod.uuid().regex(paymentsStartOnboardingPathCenterIdRegExp)
+})
+
+export const PaymentsStartOnboardingHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const PaymentsStartOnboardingResponse = zod.object({
+  "url": zod.url()
+})
+
+/**
+ * @summary Enlace de un solo uso al panel de Stripe del centro (reembolsos, disputas, pagos a su banco). 409 PAYMENTS_NOT_READY si aún no cobra.
+ */
+export const paymentsOpenDashboardPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PaymentsOpenDashboardParams = zod.object({
+  "centerId": zod.uuid().regex(paymentsOpenDashboardPathCenterIdRegExp)
+})
+
+export const PaymentsOpenDashboardHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const PaymentsOpenDashboardResponse = zod.object({
+  "url": zod.url()
 })
 
 /**

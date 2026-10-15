@@ -59,15 +59,27 @@ export function OnlinePaymentsSection(): React.JSX.Element | null {
       <Text color="ink2">{i18n.t(`centerAdmin.onlinePayments.${setup.status}`)}</Text>
       {isOnboardingNeeded ? <OnboardingActions setup={setup} /> : null}
       {setup.status === 'ready' ? (
-        <Button
-          isFullWidth
-          variant="outline"
-          leadingIconName="creditCard"
-          label={i18n.t('centerAdmin.onlinePayments.viewPaymentsAction')}
-          onPress={() => {
-            router.push('/(admin)/payments');
-          }}
-        />
+        <>
+          {setup.errorMessage === null ? null : <FormErrorBanner message={setup.errorMessage} />}
+          <Button
+            isFullWidth
+            variant="outline"
+            leadingIconName="creditCard"
+            label={i18n.t('centerAdmin.onlinePayments.viewPaymentsAction')}
+            onPress={() => {
+              router.push('/(admin)/payments');
+            }}
+          />
+          <Button
+            isFullWidth
+            variant="outline"
+            leadingIconName="creditCard"
+            isLoading={setup.isBusy}
+            label={i18n.t('centerAdmin.onlinePayments.dashboardAction')}
+            onPress={setup.openDashboard}
+          />
+          <Text color="ink2">{i18n.t('centerAdmin.onlinePayments.dashboardHint')}</Text>
+        </>
       ) : null}
     </View>
   );
