@@ -6,8 +6,8 @@ Decidido el 2026-10-15 con el dueño del producto. Construido en back (`src/modu
 
 | Origen | Destino | Condición |
 |---|---|---|
-| Alumno | Profesor | Han coincidido en alguna clase (una cita o un horario fijo) |
-| Profesor | Alumno | Ídem |
+| Alumno | Cualquier profesor del centro | Sin más condición |
+| Profesor | Cualquier alumno del centro | Sin más condición |
 | Alumno / profesor | El centro | Siempre (la bandeja del centro la atiende la administración) |
 | Dueño / administración | Alumno o profesor | Siempre; habla en nombre del centro |
 
@@ -42,7 +42,7 @@ sirven con enlace firmado de corta vida.
 - `POST /centers/:id/conversations/:cid/attachments?fileName=` · cuerpo = el fichero.
 - `POST /centers/:id/conversations/:cid/read`.
 
-Errores: `CHAT_NOT_ALLOWED`, `CHAT_NO_SHARED_CLASS`, `CHAT_MINOR_REQUIRES_GUARDIAN`, `CHAT_ATTACHMENT_UNSUPPORTED`,
+Errores: `CHAT_NOT_ALLOWED`, `CHAT_MINOR_REQUIRES_GUARDIAN`, `CHAT_ATTACHMENT_UNSUPPORTED`,
 `CHAT_ATTACHMENT_TOO_LARGE`.
 
 ## Notificaciones

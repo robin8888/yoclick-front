@@ -12,6 +12,7 @@ function buildProfile(overrides: Partial<ProfileResponseDto> = {}): ProfileRespo
   return {
     membershipId: 'staff-1',
     isMe: true,
+    role: 'staff',
     fullName: 'Marta Gil',
     photoUrl: null,
     photos: [],

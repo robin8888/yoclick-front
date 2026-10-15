@@ -2481,6 +2481,7 @@
     },
     "team": {
       "title": "Nuestro equipo",
+      "administrationTitle": "Administración",
       "emptyTitle": "Todavía no hay perfiles del equipo",
       "emptyDescription": "Cuando el centro publique las presentaciones de su equipo, las verás aquí.",
       "loadError": "No hemos podido cargar el equipo",

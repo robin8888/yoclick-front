@@ -69,6 +69,7 @@ export const teamProfilesSaveMineResponseRatingCountMax = 9007199254740991;
 export const TeamProfilesSaveMineResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesSaveMineResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -156,6 +157,7 @@ export const teamProfilesSubmitMineResponseRatingCountMax = 9007199254740991;
 export const TeamProfilesSubmitMineResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesSubmitMineResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -255,6 +257,7 @@ export const teamProfilesAddCertificationResponseRatingCountMax = 90071992547409
 export const TeamProfilesAddCertificationResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesAddCertificationResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -360,6 +363,7 @@ export const teamProfilesAddPhotoResponseRatingCountMax = 9007199254740991;
 export const TeamProfilesAddPhotoResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesAddPhotoResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -678,6 +682,7 @@ export const teamProfilesReviewResponseRatingCountMax = 9007199254740991;
 export const TeamProfilesReviewResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesReviewResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -769,6 +774,7 @@ export const teamProfilesVerifyCertificationResponseRatingCountMax = 90071992547
 export const TeamProfilesVerifyCertificationResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesVerifyCertificationResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -857,6 +863,7 @@ export const TeamProfilesListResponse = zod.object({
   "members": zod.array(zod.object({
   "membershipId": zod.uuid().regex(teamProfilesListResponseMembersItemMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({
@@ -947,6 +954,7 @@ export const teamProfilesGetResponseRatingCountMax = 9007199254740991;
 export const TeamProfilesGetResponse = zod.object({
   "membershipId": zod.uuid().regex(teamProfilesGetResponseMembershipIdRegExp),
   "isMe": zod.boolean(),
+  "role": zod.enum(['owner', 'admin', 'staff']),
   "fullName": zod.string(),
   "photoUrl": zod.string().nullable(),
   "photos": zod.array(zod.object({

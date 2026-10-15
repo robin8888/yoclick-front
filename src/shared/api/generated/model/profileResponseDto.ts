@@ -9,6 +9,7 @@ import type { ProfileResponseDtoCertificationsItem } from './profileResponseDtoC
 import type { ProfileResponseDtoIntroVideo } from './profileResponseDtoIntroVideo.ts';
 import type { ProfileResponseDtoPhotosItem } from './profileResponseDtoPhotosItem.ts';
 import type { ProfileResponseDtoRating } from './profileResponseDtoRating.ts';
+import type { ProfileResponseDtoRole } from './profileResponseDtoRole.ts';
 import type { ProfileResponseDtoStatus } from './profileResponseDtoStatus.ts';
 import type { ProfileResponseDtoTechniqueVideosItem } from './profileResponseDtoTechniqueVideosItem.ts';
 
@@ -16,6 +17,7 @@ export interface ProfileResponseDto {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   membershipId: string;
   isMe: boolean;
+  role: ProfileResponseDtoRole;
   fullName: string;
   /** @nullable */
   photoUrl: string | null;

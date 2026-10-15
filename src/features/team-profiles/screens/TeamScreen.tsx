@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { LoadErrorState } from '@/features/join';
+import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { ProfileResponseDto } from '@/shared/api/generated/model';
-import { i18n } from '@/shared/i18n';
+import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
+import { Text } from '@/ui/atoms/Text';
 import { EmptyState } from '@/ui/molecules/EmptyState';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -13,7 +14,7 @@ import { STACK_STYLE } from '../components/TeamProfiles.styles';
 import { TeamMemberCard } from '../components/TeamMemberCard';
 import { useTeamProfileList } from '../hooks/useTeamProfileQueries';
 
-function TeamList({
+function MemberCards({
   members,
 }: Readonly<{ members: readonly ProfileResponseDto[] }>): React.JSX.Element {
   const router = useRouter();
@@ -33,6 +34,36 @@ function TeamList({
         />
       ))}
     </View>
+  );
+}
+
+/** El centro (dueño y administración) y, aparte, quienes dan las clases, con la palabra del sector. */
+function TeamList({
+  members,
+}: Readonly<{ members: readonly ProfileResponseDto[] }>): React.JSX.Element {
+  const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.plural;
+  const administration = members.filter(({ role }) => role !== 'staff');
+  const teachers = members.filter(({ role }) => role === 'staff');
+
+  return (
+    <>
+      {administration.length === 0 ? null : (
+        <>
+          <Text variant="titleMd" role="heading">
+            {i18n.t('teamProfiles.team.administrationTitle')}
+          </Text>
+          <MemberCards members={administration} />
+        </>
+      )}
+      {teachers.length === 0 ? null : (
+        <>
+          <Text variant="titleMd" role="heading">
+            {`${staffWord.charAt(0).toUpperCase()}${staffWord.slice(1)}`}
+          </Text>
+          <MemberCards members={teachers} />
+        </>
+      )}
+    </>
   );
 }
 

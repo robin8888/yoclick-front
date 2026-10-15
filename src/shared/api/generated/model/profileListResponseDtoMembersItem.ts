@@ -9,6 +9,7 @@ import type { ProfileListResponseDtoMembersItemCertificationsItem } from './prof
 import type { ProfileListResponseDtoMembersItemIntroVideo } from './profileListResponseDtoMembersItemIntroVideo.ts';
 import type { ProfileListResponseDtoMembersItemPhotosItem } from './profileListResponseDtoMembersItemPhotosItem.ts';
 import type { ProfileListResponseDtoMembersItemRating } from './profileListResponseDtoMembersItemRating.ts';
+import type { ProfileListResponseDtoMembersItemRole } from './profileListResponseDtoMembersItemRole.ts';
 import type { ProfileListResponseDtoMembersItemStatus } from './profileListResponseDtoMembersItemStatus.ts';
 import type { ProfileListResponseDtoMembersItemTechniqueVideosItem } from './profileListResponseDtoMembersItemTechniqueVideosItem.ts';
 
@@ -16,6 +17,7 @@ export type ProfileListResponseDtoMembersItem = {
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */
   membershipId: string;
   isMe: boolean;
+  role: ProfileListResponseDtoMembersItemRole;
   fullName: string;
   /** @nullable */
   photoUrl: string | null;

@@ -169,7 +169,7 @@ export const getChatOpenConversationUrl = (centerId: string,) => {
 }
 
 /**
- * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED, CHAT_NO_SHARED_CLASS o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
+ * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
  */
 export const chatOpenConversation = async (centerId: string,
     openConversationRequestDto: OpenConversationRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<OpenConversationResponseDto> => {
@@ -236,7 +236,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type ChatOpenConversationMutationVariables = {centerId: string;data: OpenConversationRequestDto}
 
     /**
- * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED, CHAT_NO_SHARED_CLASS o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
+ * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
  */
 export const useChatOpenConversation = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatOpenConversation>>, TError,ChatOpenConversationMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
@@ -257,7 +257,7 @@ export const useChatOpenConversation = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con sus profesores y con el centro; el profesor, con sus alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
+ * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con los profesores y con el centro; el profesor, con los alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
  */
 export const chatListContacts = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<ContactListResponseDto> => {
 
@@ -328,7 +328,7 @@ export function useChatListContacts<TData = Awaited<ReturnType<typeof chatListCo
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con sus profesores y con el centro; el profesor, con sus alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
+ * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con los profesores y con el centro; el profesor, con los alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
  */
 
 export function useChatListContacts<TData = Awaited<ReturnType<typeof chatListContacts>>, TError = ErrorType<ProblemDetailsDto>>(

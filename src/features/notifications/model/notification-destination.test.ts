@@ -39,6 +39,6 @@ describe('resolveNotificationDestination', () => {
     });
     expect(
       resolveNotificationDestination('message_received', { audience: 'client', noticeData: {} }),
-    ).toEqual({ pathname: '/(client)/messages' });
+    ).toEqual({ pathname: '/(client)/messages', params: {} });
   });
 });

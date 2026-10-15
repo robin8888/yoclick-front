@@ -29,9 +29,9 @@ export function TeamMemberCard({
       <Avatar name={profile.fullName} photoUrl={profile.photoUrl} size="lg" isDecorative />
       <View style={GROW_STYLE}>
         <Text variant="bodyStrong">{profile.fullName}</Text>
-        {profile.headline === null ? null : (
+        {(profile.headline ?? profile.staffTitle) === null ? null : (
           <Text variant="caption" color="ink2">
-            {profile.headline}
+            {profile.headline ?? profile.staffTitle}
           </Text>
         )}
         <RatingSummaryLine rating={profile.rating} />

@@ -13,9 +13,20 @@ interface DestinationContext {
   noticeData: Readonly<Record<string, string>>;
 }
 
-type DestinationRule = (context: DestinationContext) => Href | null;
+/**
+ * Las rutas se guardan como texto y se tipan como `Href` solo al salir: `Href` es una unión enorme
+ * y TypeScript no puede combinarla con las 28 reglas.
+ */
+interface RouteWithParams {
+  pathname: string;
+  params: Record<string, string>;
+}
 
-function byAudience(routes: Partial<Record<NotificationAudience, Href>>): DestinationRule {
+type Destination = string | RouteWithParams;
+
+type DestinationRule = (context: DestinationContext) => Destination | null;
+
+function byAudience(routes: Partial<Record<NotificationAudience, string>>): DestinationRule {
   return ({ audience }) => routes[audience] ?? null;
 }
 
@@ -32,16 +43,29 @@ const PUBLIC_PROFILE = byAudience({
 });
 const TEAM_PROFILES = byAudience({ admin: '/(admin)/team/profiles' });
 
-/** Un mensaje abre su hilo; si el aviso no trae la conversación, la bandeja. */
-const MESSAGE: DestinationRule = ({ audience, noticeData }) => {
-  const { conversationId } = noticeData;
-  if (conversationId === undefined || conversationId === '') {
-    return { pathname: `/(${audience})/messages` };
+const MESSAGES_ROUTE: Readonly<Record<NotificationAudience, string>> = {
+  client: '/(client)/messages',
+  staff: '/(staff)/messages',
+  admin: '/(admin)/messages',
+};
+
+function buildThreadRoute(audience: NotificationAudience, conversationId: string): RouteWithParams {
+  switch (audience) {
+    case 'client':
+      return { pathname: '/(client)/messages/[conversationId]', params: { conversationId } };
+    case 'staff':
+      return { pathname: '/(staff)/messages/[conversationId]', params: { conversationId } };
+    case 'admin':
+      return { pathname: '/(admin)/messages/[conversationId]', params: { conversationId } };
   }
-  return {
-    pathname: `/(${audience})/messages/[conversationId]`,
-    params: { conversationId },
-  };
+}
+
+/** Un mensaje abre su hilo; si el aviso no trae la conversación, la bandeja. */
+const MESSAGE: DestinationRule = ({ audience, noticeData }): RouteWithParams => {
+  const { conversationId } = noticeData;
+  if (conversationId === undefined || conversationId === '')
+    return { pathname: MESSAGES_ROUTE[audience], params: {} };
+  return buildThreadRoute(audience, conversationId);
 };
 
 /**
@@ -85,5 +109,5 @@ export function resolveNotificationDestination(
   kind: NoticeKind,
   context: DestinationContext,
 ): Href | null {
-  return DESTINATION_BY_KIND[kind](context);
+  return DESTINATION_BY_KIND[kind](context) as Href | null;
 }

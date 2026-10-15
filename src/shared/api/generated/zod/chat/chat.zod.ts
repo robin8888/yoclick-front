@@ -74,7 +74,7 @@ export const ChatListConversationsResponse = zod.object({
 })
 
 /**
- * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED, CHAT_NO_SHARED_CLASS o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
+ * @summary Abre (o devuelve la que ya existe) la conversación con una persona, o con el centro si no se indica. 403 CHAT_NOT_ALLOWED o CHAT_MINOR_REQUIRES_GUARDIAN; 404 si la persona no existe.
  */
 export const chatOpenConversationPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
@@ -102,7 +102,7 @@ export const ChatOpenConversationResponse = zod.object({
 })
 
 /**
- * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con sus profesores y con el centro; el profesor, con sus alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
+ * @summary Con quién puede empezar una conversación quien pregunta: el alumno, con los profesores y con el centro; el profesor, con los alumnos y con el centro; la administración, con cualquiera. Los alumnos menores no aparecen.
  */
 export const chatListContactsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 
