@@ -6,6 +6,7 @@ import { Text } from '@/ui/atoms/Text';
 
 import {
   createRoomCardStyle,
+  createRoomCheckStyle,
   createRoomLetterStyle,
   ROOM_CARD_BODY_STYLE,
 } from './RoomCard.styles';
@@ -22,6 +23,18 @@ interface RoomCardProps {
   /** Si se usa para elegir una sala: marca la elegida con un check en vez de la flecha. */
   isSelected?: boolean | undefined;
   onPress: () => void;
+}
+
+function RoomCardTrailingIcon({
+  isSelected,
+}: Readonly<{ isSelected: boolean }>): React.JSX.Element {
+  const theme = useTheme();
+  if (!isSelected) return <Icon name="chevronRight" size="inline" color="ink2" />;
+  return (
+    <View style={createRoomCheckStyle(theme)}>
+      <Icon name="check" size="inline" color="onBrand" />
+    </View>
+  );
 }
 
 /** Un espacio del centro: su letra y color de la agenda, el nombre y lo que lo define. */
@@ -57,11 +70,7 @@ export function RoomCard({
           {subtitle}
         </Text>
       </View>
-      <Icon
-        name={isSelected === true ? 'check' : 'chevronRight'}
-        size="inline"
-        color={isSelected === true ? 'brandInk' : 'ink2'}
-      />
+      <RoomCardTrailingIcon isSelected={isSelected === true} />
     </Pressable>
   );
 }

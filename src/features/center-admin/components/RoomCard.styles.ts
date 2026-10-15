@@ -5,6 +5,8 @@ import { MIN_TOUCH_TARGET_SIZE, type Theme } from '@/shared/theme';
 const ROOM_ACCENT_WIDTH = 4;
 const ROOM_LETTER_SIZE = 36;
 const HALF = 2;
+const SELECTED_BORDER_WIDTH = 2;
+const CHECK_BADGE_SIZE = 28;
 
 /** Tarjeta de un espacio: borde fino y una franja con el color que tiene en la agenda. */
 export function createRoomCardStyle(
@@ -19,11 +21,11 @@ export function createRoomCardStyle(
     minHeight: MIN_TOUCH_TARGET_SIZE,
     padding: theme.space[4],
     borderRadius: theme.radius.lg,
-    borderWidth: 1,
+    borderWidth: isSelected ? SELECTED_BORDER_WIDTH : 1,
     borderLeftWidth: ROOM_ACCENT_WIDTH,
     borderColor: isSelected ? theme.colors.brand : theme.colors.line,
     borderLeftColor: accentColor,
-    backgroundColor: theme.colors.surface,
+    backgroundColor: isSelected ? theme.colors.brandSoft : theme.colors.surface,
   };
 }
 
@@ -36,6 +38,18 @@ export function createRoomLetterStyle(backgroundColor: string): ViewStyle {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor,
+  };
+}
+
+/** El check de «elegida»: círculo de marca con la marca blanca dentro. */
+export function createRoomCheckStyle(theme: Theme): ViewStyle {
+  return {
+    width: CHECK_BADGE_SIZE,
+    height: CHECK_BADGE_SIZE,
+    borderRadius: CHECK_BADGE_SIZE / HALF,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.brand,
   };
 }
 
