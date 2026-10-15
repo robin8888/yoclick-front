@@ -1,162 +1,100 @@
-import { addMinutesToTime, buildCreateClassRequest, listFreeStartTimes } from './create-class';
+import {
+  addMinutesToTime,
+  buildCreateClassRequest,
+  findHoursProblem,
+  toOpenRangesByWeekday,
+  type BusySlot,
+} from './create-class';
 
 const NO_END = null;
+const OPEN_ALL_DAY = { 1: [{ opensAt: '09:00', closesAt: '21:00' }], 7: [] };
+const MONDAY_CLASS: BusySlot = {
+  weekday: 1,
+  startsAtTime: '18:00',
+  endsAtTime: '19:00',
+  startsOn: '2026-10-01',
+  endsOn: NO_END,
+  className: 'Yoga',
+  source: 'room',
+};
 
-describe('listFreeStartTimes', () => {
-  it('offers every half hour of the day when nothing is busy', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [1],
-      busy: [],
-      period: { startsOn: '2026-10-20', endsOn: NO_END },
-    });
+const baseRequest = {
+  startsAtTime: '10:00',
+  endsAtTime: '11:00',
+  weekdays: [1],
+  busy: [] as BusySlot[],
+  period: { startsOn: '2026-10-20', endsOn: NO_END },
+  openRanges: null,
+};
 
-    expect(times[0]).toBe('06:00');
-    expect(times).toContain('18:00');
-    expect(times.at(-1)).toBe('21:00');
+describe('findHoursProblem', () => {
+  it('accepts free hours', () => {
+    expect(findHoursProblem(baseRequest)).toBeNull();
   });
 
-  it('removes the starts that would overlap a class of the same weekday', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [1],
-      busy: [
-        {
-          weekday: 1,
-          startsAtTime: '18:00',
-          endsAtTime: '19:00',
-          startsOn: '2026-10-01',
-          endsOn: NO_END,
-        },
-      ],
-      period: { startsOn: '2026-10-20', endsOn: NO_END },
-    });
-
-    expect(times).not.toContain('17:30');
-    expect(times).not.toContain('18:00');
-    expect(times).not.toContain('18:30');
-    expect(times).toContain('17:00');
-    expect(times).toContain('19:00');
+  it('rejects an end that is not after the start', () => {
+    expect(findHoursProblem({ ...baseRequest, endsAtTime: '10:00' })).toEqual({ kind: 'order' });
   });
 
-  it('ignores the busy slots of other weekdays and of periods that do not cross', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [2],
-      busy: [
-        {
-          weekday: 1,
-          startsAtTime: '18:00',
-          endsAtTime: '19:00',
-          startsOn: '2026-10-01',
-          endsOn: NO_END,
-        },
-        {
-          weekday: 2,
-          startsAtTime: '18:00',
-          endsAtTime: '19:00',
-          startsOn: '2026-01-01',
-          endsOn: '2026-06-30',
-        },
-      ],
-      period: { startsOn: '2026-10-20', endsOn: NO_END },
-    });
+  it('rejects a closed day', () => {
+    const problem = findHoursProblem({ ...baseRequest, weekdays: [7], openRanges: OPEN_ALL_DAY });
 
-    expect(times).toContain('18:00');
+    expect(problem).toEqual({ kind: 'closed' });
   });
 
-  it('needs the time to be free in every chosen weekday', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [1, 3],
-      busy: [
-        {
-          weekday: 3,
-          startsAtTime: '18:00',
-          endsAtTime: '19:00',
-          startsOn: '2026-10-01',
-          endsOn: NO_END,
-        },
-      ],
-      period: { startsOn: '2026-10-20', endsOn: NO_END },
+  it('rejects hours outside the opening hours', () => {
+    const problem = findHoursProblem({
+      ...baseRequest,
+      startsAtTime: '20:30',
+      endsAtTime: '21:30',
+      openRanges: OPEN_ALL_DAY,
     });
 
-    expect(times).not.toContain('18:00');
+    expect(problem).toEqual({ kind: 'outside_hours', opensAt: '09:00', closesAt: '21:00' });
   });
 
-  it('offers nothing without weekdays', () => {
-    expect(
-      listFreeStartTimes({
-        durationMinutes: 60,
-        weekdays: [],
-        busy: [],
-        period: { startsOn: '2026-10-20', endsOn: NO_END },
-      }),
-    ).toEqual([]);
+  it('rejects an overlap with a class of the same weekday and period', () => {
+    const problem = findHoursProblem({
+      ...baseRequest,
+      startsAtTime: '18:30',
+      endsAtTime: '19:30',
+      busy: [MONDAY_CLASS],
+    });
+
+    expect(problem).toMatchObject({ kind: 'busy', className: 'Yoga' });
+  });
+
+  it('allows a class that starts when another ends', () => {
+    const problem = findHoursProblem({
+      ...baseRequest,
+      startsAtTime: '19:00',
+      endsAtTime: '20:00',
+      busy: [MONDAY_CLASS],
+    });
+
+    expect(problem).toBeNull();
+  });
+
+  it('ignores a busy class that ended before the period', () => {
+    const problem = findHoursProblem({
+      ...baseRequest,
+      startsAtTime: '18:00',
+      endsAtTime: '19:00',
+      busy: [{ ...MONDAY_CLASS, endsOn: '2026-10-10' }],
+    });
+
+    expect(problem).toBeNull();
   });
 });
 
-describe('listFreeStartTimes · opening hours', () => {
-  const period = { startsOn: '2026-10-20', endsOn: null };
-
-  it('only offers starts inside the hours of the center, so the class ends before it closes', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [1],
-      busy: [],
-      period,
-      openRanges: { 1: [{ opensAt: '09:00', closesAt: '20:00' }] },
-    });
-
-    expect(times[0]).toBe('09:00');
-    expect(times.at(-1)).toBe('19:00');
-    expect(times).not.toContain('06:00');
-    expect(times).not.toContain('19:30');
-  });
-
-  it('respects a split day and offers nothing on a closed one', () => {
-    const split = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [2],
-      busy: [],
-      period,
-      openRanges: {
-        2: [
-          { opensAt: '09:00', closesAt: '13:00' },
-          { opensAt: '16:00', closesAt: '20:00' },
-        ],
-      },
-    });
-    const closed = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [7],
-      busy: [],
-      period,
-      openRanges: { 1: [{ opensAt: '09:00', closesAt: '20:00' }] },
-    });
-
-    expect(split).toContain('12:00');
-    expect(split).not.toContain('12:30');
-    expect(split).not.toContain('14:00');
-    expect(split).toContain('16:00');
-    expect(closed).toEqual([]);
-  });
-
-  it('does not restrict anything while the opening hours are not configured', () => {
-    const times = listFreeStartTimes({
-      durationMinutes: 60,
-      weekdays: [1],
-      busy: [],
-      period,
-      openRanges: null,
-    });
-
-    expect(times[0]).toBe('06:00');
+describe('toOpenRangesByWeekday', () => {
+  it('is null while the centre has no opening hours', () => {
+    expect(toOpenRangesByWeekday(undefined)).toBeNull();
   });
 });
 
 describe('buildCreateClassRequest', () => {
-  const service = { durationMinutes: 90, mode: 'both' as const };
+  const service = { mode: 'both' as const };
   const base = {
     label: ' Kickboxing adultos ',
     roomId: 'room-1',
@@ -165,10 +103,12 @@ describe('buildCreateClassRequest', () => {
     repeat: 'weekly' as const,
     weekdays: [3, 1],
     startsOn: '2026-10-20',
+    endsOn: '',
     startsAtTime: '18:00',
+    endsAtTime: '19:30',
   };
 
-  it('builds a weekly class with the end derived from the service duration', () => {
+  it('builds a weekly class without end date', () => {
     expect(buildCreateClassRequest(base, service, 2)).toEqual({
       serviceId: 'service-1',
       roomId: 'room-1',
@@ -183,16 +123,22 @@ describe('buildCreateClassRequest', () => {
     });
   });
 
+  it('uses the chosen end date', () => {
+    const request = buildCreateClassRequest({ ...base, endsOn: '2026-11-20' }, service, 2);
+
+    expect(request).toMatchObject({ endsOn: '2026-11-20' });
+  });
+
   it('makes a one-off class end the same day and use that date weekday', () => {
     const request = buildCreateClassRequest({ ...base, repeat: 'once', weekdays: [] }, service, 2);
 
     expect(request).toMatchObject({ weekdays: [2], startsOn: '2026-10-20', endsOn: '2026-10-20' });
   });
 
-  it('is null while something is missing', () => {
+  it('is null while something is missing or reversed', () => {
     expect(buildCreateClassRequest({ ...base, roomId: null }, service, 2)).toBeNull();
-    expect(buildCreateClassRequest({ ...base, startsAtTime: null }, service, 2)).toBeNull();
     expect(buildCreateClassRequest({ ...base, weekdays: [] }, service, 2)).toBeNull();
+    expect(buildCreateClassRequest({ ...base, endsOn: '2026-10-01' }, service, 2)).toBeNull();
   });
 });
 

@@ -34,3 +34,9 @@ le devuelve `no_active_pass` en `skipped` y no entra.
 
 Migración `rooms_without_fixed_teacher_and_service`: las salas existentes pierden el profesor y el servicio fijos
 para que no impidan crear clases con otros servicios.
+
+## Crear clase: horas y fechas (2026-10-15)
+
+- La hora de inicio y la de fin se eligen con ruedas (como el iPhone); el fin siempre es posterior al inicio.
+- Se validan contra el horario del centro (día cerrado, fuera de horario) y contra lo que ya ocupa la sala o el profesor (franjas visibles debajo de las ruedas). Mientras no valgan, no se puede guardar.
+- Cada semana: fecha de inicio y de fin (atajos de 1–4 semanas o «sin fin»). Solo una vez: un único día.
