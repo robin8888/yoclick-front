@@ -2,6 +2,7 @@ import { i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { EditRoomsSection, EditServicesSection } from '../components/ManagementEditSections';
 import { ManagementActions } from '../components/ManagementActions';
 import { RoomBlocksManagementSection } from '../components/RoomBlocksManagementSection';
 import { ScheduleWeekSection } from '../components/ScheduleWeekSection';
@@ -20,6 +21,8 @@ export function ManagementScreen(): React.JSX.Element {
       subtitle={i18n.t('centerAdmin.management.subtitle')}
     >
       <ManagementActions />
+      <EditRoomsSection />
+      <EditServicesSection />
       <RoomBlocksManagementSection />
       <ScheduleWeekSection />
     </ScreenTemplate>

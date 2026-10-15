@@ -2139,6 +2139,10 @@
       "until": "Hasta"
     },
     "management": {
+      "editRoomsTitle": "Editar salas",
+      "editRoomLabel": "Editar la sala {{name}}",
+      "editServicesTitle": "Editar servicios",
+      "editServicesHelper": "Toca un servicio para cambiar su nombre, duración o precio.",
       "createClass": "Crear clase",
       "createClassHint": "Sala, servicio, profesor y cuándo se da",
       "createRoom": "Crear sala",
