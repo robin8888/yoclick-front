@@ -26,5 +26,6 @@ export type AgendaResponseDtoEmptySessionsItem = {
   service: AgendaResponseDtoEmptySessionsItemService;
   /** @nullable */
   room: AgendaResponseDtoEmptySessionsItemRoom;
+  /** @nullable */
   staff: AgendaResponseDtoEmptySessionsItemStaff;
 };

@@ -939,7 +939,7 @@ export const AgendaGetDayResponse = zod.object({
   "staff": zod.object({
   "membershipId": zod.uuid().regex(agendaGetDayResponseEmptySessionsItemStaffMembershipIdRegExp),
   "fullName": zod.string()
-})
+}).nullable()
 }))
 })
 
