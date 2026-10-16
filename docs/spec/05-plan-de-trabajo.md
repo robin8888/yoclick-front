@@ -49,6 +49,29 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (16 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 15 oct en lo que cambia. Todo lo de este día está subido (front `c973f12`, back `e7a64d7`).
+
+### Hecho el 16 de octubre
+- ✅ **Agenda del día con alquileres sin profesor** (antes daba 500); `staff` nulo en las sesiones vacías.
+- ✅ **Alta sin «Soy…»**: el rol sale de la invitación (código, QR o enlace); sin invitación se crea un centro. Alumnos y profesores entran solo por invitación.
+- ✅ **Crear centro** sin color ni logo (se ponen después en Marca) y sin servicios de ejemplo: solo existen los que crea el propietario.
+- ✅ **Segundo factor opcional**: solo se exige a quien lo activó; se quitó la pantalla «Protege tu cuenta» del propietario nuevo. Al activarlo, el servidor devuelve una sesión ya verificada y no hace falta volver a entrar (causa del bucle de `mao@`).
+- ✅ **Barra de navegación** flotante de cristal con desenfoque (`expo-blur`) que se estrecha al hacer scroll.
+- ✅ **Bloqueos de sala y «repetir semana» eliminados** (back y app); el alquiler es una clase de un servicio con «Alquiler» y se paga con bono. La tabla `room_blocks` queda sin usar.
+- ✅ «Primeros pasos» actualizado (paso «Crea tus clases») y términos y condiciones (`docs/spec/14-terminos-y-condiciones.md`).
+
+### Pendiente
+1. ⬜ Reconstruir la app de desarrollo (`expo-blur` es nativo) y probar en el móvil la barra, el alta de propietario y los alquileres.
+2. ⬜ Entrada voluntaria para activar el segundo factor (la pantalla existe pero ya no tiene acceso).
+3. ⬜ Reembolsos desde la app en la cuenta de Stripe del centro, sin comisión y con registro de quién y por qué.
+4. ⬜ Barra de navegación: respetar «reducir movimiento».
+5. ⬜ Lo del 15 oct que sigue pendiente: tutor crea a un menor, RGPD de menores, lista de espera, chat en tiempo real, recibos con IVA, aviso de bono a punto de caducar, silenciar/borrar mensajes.
+6. ⬜ Lo pendiente del 14 oct (alta Stripe, cobro de punta a punta, recibos y reembolsos).
+
+---
+
 ## Estado de avance (15 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 14 oct en lo que cambia; lo de Stripe del 14 oct sigue pendiente igual.
