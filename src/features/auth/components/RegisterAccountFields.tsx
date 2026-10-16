@@ -4,24 +4,19 @@ import { i18n } from '@/shared/i18n';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { RegisterAccountFormValues } from '../schemas/auth-forms.schema';
-import { AccountRoleField } from './AccountRoleField';
 import { EmailTextField } from './EmailTextField';
 import { PasswordTextField } from './PasswordTextField';
 import { RegistrationConsents } from './RegistrationConsents';
 
 interface RegisterAccountFieldsProps {
   control: Control<RegisterAccountFormValues>;
-  /** Con una invitación el rol ya viene decidido: no se pregunta «Soy…». */
-  hasInvitation: boolean;
 }
 
 export function RegisterAccountFields({
   control,
-  hasInvitation,
 }: Readonly<RegisterAccountFieldsProps>): React.JSX.Element {
   return (
     <>
-      {hasInvitation ? null : <AccountRoleField control={control} />}
       <FormTextField
         control={control}
         name="fullName"

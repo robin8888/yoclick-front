@@ -18,6 +18,7 @@ describe('buildSetupGuideGroups', () => {
         'services',
         'rooms',
         'team',
+        'classes',
         'passes',
         'content',
         'onlinePayments',

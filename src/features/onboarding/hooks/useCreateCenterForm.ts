@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { useRef } from 'react';
-import { useForm, useWatch, type Control, type UseFormSetValue } from 'react-hook-form';
+import { useForm, type Control } from 'react-hook-form';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
 import { getMeListMembershipsQueryKey } from '@/shared/api/generated/endpoints/me/me';
@@ -21,9 +21,6 @@ import {
 
 interface CreateCenterForm {
   control: Control<CenterDetailsFormValues>;
-  setValue: UseFormSetValue<CenterDetailsFormValues>;
-  watchedBrandColor: string;
-  watchedName: string;
   submitCenter: () => void;
   isSubmitting: boolean;
   errorMessage: string | null;
@@ -69,19 +66,20 @@ function useEnterCreatedCenter(): (createdCenter: CreateCenterResponseDto) => Pr
     await queryClient.invalidateQueries({ queryKey: getMeListMembershipsQueryKey() });
     selectActiveCenter(createdCenter.centerId);
     finishCenterCreation();
-    router.replace('/(onboarding)/logo');
+    router.replace('/(onboarding)/done');
   };
 }
 
 export function useCreateCenterForm(): CreateCenterForm {
   const lastSubmission = useRef<SubmittedCenter | null>(null);
   const enterCreatedCenter = useEnterCreatedCenter();
-  const { control, setValue, handleSubmit } = useForm<CenterDetailsFormValues>({
+  const { control, handleSubmit } = useForm<CenterDetailsFormValues>({
     resolver: zodResolver(centerDetailsFormSchema),
     defaultValues: {
       name: '',
       sectorId: 'gym',
       city: '',
+      // El color se elige después en Marca: el centro nace con el de la plataforma.
       brandColor: DEFAULT_BRAND_COLOR,
       isListed: false,
     },
@@ -101,9 +99,6 @@ export function useCreateCenterForm(): CreateCenterForm {
 
   return {
     control,
-    setValue,
-    watchedBrandColor: useWatch({ control, name: 'brandColor' }),
-    watchedName: useWatch({ control, name: 'name' }),
     submitCenter: () => void handleSubmit(submitDetails)(),
     isSubmitting: createCenterMutation.isPending,
     errorMessage: createCenterMutation.isError

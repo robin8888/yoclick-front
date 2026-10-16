@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
-import { useForm, useWatch, type Control } from 'react-hook-form';
+import { useForm, type Control } from 'react-hook-form';
 
 import { useAccessCenter, usePendingInvitationStore } from '@/features/join';
 
@@ -22,11 +22,9 @@ interface RegisterAccountForm {
   errorMessage: string | null;
 }
 
-// Los consentimientos nacen desmarcados y separados (SEC-23). Con un enlace de invitación ya se
-// sabe que la persona es instructor.
-function buildDefaultAccountValues(accountRole: AccountRole): RegisterAccountFormValues {
+// Los consentimientos nacen desmarcados y separados (SEC-23).
+function buildDefaultAccountValues(): RegisterAccountFormValues {
   return {
-    accountRole,
     fullName: '',
     email: '',
     password: '',
@@ -43,8 +41,10 @@ function mapInvitedRoleToAccountRole(invitedRole: string | undefined): AccountRo
 }
 
 /**
- * Alta de cuenta con «Soy…». El rol elegido no se envía: la API da los roles por centro. Solo se
- * recuerda para que, tras verificar el correo e iniciar sesión, la app abra la pantalla adecuada.
+ * Quién se registra no se pregunta: alumnos y equipo llegan por invitación o eligiendo su centro, y
+ * quien se registra sin nada de eso va a crear su centro. El rol no se envía (la API da los roles
+ * por centro): se recuerda para que, tras verificar el correo e iniciar sesión, la app abra la
+ * pantalla adecuada.
  */
 export function useRegisterAccountForm(): RegisterAccountForm {
   const router = useRouter();
@@ -55,13 +55,11 @@ export function useRegisterAccountForm(): RegisterAccountForm {
   const { registerAccount, isRegistering, registrationErrorMessage } = useRegisterAccountRequest();
   const { control, handleSubmit } = useForm<RegisterAccountFormValues>({
     resolver: zodResolver(registerAccountFormSchema),
-    // Los consentimientos nacen desmarcados y separados (SEC-23). Con un enlace de invitación
-    // ya se sabe que la persona es instructor.
-    defaultValues: buildDefaultAccountValues(hasInvitationLink ? 'instructor' : 'client'),
+    defaultValues: buildDefaultAccountValues(),
   });
-  const formRole = useWatch({ control, name: 'accountRole' });
-  // Con la invitación ya consultada manda su rol; sin consultar, lo que marque el formulario.
-  const selectedRole = mapInvitedRoleToAccountRole(accessRole) ?? formRole;
+  // Con la invitación ya consultada manda su rol; con el enlace aún sin consultar se espera equipo.
+  const selectedRole: AccountRole =
+    mapInvitedRoleToAccountRole(accessRole) ?? (hasInvitationLink ? 'instructor' : 'owner');
 
   const submitAccount = handleSubmit((account) => {
     const accountToRegister = {

@@ -1,6 +1,7 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
+import { DEFAULT_BRAND_COLOR } from '@/shared/theme';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -55,7 +56,7 @@ describe('CreateCenterScreen', () => {
     expect(findApiCall('POST', '/v1/onboarding/centers')).toBeUndefined();
   });
 
-  it('creates the center with the chosen type and color and opens the logo screen', async () => {
+  it('creates the center with the chosen type, with the platform color, and opens the done screen', async () => {
     mockApi({
       'POST /v1/onboarding/centers': CREATED_CENTER,
       'GET /v1/me/memberships': { memberships: [] },
@@ -63,17 +64,16 @@ describe('CreateCenterScreen', () => {
     renderScreen(<CreateCenterScreen />);
     fireEvent.changeText(screen.getByLabelText('Nombre del centro'), 'Vértice Training');
     fireEvent.press(screen.getByRole('button', { name: 'Academia de baile' }));
-    fireEvent.press(screen.getByRole('button', { name: 'Color #7A3FE0' }));
 
     fireEvent.press(screen.getByRole('button', { name: 'Crear mi centro' }));
 
     await waitFor(() => {
-      expect(getMockRouter().replace).toHaveBeenCalledWith('/(onboarding)/logo');
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/(onboarding)/done');
     });
     expect(findApiCall('POST', '/v1/onboarding/centers')?.body).toEqual({
       name: 'Vértice Training',
       sectorId: 'baile',
-      brandColor: '#7A3FE0',
+      brandColor: DEFAULT_BRAND_COLOR,
       isListed: false,
     });
     expect(useCreatedCenterStore.getState().createdCenter).toEqual({

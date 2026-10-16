@@ -11,6 +11,7 @@ export type SetupGuideStepId =
   | 'services'
   | 'rooms'
   | 'team'
+  | 'classes'
   | 'passes'
   | 'content'
   | 'onlinePayments'
@@ -40,15 +41,30 @@ const ROOMS_STEP: SetupGuideStepDefinition = {
   route: '/(admin)/(tabs)/management',
 };
 
+const CLASSES_STEP: SetupGuideStepDefinition = {
+  id: 'classes',
+  iconName: 'calendar',
+  route: '/(admin)/schedules/new',
+};
+
 const PREPARE_STEPS: readonly SetupGuideStepDefinition[] = [
   { id: 'centerDetails', iconName: 'edit', route: '/(admin)/center' },
   { id: 'brand', iconName: 'palette', route: '/(admin)/(tabs)/brand' },
   { id: 'openingHours', iconName: 'clock', route: '/(admin)/hours' },
-  { id: 'services', iconName: 'calendar', route: '/(admin)/services' },
+  {
+    id: 'services',
+    iconName: 'file',
+    route: { pathname: '/(admin)/services/[serviceId]', params: { serviceId: 'new' } },
+  },
 ];
 
-const TEAM_AND_PASSES_STEPS: readonly SetupGuideStepDefinition[] = [
-  { id: 'team', iconName: 'users', route: buildInvitePersonRoute('staff') },
+const TEAM_STEP: SetupGuideStepDefinition = {
+  id: 'team',
+  iconName: 'users',
+  route: buildInvitePersonRoute('staff'),
+};
+
+const PASSES_AND_CONTENT_STEPS: readonly SetupGuideStepDefinition[] = [
   { id: 'passes', iconName: 'creditCard', route: '/(admin)/passes' },
   { id: 'content', iconName: 'upload', route: '/(admin)/(tabs)/content' },
   { id: 'onlinePayments', iconName: 'lock', route: '/(admin)/passes' },
@@ -62,18 +78,20 @@ const OPEN_STEPS: readonly SetupGuideStepDefinition[] = [
 
 /**
  * El orden en que un centro queda listo para funcionar: primero lo que ve cualquiera, luego equipo
- * y bonos y, al final, abrir las puertas. «Salas» solo existe en los sectores que las tienen.
+ * y bonos y, al final, abrir las puertas. «Salas» y «Clases» solo existen en los sectores que
+ * tienen salas: la clase se crea sobre una sala.
  */
 export function buildSetupGuideGroups(options: {
   canManageSpaces: boolean;
 }): readonly SetupGuideGroup[] {
   const rooms = options.canManageSpaces ? [ROOMS_STEP] : [];
+  const classes = options.canManageSpaces ? [CLASSES_STEP] : [];
   const definitions: readonly {
     id: SetupGuideGroup['id'];
     steps: readonly SetupGuideStepDefinition[];
   }[] = [
     { id: 'prepare', steps: [...PREPARE_STEPS, ...rooms] },
-    { id: 'teamAndPasses', steps: TEAM_AND_PASSES_STEPS },
+    { id: 'teamAndPasses', steps: [TEAM_STEP, ...classes, ...PASSES_AND_CONTENT_STEPS] },
     { id: 'open', steps: OPEN_STEPS },
   ];
 

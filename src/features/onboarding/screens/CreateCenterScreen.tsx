@@ -63,12 +63,7 @@ export function CreateCenterScreen(): React.JSX.Element {
       footer={<CreateCenterFooter isSubmitting={form.isSubmitting} onSubmit={form.submitCenter} />}
     >
       {form.errorMessage === null ? null : <FormErrorBanner message={form.errorMessage} />}
-      <CenterDetailsFields
-        control={form.control}
-        setValue={form.setValue}
-        centerName={form.watchedName}
-        brandColor={form.watchedBrandColor}
-      />
+      <CenterDetailsFields control={form.control} />
       <SignOutAction flow={signOut} />
     </ScreenTemplate>
   );

@@ -1,8 +1,9 @@
 /* eslint-disable sonarjs/no-hardcoded-passwords -- contraseñas de prueba, no credenciales reales */
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
-import { usePendingInvitationStore } from '@/features/join';
+import { usePendingCenterStore, usePendingInvitationStore } from '@/features/join';
 import { useCenterCreationIntentStore } from '@/features/onboarding';
+import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -33,6 +34,20 @@ describe('RegisterAccountScreen', () => {
     resetMockRouter();
     act(() => {
       useAuthFlowStore.setState({ registrationDraft: null });
+      // Quien ha elegido su centro es alumno: sigue al paso de experiencia.
+      usePendingCenterStore.getState().selectPendingCenter({
+        id: NORTE_CENTER_ID,
+        name: 'Studio Norte',
+        sectorId: 'estudio',
+        brandHexColor: '#E4572E',
+        logoUrl: null,
+      });
+    });
+  });
+
+  afterEach(() => {
+    act(() => {
+      usePendingCenterStore.getState().clearPendingCenter();
     });
   });
 
@@ -173,13 +188,14 @@ describe('RegisterGoalsScreen', () => {
   });
 });
 
-describe('RegisterAccountScreen · Soy…', () => {
+describe('RegisterAccountScreen · quién se registra', () => {
   beforeEach(() => {
     resetMockRouter();
     act(() => {
       useAuthFlowStore.setState({ registrationDraft: null, pendingEmail: null });
       useCenterCreationIntentStore.getState().finishCenterCreation();
       usePendingInvitationStore.getState().clearInvitation();
+      usePendingCenterStore.getState().clearPendingCenter();
     });
   });
 
@@ -188,23 +204,19 @@ describe('RegisterAccountScreen · Soy…', () => {
     fireEvent.press(screen.getByRole('checkbox', { name: 'Acepto las condiciones del servicio.' }));
   }
 
-  it('offers the three roles and starts as a student', () => {
+  it('does not ask who the person is', () => {
     renderScreen(<RegisterAccountScreen />);
 
-    expect(screen.getByRole('button', { name: /Soy propietario/ })).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: /Soy instructor o profesor/ })).toBeOnTheScreen();
-    expect(
-      screen.getByRole('button', { name: /Soy alumno o cliente/, selected: true }),
-    ).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Continuar' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /Soy propietario/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Soy instructor o profesor/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Soy alumno o cliente/ })).toBeNull();
   });
 
-  it('registers an owner right away and remembers they want to create a center', async () => {
+  it('registers right away as an owner when there is no invitation or chosen center', async () => {
     mockApi({ 'POST /v1/auth/register': { status: 'verification_sent' } });
     renderScreen(<RegisterAccountScreen />);
     fillAccount();
     acceptRequiredConsents();
-    fireEvent.press(screen.getByRole('button', { name: /Soy propietario/ }));
 
     fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
 
@@ -216,12 +228,14 @@ describe('RegisterAccountScreen · Soy…', () => {
     expect(usePendingInvitationStore.getState().isInvitationExpected).toBe(false);
   });
 
-  it('registers an instructor right away and remembers they expect an invitation', async () => {
+  it('registers right away and expects an invitation when an invitation link was opened', async () => {
     mockApi({ 'POST /v1/auth/register': { status: 'verification_sent' } });
+    act(() => {
+      usePendingInvitationStore.getState().saveInvitationCode('INV123');
+    });
     renderScreen(<RegisterAccountScreen />);
     fillAccount();
     acceptRequiredConsents();
-    fireEvent.press(screen.getByRole('button', { name: /Soy instructor o profesor/ }));
 
     fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
 
@@ -230,16 +244,5 @@ describe('RegisterAccountScreen · Soy…', () => {
     });
     expect(usePendingInvitationStore.getState().isInvitationExpected).toBe(true);
     expect(useCenterCreationIntentStore.getState().isCenterCreationRequested).toBe(false);
-  });
-
-  it('preselects instructor when an invitation link was opened', () => {
-    act(() => {
-      usePendingInvitationStore.getState().saveInvitationCode('INV123');
-    });
-    renderScreen(<RegisterAccountScreen />);
-
-    expect(
-      screen.getByRole('button', { name: /Soy instructor o profesor/, selected: true }),
-    ).toBeOnTheScreen();
   });
 });

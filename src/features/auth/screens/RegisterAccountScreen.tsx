@@ -51,7 +51,7 @@ export function RegisterAccountScreen(): React.JSX.Element {
       }
     >
       {form.errorMessage === null ? null : <FormErrorBanner message={form.errorMessage} />}
-      <RegisterAccountFields control={form.control} hasInvitation={accessCenter !== undefined} />
+      <RegisterAccountFields control={form.control} />
     </ScreenTemplate>
   );
 }

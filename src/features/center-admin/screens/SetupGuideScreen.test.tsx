@@ -24,7 +24,7 @@ describe('SetupGuideScreen', () => {
     renderScreen(<SetupGuideScreen />);
 
     expect(screen.getByText('Prepara tu centro')).toBeOnTheScreen();
-    expect(screen.getByText('Equipo y bonos')).toBeOnTheScreen();
+    expect(screen.getByText('Equipo, clases y bonos')).toBeOnTheScreen();
     expect(screen.getByText('Abre las puertas')).toBeOnTheScreen();
     expect(
       screen.getByRole('button', { name: /^1\. Completa los datos del centro/ }),
@@ -36,6 +36,9 @@ describe('SetupGuideScreen', () => {
 
     fireEvent.press(screen.getByRole('button', { name: /Crea tus servicios/ }));
 
-    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/services');
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(admin)/services/[serviceId]',
+      params: { serviceId: 'new' },
+    });
   });
 });

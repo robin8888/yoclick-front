@@ -314,22 +314,6 @@
         "recoverFromInjury": "Recuperarme de una lesión",
         "learnSomethingNew": "Aprender algo nuevo"
       },
-      "roleQuestion": "¿Cómo vas a usar Yoclick?",
-      "roles": {
-        "owner": {
-          "title": "Soy propietario",
-          "description": "Voy a crear la app de mi gimnasio, academia o centro."
-        },
-        "instructor": {
-          "title": "Soy instructor o profesor",
-          "description": "Mi centro me ha invitado a su equipo."
-        },
-        "client": {
-          "title": "Soy alumno o cliente",
-          "description": "Quiero reservar y apuntarme en mi centro."
-        }
-      },
-      "roleRequired": "Elige cómo vas a usar Yoclick",
       "loginPrompt": "¿Ya tienes cuenta?",
       "loginAction": "Iniciar sesión"
     },
@@ -420,13 +404,8 @@
       "nameLabel": "Nombre del centro",
       "cityLabel": "Ciudad (opcional)",
       "sectorLabel": "Tipo de centro",
-      "colorLabel": "Color de tu marca",
-      "colorHelper": "Así verán tus clientes los botones y los acentos de la app.",
-      "previewLabel": "Así se verá tu app",
-      "previewButton": "Reservar cita",
       "submitLabel": "Crear mi centro",
       "trialNotice": "14 días de prueba gratis, sin tarjeta.",
-      "colorOptionLabel": "Color {{hex}}",
       "listedLabel": "Aparecer en el buscador",
       "listedHelper": "Si lo activas, tus clientes podrán encontrarte por nombre o ciudad. Si no, solo entrarán con tu código."
     },
@@ -1488,7 +1467,7 @@
       "premiumBadge": "Premium",
       "groups": {
         "prepare": "Prepara tu centro",
-        "teamAndPasses": "Equipo y bonos",
+        "teamAndPasses": "Equipo, clases y bonos",
         "open": "Abre las puertas"
       },
       "steps": {
@@ -1506,15 +1485,19 @@
         },
         "services": {
           "title": "Crea tus servicios",
-          "description": "Qué ofreces, cuánto dura y cuánto cuesta. Sin servicios nadie puede reservar."
+          "description": "Qué ofreces, cuánto dura y cuánto cuesta. Si es un alquiler de sala, activa «Alquiler»: no necesita profesor."
         },
         "rooms": {
           "title": "Añade tus salas",
-          "description": "Cada espacio con su aforo y, si quieres, un horario fijo semanal."
+          "description": "Cada espacio con su nombre y su aforo. Lo haces en Gestión → Crear y editar sala."
         },
         "team": {
           "title": "Invita a tu equipo",
           "description": "Da de alta a tus {{staffWord}} para que tengan su agenda y confirmen la asistencia."
+        },
+        "classes": {
+          "title": "Crea tus clases",
+          "description": "En Gestión → Crear clase: sala, servicio, profesor, fechas y horas. Sin clases nadie puede apuntarse. Un alquiler es una clase de un servicio de alquiler, sin profesor."
         },
         "passes": {
           "title": "Crea tus bonos",
@@ -2153,7 +2136,7 @@
       "createService": "Crear y editar servicio",
       "createServiceHint": "Lo que se reserva; abajo, los que ya tienes",
       "title": "Gestión",
-      "subtitle": "Espacios, horarios fijos y bloqueos del centro",
+      "subtitle": "Clases, salas y servicios del centro",
       "addAction": "Nuevo espacio",
       "emptyTitle": "Aún no hay espacios",
       "emptyMessage": "Crea un espacio (sala, aula, pista…) con su aforo y, si quieres, su profesor y su servicio fijos. Con ellos programas horarios y asignas citas privadas o grupales.",
