@@ -1,6 +1,8 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { Linking, Share } from 'react-native';
 
+import { getSessionServices } from '@/shared/auth/default-session-services';
+import { useSessionStore } from '@/shared/auth/session-store';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -8,12 +10,23 @@ import { renderScreen } from '@/test/render-screen';
 import { MfaSetupScreen } from './MfaSetupScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
+jest.mock('@/shared/auth/default-session-services', () => ({ getSessionServices: jest.fn() }));
+
+const startSession = jest.fn();
+const VERIFIED_SESSION = {
+  accessToken: 'verified-access',
+  accessTokenExpiresAt: '2026-10-16T12:10:00.000Z',
+  refreshToken: 'verified-refresh',
+  refreshTokenExpiresAt: '2026-11-15T12:00:00.000Z',
+};
 
 const SETUP_RESPONSE = {
   secret: 'JBSWY3DPEHPK3PXP',
   provisioningUri: 'otpauth://totp/Yoclick:robin?secret=JBSWY3DPEHPK3PXP&issuer=Yoclick',
 };
 const RECOVERY_CODES = Array.from({ length: 10 }, (_unused, index) => `RCODE-${String(index + 1)}`);
+const CONFIRMATION = { recoveryCodes: RECOVERY_CODES, session: VERIFIED_SESSION };
+const SIGNED_IN_USER = { id: 'user-1', email: 'mao@yopmail.com', fullName: 'Mauricio' };
 
 async function reachScanStep(): Promise<void> {
   fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
@@ -25,6 +38,9 @@ async function reachScanStep(): Promise<void> {
 describe('MfaSetupScreen', () => {
   beforeEach(() => {
     resetMockRouter();
+    startSession.mockReset().mockResolvedValue(undefined);
+    jest.mocked(getSessionServices).mockReturnValue({ startSession } as never);
+    useSessionStore.getState().startSession({ accessToken: 'old-access', user: SIGNED_IN_USER });
   });
 
   it('asks for the password first and shows the QR and the key after it', async () => {
@@ -70,7 +86,7 @@ describe('MfaSetupScreen', () => {
   it('activates with the first code and then shows the ten recovery codes once', async () => {
     mockApi({
       'POST /v1/me/mfa/totp/setup': SETUP_RESPONSE,
-      'POST /v1/me/mfa/totp/confirm': { recoveryCodes: RECOVERY_CODES },
+      'POST /v1/me/mfa/totp/confirm': CONFIRMATION,
       'GET /v1/me/mfa': { isEnabled: true, recoveryCodesRemaining: 10 },
     });
     renderScreen(<MfaSetupScreen />);
@@ -84,6 +100,26 @@ describe('MfaSetupScreen', () => {
     for (const recoveryCode of RECOVERY_CODES) {
       expect(screen.getByText(recoveryCode)).toBeOnTheScreen();
     }
+  });
+
+  it('keeps the session the server verified, so the owner enters without logging in again', async () => {
+    mockApi({
+      'POST /v1/me/mfa/totp/setup': SETUP_RESPONSE,
+      'POST /v1/me/mfa/totp/confirm': CONFIRMATION,
+      'GET /v1/me/mfa': { isEnabled: true, recoveryCodesRemaining: 10 },
+    });
+    renderScreen(<MfaSetupScreen />);
+    await reachScanStep();
+
+    fireEvent.changeText(screen.getByLabelText('Código de 6 dígitos'), '123456');
+    fireEvent.press(screen.getByRole('button', { name: 'Activar verificación' }));
+    await screen.findByText('Guarda tus códigos de recuperación');
+
+    expect(startSession).toHaveBeenCalledWith({
+      accessToken: 'verified-access',
+      refreshToken: 'verified-refresh',
+      user: SIGNED_IN_USER,
+    });
   });
 
   it('requires six digits before activating', async () => {
@@ -101,7 +137,7 @@ describe('MfaSetupScreen', () => {
   it('shares the recovery codes', async () => {
     mockApi({
       'POST /v1/me/mfa/totp/setup': SETUP_RESPONSE,
-      'POST /v1/me/mfa/totp/confirm': { recoveryCodes: RECOVERY_CODES },
+      'POST /v1/me/mfa/totp/confirm': CONFIRMATION,
       'GET /v1/me/mfa': { isEnabled: true, recoveryCodesRemaining: 10 },
     });
     const shareSpy = jest.spyOn(Share, 'share').mockResolvedValue({ action: 'sharedAction' });
@@ -155,7 +191,7 @@ describe('MfaSetupScreen', () => {
     it('activates with the code from the email and shows the recovery codes', async () => {
       mockApi({
         'POST /v1/me/mfa/email/setup': EMAIL_SETUP_RESPONSE,
-        'POST /v1/me/mfa/email/confirm': { recoveryCodes: RECOVERY_CODES },
+        'POST /v1/me/mfa/email/confirm': CONFIRMATION,
         'GET /v1/me/mfa': { isEnabled: true, method: 'email', recoveryCodesRemaining: 10 },
       });
       renderScreen(<MfaSetupScreen />);

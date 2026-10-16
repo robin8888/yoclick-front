@@ -11,5 +11,4 @@ export type PaymentListResponseDtoPaymentsItemKind = typeof PaymentListResponseD
 
 export const PaymentListResponseDtoPaymentsItemKind = {
   pass: 'pass',
-  room_rental: 'room_rental',
 } as const;

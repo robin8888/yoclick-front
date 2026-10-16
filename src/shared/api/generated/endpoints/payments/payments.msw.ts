@@ -27,11 +27,10 @@ import {
   getPaymentsListResponseMock,
   getPaymentsOpenDashboardResponseMock,
   getPaymentsPayPassResponseMock,
-  getPaymentsPayRoomRentalResponseMock,
   getPaymentsStartOnboardingResponseMock
 } from './payments.faker.ts';
 
-export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsPayPassResponseMock, getPaymentsPayRoomRentalResponseMock, getPaymentsConfirmResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsOpenDashboardResponseMock } from './payments.faker.ts';
+export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsPayPassResponseMock, getPaymentsConfirmResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsOpenDashboardResponseMock } from './payments.faker.ts';
 
 
 export const getPaymentsGetStatusMockHandler = (overrideResponse?: PaymentsStatusResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentsStatusResponseDto> | PaymentsStatusResponseDto), options?: RequestHandlerOptions) => {
@@ -65,18 +64,6 @@ export const getPaymentsPayPassMockHandler = (overrideResponse?: PaymentSheetRes
     return HttpResponse.json(overrideResponse !== undefined
     ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
     : getPaymentsPayPassResponseMock(),
-      { status: 201
-      })
-  }, options)
-}
-
-export const getPaymentsPayRoomRentalMockHandler = (overrideResponse?: PaymentSheetResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PaymentSheetResponseDto> | PaymentSheetResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/room-rentals/:roomBlockId/pay', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getPaymentsPayRoomRentalResponseMock(),
       { status: 201
       })
   }, options)
@@ -131,7 +118,6 @@ export const getPaymentsMock = () => [
   getPaymentsGetStatusMockHandler(),
   getPaymentsListMockHandler(),
   getPaymentsPayPassMockHandler(),
-  getPaymentsPayRoomRentalMockHandler(),
   getPaymentsConfirmMockHandler(),
   getPaymentsStartOnboardingMockHandler(),
   getPaymentsOpenDashboardMockHandler(),

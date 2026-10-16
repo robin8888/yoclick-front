@@ -50,15 +50,6 @@ const AGENDA = {
       capacity: 12,
       staff: null,
       sessions: [SESSION],
-      blocks: [
-        {
-          id: 'block-1',
-          startsAt: '2026-10-12T08:00:00.000Z',
-          endsAt: '2026-10-12T12:00:00.000Z',
-          reason: 'rental',
-          note: 'Asociación de vecinos',
-        },
-      ],
     },
   ],
   sessionsWithoutRoom: [],
@@ -80,19 +71,18 @@ afterEach(() => {
   restoreClock();
 });
 
-describe('RoomDayScreen · fixed schedules and blocks', () => {
+describe('RoomDayScreen · fixed schedules', () => {
   beforeEach(() => {
     resetMockRouter();
     signInToCenter();
     jest.mocked(useLocalSearchParams).mockReturnValue({ roomId: ROOM_ID, date: '2026-10-12' });
   });
 
-  it('shows the block, the group name and who comes from the fixed group', async () => {
+  it('shows the group name and who comes from the fixed group', async () => {
     mockApi({ [ROOMS_PATH]: AGENDA });
     renderScreen(<RoomDayScreen />);
 
-    expect(await screen.findByText('Bloqueado · Alquiler')).toBeOnTheScreen();
-    expect(screen.getByText('Grupo de tarde')).toBeOnTheScreen();
+    expect(await screen.findByText('Grupo de tarde')).toBeOnTheScreen();
     expect(screen.getByText('Marta Ruiz · grupo fijo')).toBeOnTheScreen();
   });
 

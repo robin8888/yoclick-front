@@ -7,7 +7,6 @@ import { Text } from '@/ui/atoms/Text';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { RoomBlockCard } from '../components/RoomBlockCard';
 import { RoomSessionDetail } from '../components/RoomSessionDetail';
 import { useRoomAgenda } from '../hooks/useRoomAgenda';
 import { useTickingNow } from '@/shared/hooks/useTickingNow';
@@ -24,7 +23,7 @@ interface RoomDayBodyProps {
   now: Date;
 }
 
-/** Los bloqueos y las clases de la sala ese día, por orden de hora. */
+/** Las clases de la sala ese día, por orden de hora. */
 function RoomDayBody({
   room,
   timeZone,
@@ -34,14 +33,11 @@ function RoomDayBody({
   if (room === undefined) {
     return <Text color="ink2">{i18n.t('staffAgenda.rooms.roomNotFound')}</Text>;
   }
-  if (room.sessions.length === 0 && room.blocks.length === 0) {
+  if (room.sessions.length === 0) {
     return <Text color="ink2">{i18n.t('staffAgenda.rooms.freeAllDay')}</Text>;
   }
   return (
     <>
-      {room.blocks.map((block) => (
-        <RoomBlockCard key={block.id} block={block} timeZone={timeZone} />
-      ))}
       {room.sessions.map((session) => (
         <RoomSessionDetail
           key={session.id}

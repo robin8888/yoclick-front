@@ -51,7 +51,7 @@ export const paymentsListResponsePaymentsItemPaidAtRegExp = new RegExp('^(?:(?:\
 export const PaymentsListResponse = zod.object({
   "payments": zod.array(zod.object({
   "id": zod.uuid().regex(paymentsListResponsePaymentsItemIdRegExp),
-  "kind": zod.enum(['pass', 'room_rental']),
+  "kind": zod.enum(['pass']),
   "label": zod.string(),
   "clientName": zod.string(),
   "amountCents": zod.int().min(paymentsListResponsePaymentsItemAmountCentsMin).max(paymentsListResponsePaymentsItemAmountCentsMax),
@@ -89,37 +89,6 @@ export const PaymentsPayPassResponse = zod.object({
   "publishableKey": zod.string(),
   "connectedAccountId": zod.string(),
   "amountCents": zod.int().min(paymentsPayPassResponseAmountCentsMin).max(paymentsPayPassResponseAmountCentsMax),
-  "merchantName": zod.string()
-})
-
-/**
- * @summary Prepara el pago online del alquiler de una sala hecho a nombre de la propia persona.
- */
-export const paymentsPayRoomRentalPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const paymentsPayRoomRentalPathRoomBlockIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const PaymentsPayRoomRentalParams = zod.object({
-  "centerId": zod.uuid().regex(paymentsPayRoomRentalPathCenterIdRegExp),
-  "roomBlockId": zod.uuid().regex(paymentsPayRoomRentalPathRoomBlockIdRegExp)
-})
-
-export const PaymentsPayRoomRentalHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const paymentsPayRoomRentalResponsePaymentIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-export const paymentsPayRoomRentalResponseAmountCentsMin = -9007199254740991;
-export const paymentsPayRoomRentalResponseAmountCentsMax = 9007199254740991;
-
-
-
-export const PaymentsPayRoomRentalResponse = zod.object({
-  "paymentId": zod.uuid().regex(paymentsPayRoomRentalResponsePaymentIdRegExp),
-  "clientSecret": zod.string(),
-  "publishableKey": zod.string(),
-  "connectedAccountId": zod.string(),
-  "amountCents": zod.int().min(paymentsPayRoomRentalResponseAmountCentsMin).max(paymentsPayRoomRentalResponseAmountCentsMax),
   "merchantName": zod.string()
 })
 

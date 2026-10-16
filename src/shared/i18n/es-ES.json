@@ -471,7 +471,6 @@
       "shareCodesAction": "Compartir códigos",
       "shareCodesMessage": "Códigos de recuperación de Yoclick (cada uno vale una vez):\n{{codes}}",
       "savedLabel": "Ya los he guardado",
-      "gateErrorTitle": "No hemos podido comprobar tu seguridad",
       "methodTitle": "Elige cómo recibir el código",
       "methodSubtitle": "Cada vez que entres te pediremos un código además de tu contraseña.",
       "methodAppTitle": "App de autenticación",
@@ -1010,20 +1009,11 @@
       "openRoomLabel": "{{name}}, aforo {{capacity}}. Ver el detalle de la sala",
       "withoutRoomTitle": "Citas sin sala",
       "roomNotFound": "Esa sala ya no existe",
-      "blockLabel": "{{room}}, {{service}}, {{time}}. Ver el detalle de la sala",
       "privateClass": "Cita privada",
       "missing": "Faltan {{count}} para el aforo ({{booked}} de {{capacity}})",
       "completeRoom": "Aforo completo ({{capacity}})",
       "noClassesThisHour": "Sin clases",
       "closedDay": "El centro está cerrado este día",
-      "blockedTitle": "Bloqueado · {{reason}}",
-      "blockedLabel": "{{room}} bloqueado, {{reason}}, {{time}}",
-      "blockReason": {
-        "rental": "Alquiler",
-        "maintenance": "Mantenimiento",
-        "event": "Evento",
-        "other": "Otro"
-      },
       "cancelledSession": "Cancelada: {{reason}}",
       "scheduleSession": "Horario fijo",
       "enrollmentAttendee": "{{name}} · grupo fijo",
@@ -1429,12 +1419,6 @@
       "unavailable": "Esta versión de la app todavía no admite pagos. Actualízala e inténtalo de nuevo.",
       "confirming": "Pago recibido: estamos esperando a que Stripe lo confirme. En unos instantes se reflejará aquí."
     },
-    "rentals": {
-      "title": "Alquileres de sala",
-      "paid": "Pagado",
-      "unpaid": "Pendiente de pago",
-      "payLabel": "Pagar con tarjeta el alquiler de {{name}}"
-    },
     "assign": {
       "title": "Bonos",
       "empty": "Esta persona aún no tiene bonos.",
@@ -1543,8 +1527,15 @@
       "subtitle": "Lo que han pagado desde la app",
       "empty": "Todavía no hay cobros online.",
       "loadError": "No hemos podido cargar los cobros",
-      "kind": { "pass": "Bono", "room_rental": "Alquiler" },
-      "status": { "pending": "Pendiente", "succeeded": "Pagado", "failed": "Fallido" },
+      "kind": {
+        "pass": "Bono",
+        "room_rental": "Alquiler"
+      },
+      "status": {
+        "pending": "Pendiente",
+        "succeeded": "Pagado",
+        "failed": "Fallido"
+      },
       "rowLabel": "{{label}}, {{clientName}}, {{amount}}, {{status}}"
     },
     "tabs": {
@@ -1995,8 +1986,7 @@
       "fixedServiceLabel": "Servicio fijo de este espacio (opcional)",
       "fixedServiceHelper": "Con servicio fijo, aquí solo se programan sesiones de ese servicio.",
       "noFixedService": "Cualquier servicio",
-      "scheduleAction": "Poner horario a esta sala",
-      "blocksAction": "Bloqueos del espacio"
+      "scheduleAction": "Poner horario a esta sala"
     },
     "hoursEditor": {
       "title": "Horario de apertura",
@@ -2145,10 +2135,6 @@
       "roomLabel": "{{name}}, aforo {{capacity}}. Editar espacio",
       "loadError": "No hemos podido cargar los espacios",
       "roomFixedService": "Solo {{service}}",
-      "blocksTitle": "Alquiler y mantenimiento",
-      "blocksHelper": "Aparta una sala unas horas para alquilarla, hacer mantenimiento o un evento. Elige la sala.",
-      "blocksRoomSubtitle": "Bloquear horas de esta sala",
-      "blocksRoomLabel": "{{name}}. Bloquear horas por alquiler o mantenimiento",
       "roomsTitle": "Espacios"
     },
     "serviceSelection": {
@@ -2192,14 +2178,6 @@
       "weekRange": "Semana del {{from}} al {{to}}",
       "previousWeek": "Semana anterior",
       "nextWeek": "Semana siguiente",
-      "repeatWeekAction": "Repetir en la semana siguiente",
-      "repeatWeekHelper": "Para copiar una semana, crea sus horarios con «Esta semana» (o 2, 3, 4 semanas). Los que no tienen fin ya valen para todas las semanas.",
-      "repeatCopied_one": "Copiado {{count}} horario a la semana siguiente.",
-      "repeatCopied_other": "Copiados {{count}} horarios a la semana siguiente.",
-      "repeatAlready_one": "{{count}} ya estaba copiado.",
-      "repeatAlready_other": "{{count}} ya estaban copiados.",
-      "repeatSkipped_one": "{{count}} fecha no se pudo crear (festivo, sala o profesor ocupados).",
-      "repeatSkipped_other": "{{count}} fechas no se pudieron crear (festivo, sala o profesor ocupados).",
       "newRoomSubtitle": "Sala creada. Ahora di qué servicio se da en ella, qué días y a qué horas, y hasta cuándo.",
       "periodOneWeek": "Esta semana",
       "periodTwoWeeks": "2 semanas",
@@ -2324,51 +2302,6 @@
       "skippedDates_one": "{{count}} día con otra cita: ese día no entra",
       "skippedDates_other": "{{count}} días con otra cita: esos días no entra",
       "removeClientLabel": "Quitar a {{name}}"
-    },
-    "roomBlocks": {
-      "title": "Bloqueos",
-      "subtitle": "{{room}}: alquiler, mantenimiento o eventos",
-      "editRoomAction": "Editar sala (nombre y aforo)",
-      "addAction": "Nuevo bloqueo",
-      "empty": "Sin bloqueos en las próximas 8 semanas",
-      "loadError": "No hemos podido cargar los bloqueos",
-      "reason": {
-        "rental": "Alquiler",
-        "maintenance": "Mantenimiento",
-        "event": "Evento",
-        "other": "Otro"
-      },
-      "rowLabel": "{{when}}, {{reason}}. Quitar bloqueo",
-      "removeTitle": "¿Quitar el bloqueo?",
-      "removeMessage": "El espacio vuelve a estar disponible en ese tramo.",
-      "removeConfirm": "Quitar bloqueo",
-      "newTitle": "Nuevo bloqueo",
-      "dateLabel": "Día",
-      "dateRequired": "Elige el día",
-      "timeLabel": "Tramo",
-      "timeFrom": "Desde",
-      "timeUntil": "Hasta",
-      "timeOrder": "La hora de fin debe ser posterior a la de inicio",
-      "reasonLabel": "Motivo",
-      "noteLabel": "Nota (opcional)",
-      "notePlaceholder": "Alquilado a la asociación de vecinos",
-      "noteTooLong": "Usa como máximo 200 caracteres",
-      "saveAction": "Bloquear",
-      "renterLabel": "¿A quién se alquila? (opcional)",
-      "renterHint": "Elige a una persona registrada para ponerle precio: lo verá en su app y podrá pagarlo con tarjeta si tu centro cobra online.",
-      "renterRemove": "Quitar a esta persona",
-      "priceLabel": "Precio del alquiler (€)",
-      "pricePlaceholder": "45",
-      "priceInvalid": "Escribe un precio válido, por ejemplo 45 o 45,50",
-      "priceNeedsRenter": "Para poner precio elige antes a quién se alquila",
-      "paid": "Pagado",
-      "unpaid": "Pendiente de pago",
-      "availability": {
-        "inThePast": "Ese tramo ya ha empezado o ha pasado. Elige una hora que aún no haya llegado",
-        "outsideOpeningHours": "El centro está cerrado a esas horas. Abre: {{ranges}}",
-        "occupied": "El espacio ya está ocupado en ese tramo. Ocupado ese día: {{ranges}}",
-        "busyDay": "Ocupado ese día: {{ranges}}"
-      }
     }
   },
   "practice": {

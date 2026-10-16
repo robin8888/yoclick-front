@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { MfaConfirmResponseDtoSession } from './mfaConfirmResponseDtoSession.ts';
 
 export interface MfaConfirmResponseDto {
   /**
@@ -12,4 +13,5 @@ export interface MfaConfirmResponseDto {
      * @maxItems 10
      */
   recoveryCodes: string[];
+  session: MfaConfirmResponseDtoSession;
 }

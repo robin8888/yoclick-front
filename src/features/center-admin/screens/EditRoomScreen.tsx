@@ -27,14 +27,12 @@ const routeParamsSchema = z.object({ roomId: z.string().min(1) });
 interface EditRoomActionsProps {
   onSave: () => void;
   onSchedulePress: () => void;
-  onBlocksPress: () => void;
   onRemove: () => void;
 }
 
 function EditRoomActions({
   onSave,
   onSchedulePress,
-  onBlocksPress,
   onRemove,
 }: Readonly<EditRoomActionsProps>): React.JSX.Element {
   return (
@@ -46,13 +44,6 @@ function EditRoomActions({
         leadingIconName="calendar"
         label={i18n.t('centerAdmin.rooms.scheduleAction')}
         onPress={onSchedulePress}
-      />
-      <Button
-        isFullWidth
-        variant="secondary"
-        leadingIconName="lock"
-        label={i18n.t('centerAdmin.rooms.blocksAction')}
-        onPress={onBlocksPress}
       />
       <Button
         isFullWidth
@@ -102,9 +93,6 @@ function EditRoomForm({
           onSave={save}
           onSchedulePress={() => {
             router.push({ pathname: '/(admin)/schedules/new', params: { roomId: room.id } });
-          }}
-          onBlocksPress={() => {
-            router.push({ pathname: '/(admin)/room-blocks/[roomId]', params: { roomId: room.id } });
           }}
           onRemove={() => {
             setIsRemoving(true);

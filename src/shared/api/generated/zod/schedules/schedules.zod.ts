@@ -9,50 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * @summary Copia a la semana siguiente todos los horarios de una semana (los que empiezan y terminan dentro de ella): mismo servicio, sala, profesor, horas y aforo. Los que ya estaban copiados no se duplican; las fechas que chocan se devuelven en `skipped`.
- */
-export const schedulesRepeatWeekPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const SchedulesRepeatWeekParams = zod.object({
-  "centerId": zod.uuid().regex(schedulesRepeatWeekPathCenterIdRegExp)
-})
-
-export const SchedulesRepeatWeekHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const schedulesRepeatWeekBodyWeekStartRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
-
-
-export const SchedulesRepeatWeekBody = zod.object({
-  "weekStart": zod.iso.date().regex(schedulesRepeatWeekBodyWeekStartRegExp)
-})
-
-export const schedulesRepeatWeekResponseCopiedSeriesCountMin = -9007199254740991;
-export const schedulesRepeatWeekResponseCopiedSeriesCountMax = 9007199254740991;
-
-export const schedulesRepeatWeekResponseAlreadyCopiedSeriesCountMin = -9007199254740991;
-export const schedulesRepeatWeekResponseAlreadyCopiedSeriesCountMax = 9007199254740991;
-
-export const schedulesRepeatWeekResponseFailedSeriesCountMin = -9007199254740991;
-export const schedulesRepeatWeekResponseFailedSeriesCountMax = 9007199254740991;
-
-export const schedulesRepeatWeekResponseSkippedItemDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
-
-
-export const SchedulesRepeatWeekResponse = zod.object({
-  "copiedSeriesCount": zod.int().min(schedulesRepeatWeekResponseCopiedSeriesCountMin).max(schedulesRepeatWeekResponseCopiedSeriesCountMax),
-  "alreadyCopiedSeriesCount": zod.int().min(schedulesRepeatWeekResponseAlreadyCopiedSeriesCountMin).max(schedulesRepeatWeekResponseAlreadyCopiedSeriesCountMax),
-  "failedSeriesCount": zod.int().min(schedulesRepeatWeekResponseFailedSeriesCountMin).max(schedulesRepeatWeekResponseFailedSeriesCountMax),
-  "skipped": zod.array(zod.object({
-  "date": zod.iso.date().regex(schedulesRepeatWeekResponseSkippedItemDateRegExp),
-  "startsAtTime": zod.string(),
-  "reason": zod.enum(['holiday', 'absence', 'conflict', 'blocked'])
-}))
-})
-
-/**
  * @summary Las franjas de la semana que ya ocupan una sala y/o un profesor con clases activas: lo que no se puede elegir al crear una clase nueva.
  */
 export const schedulesBusyTimesPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -251,7 +207,7 @@ export const SchedulesCreateResponse = zod.object({
   "skipped": zod.array(zod.object({
   "date": zod.iso.date().regex(schedulesCreateResponseSkippedItemDateRegExp),
   "startsAtTime": zod.string(),
-  "reason": zod.enum(['holiday', 'absence', 'conflict', 'blocked'])
+  "reason": zod.enum(['holiday', 'absence', 'conflict'])
 }))
 })
 
@@ -341,7 +297,7 @@ export const SchedulesUpdateResponse = zod.object({
   "skipped": zod.array(zod.object({
   "date": zod.iso.date().regex(schedulesUpdateResponseSkippedItemDateRegExp),
   "startsAtTime": zod.string(),
-  "reason": zod.enum(['holiday', 'absence', 'conflict', 'blocked'])
+  "reason": zod.enum(['holiday', 'absence', 'conflict'])
 }))
 })
 

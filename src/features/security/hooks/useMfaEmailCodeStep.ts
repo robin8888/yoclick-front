@@ -1,13 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
 import { useForm, type Control } from 'react-hook-form';
 
 import { getApiErrorMessage } from '@/shared/api/errors';
-import {
-  getMfaGetStatusQueryKey,
-  useMfaConfirmEmail,
-} from '@/shared/api/generated/endpoints/mfa/mfa';
+import { useMfaConfirmEmail } from '@/shared/api/generated/endpoints/mfa/mfa';
 
+import { startVerifiedSession } from './useStartVerifiedSession';
 import { mfaCodeFormSchema, type MfaCodeFormValues } from '../schemas/mfa-forms.schema';
 
 interface MfaEmailCodeStep {
@@ -21,7 +18,6 @@ interface MfaEmailCodeStep {
 export function useMfaEmailCodeStep(
   onActivated: (recoveryCodes: string[]) => void,
 ): MfaEmailCodeStep {
-  const queryClient = useQueryClient();
   const confirmMutation = useMfaConfirmEmail();
   const { control, handleSubmit } = useForm<MfaCodeFormValues>({
     resolver: zodResolver(mfaCodeFormSchema),
@@ -31,9 +27,12 @@ export function useMfaEmailCodeStep(
     confirmMutation.mutate(
       { data: { code } },
       {
-        onSuccess: ({ recoveryCodes }) => {
-          void queryClient.invalidateQueries({ queryKey: getMfaGetStatusQueryKey() });
-          onActivated(recoveryCodes);
+        onSuccess: ({ recoveryCodes, session }) => {
+          const showRecoveryCodes = (): void => {
+            onActivated(recoveryCodes);
+          };
+          // Si no se pudo guardar la sesión nueva, los códigos se enseñan igualmente: se entra de nuevo.
+          void startVerifiedSession(session).then(showRecoveryCodes, showRecoveryCodes);
         },
       },
     );

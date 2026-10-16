@@ -15,7 +15,6 @@ import {
   listServicesOfTimeline,
   type TimelineHour,
 } from '../model/room-timeline';
-import { RoomBlockChip } from './RoomBlockChip';
 import {
   createEmptyHourStyle,
   createHourCardsStyle,
@@ -37,7 +36,7 @@ interface HourRowProps {
   now: Date;
 }
 
-/** Una ficha por clase y por bloqueo de esa hora, en línea y envueltas si no caben. */
+/** Una ficha por clase de esa hora, en línea y envueltas si no caben. */
 function HourChips({
   hour,
   marks,
@@ -62,17 +61,6 @@ function HourChips({
           />
         );
       })}
-      {hour.roomBlocks.map((roomBlock) => {
-        const mark = findRoomMark(marks, roomBlock.roomId);
-        return mark === undefined ? null : (
-          <RoomBlockChip
-            key={roomBlock.block.id}
-            roomBlock={roomBlock}
-            mark={mark}
-            timeZone={timeZone}
-          />
-        );
-      })}
     </View>
   );
 }
@@ -81,7 +69,7 @@ function HourChips({
 function HourRow(props: Readonly<HourRowProps>): React.JSX.Element {
   const theme = useTheme();
   const { hour } = props;
-  const isEmpty = hour.blocks.length === 0 && hour.roomBlocks.length === 0;
+  const isEmpty = hour.blocks.length === 0;
 
   return (
     <View style={HOUR_ROW_STYLE}>
@@ -102,7 +90,7 @@ interface RoomDayGridProps {
 
 /**
  * La agenda del centro como rejilla del día: la leyenda de salas (letra y color) y una fila por
- * hora con una ficha pequeña por clase o bloqueo, para que muchas salas a la vez quepan de un
+ * hora con una ficha pequeña por clase, para que muchas salas a la vez quepan de un
  * vistazo. Tocar una sala en la leyenda filtra; tocar una ficha abre el detalle de la sala.
  */
 export function RoomDayGrid({ agenda, isoDate }: Readonly<RoomDayGridProps>): React.JSX.Element {

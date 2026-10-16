@@ -1,12 +1,7 @@
-import type {
-  RoomAgendaResponseDto,
-  RoomAgendaResponseDtoRoomsItemBlocksItem,
-} from '@/shared/api/generated/model';
+import type { RoomAgendaResponseDto } from '@/shared/api/generated/model';
 import { formatTime24h } from '@/shared/lib/format/format-time';
 
 import type { RoomSession } from './room-agenda';
-
-export type RoomBlock = RoomAgendaResponseDtoRoomsItemBlocksItem;
 
 /** Una clase en la línea temporal: la sala, el servicio, el profesor y cuántas personas faltan. */
 export interface TimelineBlock {
@@ -17,18 +12,10 @@ export interface TimelineBlock {
   missingCount: number;
 }
 
-/** Un tramo en que la sala no está disponible: alquiler, mantenimiento o evento. */
-export interface TimelineRoomBlock {
-  roomId: string;
-  roomName: string;
-  block: RoomBlock;
-}
-
 export interface TimelineHour {
   /** «17:00». */
   label: string;
   blocks: TimelineBlock[];
-  roomBlocks: TimelineRoomBlock[];
 }
 
 const MINUTES_PER_HOUR = 60;
@@ -78,15 +65,6 @@ function listSessionEntries(agenda: RoomAgendaResponseDto): HourEntry<TimelineBl
   );
 }
 
-function listBlockEntries(agenda: RoomAgendaResponseDto): HourEntry<TimelineRoomBlock>[] {
-  return agenda.rooms.flatMap((room) =>
-    room.blocks.map((block) => ({
-      startHour: readStartHour(block.startsAt, agenda.timezone),
-      entry: { roomId: room.id, roomName: room.name, block },
-    })),
-  );
-}
-
 function compareByStartAndRoom(
   first: { startsAt: string; roomName: string },
   second: { startsAt: string; roomName: string },
@@ -105,22 +83,18 @@ export function filterTimelineByRoom(
   return hours.map((hour) => ({
     ...hour,
     blocks: hour.blocks.filter((block) => block.roomId === roomId),
-    roomBlocks: hour.roomBlocks.filter((roomBlock) => roomBlock.roomId === roomId),
   }));
 }
 
 /**
  * La línea temporal del día: una fila por cada hora en la que abre el centro (y, si hay una clase
- * o un bloqueo fuera de ese horario, también su hora), con las clases de las salas que empiezan en
- * esa hora y los tramos en que una sala está bloqueada.
+ * fuera de ese horario, también su hora), con las clases de las salas que empiezan en esa hora.
  */
 export function buildRoomTimeline(agenda: RoomAgendaResponseDto): TimelineHour[] {
   const sessionEntries = listSessionEntries(agenda);
-  const blockEntries = listBlockEntries(agenda);
   const hours = new Set([
     ...listOpenHours(agenda.openingRanges),
     ...sessionEntries.map(({ startHour }) => startHour),
-    ...blockEntries.map(({ startHour }) => startHour),
   ]);
 
   return [...hours]
@@ -134,15 +108,6 @@ export function buildRoomTimeline(agenda: RoomAgendaResponseDto): TimelineHour[]
           compareByStartAndRoom(
             { startsAt: first.session.startsAt, roomName: first.roomName },
             { startsAt: second.session.startsAt, roomName: second.roomName },
-          ),
-        ),
-      roomBlocks: blockEntries
-        .filter(({ startHour }) => startHour === hour)
-        .map(({ entry }) => entry)
-        .sort((first, second) =>
-          compareByStartAndRoom(
-            { startsAt: first.block.startsAt, roomName: first.roomName },
-            { startsAt: second.block.startsAt, roomName: second.roomName },
           ),
         ),
     }));
@@ -163,7 +128,7 @@ export function listServicesOfTimeline(
     .sort((first, second) => first.name.localeCompare(second.name));
 }
 
-/** Solo las clases de un servicio; los bloqueos no tienen servicio, así que se ocultan. */
+/** Solo las clases de un servicio. */
 export function filterTimelineByService(
   hours: readonly TimelineHour[],
   serviceId: string | null,
@@ -172,6 +137,5 @@ export function filterTimelineByService(
   return hours.map((hour) => ({
     ...hour,
     blocks: hour.blocks.filter((block) => block.session.service.id === serviceId),
-    roomBlocks: [],
   }));
 }

@@ -57,7 +57,7 @@ function listBrandTabPaths(hasRoomManagement: boolean): string[] {
   return hasRoomManagement ? paths : [...paths, '/rooms'];
 }
 
-const MANAGEMENT_PATHS = ['/management', '/rooms', '/schedules', '/room-blocks'];
+const MANAGEMENT_PATHS = ['/management', '/rooms', '/schedules'];
 
 function listMainAdminTabs(request: AdminTabsRequest): readonly PathTab[] {
   const { clientsLabel, hasRoomManagement } = request;

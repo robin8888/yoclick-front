@@ -1,6 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { Share, View } from 'react-native';
 
-import { MfaScreenLogo, useSignOut } from '@/features/auth';
+import { MfaScreenLogo } from '@/features/auth';
+import { getMfaGetStatusQueryKey } from '@/shared/api/generated/endpoints/mfa/mfa';
 import { i18n } from '@/shared/i18n';
 import { platformCardColors } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
@@ -34,19 +36,19 @@ function RecoveryCodeGrid({ recoveryCodes }: Readonly<MfaRecoveryStepProps>): Re
 }
 
 /**
- * Paso 3: los diez códigos de recuperación, que solo se enseñan ahora. La sesión actual no pasó
- * por el segundo factor, así que al terminar se cierra y se entra de nuevo con el código de la app.
+ * Paso 3: los diez códigos de recuperación, que solo se enseñan ahora. La sesión ya viene verificada
+ * con el segundo factor: al terminar, el estado se refresca y la zona de administración se abre sola.
+ * El estado no se refresca antes porque desmontaría esta pantalla antes de guardar los códigos.
  */
 export function MfaRecoveryStep({
   recoveryCodes,
 }: Readonly<MfaRecoveryStepProps>): React.JSX.Element {
-  const { signOut, isSigningOut } = useSignOut({ noticeAfterSignOut: 'mfaEnabled' });
+  const queryClient = useQueryClient();
 
   return (
     <ScreenTemplate
       hasPlatformHeroBackground
       isHeaderCentered
-      isLoading={isSigningOut}
       headerAccessory={<MfaScreenLogo />}
       title={i18n.t('security.mfaSetup.recoveryTitle')}
       subtitle={i18n.t('security.mfaSetup.recoverySubtitle')}
@@ -63,8 +65,9 @@ export function MfaRecoveryStep({
           <Button
             label={i18n.t('security.mfaSetup.savedLabel')}
             isFullWidth
-            isLoading={isSigningOut}
-            onPress={signOut}
+            onPress={() => {
+              void queryClient.invalidateQueries({ queryKey: getMfaGetStatusQueryKey() });
+            }}
           />
         </>
       }

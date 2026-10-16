@@ -10,7 +10,6 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { MyPassCard } from '../components/MyPassCard';
-import { MyRentalsSection } from '../components/MyRentalsSection';
 import { PayPassAction } from '../components/PayPassAction';
 import { RateOfferCard } from '../components/RateOfferCard';
 import { useMyPasses } from '../hooks/useMyPasses';
@@ -123,7 +122,6 @@ export function MyPassesScreen(): React.JSX.Element {
         <Text color="ink2">{i18n.t('passes.empty')}</Text>
       ) : null}
       <MyPassList passes={myPasses} canPayOnline={canPayOnline} />
-      <MyRentalsSection />
       <RateOffersSection />
     </ScreenTemplate>
   );

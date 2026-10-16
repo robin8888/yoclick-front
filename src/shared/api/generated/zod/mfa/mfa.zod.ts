@@ -52,10 +52,18 @@ export const MfaConfirmTotpBody = zod.object({
 export const mfaConfirmTotpResponseRecoveryCodesMin = 10;
 export const mfaConfirmTotpResponseRecoveryCodesMax = 10;
 
+export const mfaConfirmTotpResponseSessionAccessTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const mfaConfirmTotpResponseSessionRefreshTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const MfaConfirmTotpResponse = zod.object({
-  "recoveryCodes": zod.array(zod.string()).min(mfaConfirmTotpResponseRecoveryCodesMin).max(mfaConfirmTotpResponseRecoveryCodesMax)
+  "recoveryCodes": zod.array(zod.string()).min(mfaConfirmTotpResponseRecoveryCodesMin).max(mfaConfirmTotpResponseRecoveryCodesMax),
+  "session": zod.object({
+  "accessToken": zod.string(),
+  "accessTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaConfirmTotpResponseSessionAccessTokenExpiresAtRegExp),
+  "refreshToken": zod.string(),
+  "refreshTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaConfirmTotpResponseSessionRefreshTokenExpiresAtRegExp)
+})
 })
 
 /**
@@ -139,10 +147,18 @@ export const MfaConfirmEmailBody = zod.object({
 export const mfaConfirmEmailResponseRecoveryCodesMin = 10;
 export const mfaConfirmEmailResponseRecoveryCodesMax = 10;
 
+export const mfaConfirmEmailResponseSessionAccessTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const mfaConfirmEmailResponseSessionRefreshTokenExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const MfaConfirmEmailResponse = zod.object({
-  "recoveryCodes": zod.array(zod.string()).min(mfaConfirmEmailResponseRecoveryCodesMin).max(mfaConfirmEmailResponseRecoveryCodesMax)
+  "recoveryCodes": zod.array(zod.string()).min(mfaConfirmEmailResponseRecoveryCodesMin).max(mfaConfirmEmailResponseRecoveryCodesMax),
+  "session": zod.object({
+  "accessToken": zod.string(),
+  "accessTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaConfirmEmailResponseSessionAccessTokenExpiresAtRegExp),
+  "refreshToken": zod.string(),
+  "refreshTokenExpiresAt": zod.iso.datetime({"offset":true}).regex(mfaConfirmEmailResponseSessionRefreshTokenExpiresAtRegExp)
+})
 })
 
 /**

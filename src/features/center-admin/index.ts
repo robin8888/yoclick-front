@@ -28,8 +28,6 @@ export { NewScheduleScreen } from './screens/NewScheduleScreen';
 export { ScheduleSeriesScreen } from './screens/ScheduleSeriesScreen';
 export { EditScheduleScreen } from './screens/EditScheduleScreen';
 export { EnrollClientsScreen } from './screens/EnrollClientsScreen';
-export { RoomBlocksScreen } from './screens/RoomBlocksScreen';
-export { NewRoomBlockScreen } from './screens/NewRoomBlockScreen';
 export { CenterDetailsScreen } from './screens/CenterDetailsScreen';
 export { ReceptionPosterScreen } from './screens/ReceptionPosterScreen';
 export { AccountSecurityScreen } from './screens/AccountSecurityScreen';

@@ -13,5 +13,4 @@ export const ScheduleSeriesWriteResponseDtoSkippedItemReason = {
   holiday: 'holiday',
   absence: 'absence',
   conflict: 'conflict',
-  blocked: 'blocked',
 } as const;

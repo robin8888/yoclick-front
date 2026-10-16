@@ -31,7 +31,6 @@ function buildRoom(overrides: Record<string, unknown>) {
     capacity: 10,
     staff: null,
     sessions: [],
-    blocks: [],
     ...overrides,
   };
 }
@@ -51,9 +50,7 @@ describe('buildRoomTimeline', () => {
     const timeline = buildRoomTimeline(buildAgenda([]));
 
     expect(timeline.map(({ label }) => label)).toEqual(['16:00', '17:00', '18:00']);
-    expect(
-      timeline.every(({ blocks, roomBlocks }) => blocks.length === 0 && roomBlocks.length === 0),
-    ).toBe(true);
+    expect(timeline.every(({ blocks }) => blocks.length === 0)).toBe(true);
   });
 
   it('puts each class of each room in the hour it starts, with the people still missing', () => {
@@ -135,29 +132,5 @@ describe('buildRoomTimeline', () => {
     const seventeen = onlyBachata.find(({ label }) => label === '17:00');
     expect(seventeen?.blocks.map(({ session }) => session.id)).toEqual(['s2']);
     expect(filterTimelineByService(timeline, null)).toEqual(timeline);
-  });
-
-  it('shows a blocked room in the hour the block starts, even outside the opening hours', () => {
-    const timeline = buildRoomTimeline(
-      buildAgenda([
-        buildRoom({
-          blocks: [
-            {
-              id: 'block-1',
-              startsAt: '2026-10-12T08:00:00.000Z', // 10:00 en Madrid
-              endsAt: '2026-10-12T12:00:00.000Z',
-              reason: 'rental',
-              note: 'Asociación de vecinos',
-            },
-          ],
-        }),
-      ]),
-    );
-
-    const ten = timeline.find(({ label }) => label === '10:00');
-    expect(timeline.map(({ label }) => label)).toEqual(['10:00', '16:00', '17:00', '18:00']);
-    expect(ten?.roomBlocks.map(({ roomName, block }) => [roomName, block.reason])).toEqual([
-      ['Sala de baile', 'rental'],
-    ]);
   });
 });

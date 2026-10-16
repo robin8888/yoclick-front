@@ -14,24 +14,17 @@ import type {
 } from 'msw';
 
 import type {
-  MyRentalsResponseDto,
-  RoomBlockListResponseDto,
-  RoomBlockResponseDto,
   RoomListResponseDto,
   RoomResponseDto
 } from '../../model';
 
 import {
-  getRoomBlocksCreateResponseMock,
-  getRoomBlocksListOfRoomResponseMock,
-  getRoomBlocksListResponseMock,
-  getRoomRentalsMineResponseMock,
   getRoomsCreateResponseMock,
   getRoomsListResponseMock,
   getRoomsUpdateResponseMock
 } from './rooms.faker.ts';
 
-export { getRoomsListResponseMock, getRoomsCreateResponseMock, getRoomsUpdateResponseMock, getRoomRentalsMineResponseMock, getRoomBlocksListResponseMock, getRoomBlocksListOfRoomResponseMock, getRoomBlocksCreateResponseMock } from './rooms.faker.ts';
+export { getRoomsListResponseMock, getRoomsCreateResponseMock, getRoomsUpdateResponseMock } from './rooms.faker.ts';
 
 
 export const getRoomsListMockHandler = (overrideResponse?: RoomListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomListResponseDto> | RoomListResponseDto), options?: RequestHandlerOptions) => {
@@ -79,72 +72,9 @@ export const getRoomsArchiveMockHandler = (overrideResponse?: void | ((info: Par
       })
   }, options)
 }
-
-export const getRoomRentalsMineMockHandler = (overrideResponse?: MyRentalsResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MyRentalsResponseDto> | MyRentalsResponseDto), options?: RequestHandlerOptions) => {
-  return http.get('*/v1/centers/:centerId/room-rentals/mine', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRoomRentalsMineResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getRoomBlocksListMockHandler = (overrideResponse?: RoomBlockListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomBlockListResponseDto> | RoomBlockListResponseDto), options?: RequestHandlerOptions) => {
-  return http.get('*/v1/centers/:centerId/room-blocks', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRoomBlocksListResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getRoomBlocksListOfRoomMockHandler = (overrideResponse?: RoomBlockListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<RoomBlockListResponseDto> | RoomBlockListResponseDto), options?: RequestHandlerOptions) => {
-  return http.get('*/v1/centers/:centerId/rooms/:roomId/blocks', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRoomBlocksListOfRoomResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getRoomBlocksCreateMockHandler = (overrideResponse?: RoomBlockResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<RoomBlockResponseDto> | RoomBlockResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/rooms/:roomId/blocks', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getRoomBlocksCreateResponseMock(),
-      { status: 201
-      })
-  }, options)
-}
-
-export const getRoomBlocksDeleteMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
-  return http.delete('*/v1/centers/:centerId/rooms/:roomId/blocks/:blockId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
-  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
-
-    return new HttpResponse(null,
-      { status: 204
-      })
-  }, options)
-}
 export const getRoomsMock = () => [
   getRoomsListMockHandler(),
   getRoomsCreateMockHandler(),
   getRoomsUpdateMockHandler(),
-  getRoomsArchiveMockHandler(),
-  getRoomRentalsMineMockHandler(),
-  getRoomBlocksListMockHandler(),
-  getRoomBlocksListOfRoomMockHandler(),
-  getRoomBlocksCreateMockHandler(),
-  getRoomBlocksDeleteMockHandler()
+  getRoomsArchiveMockHandler()
 ]
