@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
+
 import { isAnyPathInside } from './is-path-active';
+import { resetCompactTabBar } from './tab-bar-compact';
 import { TabBar } from './TabBar';
 import type { PathTabBarProps } from './TabBar.types';
 
@@ -8,6 +11,11 @@ export function PathTabBar({
   currentPath,
   onTabPress,
 }: Readonly<PathTabBarProps>): React.JSX.Element {
+  // La pantalla nueva empieza arriba del todo: la barra no se queda encogida de la anterior.
+  useEffect(() => {
+    resetCompactTabBar();
+  }, [currentPath]);
+
   return (
     <TabBar
       tabs={tabs.map((tab) => ({

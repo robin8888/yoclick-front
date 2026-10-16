@@ -17,6 +17,7 @@ import {
 } from './ScreenTemplate.styles';
 import type { ScreenTemplateProps } from './ScreenTemplate.types';
 import { useIsKeyboardVisible } from '@/ui/hooks/useIsKeyboardVisible';
+import { useTabBarOverlap } from '@/ui/organisms/TabBar';
 import { BusyOverlay } from '@/ui/molecules/BusyOverlay';
 import { KeyboardAwareScroll } from './KeyboardAwareScroll';
 import { CenterHoneycombBackground } from './CenterHoneycombBackground';
@@ -24,6 +25,8 @@ import { PlatformHeroBackground } from './PlatformHeroBackground';
 import { ScreenTemplateTop } from './ScreenTemplateTop';
 
 const KEYBOARD_AVOIDING_STYLE = { flex: 1 } as const;
+const SAFE_EDGES_ALL = ['top', 'right', 'bottom', 'left'] as const;
+const SAFE_EDGES_WITHOUT_BOTTOM = ['top', 'right', 'left'] as const;
 
 /** Esqueleto de pantalla: zona segura, cabecera, contenido con scroll y acción fija abajo. */
 export function ScreenTemplate(props: Readonly<ScreenTemplateProps>): React.JSX.Element {
@@ -47,8 +50,15 @@ function ScreenFooter({
   hasPlatformHeroBackground,
 }: Readonly<ScreenFooterProps>): React.JSX.Element | null {
   const theme = useTheme();
+  const tabBarOverlap = useTabBarOverlap();
   if (footer === undefined) return null;
-  return <View style={createFooterStyle(theme, hasPlatformHeroBackground)}>{footer}</View>;
+  return (
+    <View
+      style={[createFooterStyle(theme, hasPlatformHeroBackground), { marginBottom: tabBarOverlap }]}
+    >
+      {footer}
+    </View>
+  );
 }
 
 type HeaderProps = Omit<ComponentProps<typeof ScreenTemplateTop>, 'hasPlatformHeroBackground'>;
@@ -86,11 +96,15 @@ function FixedActions({
   floatingAction,
   hasPlatformHeroBackground,
 }: Readonly<FixedActionsProps>): React.JSX.Element {
+  const tabBarOverlap = useTabBarOverlap();
   return (
     <>
       <ScreenFooter footer={footer} hasPlatformHeroBackground={hasPlatformHeroBackground} />
       {floatingAction === undefined ? null : (
-        <View style={FLOATING_ACTION_STYLE} pointerEvents="box-none">
+        <View
+          style={[FLOATING_ACTION_STYLE, { marginBottom: tabBarOverlap }]}
+          pointerEvents="box-none"
+        >
           {floatingAction}
         </View>
       )}
@@ -146,6 +160,19 @@ function KeyboardAvoidingFrame({ children }: Readonly<{ children: ReactNode }>):
   );
 }
 
+/** La zona segura; con la barra flotante puesta, esta ya cuenta con el borde inferior. */
+function TabBarAwareSafeArea({ children }: Readonly<{ children: ReactNode }>): React.JSX.Element {
+  const tabBarOverlap = useTabBarOverlap();
+  return (
+    <SafeAreaView
+      style={TRANSPARENT_SAFE_AREA_STYLE}
+      edges={tabBarOverlap > 0 ? SAFE_EDGES_WITHOUT_BOTTOM : SAFE_EDGES_ALL}
+    >
+      {children}
+    </SafeAreaView>
+  );
+}
+
 type ScreenBodyProps = Omit<ScreenTemplateProps, 'isLoading' | 'loadingLabel' | 'backdrop'>;
 
 /** Zona segura con el contenido que hace scroll y, encima, las acciones fijas. */
@@ -165,9 +192,10 @@ function ScreenBody({
 
   return (
     <KeyboardAvoidingFrame>
-      <SafeAreaView style={TRANSPARENT_SAFE_AREA_STYLE}>
+      <TabBarAwareSafeArea>
         <KeyboardAwareScroll
           isContentCentered={isContentCentered}
+          isFooterBelow={footer !== undefined}
           trailingContent={isKeyboardVisible ? footerView : null}
         >
           <ScreenHeaderSlot
@@ -184,7 +212,7 @@ function ScreenBody({
             hasPlatformHeroBackground={hasPlatformHeroBackground}
           />
         )}
-      </SafeAreaView>
+      </TabBarAwareSafeArea>
     </KeyboardAvoidingFrame>
   );
 }

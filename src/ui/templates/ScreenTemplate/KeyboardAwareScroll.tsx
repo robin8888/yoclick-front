@@ -9,6 +9,7 @@ import {
   type NativeScrollEvent,
 } from 'react-native';
 
+import { updateCompactTabBar, useTabBarOverlap } from '@/ui/organisms/TabBar';
 import { useTheme } from '@/shared/theme';
 import { calculateRevealOffset, KeyboardRevealContext } from '@/ui/hooks/keyboard-reveal';
 
@@ -34,6 +35,8 @@ const FRAME_STYLE = { flex: 1 } as const;
 
 interface KeyboardAwareScrollProps {
   isContentCentered: boolean;
+  /** Con un botón fijo abajo, ya es él quien deja sitio a la barra flotante. */
+  isFooterBelow: boolean;
   /** Va tras el contenido, dentro del scroll (el botón principal mientras el teclado está abierto). */
   trailingContent?: ReactNode;
   children: ReactNode;
@@ -129,10 +132,13 @@ function useKeyboardReveal(): RevealTools & {
  */
 export function KeyboardAwareScroll({
   isContentCentered,
+  isFooterBelow,
   trailingContent,
   children,
 }: Readonly<KeyboardAwareScrollProps>): React.JSX.Element {
   const theme = useTheme();
+  const tabBarOverlap = useTabBarOverlap();
+  const bottomInset = isFooterBelow ? 0 : tabBarOverlap;
   const { scrollRef, frameRef, offsetYRef, reveal, keyboardOverlap } = useKeyboardReveal();
 
   return (
@@ -143,7 +149,9 @@ export function KeyboardAwareScroll({
           contentContainerStyle={[
             createContentStyle(theme, isContentCentered),
             // En iOS el hueco del teclado lo pone la plantilla (ver `measureKeyboardOverlap`).
-            Platform.OS === 'ios' ? { paddingBottom: theme.space[5] + keyboardOverlap } : null,
+            Platform.OS === 'ios'
+              ? { paddingBottom: theme.space[5] + keyboardOverlap + bottomInset }
+              : { paddingBottom: theme.space[5] + bottomInset },
           ]}
           automaticallyAdjustKeyboardInsets={false}
           keyboardShouldPersistTaps="handled"
@@ -151,6 +159,7 @@ export function KeyboardAwareScroll({
           scrollEventThrottle={SCROLL_EVENT_THROTTLE_MS}
           onScroll={(event: { nativeEvent: NativeScrollEvent }) => {
             offsetYRef.current = event.nativeEvent.contentOffset.y;
+            updateCompactTabBar(event.nativeEvent.contentOffset.y);
           }}
         >
           {children}
