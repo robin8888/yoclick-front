@@ -102,6 +102,8 @@ const DESTINATION_BY_KIND: Readonly<Record<NoticeKind, DestinationRule>> = {
   room_rental_assigned: MY_PASSES,
   payment_received: byAudience({ admin: '/(admin)/payments' }),
   message_received: MESSAGE,
+  waitlist_offer: MY_BOOKINGS,
+  waitlist_offer_expired: MY_BOOKINGS,
 };
 
 /** La pantalla a la que lleva un aviso, o `null` si no hay ninguna que mostrar. */

@@ -27,3 +27,4 @@ export * from './team/team.ts';
 export * from './team-profiles/team-profiles.ts';
 export * from './time-entries/time-entries.ts';
 export * from './videos/videos.ts';
+export * from './waitlist/waitlist.ts';

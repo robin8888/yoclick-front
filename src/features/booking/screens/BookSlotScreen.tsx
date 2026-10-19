@@ -55,7 +55,7 @@ function ClassStep({ sessions, serviceId }: Readonly<ClassStepProps>): React.JSX
 }
 
 function BookClassContent({ serviceId }: Readonly<{ serviceId: string }>): React.JSX.Element {
-  const sessions = useServiceSessions(serviceId);
+  const sessions = useServiceSessions(serviceId, { shouldIncludeFull: true });
 
   if (sessions.isError) {
     return (

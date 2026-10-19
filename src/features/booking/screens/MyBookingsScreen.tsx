@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { useState } from 'react';
 
 import { ActingForSelector } from '@/features/guardians';
@@ -13,6 +13,7 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { BookingList } from '../components/BookingList';
+import { WaitlistBookingCards } from '../components/WaitlistBookingCards';
 import { CancelBookingSheet } from '../components/CancelBookingSheet';
 import { useBookingCancellation } from '../hooks/useBookingCancellation';
 import { useMyBookings, type BookingScope } from '../hooks/useMyBookings';
@@ -25,6 +26,19 @@ const SCOPE_OPTIONS = [
 interface BookingsContentProps {
   scope: BookingScope;
   bookings: MyBookingsResponseDto['bookings'];
+}
+
+function buildRescheduleRoute(booking: MyBookingsResponseDto['bookings'][number]): Href {
+  return {
+    pathname: '/(client)/book/reschedule',
+    params: {
+      bookingId: booking.id,
+      serviceId: booking.service.id,
+      staffMembershipId: booking.staff.membershipId,
+      serviceName: booking.service.name,
+      startsAt: booking.startsAt,
+    },
+  };
 }
 
 /** La lista con su ciclo de cancelación (hoja de confirmación y mensajes de resultado). */
@@ -48,18 +62,10 @@ function BookingsContent({ scope, bookings }: Readonly<BookingsContentProps>): R
         }}
         onCancelRequest={cancellation.askToCancel}
         onRescheduleRequest={(booking) => {
-          router.push({
-            pathname: '/(client)/book/reschedule',
-            params: {
-              bookingId: booking.id,
-              serviceId: booking.service.id,
-              staffMembershipId: booking.staff.membershipId,
-              serviceName: booking.service.name,
-              startsAt: booking.startsAt,
-            },
-          });
+          router.push(buildRescheduleRoute(booking));
         }}
       />
+      <WaitlistBookingCards scope={scope} />
       <CancelBookingSheet
         booking={cancellation.bookingToCancel}
         isCancelling={cancellation.isCancelling}

@@ -64,6 +64,9 @@
     "VIDEO_NOT_REVIEWABLE": "Este vídeo ya no está pendiente de revisión.",
     "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera",
     "CHECKIN_CODE_INVALID": "Este código QR no es válido o ha caducado. Pide que lo actualicen",
+    "WAITLIST_SESSION_HAS_SEATS": "Esta clase aún tiene plazas: reserva directamente",
+    "WAITLIST_ALREADY_JOINED": "Ya estás en la lista de espera de esta clase",
+    "WAITLIST_OFFER_EXPIRED": "Han pasado las 12 horas para confirmar: la plaza ha pasado a otra persona",
     "CHECKIN_NO_BOOKING": "Esta persona no tiene una cita confirmada para registrar ahora",
     "PASS_REQUIRED": "Esta cita está bloqueada: su bono se reembolsó. Hace falta un bono nuevo para atenderla",
     "BOOKING_NOT_STARTABLE": "Esta clase no se puede iniciar ahora: solo desde 15 minutos antes hasta que termina",
@@ -1107,6 +1110,17 @@
     "entryTitle": "Mensajes",
     "entryDescription": "Escribe al centro o a tu equipo."
   },
+  "waitlist": {
+    "joinAction": "Apuntarme a la lista de espera",
+    "leaveAction": "Salir de la lista",
+    "confirmAction": "Confirmar plaza",
+    "declineAction": "No la quiero",
+    "waitingStatus": "En lista de espera · puesto {{position}}",
+    "offeredStatus": "Plaza ofrecida · confirma antes del {{deadline}}",
+    "classFull": "Completa · {{teacher}}",
+    "sectionTitle": "Lista de espera",
+    "cardDetails": "{{time}} · {{teacher}}"
+  },
   "notifications": {
     "title": "Avisos",
     "markAllRead": "Marcar leídos",
@@ -1197,6 +1211,10 @@
     "passRunningLowDescription": "Te queda una sola sesión en tu bono {{rateName}}. Pide uno nuevo para no quedarte sin plaza.",
     "messageReceivedTitle": "Mensaje nuevo",
     "messageReceivedDescription": "{{senderName}} te ha escrito. Ábrelo en Mensajes.",
+    "waitlistOfferTitle": "Se ha liberado una plaza para ti",
+    "waitlistOfferDescription": "{{serviceName}} · {{when}}. Tienes 12 horas para confirmarla; si no, pasará a la siguiente persona.",
+    "waitlistOfferExpiredTitle": "Tu plaza ofrecida ha caducado",
+    "waitlistOfferExpiredDescription": "No la confirmaste a tiempo y pasó a otra persona: {{serviceName}} · {{when}}.",
     "passExhaustedTitle": "Tu bono se ha agotado",
     "passExhaustedDescription": "Has usado todas las sesiones de tu bono {{rateName}}. Pide uno nuevo para seguir reservando.",
     "priceSuffix": " por {{price}}"

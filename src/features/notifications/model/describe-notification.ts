@@ -51,6 +51,8 @@ const TITLE_KEYS = {
   pass_running_low: 'notifications.passRunningLowTitle',
   pass_exhausted: 'notifications.passExhaustedTitle',
   message_received: 'notifications.messageReceivedTitle',
+  waitlist_offer: 'notifications.waitlistOfferTitle',
+  waitlist_offer_expired: 'notifications.waitlistOfferExpiredTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -83,6 +85,8 @@ const DESCRIPTION_KEYS = {
   pass_running_low: 'notifications.passRunningLowDescription',
   pass_exhausted: 'notifications.passExhaustedDescription',
   message_received: 'notifications.messageReceivedDescription',
+  waitlist_offer: 'notifications.waitlistOfferDescription',
+  waitlist_offer_expired: 'notifications.waitlistOfferExpiredDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {

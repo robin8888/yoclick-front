@@ -1615,7 +1615,8 @@ export const servicesListOpenSessionsQueryToRegExp = new RegExp('^(?:(?:\\d\\d[2
 
 export const ServicesListOpenSessionsQueryParams = zod.object({
   "from": zod.iso.date().regex(servicesListOpenSessionsQueryFromRegExp),
-  "to": zod.iso.date().regex(servicesListOpenSessionsQueryToRegExp)
+  "to": zod.iso.date().regex(servicesListOpenSessionsQueryToRegExp),
+  "includeFull": zod.enum(['true', 'false']).optional()
 })
 
 export const ServicesListOpenSessionsHeader = zod.object({

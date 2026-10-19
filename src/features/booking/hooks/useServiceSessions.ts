@@ -12,11 +12,13 @@ import { addDaysToIsoDate, getTodayIsoDate } from '@/shared/lib/format';
 const OFFER_HORIZON_DAYS = 60;
 
 /**
- * Las clases con plazas del servicio elegido en los próximos 60 días y si el servicio tiene horario
+ * Las clases con plazas del servicio elegido en los próximos 60 días (con `shouldIncludeFull`, también
+ * las llenas) y si el servicio tiene horario
  * de sala (`isScheduled`): con él solo se asigna a sus clases; sin él, la hora es libre.
  */
 export function useServiceSessions(
   serviceId: string | null,
+  options: { shouldIncludeFull?: boolean } = {},
 ): UseQueryResult<ServiceSessionsResponseDto, ErrorType> {
   const centerId = useSessionStore((state) => state.activeCenterId);
   const [todayIsoDate] = useState(() => getTodayIsoDate(new Date(), DEFAULT_CENTER_TIME_ZONE));
@@ -25,7 +27,12 @@ export function useServiceSessions(
     getServicesListOpenSessionsQueryOptions(
       centerId ?? '',
       serviceId ?? '',
-      { from: todayIsoDate, to: addDaysToIsoDate(todayIsoDate, OFFER_HORIZON_DAYS) },
+      {
+        from: todayIsoDate,
+        to: addDaysToIsoDate(todayIsoDate, OFFER_HORIZON_DAYS),
+        // Las llenas salen para poder apuntarse a su lista de espera.
+        ...(options.shouldIncludeFull === true && { includeFull: 'true' as const }),
+      },
       { query: { enabled: centerId !== null && serviceId !== null } },
     ),
   );
