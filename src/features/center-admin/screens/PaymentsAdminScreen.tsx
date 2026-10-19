@@ -11,6 +11,7 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { usePaymentsList } from '../hooks/usePaymentsList';
+import { buildPaymentStatusLabel } from '../model/payment-status-label';
 
 const ROW_STYLE = { gap: 2 } as const;
 
@@ -19,7 +20,7 @@ function PaymentRow({
   payment,
 }: Readonly<{ payment: PaymentListResponseDtoPaymentsItem }>): React.JSX.Element {
   const kind = i18n.t(`centerAdmin.payments.kind.${payment.kind}`);
-  const status = i18n.t(`centerAdmin.payments.status.${payment.status}`);
+  const status = buildPaymentStatusLabel(payment);
   const amount = formatEuros(payment.amountCents);
   const when = formatShortDate(payment.paidAt ?? payment.createdAt);
 

@@ -1534,7 +1534,9 @@
       "status": {
         "pending": "Pendiente",
         "succeeded": "Pagado",
-        "failed": "Fallido"
+        "failed": "Fallido",
+        "refunded": "Reembolsado",
+        "partiallyRefunded": "Reembolsado {{amount}}"
       },
       "rowLabel": "{{label}}, {{clientName}}, {{amount}}, {{status}}"
     },
