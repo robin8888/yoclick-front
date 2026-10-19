@@ -451,7 +451,7 @@
   "security": {
     "mfaSetup": {
       "passwordTitle": "Protege tu cuenta",
-      "passwordSubtitle": "Como propietario necesitas la verificación en dos pasos. Primero confirma tu contraseña.",
+      "passwordSubtitle": "Primero confirma tu contraseña.",
       "passwordLabel": "Contraseña",
       "continueLabel": "Continuar",
       "scanTitle": "Conecta tu app de autenticación",
@@ -1807,6 +1807,7 @@
       "twoFactorDescription": "Código de tu app autenticadora o de tu correo al entrar. Recomendado para administradores.",
       "twoFactorOn": "Activa",
       "twoFactorOff": "Desactivada",
+      "twoFactorEnableAction": "Activar",
       "twoFactorOffNote": "Tu cuenta tiene acceso a datos de salud y pagos de tus {{clientWord}}. Activa la verificación en dos pasos.",
       "recoveryCodes_one": "Te queda {{count}} código de recuperación.",
       "recoveryCodes_other": "Te quedan {{count}} códigos de recuperación.",

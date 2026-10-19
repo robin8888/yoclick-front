@@ -1,17 +1,56 @@
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import { useMfaGetStatus } from '@/shared/api/generated/endpoints/mfa/mfa';
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { Badge } from '@/ui/atoms/Badge';
+import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
 import { createTwoFactorCardStyle, TWO_FACTOR_TEXT_STYLE } from './TwoFactorStatusCard.styles';
 
+interface TwoFactorDetailsProps {
+  clientWord: string;
+  isEnabled: boolean;
+  recoveryCodesRemaining: number;
+}
+
+/** Con la verificación activa, los códigos que quedan; si no, el aviso y el acceso para activarla. */
+function TwoFactorDetails({
+  clientWord,
+  isEnabled,
+  recoveryCodesRemaining,
+}: Readonly<TwoFactorDetailsProps>): React.JSX.Element {
+  const router = useRouter();
+  if (isEnabled) {
+    return (
+      <Text variant="caption" color="ink2">
+        {i18n.t('centerAdmin.security.recoveryCodes', { count: recoveryCodesRemaining })}
+      </Text>
+    );
+  }
+  return (
+    <>
+      <Text variant="caption" color="warning">
+        {i18n.t('centerAdmin.security.twoFactorOffNote', { clientWord })}
+      </Text>
+      <Button
+        size="sm"
+        label={i18n.t('centerAdmin.security.twoFactorEnableAction')}
+        onPress={() => {
+          router.push('/(admin)/mfa-setup');
+        }}
+      />
+    </>
+  );
+}
+
 /**
- * Prototipo `asec`: la verificación en dos pasos. Las rutas de administración ya la exigen, así que
- * aquí se ve su estado y cuántos códigos de recuperación quedan; no se apaga desde la propia pantalla.
+ * Prototipo `asec`: la verificación en dos pasos. Es opcional: las rutas de administración solo la
+ * piden a quien ya la tiene. Aquí se ve su estado, cuántos códigos de recuperación quedan y, si está
+ * desactivada, el acceso para activarla. No se apaga desde la propia pantalla.
  */
 export function TwoFactorStatusCard({
   clientWord,
@@ -28,17 +67,12 @@ export function TwoFactorStatusCard({
         <Text variant="caption" color="ink2">
           {i18n.t('centerAdmin.security.twoFactorDescription')}
         </Text>
-        {isEnabled ? (
-          <Text variant="caption" color="ink2">
-            {i18n.t('centerAdmin.security.recoveryCodes', {
-              count: status.data?.recoveryCodesRemaining ?? 0,
-            })}
-          </Text>
-        ) : null}
-        {status.data === undefined || isEnabled ? null : (
-          <Text variant="caption" color="warning">
-            {i18n.t('centerAdmin.security.twoFactorOffNote', { clientWord })}
-          </Text>
+        {status.data === undefined ? null : (
+          <TwoFactorDetails
+            clientWord={clientWord}
+            isEnabled={isEnabled}
+            recoveryCodesRemaining={status.data.recoveryCodesRemaining}
+          />
         )}
       </View>
       {status.data === undefined ? null : (

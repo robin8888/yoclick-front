@@ -47,12 +47,17 @@ function StartSteps({ step, onStepChange }: Readonly<StepProps>): React.JSX.Elem
 }
 
 /** El primer código (QR de la app o el del correo) y los códigos de recuperación. */
-function ActivationSteps({ step, onStepChange }: Readonly<StepProps>): React.JSX.Element | null {
+function ActivationSteps({
+  step,
+  onStepChange,
+  onDone,
+}: Readonly<StepProps & { onDone?: (() => void) | undefined }>): React.JSX.Element | null {
   const showRecovery = (recoveryCodes: string[]): void => {
     onStepChange({ kind: 'recovery', recoveryCodes });
   };
   if (step.kind === 'scan') return <MfaScanStep setup={step.setup} onActivated={showRecovery} />;
-  if (step.kind === 'recovery') return <MfaRecoveryStep recoveryCodes={step.recoveryCodes} />;
+  if (step.kind === 'recovery')
+    return <MfaRecoveryStep recoveryCodes={step.recoveryCodes} onDone={onDone} />;
   if (step.kind !== 'emailCode') return null;
   return (
     <MfaEmailCodeStep
@@ -69,13 +74,15 @@ function ActivationSteps({ step, onStepChange }: Readonly<StepProps>): React.JSX
  * Activar la verificación en dos pasos: elegir método (app o correo), contraseña, el primer código
  * (QR de la app o el que llega al correo) y los códigos de recuperación.
  */
-export function MfaSetupScreen(): React.JSX.Element {
+export function MfaSetupScreen({
+  onDone,
+}: Readonly<{ onDone?: (() => void) | undefined }>): React.JSX.Element {
   const [step, setStep] = useState<EnrollmentStep>({ kind: 'method' });
 
   return (
     <>
       <StartSteps step={step} onStepChange={setStep} />
-      <ActivationSteps step={step} onStepChange={setStep} />
+      <ActivationSteps step={step} onStepChange={setStep} onDone={onDone} />
     </>
   );
 }

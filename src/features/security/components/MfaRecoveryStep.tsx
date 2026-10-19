@@ -13,6 +13,7 @@ import { RECOVERY_CODE_CARD_STYLE, RECOVERY_CODES_STYLE } from './MfaRecoverySte
 
 interface MfaRecoveryStepProps {
   recoveryCodes: readonly string[];
+  onDone?: (() => void) | undefined;
 }
 
 function shareRecoveryCodes(recoveryCodes: readonly string[]): void {
@@ -37,11 +38,13 @@ function RecoveryCodeGrid({ recoveryCodes }: Readonly<MfaRecoveryStepProps>): Re
 
 /**
  * Paso 3: los diez códigos de recuperación, que solo se enseñan ahora. La sesión ya viene verificada
- * con el segundo factor: al terminar, el estado se refresca y la zona de administración se abre sola.
+ * con el segundo factor: al terminar, el estado se refresca y la zona de administración se abre sola
+ * o, si se activó desde Ajustes, se vuelve a ellos con `onDone`.
  * El estado no se refresca antes porque desmontaría esta pantalla antes de guardar los códigos.
  */
 export function MfaRecoveryStep({
   recoveryCodes,
+  onDone,
 }: Readonly<MfaRecoveryStepProps>): React.JSX.Element {
   const queryClient = useQueryClient();
 
@@ -67,6 +70,7 @@ export function MfaRecoveryStep({
             isFullWidth
             onPress={() => {
               void queryClient.invalidateQueries({ queryKey: getMfaGetStatusQueryKey() });
+              onDone?.();
             }}
           />
         </>

@@ -3,7 +3,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { findApiCall, mockApi } from '@/test/mock-api';
-import { resetMockRouter } from '@/test/mock-router';
+import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { AccountSecurityScreen } from './AccountSecurityScreen';
@@ -72,6 +72,23 @@ describe('AccountSecurityScreen', () => {
     expect(await screen.findByText('Esta sesión')).toBeOnTheScreen();
     expect(screen.getByText('iPad · app')).toBeOnTheScreen();
     expect(await screen.findByText(/cambió el servicio «Clase particular»/)).toBeOnTheScreen();
+  });
+
+  it('offers to turn on the second factor when it is off', async () => {
+    mockApi({ 'GET /v1/me/mfa': { isEnabled: false, recoveryCodesRemaining: 0 } });
+    renderScreen(<AccountSecurityScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Activar' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/mfa-setup');
+  });
+
+  it('does not offer to turn it on when it is already active', async () => {
+    renderScreen(<AccountSecurityScreen />);
+
+    await screen.findByText('Activa');
+
+    expect(screen.queryByRole('button', { name: 'Activar' })).not.toBeOnTheScreen();
   });
 
   it('closes another device but offers no button for this one', async () => {
