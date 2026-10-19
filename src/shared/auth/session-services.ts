@@ -33,6 +33,8 @@ export interface SessionServices {
   /** Arranque en frío: intercambia el refresh token guardado por un access token en memoria. */
   restoreSession: () => Promise<void>;
   signOut: (options?: { shouldRevokeEverywhere?: boolean }) => Promise<void>;
+  /** Un access token vigente (renovado si hace falta) para lo que no pasa por la API normal, como el tiempo real. */
+  refreshAccessToken: () => Promise<string | null>;
 }
 
 async function requestRotatedTokens(
@@ -130,5 +132,5 @@ export function createSessionServices(config: SessionServicesConfig): SessionSer
     await signOutLocally();
   }
 
-  return { apiClient, startSession, restoreSession, signOut };
+  return { apiClient, startSession, restoreSession, signOut, refreshAccessToken };
 }

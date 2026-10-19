@@ -12,17 +12,25 @@ import type {
   MessageListResponseDto,
 } from '@/shared/api/generated/model';
 
+import { useRealtimeStatusStore } from '@/shared/realtime/realtime-status-store';
+
 import { useActiveCenterId } from './useActiveCenterId';
 
-/** Sondeo corto: sin conexión en tiempo real, la bandeja y el hilo se refrescan solos. */
+/** Sondeo corto mientras no hay tiempo real: la bandeja y el hilo se refrescan solos. */
 const CONVERSATIONS_POLL_MS = 15_000;
 const MESSAGES_POLL_MS = 5_000;
+/** Con el WebSocket abierto el sondeo es solo una red de seguridad (avisos perdidos). */
+const CONVERSATIONS_SAFETY_POLL_MS = 120_000;
+const MESSAGES_SAFETY_POLL_MS = 60_000;
 
 /** Las conversaciones de quien mira, con los mensajes sin leer. */
 export function useConversations(): UseQueryResult<ConversationListResponseDto, ErrorType> {
+  const isRealtimeConnected = useRealtimeStatusStore((state) => state.isConnected);
   return useQuery(
     getChatListConversationsQueryOptions(useActiveCenterId(), {
-      query: { refetchInterval: CONVERSATIONS_POLL_MS },
+      query: {
+        refetchInterval: isRealtimeConnected ? CONVERSATIONS_SAFETY_POLL_MS : CONVERSATIONS_POLL_MS,
+      },
     }),
   );
 }
@@ -36,9 +44,10 @@ export function useChatContacts(): UseQueryResult<ContactListResponseDto, ErrorT
 export function useConversationMessages(
   conversationId: string,
 ): UseQueryResult<MessageListResponseDto, ErrorType> {
+  const isRealtimeConnected = useRealtimeStatusStore((state) => state.isConnected);
   return useQuery(
     getChatListMessagesQueryOptions(useActiveCenterId(), conversationId, undefined, {
-      query: { refetchInterval: MESSAGES_POLL_MS },
+      query: { refetchInterval: isRealtimeConnected ? MESSAGES_SAFETY_POLL_MS : MESSAGES_POLL_MS },
     }),
   );
 }
