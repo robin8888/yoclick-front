@@ -39,14 +39,14 @@ describe('CenterReadyScreen', () => {
     expect(screen.getByText('https://yoclick.app/j/VERTI9')).toBeOnTheScreen();
   });
 
-  it('shares the code with the link', () => {
+  it('shares the center name and the code', () => {
     const shareSpy = jest.spyOn(Share, 'share').mockResolvedValue({ action: 'sharedAction' });
     renderScreen(<CenterReadyScreen />);
 
     fireEvent.press(screen.getByRole('button', { name: 'Compartir el código' }));
 
     expect(shareSpy).toHaveBeenCalledWith({
-      message: expect.stringContaining('https://yoclick.app/j/VERTI9') as string,
+      message: expect.stringContaining('VERTI9') as string,
     });
   });
 

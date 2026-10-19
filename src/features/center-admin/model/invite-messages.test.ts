@@ -15,7 +15,6 @@ describe('buildInviteMessage', () => {
 
     expect(message).toContain('Studio Norte');
     expect(message).toContain('NORTE7');
-    expect(message).toContain('https://yoclick.app/j/NORTE7');
   });
 });
 

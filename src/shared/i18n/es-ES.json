@@ -433,7 +433,7 @@
       "joinCodeLabel": "Código para tus clientes",
       "joinLinkLabel": "Enlace de invitación",
       "shareAction": "Compartir el código",
-      "shareMessage": "Únete a {{centerName}} en Yoclick con el código {{joinCode}}: {{joinLink}}",
+      "shareMessage": "{{centerName}} te invita a unirte en Yoclick. Descarga la app Yoclick, pulsa «Tengo un código» y escribe: {{joinCode}}",
       "enterAction": "Ir a mi panel"
     },
     "logo": {
@@ -2058,7 +2058,7 @@
       "copyCodeAction": "Copiar código",
       "copiedAction": "Copiado",
       "anotherAction": "Invitar a otra persona",
-      "shareMessage": "{{centerName}} te invita como {{roleWord}}. Abre la app de Yoclick, pulsa «Tengo un código» y escribe: {{code}}. También puedes entrar desde este enlace: {{link}}",
+      "shareMessage": "{{centerName}} te invita como {{roleWord}}. Abre la app de Yoclick, pulsa «Tengo un código» y escribe: {{code}}.",
       "expiresOn": "Caduca el {{date}}",
       "resendAction": "Reenviar",
       "resendLabel": "Reenviar la invitación a {{recipient}} con un código nuevo",
@@ -2092,7 +2092,7 @@
       "regenerateTitle": "¿Cambiar el código?",
       "regenerateMessage": "El QR y el enlace actuales dejarán de funcionar. Quien ya se unió no se ve afectado. Tendrás que imprimir el cartel de nuevo.",
       "regenerateConfirm": "Cambiar código",
-      "shareMessage": "Únete a {{centerName}} en la app. Código: {{joinCode}}. Enlace: {{joinLink}}"
+      "shareMessage": "{{centerName}} te invita a unirte en Yoclick. Descarga la app Yoclick, pulsa «Tengo un código» y escribe: {{joinCode}}"
     },
     "poster": {
       "title": "Cartel para recepción",
