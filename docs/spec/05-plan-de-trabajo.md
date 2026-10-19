@@ -49,6 +49,32 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (19 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 16 oct en lo que cambia. Todo lo de este día está subido (front `3b9afee`, back `2a27665`). Back: lint, tsc, 1185 unitarios y 1005 e2e en verde; front: lint, typecheck y 2240 tests en verde.
+
+### Hecho el 19 de octubre
+- ✅ **Invitaciones sin enlace roto**: el mensaje de WhatsApp lleva el nombre del centro y el código (el enlace `yoclick.app/j/…` daba error mientras el dominio no esté publicado).
+- ✅ **Segundo factor voluntario desde Ajustes**: botón «Activar» en Seguridad.
+- ✅ **Reembolsos**: se hacen en el panel de Stripe del centro; el back guarda lo devuelto (`charge.refunded`) y la lista de cobros dice «Reembolsado». Un reembolso total anula el bono.
+- ✅ **Citas bloqueadas tras un reembolso total**: las reservas anteriores se conservan pero no se pueden iniciar ni confirmar (409 `PASS_REQUIRED`) hasta tener un bono nuevo; se ven como «Necesita bono nuevo».
+- ✅ **Barra de navegación** respeta «reducir movimiento».
+- ✅ **Lista de espera**: clases grupales llenas con «Apuntarme a la lista de espera»; al liberarse una plaza se ofrece a la primera persona, que tiene 12 horas para confirmar (la plaza queda retenida) y si no pasa a la siguiente; avisos y push; «Mis citas» muestra puesto u oferta.
+- ✅ **Fallo corregido**: al cancelar un cliente su reserva en una clase grupal suelta, la clase se cancelaba para todos.
+- ✅ **Recibos con IVA**: número correlativo por centro y año, IVA del 21 % incluido en el precio de los bonos, pantalla de recibo con PDF para compartir, «Recibos» en Mis bonos y en Cobros online; sin razón social, NIF y dirección fiscal no se pueden activar los cobros online.
+- ✅ **Chat en tiempo real** por WebSocket (`/v1/realtime`): avisos sin contenido y recarga por la API; el sondeo queda como red de seguridad.
+
+### Pendiente
+1. ⬜ Probar en el móvil: lista de espera (apuntarse, oferta, confirmar), recibos y PDF, chat en tiempo real y el bloqueo de citas tras un reembolso (hace falta reconstruir la app si no se hizo tras `expo-blur`).
+2. ⬜ **RGPD de menores** (consentimiento del tutor, acceso y borrado) junto con todo el bloque legal, al final.
+3. ⬜ **Stripe real antes de las tiendas**: el webhook de Connect debe escuchar `charge.refunded` y `payment_intent.succeeded`; recrear cuentas antiguas; Apple Pay, `account.updated` y página de retorno.
+4. ⬜ Chat en tiempo real con varias instancias de la API: hace falta Redis (hoy el registro está en memoria).
+5. ⬜ Lista de espera: vista para el equipo y push con más detalle.
+6. ⬜ Publicar `yoclick.app` (enlaces `/j/` e `/i/`, QR con cámara nativa) y volver a poner el enlace en los mensajes.
+7. ⬜ Lo del 15 oct que sigue: tutor crea a un menor, aviso de bono a punto de caducar, silenciar/borrar mensajes.
+
+---
+
 ## Estado de avance (16 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 15 oct en lo que cambia. Todo lo de este día está subido (front `c973f12`, back `e7a64d7`).
