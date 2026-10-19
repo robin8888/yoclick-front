@@ -53,6 +53,7 @@ export function buildBooking(overrides: Partial<BookingResponseDto> = {}): Booki
     checkedInAt: null,
     actualDurationSeconds: null,
     createdAt: '2026-10-05T10:00:00.000Z',
+    needsNewPass: false,
     createdBy: null,
     source: 'single',
     ...overrides,

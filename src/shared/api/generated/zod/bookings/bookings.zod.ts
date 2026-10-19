@@ -94,6 +94,7 @@ export const BookingsCreateResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsCreateResponseActualDurationSecondsMin).max(bookingsCreateResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsCreateResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsCreateResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -187,6 +188,7 @@ export const BookingsListMineResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsListMineResponseBookingsItemActualDurationSecondsMin).max(bookingsListMineResponseBookingsItemActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsListMineResponseBookingsItemCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsListMineResponseBookingsItemCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -272,6 +274,7 @@ export const BookingsCancelResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsCancelResponseBookingActualDurationSecondsMin).max(bookingsCancelResponseBookingActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsCancelResponseBookingCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsCancelResponseBookingCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -363,6 +366,7 @@ export const BookingsJoinSessionResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsJoinSessionResponseActualDurationSecondsMin).max(bookingsJoinSessionResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsJoinSessionResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsJoinSessionResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -453,6 +457,7 @@ export const BookingsMoveToSessionResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsMoveToSessionResponseActualDurationSecondsMin).max(bookingsMoveToSessionResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsMoveToSessionResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsMoveToSessionResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -543,6 +548,7 @@ export const BookingsRescheduleResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsRescheduleResponseActualDurationSecondsMin).max(bookingsRescheduleResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsRescheduleResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsRescheduleResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -626,6 +632,7 @@ export const BookingsStartResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsStartResponseActualDurationSecondsMin).max(bookingsStartResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsStartResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsStartResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -718,6 +725,7 @@ export const BookingsEndResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsEndResponseActualDurationSecondsMin).max(bookingsEndResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsEndResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsEndResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -801,6 +809,7 @@ export const BookingsConfirmAttendanceResponse = zod.object({
   "actualDurationSeconds": zod.int().min(bookingsConfirmAttendanceResponseActualDurationSecondsMin).max(bookingsConfirmAttendanceResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(bookingsConfirmAttendanceResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(bookingsConfirmAttendanceResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -910,6 +919,7 @@ export const AgendaGetDayResponse = zod.object({
   "actualDurationSeconds": zod.int().min(agendaGetDayResponseEntriesItemBookingActualDurationSecondsMin).max(agendaGetDayResponseEntriesItemBookingActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaGetDayResponseEntriesItemBookingCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaGetDayResponseEntriesItemBookingCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -1034,6 +1044,7 @@ export const AgendaCreateBookingResponse = zod.object({
   "actualDurationSeconds": zod.int().min(agendaCreateBookingResponseActualDurationSecondsMin).max(agendaCreateBookingResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaCreateBookingResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaCreateBookingResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -1117,6 +1128,7 @@ export const AgendaCancelBookingResponse = zod.object({
   "actualDurationSeconds": zod.int().min(agendaCancelBookingResponseActualDurationSecondsMin).max(agendaCancelBookingResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaCancelBookingResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaCancelBookingResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -1207,6 +1219,7 @@ export const AgendaJoinGroupSessionResponse = zod.object({
   "actualDurationSeconds": zod.int().min(agendaJoinGroupSessionResponseActualDurationSecondsMin).max(agendaJoinGroupSessionResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaJoinGroupSessionResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaJoinGroupSessionResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -1576,6 +1589,7 @@ export const AgendaRescheduleBookingResponse = zod.object({
   "actualDurationSeconds": zod.int().min(agendaRescheduleBookingResponseActualDurationSecondsMin).max(agendaRescheduleBookingResponseActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(agendaRescheduleBookingResponseCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(agendaRescheduleBookingResponseCreatedByMembershipIdRegExp),
   "fullName": zod.string(),
@@ -1758,6 +1772,7 @@ export const SessionRecordsListResponse = zod.object({
   "actualDurationSeconds": zod.int().min(sessionRecordsListResponseRecordsItemBookingActualDurationSecondsMin).max(sessionRecordsListResponseRecordsItemBookingActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(sessionRecordsListResponseRecordsItemBookingCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(sessionRecordsListResponseRecordsItemBookingCreatedByMembershipIdRegExp),
   "fullName": zod.string(),

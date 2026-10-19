@@ -65,6 +65,7 @@
     "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera",
     "CHECKIN_CODE_INVALID": "Este código QR no es válido o ha caducado. Pide que lo actualicen",
     "CHECKIN_NO_BOOKING": "Esta persona no tiene una cita confirmada para registrar ahora",
+    "PASS_REQUIRED": "Esta cita está bloqueada: su bono se reembolsó. Hace falta un bono nuevo para atenderla",
     "BOOKING_NOT_STARTABLE": "Esta clase no se puede iniciar ahora: solo desde 15 minutos antes hasta que termina",
     "SESSION_ALREADY_OPEN": "Ya tienes otra clase en marcha. Termínala antes de iniciar esta",
     "SESSION_NOT_STARTED": "Esta clase todavía no se ha iniciado",
@@ -600,7 +601,8 @@
         "cancelled": "Cancelada",
         "attended": "Realizada",
         "no_show": "No asististe",
-        "past": "Ya pasada"
+        "past": "Ya pasada",
+        "needs_new_pass": "Necesita bono nuevo"
       }
     },
     "reschedule": {
@@ -933,6 +935,7 @@
     "attendance": {
       "title": "Asistencia",
       "pendingText": "Pendiente de confirmar",
+      "needsNewPassText": "Necesita un bono nuevo",
       "confirmedText": "Asistió",
       "confirmLabel": "Confirmar asistencia de {{name}}",
       "confirmedLabel": "Asistencia confirmada de {{name}}",

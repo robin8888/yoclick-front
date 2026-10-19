@@ -12,6 +12,8 @@ export interface SessionAttendee {
   /** Ya se confirmó que vino (QR o check): no se puede deshacer, el bono ya se descontó. */
   isConfirmed: boolean;
   isCancelled: boolean;
+  /** Su bono se reembolsó: no se puede confirmar hasta que tenga uno nuevo. */
+  needsNewPass: boolean;
 }
 
 /** Las personas de una clase, en el orden de la agenda y sin las que cancelaron. */
@@ -28,6 +30,7 @@ export function listSessionAttendees(
       isEnrollment: booking.source === 'enrollment',
       isConfirmed: booking.checkedInAt !== null || booking.status === 'attended',
       isCancelled: false,
+      needsNewPass: booking.needsNewPass,
     }));
 }
 

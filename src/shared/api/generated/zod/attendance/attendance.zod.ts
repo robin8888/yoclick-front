@@ -157,6 +157,7 @@ export const AttendanceCheckInResponse = zod.object({
   "actualDurationSeconds": zod.int().min(attendanceCheckInResponseBookingActualDurationSecondsMin).max(attendanceCheckInResponseBookingActualDurationSecondsMax).nullable(),
   "source": zod.enum(['single', 'enrollment']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(attendanceCheckInResponseBookingCreatedAtRegExp),
+  "needsNewPass": zod.boolean(),
   "createdBy": zod.object({
   "membershipId": zod.uuid().regex(attendanceCheckInResponseBookingCreatedByMembershipIdRegExp),
   "fullName": zod.string(),

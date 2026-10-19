@@ -21,6 +21,18 @@ interface AttendanceCheckRowProps {
   onConfirmPress: () => void;
 }
 
+function resolveStatusText(attendee: SessionAttendee): string {
+  if (attendee.isConfirmed) return i18n.t('staffAgenda.attendance.confirmedText');
+  return attendee.needsNewPass
+    ? i18n.t('staffAgenda.attendance.needsNewPassText')
+    : i18n.t('staffAgenda.attendance.pendingText');
+}
+
+function resolveStatusColor(attendee: SessionAttendee): 'success' | 'warning' | 'ink2' {
+  if (attendee.isConfirmed) return 'success';
+  return attendee.needsNewPass ? 'warning' : 'ink2';
+}
+
 /**
  * Una persona de la clase: su foto, su nombre y el check de asistencia. Confirmada, el check queda
  * relleno y no se puede deshacer (el bono ya se descontó); nunca depende solo del color.
@@ -36,7 +48,7 @@ export function AttendanceCheckRow({
   const label = isConfirmed
     ? i18n.t('staffAgenda.attendance.confirmedLabel', { name: fullName })
     : i18n.t('staffAgenda.attendance.confirmLabel', { name: fullName });
-  const isInteractive = !isConfirmed && !isDisabled && !isBusy;
+  const isInteractive = !isConfirmed && !attendee.needsNewPass && !isDisabled && !isBusy;
 
   return (
     <View style={createAttendanceRowStyle(theme)}>
@@ -45,10 +57,8 @@ export function AttendanceCheckRow({
         <Text variant="bodyStrong" numberOfLines={1}>
           {fullName}
         </Text>
-        <Text variant="caption" color={isConfirmed ? 'success' : 'ink2'}>
-          {isConfirmed
-            ? i18n.t('staffAgenda.attendance.confirmedText')
-            : i18n.t('staffAgenda.attendance.pendingText')}
+        <Text variant="caption" color={resolveStatusColor(attendee)}>
+          {resolveStatusText(attendee)}
         </Text>
       </View>
       <Pressable

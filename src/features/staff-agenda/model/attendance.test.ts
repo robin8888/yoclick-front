@@ -9,6 +9,7 @@ function buildEntry(overrides: {
   status?: string;
   checkedInAt?: string | null;
   source?: string;
+  needsNewPass?: boolean;
 }): AgendaResponseDtoEntriesItem {
   return {
     booking: {
@@ -16,6 +17,7 @@ function buildEntry(overrides: {
       status: overrides.status ?? 'confirmed',
       checkedInAt: overrides.checkedInAt ?? null,
       source: overrides.source ?? 'single',
+      needsNewPass: overrides.needsNewPass ?? false,
       session: { id: overrides.sessionId },
     },
     client: { membershipId: `m-${overrides.bookingId}`, fullName: overrides.name, photoUrl: null },
@@ -47,6 +49,19 @@ describe('listSessionAttendees', () => {
   it('marks as confirmed those who arrived or whose class was closed', () => {
     const confirmed = listSessionAttendees(entries, 's1').map(({ isConfirmed }) => isConfirmed);
     expect(confirmed).toEqual([false, true, true]);
+  });
+});
+
+describe('listSessionAttendees with a refunded pass', () => {
+  it('flags the people whose booking is blocked until they have a new pass', () => {
+    const entries = [
+      buildEntry({ bookingId: 'b1', sessionId: 's1', name: 'Ana', needsNewPass: true }),
+      buildEntry({ bookingId: 'b2', sessionId: 's1', name: 'Luis' }),
+    ];
+
+    const blocked = listSessionAttendees(entries, 's1').map((attendee) => attendee.needsNewPass);
+
+    expect(blocked).toEqual([true, false]);
   });
 });
 
