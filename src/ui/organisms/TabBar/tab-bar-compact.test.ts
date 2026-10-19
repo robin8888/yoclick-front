@@ -1,4 +1,9 @@
-import { nextCompactValue } from './tab-bar-compact';
+import {
+  COMPACT_DURATION_MS,
+  nextCompactValue,
+  REDUCED_MOTION_DURATION_MS,
+  resolveCompactDuration,
+} from './tab-bar-compact';
 
 describe('nextCompactValue', () => {
   it.each([
@@ -39,5 +44,17 @@ describe('nextCompactValue', () => {
     },
   ])('$caseName', ({ offsetY, lastOffsetY, current, expected }) => {
     expect(nextCompactValue({ offsetY, lastOffsetY, current })).toBe(expected);
+  });
+});
+
+describe('resolveCompactDuration', () => {
+  it('animates the shrink normally', () => {
+    expect(resolveCompactDuration({ isReducedMotionEnabled: false })).toBe(COMPACT_DURATION_MS);
+  });
+
+  it('changes instantly when the system asks to reduce motion', () => {
+    expect(resolveCompactDuration({ isReducedMotionEnabled: true })).toBe(
+      REDUCED_MOTION_DURATION_MS,
+    );
   });
 });

@@ -5,11 +5,23 @@ const SCROLL_THRESHOLD_PX = 4;
 /** No se encoge hasta haber bajado esto. */
 const COMPACT_AFTER_PX = 40;
 export const COMPACT_DURATION_MS = 280;
+/** Con «reducir movimiento» el cambio es instantáneo (convención del proyecto: 1 ms). */
+export const REDUCED_MOTION_DURATION_MS = 1;
 
 /** 0 = barra a todo su ancho, 1 = barra encogida. Es de módulo: el scroll y la barra son componentes distintos. */
 export const compactTabBar = new Animated.Value(0);
 let lastScrollOffsetY = 0;
 let currentCompactValue = 0;
+let isReducedMotionEnabled = false;
+
+export function resolveCompactDuration(input: { isReducedMotionEnabled: boolean }): number {
+  return input.isReducedMotionEnabled ? REDUCED_MOTION_DURATION_MS : COMPACT_DURATION_MS;
+}
+
+/** La barra la sincroniza con la preferencia del sistema; el scroll vive fuera de React. */
+export function setTabBarReducedMotion(isEnabled: boolean): void {
+  isReducedMotionEnabled = isEnabled;
+}
 
 /** Bajar más de `COMPACT_AFTER_PX` la encoge; subir la devuelve a su ancho; el resto no cambia. */
 export function nextCompactValue(input: {
@@ -35,7 +47,7 @@ export function updateCompactTabBar(offsetY: number): void {
     // El ancho es una propiedad de diseño: no admite el motor nativo.
     Animated.timing(compactTabBar, {
       toValue: next,
-      duration: COMPACT_DURATION_MS,
+      duration: resolveCompactDuration({ isReducedMotionEnabled }),
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: false,
     }).start();

@@ -1,9 +1,10 @@
+import { useEffect } from 'react';
 import { Animated, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useTheme } from '@/shared/theme';
+import { useReducedMotion, useTheme } from '@/shared/theme';
 
-import { compactTabBar } from './tab-bar-compact';
+import { compactTabBar, setTabBarReducedMotion } from './tab-bar-compact';
 import { createTabBarMarginStyle, createTabBarStyle, getTabBarWidths } from './TabBar.styles';
 import { TabBarButton } from './TabBarButton';
 import { TabBarGlass } from './TabBarGlass';
@@ -18,11 +19,17 @@ export function TabBar({ tabs }: Readonly<TabBarProps>): React.JSX.Element {
   const theme = useTheme();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { width: windowWidth } = useWindowDimensions();
+  const isReducedMotionEnabled = useReducedMotion();
   const { fullWidth, compactWidth } = getTabBarWidths(theme, windowWidth);
   const barWidth = compactTabBar.interpolate({
     inputRange: [0, 1],
     outputRange: [fullWidth, compactWidth],
   });
+
+  // El scroll que encoge la barra no es un componente: se le pasa la preferencia del sistema.
+  useEffect(() => {
+    setTabBarReducedMotion(isReducedMotionEnabled);
+  }, [isReducedMotionEnabled]);
 
   return (
     <View style={createTabBarMarginStyle(theme, bottomInset)}>
