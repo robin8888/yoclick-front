@@ -23,7 +23,8 @@ export const PaymentsGetStatusHeader = zod.object({
 })
 
 export const PaymentsGetStatusResponse = zod.object({
-  "status": zod.enum(['not_included', 'not_started', 'pending', 'ready'])
+  "status": zod.enum(['not_included', 'not_started', 'pending', 'ready']),
+  "isFiscalDataComplete": zod.boolean()
 })
 
 /**
@@ -59,6 +60,7 @@ export const PaymentsListResponse = zod.object({
   "clientName": zod.string(),
   "amountCents": zod.int().min(paymentsListResponsePaymentsItemAmountCentsMin).max(paymentsListResponsePaymentsItemAmountCentsMax),
   "refundedCents": zod.int().min(paymentsListResponsePaymentsItemRefundedCentsMin).max(paymentsListResponsePaymentsItemRefundedCentsMax),
+  "receiptNumber": zod.string().nullable(),
   "status": zod.enum(['pending', 'succeeded', 'failed']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(paymentsListResponsePaymentsItemCreatedAtRegExp),
   "paidAt": zod.iso.datetime({"offset":true}).regex(paymentsListResponsePaymentsItemPaidAtRegExp).nullable()
@@ -160,4 +162,95 @@ export const PaymentsOpenDashboardResponse = zod.object({
  * @summary Avisos de Stripe. Verifica la firma `Stripe-Signature` (SEC-66) y relee el cobro antes de dar nada por pagado.
  */
 export const WebhooksStripeResponse = zod.void()
+
+/**
+ * @summary Los cobros ya pagados de la propia persona, con el número de su recibo.
+ */
+export const paymentsListMinePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PaymentsListMineParams = zod.object({
+  "centerId": zod.uuid().regex(paymentsListMinePathCenterIdRegExp)
+})
+
+export const PaymentsListMineHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const paymentsListMineResponsePaymentsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const paymentsListMineResponsePaymentsItemAmountCentsMin = -9007199254740991;
+export const paymentsListMineResponsePaymentsItemAmountCentsMax = 9007199254740991;
+
+export const paymentsListMineResponsePaymentsItemRefundedCentsMin = -9007199254740991;
+export const paymentsListMineResponsePaymentsItemRefundedCentsMax = 9007199254740991;
+
+export const paymentsListMineResponsePaymentsItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const paymentsListMineResponsePaymentsItemPaidAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PaymentsListMineResponse = zod.object({
+  "payments": zod.array(zod.object({
+  "id": zod.uuid().regex(paymentsListMineResponsePaymentsItemIdRegExp),
+  "kind": zod.enum(['pass']),
+  "label": zod.string(),
+  "clientName": zod.string(),
+  "amountCents": zod.int().min(paymentsListMineResponsePaymentsItemAmountCentsMin).max(paymentsListMineResponsePaymentsItemAmountCentsMax),
+  "refundedCents": zod.int().min(paymentsListMineResponsePaymentsItemRefundedCentsMin).max(paymentsListMineResponsePaymentsItemRefundedCentsMax),
+  "receiptNumber": zod.string().nullable(),
+  "status": zod.enum(['pending', 'succeeded', 'failed']),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(paymentsListMineResponsePaymentsItemCreatedAtRegExp),
+  "paidAt": zod.iso.datetime({"offset":true}).regex(paymentsListMineResponsePaymentsItemPaidAtRegExp).nullable()
+}))
+})
+
+/**
+ * @summary El recibo de un cobro pagado, con la base imponible y el IVA (los precios lo llevan incluido). La persona cliente solo ve los suyos; 404 si no existe o aún no está pagado.
+ */
+export const paymentsGetReceiptPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const paymentsGetReceiptPathPaymentIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PaymentsGetReceiptParams = zod.object({
+  "centerId": zod.uuid().regex(paymentsGetReceiptPathCenterIdRegExp),
+  "paymentId": zod.uuid().regex(paymentsGetReceiptPathPaymentIdRegExp)
+})
+
+export const PaymentsGetReceiptHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const paymentsGetReceiptResponseIssuedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const paymentsGetReceiptResponseBaseCentsMin = -9007199254740991;
+export const paymentsGetReceiptResponseBaseCentsMax = 9007199254740991;
+
+export const paymentsGetReceiptResponseVatRatePercentMin = -9007199254740991;
+export const paymentsGetReceiptResponseVatRatePercentMax = 9007199254740991;
+
+export const paymentsGetReceiptResponseVatCentsMin = -9007199254740991;
+export const paymentsGetReceiptResponseVatCentsMax = 9007199254740991;
+
+export const paymentsGetReceiptResponseTotalCentsMin = -9007199254740991;
+export const paymentsGetReceiptResponseTotalCentsMax = 9007199254740991;
+
+export const paymentsGetReceiptResponseRefundedCentsMin = -9007199254740991;
+export const paymentsGetReceiptResponseRefundedCentsMax = 9007199254740991;
+
+
+
+export const PaymentsGetReceiptResponse = zod.object({
+  "receiptNumber": zod.string(),
+  "issuedAt": zod.iso.datetime({"offset":true}).regex(paymentsGetReceiptResponseIssuedAtRegExp),
+  "seller": zod.object({
+  "legalName": zod.string(),
+  "taxId": zod.string().nullable(),
+  "taxAddress": zod.string().nullable()
+}),
+  "buyerName": zod.string(),
+  "concept": zod.string(),
+  "baseCents": zod.int().min(paymentsGetReceiptResponseBaseCentsMin).max(paymentsGetReceiptResponseBaseCentsMax),
+  "vatRatePercent": zod.int().min(paymentsGetReceiptResponseVatRatePercentMin).max(paymentsGetReceiptResponseVatRatePercentMax),
+  "vatCents": zod.int().min(paymentsGetReceiptResponseVatCentsMin).max(paymentsGetReceiptResponseVatCentsMax),
+  "totalCents": zod.int().min(paymentsGetReceiptResponseTotalCentsMin).max(paymentsGetReceiptResponseTotalCentsMax),
+  "refundedCents": zod.int().min(paymentsGetReceiptResponseRefundedCentsMin).max(paymentsGetReceiptResponseRefundedCentsMax)
+})
 

@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 
 import { ActingForSelector } from '@/features/guardians';
 import { LoadErrorState } from '@/features/join';
+import { MyReceiptsSection } from '@/features/receipts';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Text } from '@/ui/atoms/Text';
@@ -123,6 +124,7 @@ export function MyPassesScreen(): React.JSX.Element {
       ) : null}
       <MyPassList passes={myPasses} canPayOnline={canPayOnline} />
       <RateOffersSection />
+      <MyReceiptsSection />
     </ScreenTemplate>
   );
 }

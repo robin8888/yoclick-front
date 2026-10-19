@@ -450,6 +450,8 @@ export * from './rateListResponseDtoRatesItem.ts';
 export * from './rateListResponseDtoRatesItemServicesItem.ts';
 export * from './rateResponseDto.ts';
 export * from './rateResponseDtoServicesItem.ts';
+export * from './receiptResponseDto.ts';
+export * from './receiptResponseDtoSeller.ts';
 export * from './recordCompletionRequestDto.ts';
 export * from './refreshRequestDto.ts';
 export * from './refreshResponseDto.ts';

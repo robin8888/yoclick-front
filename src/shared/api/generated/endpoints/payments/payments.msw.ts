@@ -18,19 +18,22 @@ import type {
   PaymentConfirmationResponseDto,
   PaymentListResponseDto,
   PaymentSheetResponseDto,
-  PaymentsStatusResponseDto
+  PaymentsStatusResponseDto,
+  ReceiptResponseDto
 } from '../../model';
 
 import {
   getPaymentsConfirmResponseMock,
+  getPaymentsGetReceiptResponseMock,
   getPaymentsGetStatusResponseMock,
+  getPaymentsListMineResponseMock,
   getPaymentsListResponseMock,
   getPaymentsOpenDashboardResponseMock,
   getPaymentsPayPassResponseMock,
   getPaymentsStartOnboardingResponseMock
 } from './payments.faker.ts';
 
-export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsPayPassResponseMock, getPaymentsConfirmResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsOpenDashboardResponseMock } from './payments.faker.ts';
+export { getPaymentsGetStatusResponseMock, getPaymentsListResponseMock, getPaymentsPayPassResponseMock, getPaymentsConfirmResponseMock, getPaymentsStartOnboardingResponseMock, getPaymentsOpenDashboardResponseMock, getPaymentsListMineResponseMock, getPaymentsGetReceiptResponseMock } from './payments.faker.ts';
 
 
 export const getPaymentsGetStatusMockHandler = (overrideResponse?: PaymentsStatusResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentsStatusResponseDto> | PaymentsStatusResponseDto), options?: RequestHandlerOptions) => {
@@ -114,6 +117,30 @@ export const getWebhooksStripeMockHandler = (overrideResponse?: void | ((info: P
       })
   }, options)
 }
+
+export const getPaymentsListMineMockHandler = (overrideResponse?: PaymentListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PaymentListResponseDto> | PaymentListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/payments/mine', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPaymentsListMineResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPaymentsGetReceiptMockHandler = (overrideResponse?: ReceiptResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ReceiptResponseDto> | ReceiptResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/payments/:paymentId/receipt', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPaymentsGetReceiptResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getPaymentsMock = () => [
   getPaymentsGetStatusMockHandler(),
   getPaymentsListMockHandler(),
@@ -121,5 +148,7 @@ export const getPaymentsMock = () => [
   getPaymentsConfirmMockHandler(),
   getPaymentsStartOnboardingMockHandler(),
   getPaymentsOpenDashboardMockHandler(),
-  getWebhooksStripeMockHandler()
+  getWebhooksStripeMockHandler(),
+  getPaymentsListMineMockHandler(),
+  getPaymentsGetReceiptMockHandler()
 ]

@@ -16,6 +16,8 @@ export type OnlinePaymentsStatus = (typeof ONLINE_PAYMENTS_STATUSES)[number];
 interface OnlinePaymentsSetup {
   /** `null` mientras se consulta. */
   status: OnlinePaymentsStatus | null;
+  /** Razón social, NIF y dirección fiscal rellenos: sin ellos no se puede activar el cobro. */
+  isFiscalDataComplete: boolean;
   /** Abre el formulario de alta de Stripe en el navegador. */
   startOnboarding: () => void;
   /** Abre el panel de Stripe del centro (reembolsos, disputas, pagos a su banco). */
@@ -52,6 +54,7 @@ export function useOnlinePaymentsSetup(): OnlinePaymentsSetup {
     status:
       ONLINE_PAYMENTS_STATUSES.find((candidate) => candidate === String(status.data?.status)) ??
       null,
+    isFiscalDataComplete: status.data?.isFiscalDataComplete ?? true,
     startOnboarding: () => {
       onboarding.mutate();
     },

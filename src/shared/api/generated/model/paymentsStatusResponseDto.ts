@@ -9,4 +9,5 @@ import type { PaymentsStatusResponseDtoStatus } from './paymentsStatusResponseDt
 
 export interface PaymentsStatusResponseDto {
   status: PaymentsStatusResponseDtoStatus;
+  isFiscalDataComplete: boolean;
 }

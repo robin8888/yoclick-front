@@ -30,7 +30,8 @@ import type {
   PaymentListResponseDto,
   PaymentSheetResponseDto,
   PaymentsStatusResponseDto,
-  ProblemDetailsDto
+  ProblemDetailsDto,
+  ReceiptResponseDto
 } from '../../model';
 
 import { apiMutator } from '../../../api-mutator.ts';
@@ -625,3 +626,211 @@ export const useWebhooksStripe = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getWebhooksStripeMutationOptions(options), queryClient);
     }
+    export const getPaymentsListMineUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/payments/mine`
+}
+
+/**
+ * @summary Los cobros ya pagados de la propia persona, con el número de su recibo.
+ */
+export const paymentsListMine = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<PaymentListResponseDto> => {
+
+  return apiMutator<PaymentListResponseDto>(getPaymentsListMineUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPaymentsListMineQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/payments/mine`
+    ] as const;
+    }
+
+
+export const getPaymentsListMineQueryOptions = <TData = Awaited<ReturnType<typeof paymentsListMine>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPaymentsListMineQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof paymentsListMine>>> = ({ signal }) => paymentsListMine(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PaymentsListMineQueryResult = NonNullable<Awaited<ReturnType<typeof paymentsListMine>>>
+export type PaymentsListMineQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePaymentsListMine<TData = Awaited<ReturnType<typeof paymentsListMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof paymentsListMine>>,
+          TError,
+          Awaited<ReturnType<typeof paymentsListMine>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePaymentsListMine<TData = Awaited<ReturnType<typeof paymentsListMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof paymentsListMine>>,
+          TError,
+          Awaited<ReturnType<typeof paymentsListMine>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePaymentsListMine<TData = Awaited<ReturnType<typeof paymentsListMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los cobros ya pagados de la propia persona, con el número de su recibo.
+ */
+
+export function usePaymentsListMine<TData = Awaited<ReturnType<typeof paymentsListMine>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsListMine>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPaymentsListMineQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getPaymentsGetReceiptUrl = (centerId: string,
+    paymentId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/payments/${paymentId}/receipt`
+}
+
+/**
+ * @summary El recibo de un cobro pagado, con la base imponible y el IVA (los precios lo llevan incluido). La persona cliente solo ve los suyos; 404 si no existe o aún no está pagado.
+ */
+export const paymentsGetReceipt = async (centerId: string,
+    paymentId: string, options?: Parameters<typeof apiMutator>[1]): Promise<ReceiptResponseDto> => {
+
+  return apiMutator<ReceiptResponseDto>(getPaymentsGetReceiptUrl(centerId,paymentId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPaymentsGetReceiptQueryKey = (centerId: string,
+    paymentId: string,) => {
+    return [
+    `/v1/centers/${centerId}/payments/${paymentId}/receipt`
+    ] as const;
+    }
+
+
+export const getPaymentsGetReceiptQueryOptions = <TData = Awaited<ReturnType<typeof paymentsGetReceipt>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    paymentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPaymentsGetReceiptQueryKey(centerId,paymentId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof paymentsGetReceipt>>> = ({ signal }) => paymentsGetReceipt(centerId,paymentId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && paymentId !== null && paymentId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PaymentsGetReceiptQueryResult = NonNullable<Awaited<ReturnType<typeof paymentsGetReceipt>>>
+export type PaymentsGetReceiptQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePaymentsGetReceipt<TData = Awaited<ReturnType<typeof paymentsGetReceipt>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    paymentId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof paymentsGetReceipt>>,
+          TError,
+          Awaited<ReturnType<typeof paymentsGetReceipt>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePaymentsGetReceipt<TData = Awaited<ReturnType<typeof paymentsGetReceipt>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    paymentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof paymentsGetReceipt>>,
+          TError,
+          Awaited<ReturnType<typeof paymentsGetReceipt>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePaymentsGetReceipt<TData = Awaited<ReturnType<typeof paymentsGetReceipt>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    paymentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary El recibo de un cobro pagado, con la base imponible y el IVA (los precios lo llevan incluido). La persona cliente solo ve los suyos; 404 si no existe o aún no está pagado.
+ */
+
+export function usePaymentsGetReceipt<TData = Awaited<ReturnType<typeof paymentsGetReceipt>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    paymentId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof paymentsGetReceipt>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPaymentsGetReceiptQueryOptions(centerId,paymentId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+

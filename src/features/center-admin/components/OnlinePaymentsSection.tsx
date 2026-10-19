@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { i18n } from '@/shared/i18n';
+import { useActiveCenterSectorId } from '@/features/join';
+import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
@@ -13,6 +14,29 @@ const SECTION_STYLE = { gap: 8 } as const;
 
 type SetupProps = Readonly<{ setup: ReturnType<typeof useOnlinePaymentsSetup> }>;
 
+/** Sin razón social, NIF y dirección no hay recibos válidos: se pide antes de activar el cobro. */
+function FiscalDataNotice(): React.JSX.Element {
+  const router = useRouter();
+  const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
+
+  return (
+    <>
+      <Text color="warning">
+        {i18n.t('centerAdmin.onlinePayments.fiscalDataNotice', { clientWord })}
+      </Text>
+      <Button
+        isFullWidth
+        variant="outline"
+        leadingIconName="edit"
+        label={i18n.t('centerAdmin.onlinePayments.fiscalDataAction')}
+        onPress={() => {
+          router.push('/(admin)/center');
+        }}
+      />
+    </>
+  );
+}
+
 /** Alta pendiente: abrir (o retomar) el formulario de Stripe y, al volver, comprobarlo. */
 function OnboardingActions({ setup }: SetupProps): React.JSX.Element {
   const isPending = setup.status === 'pending';
@@ -23,10 +47,12 @@ function OnboardingActions({ setup }: SetupProps): React.JSX.Element {
   return (
     <>
       {setup.errorMessage === null ? null : <FormErrorBanner message={setup.errorMessage} />}
+      {setup.isFiscalDataComplete ? null : <FiscalDataNotice />}
       <Button
         isFullWidth
         leadingIconName="creditCard"
         isLoading={setup.isBusy}
+        isDisabled={!setup.isFiscalDataComplete}
         label={i18n.t(startKey)}
         onPress={setup.startOnboarding}
       />

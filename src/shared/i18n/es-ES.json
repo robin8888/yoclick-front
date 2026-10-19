@@ -64,6 +64,7 @@
     "VIDEO_NOT_REVIEWABLE": "Este vídeo ya no está pendiente de revisión.",
     "LOGO_TOO_LARGE": "El logo es demasiado grande. Prueba con una imagen más ligera",
     "CHECKIN_CODE_INVALID": "Este código QR no es válido o ha caducado. Pide que lo actualicen",
+    "FISCAL_DATA_REQUIRED": "Para cobrar online completa los datos fiscales del centro: razón social, NIF y dirección",
     "WAITLIST_SESSION_HAS_SEATS": "Esta clase aún tiene plazas: reserva directamente",
     "WAITLIST_ALREADY_JOINED": "Ya estás en la lista de espera de esta clase",
     "WAITLIST_OFFER_EXPIRED": "Han pasado las 12 horas para confirmar: la plaza ha pasado a otra persona",
@@ -1110,6 +1111,26 @@
     "entryTitle": "Mensajes",
     "entryDescription": "Escribe al centro o a tu equipo."
   },
+  "receipts": {
+    "title": "Recibo",
+    "sectionTitle": "Recibos",
+    "rowSubtitle": "Recibo {{receiptNumber}} · {{date}}",
+    "number": "Número",
+    "date": "Fecha",
+    "seller": "Emitido por",
+    "buyer": "Cliente: {{name}}",
+    "buyerLabel": "Cliente",
+    "concept": "Concepto",
+    "base": "Base imponible",
+    "vat": "IVA ({{rate}} %)",
+    "total": "Total",
+    "vatIncludedNote": "El precio incluye el IVA.",
+    "refunded": "Reembolsado {{amount}}",
+    "shareAction": "Compartir recibo (PDF)",
+    "shareDialogTitle": "Recibo",
+    "shareError": "No hemos podido crear el PDF. Inténtalo de nuevo.",
+    "loadError": "No hemos podido cargar el recibo"
+  },
   "waitlist": {
     "joinAction": "Apuntarme a la lista de espera",
     "leaveAction": "Salir de la lista",
@@ -1541,13 +1562,17 @@
       "refreshAction": "Comprobar",
       "viewPaymentsAction": "Ver cobros",
       "dashboardAction": "Reembolsos y pagos en Stripe",
-      "dashboardHint": "Los reembolsos, las disputas y los ingresos en tu banco se gestionan desde tu panel de Stripe."
+      "dashboardHint": "Los reembolsos, las disputas y los ingresos en tu banco se gestionan desde tu panel de Stripe.",
+      "fiscalDataNotice": "Los recibos que reciben tus {{clientWord}} llevan tus datos fiscales, y los precios de tus bonos incluyen el IVA (21 %). Antes de activar los cobros completa razón social, NIF y dirección fiscal.",
+      "fiscalDataAction": "Completar datos fiscales"
     },
     "payments": {
       "title": "Cobros online",
       "subtitle": "Lo que han pagado desde la app",
       "empty": "Todavía no hay cobros online.",
       "loadError": "No hemos podido cargar los cobros",
+      "receiptHint": "Abre el recibo",
+      "receiptNumber": "Recibo {{receiptNumber}}",
       "kind": {
         "pass": "Bono",
         "room_rental": "Alquiler"
