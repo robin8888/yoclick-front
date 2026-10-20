@@ -49,6 +49,28 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (20 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 19 oct; lo que no aparece aquí no ha cambiado. Commiteado en ambos repos, sin subir. Back: lint, tsc, 1198 unitarios y 1031 e2e en verde; front: lint, typecheck y 2271 tests en verde.
+
+### Hecho el 20 de octubre
+- ✅ **Barra de pestañas ya no tapa el campo del chat** (iPhone y Android).
+- ✅ **Lista de espera para el equipo**: ver quién espera en una clase y quitar a alguien; si tenía la oferta, pasa a la siguiente persona. El aviso de oferta explica las 12 horas.
+- ✅ **Módulos del centro** (contenido, asistencia, bonos, lista de espera, salas): se apagan desde «Módulos», el servidor responde 409 `MODULE_DISABLED` y la app oculta lo que no toca. Pregunta «¿Cómo trabajas?» al crear el centro (clases, citas o ambas). Ver `15-enfoque-citas-y-modulos.md`.
+- ✅ **Margen entre citas** por servicio (0–240 min); los huecos y las citas ocupadas lo respetan.
+- ✅ **Menú «Más» más ligero**: lo diario a la vista y el resto en «Más ajustes».
+- ✅ **Primeros pasos con avance**: pasos hechos marcados, pasos de módulos apagados ocultos y tarjeta de progreso en el inicio del centro.
+- ❌ **Vocabulario editable del centro**: descartado (se mantiene el del sector).
+
+### Pendiente
+1. ⬜ Probar en el móvil lo del 19 y el 20 de octubre.
+2. ⬜ Menos toques al reservar y «repetir mi última cita».
+3. ⬜ Plantillas de servicios por tipo de negocio (solo ejemplos editables), si se quiere.
+4. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+5. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+
+---
+
 ## Estado de avance (19 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **sustituye** a la del 16 oct en lo que cambia. Todo lo de este día está subido (front `3b9afee`, back `2a27665`). Back: lint, tsc, 1185 unitarios y 1005 e2e en verde; front: lint, typecheck y 2240 tests en verde.
