@@ -26,6 +26,8 @@ const MAX_NAME_LENGTH = 80;
 const MAX_DESCRIPTION_LENGTH = 500;
 const MIN_DURATION_MINUTES = 5;
 const MAX_DURATION_MINUTES = 600;
+const MAX_BUFFER_MINUTES = 240;
+const BUFFER_STEP_MINUTES = 5;
 const MAX_PRICE_CENTS = 10_000_000;
 const CENTS_PER_EURO = 100;
 const PRICE_DECIMAL_DIGITS = 2;
@@ -56,6 +58,23 @@ export const serviceFormSchema = z.object({
         );
       },
       { error: () => i18n.t('centerAdmin.serviceEditor.durationInvalid') },
+    ),
+  /** Minutos libres tras cada cita (preparar, limpiar); «0» = sin margen. */
+  bufferMinutes: z
+    .string()
+    .trim()
+    .refine(
+      (text) => {
+        const minutes = Number(text);
+        return (
+          text !== '' &&
+          Number.isInteger(minutes) &&
+          minutes >= 0 &&
+          minutes <= MAX_BUFFER_MINUTES &&
+          minutes % BUFFER_STEP_MINUTES === 0
+        );
+      },
+      { error: () => i18n.t('centerAdmin.serviceEditor.bufferInvalid') },
     ),
   priceInEuros: z
     .string()
@@ -96,6 +115,7 @@ export function buildEmptyServiceForm(): ServiceFormValues {
     name: '',
     description: '',
     durationMinutes: String(DEFAULT_SERVICE_DURATION_MINUTES),
+    bufferMinutes: '0',
     priceInEuros: '',
     isVisible: true,
     isRental: false,
@@ -110,6 +130,7 @@ export function mapServiceToForm(service: ServiceListResponseDtoServicesItem): S
     name: service.name,
     description: service.description ?? '',
     durationMinutes: String(service.durationMinutes),
+    bufferMinutes: String(service.bufferMinutes),
     priceInEuros: formatPriceForInput(service.priceCents),
     isVisible: service.isVisible,
     isRental: service.isRental,
@@ -124,6 +145,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
   name: string;
   description: string | null;
   durationMinutes: number;
+  bufferMinutes: number;
   priceCents: number | null;
   isVisible: boolean;
   isRental: boolean;
@@ -135,6 +157,7 @@ export function mapFormToServiceChanges(formValues: ServiceFormValues): {
     name: formValues.name,
     description: formValues.description === '' ? null : formValues.description,
     durationMinutes: Number(formValues.durationMinutes),
+    bufferMinutes: Number(formValues.bufferMinutes),
     priceCents: formValues.priceInEuros === '' ? null : parsePriceInCents(formValues.priceInEuros),
     isVisible: formValues.isVisible,
     isRental: formValues.isRental,

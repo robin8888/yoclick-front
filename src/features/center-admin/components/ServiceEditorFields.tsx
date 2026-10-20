@@ -84,6 +84,33 @@ function ServiceAssignmentFields({ form }: Readonly<ServiceEditorFieldsProps>): 
   );
 }
 
+/** Cuánto dura la cita y cuánto tiempo queda libre después. */
+function TimingFields({ form }: Readonly<ServiceEditorFieldsProps>): React.JSX.Element {
+  return (
+    <>
+      <DurationPresets
+        selectedMinutes={form.watchedDurationMinutes}
+        onMinutesSelect={(minutes) => {
+          form.setValue('durationMinutes', minutes, { shouldValidate: true });
+        }}
+      />
+      <FormTextField
+        control={form.control}
+        name="durationMinutes"
+        label={i18n.t('centerAdmin.serviceEditor.durationMinutesLabel')}
+        keyboardType="number-pad"
+      />
+      <FormTextField
+        control={form.control}
+        name="bufferMinutes"
+        label={i18n.t('centerAdmin.serviceEditor.bufferMinutesLabel')}
+        helperText={i18n.t('centerAdmin.serviceEditor.bufferHelper')}
+        keyboardType="number-pad"
+      />
+    </>
+  );
+}
+
 /** Los campos de un servicio: nombre, descripción, duración, precio, quién lo da y visibilidad. */
 export function ServiceEditorFields({
   form,
@@ -101,18 +128,7 @@ export function ServiceEditorFields({
         label={i18n.t('centerAdmin.serviceEditor.descriptionLabel')}
         placeholder={i18n.t('centerAdmin.serviceEditor.descriptionPlaceholder')}
       />
-      <DurationPresets
-        selectedMinutes={form.watchedDurationMinutes}
-        onMinutesSelect={(minutes) => {
-          form.setValue('durationMinutes', minutes, { shouldValidate: true });
-        }}
-      />
-      <FormTextField
-        control={form.control}
-        name="durationMinutes"
-        label={i18n.t('centerAdmin.serviceEditor.durationMinutesLabel')}
-        keyboardType="number-pad"
-      />
+      <TimingFields form={form} />
       <FormTextField
         control={form.control}
         name="priceInEuros"
