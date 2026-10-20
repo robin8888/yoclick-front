@@ -61,4 +61,19 @@ describe('buildSetupGuideGroups', () => {
 
     expect(new Set(stepIds).size).toBe(stepIds.length);
   });
+
+  it('leaves out the steps of the modules a center turned off', () => {
+    const stepIds = buildSetupGuideGroups({
+      canManageSpaces: true,
+      modules: { passes: false, content: false, rooms: false },
+    }).flatMap((group) => group.steps.map((step) => step.id));
+
+    expect(stepIds).not.toEqual(
+      expect.arrayContaining(['passes', 'onlinePayments', 'content', 'rooms', 'classes']),
+    );
+    expect(stepIds).toEqual(expect.arrayContaining(['services', 'team', 'inviteClients']));
+    expect(stepIds.some((id) => ['passes', 'content', 'rooms', 'classes'].includes(id))).toBe(
+      false,
+    );
+  });
 });

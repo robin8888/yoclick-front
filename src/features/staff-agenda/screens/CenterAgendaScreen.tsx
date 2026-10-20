@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 
 import { formatLongDate } from '@/features/booking';
-import { useActiveCenterSectorId } from '@/features/join';
+import { SetupProgressCard } from '@/features/center-admin';
+import { useActiveCenterModules, useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -14,10 +15,12 @@ import { useAgendaDay } from '../hooks/useAgendaDay';
 function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.Element {
   const router = useRouter();
   const sectorId = useActiveCenterSectorId();
+  const modules = useActiveCenterModules();
 
   return (
     <CenterQuickActions
-      canManageSpaces={hasRoomManagement(sectorId)}
+      canManageSpaces={hasRoomManagement(sectorId) && modules.rooms}
+      hasPasses={modules.passes}
       sessionsWord={getSectorVocabulary(sectorId).session.plural}
       onAgendaPress={() => {
         router.push('/(admin)/day-agenda');
@@ -49,6 +52,7 @@ export function CenterAgendaScreen(): React.JSX.Element {
   const day = useAgendaDay();
   const dayDate = `${day.isoDate}T12:00:00.000Z`;
   const title = i18n.t('staffAgenda.center.homeTitle');
+  const hasAttendance = useActiveCenterModules().attendance;
 
   return (
     <ScreenTemplate isHeaderHidden title={title}>
@@ -57,8 +61,9 @@ export function CenterAgendaScreen(): React.JSX.Element {
         title={title}
         notificationsHref="/(admin)/(tabs)/notifications"
       />
+      <SetupProgressCard />
       <CenterActions isoDate={day.isoDate} />
-      <ScanAttendanceButton isCenterWide />
+      {hasAttendance ? <ScanAttendanceButton isCenterWide /> : null}
     </ScreenTemplate>
   );
 }
