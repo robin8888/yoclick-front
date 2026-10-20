@@ -27,6 +27,13 @@ export const CentersGetBrandingResponse = zod.object({
   "sectorId": zod.string(),
   "brandColor": zod.string(),
   "logoUrl": zod.string().nullable(),
+  "modules": zod.object({
+  "content": zod.boolean(),
+  "attendance": zod.boolean(),
+  "passes": zod.boolean(),
+  "waitlist": zod.boolean(),
+  "rooms": zod.boolean()
+}),
   "appearance": zod.object({
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),
@@ -131,6 +138,13 @@ export const CentersGetSettingsResponse = zod.object({
   "freeCancellationHours": zod.int().min(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersGetSettingsResponseCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
+  "modules": zod.object({
+  "content": zod.boolean(),
+  "attendance": zod.boolean(),
+  "passes": zod.boolean(),
+  "waitlist": zod.boolean(),
+  "rooms": zod.boolean()
+}),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable(),
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),
@@ -260,6 +274,13 @@ export const CentersUpdateSettingsBody = zod.object({
   "freeCancellationHours": zod.int().min(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsBodyCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
 }).optional(),
+  "modules": zod.object({
+  "content": zod.boolean().optional(),
+  "attendance": zod.boolean().optional(),
+  "passes": zod.boolean().optional(),
+  "waitlist": zod.boolean().optional(),
+  "rooms": zod.boolean().optional()
+}).optional(),
   "backgroundColor": zod.string().regex(centersUpdateSettingsBodyBackgroundColorRegExp).nullish(),
   "backgroundColorEnd": zod.string().regex(centersUpdateSettingsBodyBackgroundColorEndRegExp).nullish(),
   "hiveColor": zod.string().regex(centersUpdateSettingsBodyHiveColorRegExp).nullish()
@@ -348,6 +369,13 @@ export const CentersUpdateSettingsResponse = zod.object({
   "freeCancellationHours": zod.int().min(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMin).max(centersUpdateSettingsResponseCancelPolicyFreeCancellationHoursMax),
   "lateCancellationConsumesCredit": zod.boolean()
 }).nullable(),
+  "modules": zod.object({
+  "content": zod.boolean(),
+  "attendance": zod.boolean(),
+  "passes": zod.boolean(),
+  "waitlist": zod.boolean(),
+  "rooms": zod.boolean()
+}),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable(),
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),

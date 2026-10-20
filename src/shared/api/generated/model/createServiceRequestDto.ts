@@ -41,6 +41,11 @@ export interface CreateServiceRequestDto {
      * @maximum 86400
      */
   minNoticeMinutes?: number;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  bufferMinutes?: number;
   isVisible?: boolean;
   isRental?: boolean;
   /** @pattern ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$ */

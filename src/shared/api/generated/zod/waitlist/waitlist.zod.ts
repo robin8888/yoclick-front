@@ -99,6 +99,45 @@ export const WaitlistJoinResponse = zod.object({
 })
 
 /**
+ * @summary Quién espera una clase llena: las plazas ofrecidas pendientes de confirmar y la cola por orden de llegada.
+ */
+export const waitlistListForSessionPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const waitlistListForSessionPathClassSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const WaitlistListForSessionParams = zod.object({
+  "centerId": zod.uuid().regex(waitlistListForSessionPathCenterIdRegExp),
+  "classSessionId": zod.uuid().regex(waitlistListForSessionPathClassSessionIdRegExp)
+})
+
+export const WaitlistListForSessionHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const waitlistListForSessionResponseEntriesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const waitlistListForSessionResponseEntriesItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const waitlistListForSessionResponseEntriesItemPositionMin = -9007199254740991;
+export const waitlistListForSessionResponseEntriesItemPositionMax = 9007199254740991;
+
+export const waitlistListForSessionResponseEntriesItemOfferExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const waitlistListForSessionResponseEntriesItemClientMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const WaitlistListForSessionResponse = zod.object({
+  "entries": zod.array(zod.object({
+  "id": zod.uuid().regex(waitlistListForSessionResponseEntriesItemIdRegExp),
+  "status": zod.enum(['waiting', 'offered']),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(waitlistListForSessionResponseEntriesItemCreatedAtRegExp),
+  "position": zod.int().min(waitlistListForSessionResponseEntriesItemPositionMin).max(waitlistListForSessionResponseEntriesItemPositionMax).nullable(),
+  "offerExpiresAt": zod.iso.datetime({"offset":true}).regex(waitlistListForSessionResponseEntriesItemOfferExpiresAtRegExp).nullable(),
+  "client": zod.object({
+  "membershipId": zod.uuid().regex(waitlistListForSessionResponseEntriesItemClientMembershipIdRegExp),
+  "fullName": zod.string()
+})
+}))
+})
+
+/**
  * @summary Sale de la lista de espera. Si ya tenía una plaza ofrecida, esa plaza se ofrece a la siguiente persona.
  */
 export const waitlistLeavePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -199,4 +238,24 @@ export const WaitlistConfirmResponse = zod.object({
   "role": zod.enum(['owner', 'admin', 'staff', 'client'])
 }).nullable()
 })
+
+/**
+ * @summary El personal quita a una persona de la espera de la clase. Si tenía una plaza ofrecida, esa plaza se ofrece a la siguiente persona.
+ */
+export const waitlistRemoveFromSessionPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const waitlistRemoveFromSessionPathClassSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const waitlistRemoveFromSessionPathEntryIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const WaitlistRemoveFromSessionParams = zod.object({
+  "centerId": zod.uuid().regex(waitlistRemoveFromSessionPathCenterIdRegExp),
+  "classSessionId": zod.uuid().regex(waitlistRemoveFromSessionPathClassSessionIdRegExp),
+  "entryId": zod.uuid().regex(waitlistRemoveFromSessionPathEntryIdRegExp)
+})
+
+export const WaitlistRemoveFromSessionHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const WaitlistRemoveFromSessionResponse = zod.void()
 

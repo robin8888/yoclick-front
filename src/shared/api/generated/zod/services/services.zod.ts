@@ -35,6 +35,9 @@ export const servicesListResponseServicesItemBookingWindowDaysMax = 900719925474
 export const servicesListResponseServicesItemMinNoticeMinutesMin = -9007199254740991;
 export const servicesListResponseServicesItemMinNoticeMinutesMax = 9007199254740991;
 
+export const servicesListResponseServicesItemBufferMinutesMin = -9007199254740991;
+export const servicesListResponseServicesItemBufferMinutesMax = 9007199254740991;
+
 export const servicesListResponseServicesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesListResponseServicesItemSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesListResponseServicesItemSchedulesItemWeekdayMax = 7;
@@ -57,6 +60,7 @@ export const ServicesListResponse = zod.object({
   "color": zod.string().nullable(),
   "bookingWindowDays": zod.int().min(servicesListResponseServicesItemBookingWindowDaysMin).max(servicesListResponseServicesItemBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesListResponseServicesItemMinNoticeMinutesMin).max(servicesListResponseServicesItemMinNoticeMinutesMax),
+  "bufferMinutes": zod.int().min(servicesListResponseServicesItemBufferMinutesMin).max(servicesListResponseServicesItemBufferMinutesMax),
   "isVisible": zod.boolean(),
   "isRental": zod.boolean(),
   "room": zod.object({
@@ -118,6 +122,9 @@ export const servicesCreateBodyBookingWindowDaysMax = 365;
 export const servicesCreateBodyMinNoticeMinutesMin = 0;
 export const servicesCreateBodyMinNoticeMinutesMax = 86400;
 
+export const servicesCreateBodyBufferMinutesMin = -9007199254740991;
+export const servicesCreateBodyBufferMinutesMax = 9007199254740991;
+
 export const servicesCreateBodyRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateBodyStaffMembershipIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateBodyStaffMembershipIdsMax = 50;
@@ -133,6 +140,7 @@ export const ServicesCreateBody = zod.object({
   "color": zod.string().regex(servicesCreateBodyColorRegExp).optional(),
   "bookingWindowDays": zod.int().min(1).max(servicesCreateBodyBookingWindowDaysMax).optional(),
   "minNoticeMinutes": zod.int().min(servicesCreateBodyMinNoticeMinutesMin).max(servicesCreateBodyMinNoticeMinutesMax).optional(),
+  "bufferMinutes": zod.int().min(servicesCreateBodyBufferMinutesMin).max(servicesCreateBodyBufferMinutesMax).optional(),
   "isVisible": zod.boolean().optional(),
   "isRental": zod.boolean().optional(),
   "roomId": zod.uuid().regex(servicesCreateBodyRoomIdRegExp).optional(),
@@ -151,6 +159,9 @@ export const servicesCreateResponseBookingWindowDaysMax = 9007199254740991;
 
 export const servicesCreateResponseMinNoticeMinutesMin = -9007199254740991;
 export const servicesCreateResponseMinNoticeMinutesMax = 9007199254740991;
+
+export const servicesCreateResponseBufferMinutesMin = -9007199254740991;
+export const servicesCreateResponseBufferMinutesMax = 9007199254740991;
 
 export const servicesCreateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesCreateResponseSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -173,6 +184,7 @@ export const ServicesCreateResponse = zod.object({
   "color": zod.string().nullable(),
   "bookingWindowDays": zod.int().min(servicesCreateResponseBookingWindowDaysMin).max(servicesCreateResponseBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesCreateResponseMinNoticeMinutesMin).max(servicesCreateResponseMinNoticeMinutesMax),
+  "bufferMinutes": zod.int().min(servicesCreateResponseBufferMinutesMin).max(servicesCreateResponseBufferMinutesMax),
   "isVisible": zod.boolean(),
   "isRental": zod.boolean(),
   "room": zod.object({
@@ -235,6 +247,9 @@ export const servicesUpdateBodyBookingWindowDaysMax = 365;
 export const servicesUpdateBodyMinNoticeMinutesMin = 0;
 export const servicesUpdateBodyMinNoticeMinutesMax = 86400;
 
+export const servicesUpdateBodyBufferMinutesMin = -9007199254740991;
+export const servicesUpdateBodyBufferMinutesMax = 9007199254740991;
+
 export const servicesUpdateBodyRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateBodyStaffMembershipIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateBodyStaffMembershipIdsMax = 50;
@@ -250,6 +265,7 @@ export const ServicesUpdateBody = zod.object({
   "color": zod.string().regex(servicesUpdateBodyColorRegExp).nullish(),
   "bookingWindowDays": zod.int().min(1).max(servicesUpdateBodyBookingWindowDaysMax).optional(),
   "minNoticeMinutes": zod.int().min(servicesUpdateBodyMinNoticeMinutesMin).max(servicesUpdateBodyMinNoticeMinutesMax).optional(),
+  "bufferMinutes": zod.int().min(servicesUpdateBodyBufferMinutesMin).max(servicesUpdateBodyBufferMinutesMax).optional(),
   "isVisible": zod.boolean().optional(),
   "isRental": zod.boolean().optional(),
   "roomId": zod.uuid().regex(servicesUpdateBodyRoomIdRegExp).nullish(),
@@ -268,6 +284,9 @@ export const servicesUpdateResponseBookingWindowDaysMax = 9007199254740991;
 
 export const servicesUpdateResponseMinNoticeMinutesMin = -9007199254740991;
 export const servicesUpdateResponseMinNoticeMinutesMax = 9007199254740991;
+
+export const servicesUpdateResponseBufferMinutesMin = -9007199254740991;
+export const servicesUpdateResponseBufferMinutesMax = 9007199254740991;
 
 export const servicesUpdateResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const servicesUpdateResponseSchedulesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -290,6 +309,7 @@ export const ServicesUpdateResponse = zod.object({
   "color": zod.string().nullable(),
   "bookingWindowDays": zod.int().min(servicesUpdateResponseBookingWindowDaysMin).max(servicesUpdateResponseBookingWindowDaysMax),
   "minNoticeMinutes": zod.int().min(servicesUpdateResponseMinNoticeMinutesMin).max(servicesUpdateResponseMinNoticeMinutesMax),
+  "bufferMinutes": zod.int().min(servicesUpdateResponseBufferMinutesMin).max(servicesUpdateResponseBufferMinutesMax),
   "isVisible": zod.boolean(),
   "isRental": zod.boolean(),
   "room": zod.object({

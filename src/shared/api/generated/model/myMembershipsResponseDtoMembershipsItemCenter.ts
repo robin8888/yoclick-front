@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { MyMembershipsResponseDtoMembershipsItemCenterAppearance } from './myMembershipsResponseDtoMembershipsItemCenterAppearance.ts';
+import type { MyMembershipsResponseDtoMembershipsItemCenterModules } from './myMembershipsResponseDtoMembershipsItemCenterModules.ts';
 
 export type MyMembershipsResponseDtoMembershipsItemCenter = {
   name: string;
@@ -14,5 +15,6 @@ export type MyMembershipsResponseDtoMembershipsItemCenter = {
   brandColor: string;
   /** @nullable */
   logoUrl: string | null;
+  modules: MyMembershipsResponseDtoMembershipsItemCenterModules;
   appearance: MyMembershipsResponseDtoMembershipsItemCenterAppearance;
 };

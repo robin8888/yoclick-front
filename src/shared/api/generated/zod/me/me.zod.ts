@@ -141,6 +141,13 @@ export const MeListMembershipsResponse = zod.object({
   "sectorId": zod.string(),
   "brandColor": zod.string(),
   "logoUrl": zod.string().nullable(),
+  "modules": zod.object({
+  "content": zod.boolean(),
+  "attendance": zod.boolean(),
+  "passes": zod.boolean(),
+  "waitlist": zod.boolean(),
+  "rooms": zod.boolean()
+}),
   "appearance": zod.object({
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),
@@ -251,6 +258,13 @@ export const MeExportDataResponse = zod.object({
   "sectorId": zod.string(),
   "brandColor": zod.string(),
   "logoUrl": zod.string().nullable(),
+  "modules": zod.object({
+  "content": zod.boolean(),
+  "attendance": zod.boolean(),
+  "passes": zod.boolean(),
+  "waitlist": zod.boolean(),
+  "rooms": zod.boolean()
+}),
   "appearance": zod.object({
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),

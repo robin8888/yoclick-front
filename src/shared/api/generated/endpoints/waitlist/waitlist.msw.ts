@@ -16,16 +16,18 @@ import type {
 import type {
   BookingResponseDto,
   MyWaitlistResponseDto,
+  SessionWaitlistResponseDto,
   WaitlistEntryResponseDto
 } from '../../model';
 
 import {
   getWaitlistConfirmResponseMock,
   getWaitlistJoinResponseMock,
+  getWaitlistListForSessionResponseMock,
   getWaitlistListMineResponseMock
 } from './waitlist.faker.ts';
 
-export { getWaitlistListMineResponseMock, getWaitlistJoinResponseMock, getWaitlistConfirmResponseMock } from './waitlist.faker.ts';
+export { getWaitlistListMineResponseMock, getWaitlistJoinResponseMock, getWaitlistListForSessionResponseMock, getWaitlistConfirmResponseMock } from './waitlist.faker.ts';
 
 
 export const getWaitlistListMineMockHandler = (overrideResponse?: MyWaitlistResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MyWaitlistResponseDto> | MyWaitlistResponseDto), options?: RequestHandlerOptions) => {
@@ -52,6 +54,18 @@ export const getWaitlistJoinMockHandler = (overrideResponse?: WaitlistEntryRespo
   }, options)
 }
 
+export const getWaitlistListForSessionMockHandler = (overrideResponse?: SessionWaitlistResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<SessionWaitlistResponseDto> | SessionWaitlistResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/class-sessions/:classSessionId/waitlist', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getWaitlistListForSessionResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getWaitlistLeaveMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
   return http.post('*/v1/centers/:centerId/waitlist/:entryId/leave', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
   if (typeof overrideResponse === 'function') {await overrideResponse(info); }
@@ -73,9 +87,21 @@ export const getWaitlistConfirmMockHandler = (overrideResponse?: BookingResponse
       })
   }, options)
 }
+
+export const getWaitlistRemoveFromSessionMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/class-sessions/:classSessionId/waitlist/:entryId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 export const getWaitlistMock = () => [
   getWaitlistListMineMockHandler(),
   getWaitlistJoinMockHandler(),
+  getWaitlistListForSessionMockHandler(),
   getWaitlistLeaveMockHandler(),
-  getWaitlistConfirmMockHandler()
+  getWaitlistConfirmMockHandler(),
+  getWaitlistRemoveFromSessionMockHandler()
 ]

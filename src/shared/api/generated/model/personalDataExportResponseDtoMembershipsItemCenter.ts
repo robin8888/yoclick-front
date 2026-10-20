@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { PersonalDataExportResponseDtoMembershipsItemCenterAppearance } from './personalDataExportResponseDtoMembershipsItemCenterAppearance.ts';
+import type { PersonalDataExportResponseDtoMembershipsItemCenterModules } from './personalDataExportResponseDtoMembershipsItemCenterModules.ts';
 
 export type PersonalDataExportResponseDtoMembershipsItemCenter = {
   name: string;
@@ -14,5 +15,6 @@ export type PersonalDataExportResponseDtoMembershipsItemCenter = {
   brandColor: string;
   /** @nullable */
   logoUrl: string | null;
+  modules: PersonalDataExportResponseDtoMembershipsItemCenterModules;
   appearance: PersonalDataExportResponseDtoMembershipsItemCenterAppearance;
 };

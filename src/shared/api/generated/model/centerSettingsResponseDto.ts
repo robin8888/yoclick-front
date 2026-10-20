@@ -7,6 +7,7 @@
  */
 import type { CenterSettingsResponseDtoCancelPolicy } from './centerSettingsResponseDtoCancelPolicy.ts';
 import type { CenterSettingsResponseDtoHolidaysItem } from './centerSettingsResponseDtoHolidaysItem.ts';
+import type { CenterSettingsResponseDtoModules } from './centerSettingsResponseDtoModules.ts';
 import type { CenterSettingsResponseDtoOpeningHours } from './centerSettingsResponseDtoOpeningHours.ts';
 import type { CenterSettingsResponseDtoStatus } from './centerSettingsResponseDtoStatus.ts';
 
@@ -48,6 +49,7 @@ export interface CenterSettingsResponseDto {
   holidays: CenterSettingsResponseDtoHolidaysItem[] | null;
   /** @nullable */
   cancelPolicy: CenterSettingsResponseDtoCancelPolicy;
+  modules: CenterSettingsResponseDtoModules;
   /**
      * @nullable
      * @pattern ^(?:(?:\d\d[2468][048]|\d\d[13579][26]|\d\d0[48]|[02468][048]00|[13579][26]00)-02-29|\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\d|30)|(?:02)-(?:0[1-9]|1\d|2[0-8])))T(?:(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d+)?(?:Z))$

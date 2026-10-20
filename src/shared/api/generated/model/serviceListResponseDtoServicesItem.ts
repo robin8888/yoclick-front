@@ -44,6 +44,11 @@ export type ServiceListResponseDtoServicesItem = {
      * @maximum 9007199254740991
      */
   minNoticeMinutes: number;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  bufferMinutes: number;
   isVisible: boolean;
   isRental: boolean;
   /** @nullable */

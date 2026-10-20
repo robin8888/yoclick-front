@@ -28,6 +28,7 @@ import type {
   BookingResponseDto,
   MyWaitlistResponseDto,
   ProblemDetailsDto,
+  SessionWaitlistResponseDto,
   WaitlistEntryResponseDto
 } from '../../model';
 
@@ -229,7 +230,115 @@ export const useWaitlistJoin = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getWaitlistJoinMutationOptions(options), queryClient);
     }
-    export const getWaitlistLeaveUrl = (centerId: string,
+    export const getWaitlistListForSessionUrl = (centerId: string,
+    classSessionId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/class-sessions/${classSessionId}/waitlist`
+}
+
+/**
+ * @summary Quién espera una clase llena: las plazas ofrecidas pendientes de confirmar y la cola por orden de llegada.
+ */
+export const waitlistListForSession = async (centerId: string,
+    classSessionId: string, options?: Parameters<typeof apiMutator>[1]): Promise<SessionWaitlistResponseDto> => {
+
+  return apiMutator<SessionWaitlistResponseDto>(getWaitlistListForSessionUrl(centerId,classSessionId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getWaitlistListForSessionQueryKey = (centerId: string,
+    classSessionId: string,) => {
+    return [
+    `/v1/centers/${centerId}/class-sessions/${classSessionId}/waitlist`
+    ] as const;
+    }
+
+
+export const getWaitlistListForSessionQueryOptions = <TData = Awaited<ReturnType<typeof waitlistListForSession>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    classSessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getWaitlistListForSessionQueryKey(centerId,classSessionId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof waitlistListForSession>>> = ({ signal }) => waitlistListForSession(centerId,classSessionId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined && classSessionId !== null && classSessionId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type WaitlistListForSessionQueryResult = NonNullable<Awaited<ReturnType<typeof waitlistListForSession>>>
+export type WaitlistListForSessionQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useWaitlistListForSession<TData = Awaited<ReturnType<typeof waitlistListForSession>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    classSessionId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof waitlistListForSession>>,
+          TError,
+          Awaited<ReturnType<typeof waitlistListForSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useWaitlistListForSession<TData = Awaited<ReturnType<typeof waitlistListForSession>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    classSessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof waitlistListForSession>>,
+          TError,
+          Awaited<ReturnType<typeof waitlistListForSession>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useWaitlistListForSession<TData = Awaited<ReturnType<typeof waitlistListForSession>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    classSessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Quién espera una clase llena: las plazas ofrecidas pendientes de confirmar y la cola por orden de llegada.
+ */
+
+export function useWaitlistListForSession<TData = Awaited<ReturnType<typeof waitlistListForSession>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    classSessionId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof waitlistListForSession>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getWaitlistListForSessionQueryOptions(centerId,classSessionId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getWaitlistLeaveUrl = (centerId: string,
     entryId: string,) => {
 
 
@@ -378,4 +487,81 @@ export const useWaitlistConfirm = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getWaitlistConfirmMutationOptions(options), queryClient);
+    }
+    export const getWaitlistRemoveFromSessionUrl = (centerId: string,
+    classSessionId: string,
+    entryId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/class-sessions/${classSessionId}/waitlist/${entryId}`
+}
+
+/**
+ * @summary El personal quita a una persona de la espera de la clase. Si tenía una plaza ofrecida, esa plaza se ofrece a la siguiente persona.
+ */
+export const waitlistRemoveFromSession = async (centerId: string,
+    classSessionId: string,
+    entryId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getWaitlistRemoveFromSessionUrl(centerId,classSessionId,entryId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getWaitlistRemoveFromSessionMutationKey = () => ['waitlistRemoveFromSession'] as const;
+
+export const getWaitlistRemoveFromSessionMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof waitlistRemoveFromSession>>, TError,WaitlistRemoveFromSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof waitlistRemoveFromSession>>, TError,WaitlistRemoveFromSessionMutationVariables, TContext> => {
+
+const mutationKey = getWaitlistRemoveFromSessionMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof waitlistRemoveFromSession>>, WaitlistRemoveFromSessionMutationVariables> = (props) => {
+          const {centerId,classSessionId,entryId} = props ?? {};
+
+          return  waitlistRemoveFromSession(centerId,classSessionId,entryId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WaitlistRemoveFromSessionMutationResult = NonNullable<Awaited<ReturnType<typeof waitlistRemoveFromSession>>>
+
+    export type WaitlistRemoveFromSessionMutationError = ErrorType<ProblemDetailsDto>
+    export type WaitlistRemoveFromSessionMutationVariables = {centerId: string;classSessionId: string;entryId: string}
+
+    /**
+ * @summary El personal quita a una persona de la espera de la clase. Si tenía una plaza ofrecida, esa plaza se ofrece a la siguiente persona.
+ */
+export const useWaitlistRemoveFromSession = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof waitlistRemoveFromSession>>, TError,WaitlistRemoveFromSessionMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof waitlistRemoveFromSession>>,
+        TError,
+        WaitlistRemoveFromSessionMutationVariables,
+        TContext
+      > => {
+      return useMutation(getWaitlistRemoveFromSessionMutationOptions(options), queryClient);
     }

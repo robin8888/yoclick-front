@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { CreateCenterRequestDtoSectorId } from './createCenterRequestDtoSectorId.ts';
+import type { CreateCenterRequestDtoWorkMode } from './createCenterRequestDtoWorkMode.ts';
 
 export interface CreateCenterRequestDto {
   /**
@@ -22,4 +23,5 @@ export interface CreateCenterRequestDto {
      */
   city?: string;
   isListed?: boolean;
+  workMode?: CreateCenterRequestDtoWorkMode;
 }

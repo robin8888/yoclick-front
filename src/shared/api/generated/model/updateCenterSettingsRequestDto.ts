@@ -7,6 +7,7 @@
  */
 import type { UpdateCenterSettingsRequestDtoCancelPolicy } from './updateCenterSettingsRequestDtoCancelPolicy.ts';
 import type { UpdateCenterSettingsRequestDtoHolidaysItem } from './updateCenterSettingsRequestDtoHolidaysItem.ts';
+import type { UpdateCenterSettingsRequestDtoModules } from './updateCenterSettingsRequestDtoModules.ts';
 import type { UpdateCenterSettingsRequestDtoOpeningHours } from './updateCenterSettingsRequestDtoOpeningHours.ts';
 import type { UpdateCenterSettingsRequestDtoSectorId } from './updateCenterSettingsRequestDtoSectorId.ts';
 
@@ -78,6 +79,7 @@ export interface UpdateCenterSettingsRequestDto {
   /** @maxItems 100 */
   holidays?: UpdateCenterSettingsRequestDtoHolidaysItem[];
   cancelPolicy?: UpdateCenterSettingsRequestDtoCancelPolicy;
+  modules?: UpdateCenterSettingsRequestDtoModules;
   /**
      * @nullable
      * @pattern ^#[0-9A-Fa-f]{6}$
