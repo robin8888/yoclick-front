@@ -1,11 +1,12 @@
 import { useRouter, usePathname, type Href } from 'expo-router';
 
+import { useActiveCenterModules, type CenterModules } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
 
 /** Las pestañas del alumno: Inicio, Reservar, Mis citas, Practicar y Perfil, con sus pantallas hijas. */
-function listClientTabs(): readonly PathTab[] {
-  return [
+function listClientTabs(modules: CenterModules): readonly PathTab[] {
+  const tabs: PathTab[] = [
     {
       id: 'home',
       label: i18n.t('booking.tabs.home'),
@@ -42,15 +43,17 @@ function listClientTabs(): readonly PathTab[] {
       activePaths: ['/profile', '/centers'],
     },
   ];
+  return modules.content ? tabs : tabs.filter((tab) => tab.id !== 'practice');
 }
 
 /** La barra del alumno, visible en todas sus pantallas. */
 export function ClientTabBar(): React.JSX.Element {
   const router = useRouter();
+  const modules = useActiveCenterModules();
 
   return (
     <PathTabBar
-      tabs={listClientTabs()}
+      tabs={listClientTabs(modules)}
       currentPath={usePathname()}
       onTabPress={(href) => {
         router.navigate(href as Href);

@@ -1,6 +1,7 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { AdminComingSoonScreen } from './screens/AdminComingSoonScreen';
 export { AdminMoreScreen } from './screens/AdminMoreScreen';
+export { CenterModulesScreen } from './screens/CenterModulesScreen';
 export { ImportClientsScreen } from './screens/ImportClientsScreen';
 export {
   MyAvailabilityScreen,
@@ -33,3 +34,4 @@ export { ReceptionPosterScreen } from './screens/ReceptionPosterScreen';
 export { AccountSecurityScreen } from './screens/AccountSecurityScreen';
 export { PrivacyLegalScreen } from './screens/PrivacyLegalScreen';
 export { SetupGuideScreen } from './screens/SetupGuideScreen';
+export { SetupProgressCard } from './components/SetupProgressCard';

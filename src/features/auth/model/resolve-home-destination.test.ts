@@ -1,6 +1,6 @@
 import type { MyMembershipsResponseDtoMembershipsItem } from '@/shared/api/generated/model';
 
-import { NO_APPEARANCE } from '@/test/factories';
+import { ALL_MODULES_ON, NO_APPEARANCE } from '@/test/factories';
 
 import { resolveHomeDestination } from './resolve-home-destination';
 
@@ -20,6 +20,7 @@ function buildMembership(
       sectorId: 'estudio',
       brandColor: '#E4572E',
       logoUrl: null,
+      modules: ALL_MODULES_ON,
       appearance: NO_APPEARANCE,
     },
     ...overrides,

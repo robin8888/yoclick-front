@@ -97,6 +97,7 @@
     "SESSION_NOT_CANCELLABLE": "Esta sesión ya ha empezado o ya estaba cancelada",
     "ROOM_HAS_BOOKINGS": "Hay clases o citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
     "SERVICE_ONLY_IN_SCHEDULE": "Este servicio solo se da en sus horarios. Elige una de sus clases con plazas",
+    "MODULE_DISABLED": "Tu centro no usa esta función. Puede activarla desde Módulos del centro",
     "CLIENT_HAS_NO_PASS": "Esa persona no tiene un bono en vigor con clases. Dale un bono desde su ficha para apuntarla",
     "PASS_FULLY_BOOKED": "Ya tienes agendadas todas las clases de tu bono. Cancela alguna o pide otro bono para agendar más",
     "ROOM_SCHEDULE_OVERLAP": "Esa sala ya tiene un horario a esa hora en esos días. Elige otra hora, otra fecha u otra sala, o edita el horario que ya existe",
@@ -409,10 +410,25 @@
       "nameLabel": "Nombre del centro",
       "cityLabel": "Ciudad (opcional)",
       "sectorLabel": "Tipo de centro",
+      "workModeLabel": "¿Cómo trabajas?",
       "submitLabel": "Crear mi centro",
       "trialNotice": "14 días de prueba gratis, sin tarjeta.",
       "listedLabel": "Aparecer en el buscador",
       "listedHelper": "Si lo activas, tus clientes podrán encontrarte por nombre o ciudad. Si no, solo entrarán con tu código."
+    },
+    "workModes": {
+      "classes": {
+        "label": "Clases y grupos",
+        "description": "Academia, gimnasio, baile, yoga… con salas, bonos y asistencia."
+      },
+      "appointments": {
+        "label": "Citas con clientes",
+        "description": "Estética, psicología, taller… Solo reservar, anular y cambiar citas."
+      },
+      "both": {
+        "label": "Las dos cosas",
+        "description": "Clases y también citas individuales: todo disponible."
+      }
     },
     "sectorGroups": {
       "sport": "Deporte y salud",
@@ -1140,6 +1156,13 @@
     "offeredStatus": "Plaza ofrecida · confirma antes del {{deadline}}",
     "classFull": "Completa · {{teacher}}",
     "sectionTitle": "Lista de espera",
+    "staffSectionTitle": "Lista de espera ({{count}})",
+    "removeAction": "Quitar",
+    "removeActionLabel": "Quitar de la lista de espera a {{name}}",
+    "removeTitle": "¿Quitar de la lista de espera?",
+    "removeMessage": "{{name}} dejará de esperar esta clase. Si tenía una plaza ofrecida, pasará a la siguiente persona.",
+    "removeConfirm": "Sí, quitar",
+    "removeDismiss": "Mantener",
     "cardDetails": "{{time}} · {{teacher}}"
   },
   "notifications": {
@@ -1491,6 +1514,10 @@
       "title": "Primeros pasos",
       "subtitle": "Sigue este orden y tu centro funcionará del todo con la app.",
       "premiumBadge": "Premium",
+      "doneBadge": "Hecho",
+      "progressTitle": "Primeros pasos: {{done}} de {{total}}",
+      "progressNext": "Siguiente: {{next}}",
+      "progressLabel": "Primeros pasos, {{done}} de {{total}} hechos. Siguiente: {{next}}",
       "groups": {
         "prepare": "Prepara tu centro",
         "teamAndPasses": "Equipo, clases y bonos",
@@ -1607,9 +1634,41 @@
       "sat": "Sábado",
       "sun": "Domingo"
     },
+    "modules": {
+      "title": "Módulos del centro",
+      "subtitle": "Enciende solo lo que usas. Reservar, anular y cambiar citas siempre está disponible.",
+      "errorTitle": "No hemos podido cargar los módulos",
+      "content": {
+        "title": "Contenido y práctica",
+        "description": "Rutinas, vídeos y biblioteca para que tus clientes practiquen."
+      },
+      "attendance": {
+        "title": "QR y asistencia",
+        "description": "El cliente enseña un QR al llegar y se pasa lista en cada clase."
+      },
+      "passes": {
+        "title": "Bonos",
+        "description": "Packs de sesiones que el cliente compra y que se descuentan al asistir."
+      },
+      "waitlist": {
+        "title": "Lista de espera",
+        "description": "Cuando una clase se llena, la gente espera una plaza libre."
+      },
+      "rooms": {
+        "title": "Salas y horarios fijos",
+        "description": "Salas con aforo, horarios que se repiten y grupos fijos."
+      }
+    },
     "more": {
       "title": "Más",
       "centerSection": "Tu centro",
+      "showAdvancedTitle": "Más ajustes",
+      "hideAdvancedTitle": "Ocultar ajustes",
+      "advancedSubtitle": "Datos del centro, módulos, equipo, cuenta y privacidad",
+      "showAdvancedLabel": "Más ajustes, plegado. Pulsa para mostrar",
+      "hideAdvancedLabel": "Ocultar ajustes, desplegado. Pulsa para plegar",
+      "modulesTitle": "Módulos del centro",
+      "modulesSubtitle": "Qué usa tu centro: clases, bonos, asistencia…",
       "teamSection": "Equipo",
       "messagesTitle": "Mensajes",
       "messagesSubtitle": "Lo que te escriben {{clientWord}} y {{staffWord}}",
@@ -2001,6 +2060,9 @@
       "nameRequired": "Escribe el nombre del servicio",
       "nameTooLong": "Usa como máximo 80 caracteres",
       "descriptionTooLong": "Usa como máximo 500 caracteres",
+      "bufferMinutesLabel": "Margen entre citas (minutos)",
+      "bufferHelper": "Tiempo libre tras cada cita para preparar o limpiar. 0 = sin margen.",
+      "bufferInvalid": "Pon un número de minutos entre 0 y 240, de 5 en 5",
       "durationInvalid": "Indica una duración entre 5 y 600 minutos",
       "priceInvalid": "Escribe un importe válido, por ejemplo 35 o 35,50",
       "modeLabel": "Cómo se da",

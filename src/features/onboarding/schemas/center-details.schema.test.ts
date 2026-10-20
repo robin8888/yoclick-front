@@ -2,6 +2,7 @@ import { centerDetailsFormSchema } from './center-details.schema';
 
 const VALID_DETAILS = {
   name: 'Vértice Training',
+  workMode: 'both',
   sectorId: 'gym',
   city: 'Zaragoza',
   brandColor: '#2446C7',
@@ -17,6 +18,7 @@ describe('centerDetailsFormSchema', () => {
     ['a one-letter name', { name: 'V' }],
     ['a name with only spaces', { name: '   ' }],
     ['an unknown sector', { sectorId: 'pizzeria' }],
+    ['an unknown way of working', { workMode: 'whatever' }],
     ['a color without the hash', { brandColor: '2446C7' }],
     ['a three-digit color', { brandColor: '#24C' }],
   ])('rejects %s', (_caseName, override) => {

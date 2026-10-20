@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 
+import { useActiveCenterModules } from '@/features/join';
 import { WaitlistSessionAction } from '@/features/waitlist';
 import type {
   MyWaitlistResponseDtoEntriesItem,
@@ -18,13 +19,14 @@ interface FullClassRowProps {
   waitlistEntry: MyWaitlistResponseDtoEntriesItem | undefined;
 }
 
-/** Una clase sin plazas: no se puede elegir, pero se puede entrar en su lista de espera. */
+/** Una clase sin plazas: no se puede elegir; si el centro usa lista de espera, se puede entrar en ella. */
 export function FullClassRow({
   session,
   timeZone,
   waitlistEntry,
 }: Readonly<FullClassRowProps>): React.JSX.Element {
   const theme = useTheme();
+  const hasWaitlist = useActiveCenterModules().waitlist;
   const timeRange = i18n.t('booking.slot.classOption', {
     startTime: formatTime24h(session.startsAt, timeZone),
     endTime: formatTime24h(session.endsAt, timeZone),
@@ -36,11 +38,13 @@ export function FullClassRow({
       <Text variant="caption" color="ink2">
         {i18n.t('waitlist.classFull', { teacher: session.teacher.fullName })}
       </Text>
-      <WaitlistSessionAction
-        classSessionId={session.id}
-        entry={waitlistEntry}
-        timeZone={timeZone}
-      />
+      {hasWaitlist ? (
+        <WaitlistSessionAction
+          classSessionId={session.id}
+          entry={waitlistEntry}
+          timeZone={timeZone}
+        />
+      ) : null}
     </View>
   );
 }

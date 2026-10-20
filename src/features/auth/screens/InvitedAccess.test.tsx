@@ -1,6 +1,7 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { usePendingInvitationStore } from '@/features/join';
+import { ALL_MODULES_ON, buildBranding } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -144,6 +145,31 @@ describe('RegisterAccountScreen · con invitación', () => {
     await waitFor(() => {
       expect(getMockRouter().replace).toHaveBeenCalledWith('/(auth)/verify-email');
     });
+  });
+
+  it('registers an invited student right away when the center does not use content', async () => {
+    mockApi({
+      [PREVIEW_PATH]: CLIENT_BY_EMAIL,
+      [`GET /v1/centers/${CENTER_ID}/branding`]: buildBranding({
+        centerId: CENTER_ID,
+        modules: { ...ALL_MODULES_ON, content: false },
+      }),
+      'POST /v1/auth/register': { status: 'verification_sent' },
+    });
+    carryInvitation();
+    renderScreen(<RegisterAccountScreen />);
+    await screen.findByText(/Usa el correo m\*\*\*@yopmail\.com/);
+    fillAccount();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Crear cuenta' })).toBeOnTheScreen();
+    });
+    fireEvent.press(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+    await waitFor(() => {
+      expect(getMockRouter().replace).toHaveBeenCalledWith('/(auth)/verify-email');
+    });
+    expect(getMockRouter().push).not.toHaveBeenCalledWith('/(auth)/register/goals');
   });
 
   it('sends an invited student to the experience step and reminds the email of the invitation', async () => {

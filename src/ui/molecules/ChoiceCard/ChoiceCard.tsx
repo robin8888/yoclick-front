@@ -14,6 +14,8 @@ export type ChoiceIndicator = 'radio' | 'checkbox';
 
 interface ChoiceCardProps {
   label: string;
+  /** Una línea de apoyo bajo el nombre; sin ella, la tarjeta solo lleva el nombre. */
+  description?: string | undefined;
   /** `radio` para elegir una sola opción; `checkbox` para poder elegir varias. */
   indicator: ChoiceIndicator;
   isSelected: boolean;
@@ -23,6 +25,7 @@ interface ChoiceCardProps {
 /** Opción a todo el ancho, en tarjeta blanca; la elegida lleva borde dorado y marca (no solo color). */
 export function ChoiceCard({
   label,
+  description,
   indicator,
   isSelected,
   onPress,
@@ -39,6 +42,11 @@ export function ChoiceCard({
         <Text variant="bodyStrong" tintColor={platformCardColors.title}>
           {label}
         </Text>
+        {description === undefined ? null : (
+          <Text variant="caption" tintColor={platformCardColors.description}>
+            {description}
+          </Text>
+        )}
       </View>
       <View style={createChoiceIndicatorStyle({ indicator, isSelected })}>
         {isSelected ? (

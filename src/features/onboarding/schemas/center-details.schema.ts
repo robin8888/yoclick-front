@@ -3,6 +3,9 @@ import { z } from 'zod';
 import { i18n } from '@/shared/i18n';
 import { SECTOR_IDS } from '@/shared/i18n/sector-vocabulary';
 
+/** Cómo trabaja el centro: con clases y grupos, solo con citas o con las dos cosas. */
+export const WORK_MODES = ['classes', 'appointments', 'both'] as const;
+
 // Mismos límites que `CreateCenterRequestDto` (docs/api/openapi.yaml).
 const MIN_CENTER_NAME_LENGTH = 2;
 const MAX_CENTER_NAME_LENGTH = 80;
@@ -15,6 +18,7 @@ export const centerDetailsFormSchema = z.object({
     .trim()
     .min(MIN_CENTER_NAME_LENGTH, { error: () => i18n.t('validation.centerNameRequired') })
     .max(MAX_CENTER_NAME_LENGTH, { error: () => i18n.t('validation.centerNameTooLong') }),
+  workMode: z.enum(WORK_MODES),
   sectorId: z.enum(SECTOR_IDS, { error: () => i18n.t('validation.sectorRequired') }),
   city: z
     .string()

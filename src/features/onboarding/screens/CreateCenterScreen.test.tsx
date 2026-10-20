@@ -75,6 +75,7 @@ describe('CreateCenterScreen', () => {
       sectorId: 'baile',
       brandColor: DEFAULT_BRAND_COLOR,
       isListed: false,
+      workMode: 'both',
     });
     expect(useCreatedCenterStore.getState().createdCenter).toEqual({
       centerId: CREATED_CENTER.centerId,
@@ -99,6 +100,24 @@ describe('CreateCenterScreen', () => {
 
     await waitFor(() => {
       expect(findApiCall('POST', '/v1/onboarding/centers')?.body).toMatchObject({ isListed: true });
+    });
+  });
+
+  it('sends that the center only works with appointments when the owner chooses it', async () => {
+    mockApi({
+      'POST /v1/onboarding/centers': CREATED_CENTER,
+      'GET /v1/me/memberships': { memberships: [] },
+    });
+    renderScreen(<CreateCenterScreen />);
+    fireEvent.changeText(screen.getByLabelText('Nombre del centro'), 'Taller Norte');
+    fireEvent.press(screen.getByRole('button', { name: 'Citas con clientes' }));
+
+    fireEvent.press(screen.getByRole('button', { name: 'Crear mi centro' }));
+
+    await waitFor(() => {
+      expect(findApiCall('POST', '/v1/onboarding/centers')?.body).toMatchObject({
+        workMode: 'appointments',
+      });
     });
   });
 

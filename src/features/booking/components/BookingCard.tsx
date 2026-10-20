@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import { useCheckInQrAvailability } from '@/features/attendance';
+import { useActiveCenterModules } from '@/features/join';
 import type { MyBookingsResponseDtoBookingsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { describeBookingAssigner } from '@/shared/lib/booking-assigner';
@@ -94,6 +95,7 @@ export function BookingCard({
 }: Readonly<BookingCardProps>): React.JSX.Element {
   const router = useRouter();
   const qrAvailability = useCheckInQrAvailability(booking);
+  const hasAttendance = useActiveCenterModules().attendance;
   const displayStatus = resolveBookingDisplayStatus(booking, now);
   const presentation = presentBookingStatus(displayStatus);
   const requests =
@@ -114,7 +116,9 @@ export function BookingCard({
       isPast={displayStatus === 'past'}
       buttonActions={requests !== null && isActionable ? buildButtonActions(booking, requests) : []}
       linkActions={
-        isActionable ? buildQrLinkActions(router, qrAvailability?.isAvailable === true) : []
+        isActionable && hasAttendance
+          ? buildQrLinkActions(router, qrAvailability?.isAvailable === true)
+          : []
       }
     />
   );

@@ -6,12 +6,13 @@ import { FormTextField } from '@/ui/molecules/FormTextField';
 import type { CenterDetailsFormValues } from '../schemas/center-details.schema';
 import { ListedInSearchField } from './ListedInSearchField';
 import { SectorPicker } from './SectorPicker';
+import { WorkModePicker } from './WorkModePicker';
 
 interface CenterDetailsFieldsProps {
   control: Control<CenterDetailsFormValues>;
 }
 
-/** Campos del alta: nombre, tipo y ciudad. El color y el logo se ponen después, en Marca. */
+/** Campos del alta: nombre, cómo trabaja, tipo y ciudad. El color y el logo se ponen después, en Marca. */
 export function CenterDetailsFields({
   control,
 }: Readonly<CenterDetailsFieldsProps>): React.JSX.Element {
@@ -23,6 +24,7 @@ export function CenterDetailsFields({
         label={i18n.t('onboarding.center.nameLabel')}
         autoCapitalize="words"
       />
+      <WorkModePicker control={control} />
       <SectorPicker control={control} />
       <FormTextField
         control={control}

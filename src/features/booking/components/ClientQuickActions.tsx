@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 
 import { useUnreadMessageCount } from '@/features/chat';
 import { useMyChildren } from '@/features/guardians';
+import { useActiveCenterModules } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
 
@@ -38,9 +39,22 @@ function buildMessagesAction(
   };
 }
 
+function buildPassesAction(open: (route: Route) => () => void, hasPasses: boolean): QuickAction[] {
+  if (!hasPasses) return [];
+  return [
+    {
+      id: 'passes',
+      iconName: 'creditCard',
+      label: i18n.t('booking.home.passesAction'),
+      hint: i18n.t('booking.home.passesHint'),
+      onPress: open('/(client)/my-passes'),
+    },
+  ];
+}
+
 function buildSecondaryActions(
   open: (route: Route) => () => void,
-  options: { hasChildren: boolean; unreadMessageCount: number },
+  options: { hasChildren: boolean; hasPasses: boolean; unreadMessageCount: number },
 ): QuickAction[] {
   return [
     ...buildChildrenAction(open, options.hasChildren),
@@ -51,13 +65,7 @@ function buildSecondaryActions(
       hint: i18n.t('booking.home.myBookingsHint'),
       onPress: open('/(client)/(tabs)/bookings'),
     },
-    {
-      id: 'passes',
-      iconName: 'creditCard',
-      label: i18n.t('booking.home.passesAction'),
-      hint: i18n.t('booking.home.passesHint'),
-      onPress: open('/(client)/my-passes'),
-    },
+    ...buildPassesAction(open, options.hasPasses),
     {
       id: 'team',
       iconName: 'users',
@@ -77,6 +85,7 @@ export function ClientQuickActions(): React.JSX.Element {
   const router = useRouter();
   const hasChildren = (useMyChildren().data?.children.length ?? 0) > 0;
   const unreadMessageCount = useUnreadMessageCount();
+  const hasPasses = useActiveCenterModules().passes;
   const open = (route: Route) => () => {
     router.push(route);
   };
@@ -90,7 +99,7 @@ export function ClientQuickActions(): React.JSX.Element {
         hint: i18n.t('booking.home.bookHint'),
         onPress: open('/(client)/(tabs)/book'),
       }}
-      actions={buildSecondaryActions(open, { hasChildren, unreadMessageCount })}
+      actions={buildSecondaryActions(open, { hasChildren, hasPasses, unreadMessageCount })}
     />
   );
 }

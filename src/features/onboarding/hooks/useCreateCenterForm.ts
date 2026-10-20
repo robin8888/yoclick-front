@@ -32,8 +32,8 @@ interface SubmittedCenter {
 }
 
 function mapFormValuesToRequest(details: CenterDetailsFormValues): CreateCenterRequestDto {
-  const { name, sectorId, brandColor, city, isListed } = details;
-  return { name, sectorId, brandColor, isListed, ...(city === '' ? {} : { city }) };
+  const { name, sectorId, brandColor, city, isListed, workMode } = details;
+  return { name, sectorId, brandColor, isListed, workMode, ...(city === '' ? {} : { city }) };
 }
 
 /**
@@ -77,6 +77,7 @@ export function useCreateCenterForm(): CreateCenterForm {
     resolver: zodResolver(centerDetailsFormSchema),
     defaultValues: {
       name: '',
+      workMode: 'both',
       sectorId: 'gym',
       city: '',
       // El color se elige después en Marca: el centro nace con el de la plataforma.

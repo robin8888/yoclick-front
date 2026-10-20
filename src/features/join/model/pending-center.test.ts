@@ -1,3 +1,5 @@
+import { ALL_MODULES_ON } from '@/test/factories';
+
 import {
   formatCenterCity,
   mapBrandingToPendingCenter,
@@ -58,6 +60,7 @@ describe('pending center mappers', () => {
         sectorId: 'estudio',
         brandColor: '#E4572E',
         logoUrl: null,
+        modules: ALL_MODULES_ON,
         appearance: { backgroundColor: null, backgroundColorEnd: null, hiveColor: null },
       },
       'NORTE7',

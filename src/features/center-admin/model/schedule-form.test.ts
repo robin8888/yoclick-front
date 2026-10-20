@@ -43,6 +43,7 @@ function buildService(
     currency: 'EUR',
     color: null,
     bookingWindowDays: 30,
+    bufferMinutes: 0,
     minNoticeMinutes: 60,
     isVisible: true,
     isRental: false,

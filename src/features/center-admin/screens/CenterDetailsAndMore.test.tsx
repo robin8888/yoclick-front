@@ -42,14 +42,32 @@ describe('AdminMoreScreen', () => {
     mockApi({ 'GET /v1/me/memberships': { memberships: [] } });
   });
 
-  it('groups the accesses and opens the center details', () => {
+  it('shows the everyday accesses and keeps the rarely used ones folded under «Más ajustes»', () => {
     renderScreen(<AdminMoreScreen />);
 
     expect(screen.getByText('Tu centro')).toBeOnTheScreen();
-    expect(screen.getByText('Equipo')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: /Invita a tus/ })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: /Datos del centro y horario/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Seguridad/ })).toBeNull();
+  });
+
+  it('unfolds «Más ajustes» and opens the center details', () => {
+    renderScreen(<AdminMoreScreen />);
+
+    fireEvent.press(screen.getByRole('button', { name: /Más ajustes/ }));
     fireEvent.press(screen.getByRole('button', { name: /Datos del centro y horario/ }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/center');
+  });
+
+  it('folds the advanced accesses again', () => {
+    renderScreen(<AdminMoreScreen />);
+    fireEvent.press(screen.getByRole('button', { name: /Más ajustes/ }));
+    expect(screen.getByRole('button', { name: /Datos del centro y horario/ })).toBeOnTheScreen();
+
+    fireEvent.press(screen.getByRole('button', { name: /Ocultar ajustes/ }));
+
+    expect(screen.queryByRole('button', { name: /Datos del centro y horario/ })).toBeNull();
   });
 
   it('offers the dark theme switch and signing out', () => {

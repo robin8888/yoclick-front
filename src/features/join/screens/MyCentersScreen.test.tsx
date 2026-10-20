@@ -2,7 +2,13 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { buildApiError, mockApi } from '@/test/mock-api';
-import { buildMembership, FORJA_CENTER_ID, NO_APPEARANCE, NORTE_CENTER_ID } from '@/test/factories';
+import {
+  ALL_MODULES_ON,
+  buildMembership,
+  FORJA_CENTER_ID,
+  NO_APPEARANCE,
+  NORTE_CENTER_ID,
+} from '@/test/factories';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
@@ -19,6 +25,7 @@ const FORJA_MEMBERSHIP = buildMembership({
     sectorId: 'readap',
     brandColor: '#2446C7',
     logoUrl: null,
+    modules: ALL_MODULES_ON,
     appearance: NO_APPEARANCE,
   },
 });

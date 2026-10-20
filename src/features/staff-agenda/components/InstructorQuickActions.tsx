@@ -1,6 +1,7 @@
 import { useRouter, type Href } from 'expo-router';
 
 import { useUnreadMessageCount } from '@/features/chat';
+import { useActiveCenterModules, type CenterModules } from '@/features/join';
 
 import { i18n } from '@/shared/i18n';
 import type { IconName } from '@/ui/atoms/Icon';
@@ -93,6 +94,15 @@ const SECONDARY_SPECS: readonly ActionSpec[] = [
   },
 ];
 
+/** Escáner, rutinas y contenido solo salen si el centro usa asistencia y contenido. */
+function listVisibleSpecs(modules: CenterModules): readonly ActionSpec[] {
+  const hiddenIds = [
+    ...(modules.attendance ? [] : ['scan']),
+    ...(modules.content ? [] : ['routines', 'content']),
+  ];
+  return SECONDARY_SPECS.filter((spec) => !hiddenIds.includes(spec.id));
+}
+
 interface InstructorQuickActionsProps {
   /** «Rutinas», «tareas», «prácticas»…: la palabra del sector, ya en plural y con mayúscula. */
   routineLabel: string;
@@ -104,6 +114,7 @@ export function InstructorQuickActions({
 }: Readonly<InstructorQuickActionsProps>): React.JSX.Element {
   const router = useRouter();
   const unreadMessageCount = useUnreadMessageCount();
+  const modules = useActiveCenterModules();
   const toAction = (spec: ActionSpec): QuickAction => ({
     id: spec.id,
     iconName: spec.iconName,
@@ -118,7 +129,7 @@ export function InstructorQuickActions({
   return (
     <QuickActionsGrid
       primaryAction={toAction(PRIMARY_SPEC)}
-      actions={SECONDARY_SPECS.map(toAction)}
+      actions={listVisibleSpecs(modules).map(toAction)}
     />
   );
 }

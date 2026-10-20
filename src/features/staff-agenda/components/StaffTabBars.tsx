@@ -1,6 +1,6 @@
 import { usePathname, useRouter, type Href } from 'expo-router';
 
-import { useActiveCenterSectorId } from '@/features/join';
+import { useActiveCenterModules, useActiveCenterSectorId } from '@/features/join';
 import { useUnreadNotificationCount } from '@/features/notifications';
 import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { PathTabBar, type PathTab } from '@/ui/organisms/TabBar';
@@ -49,6 +49,8 @@ interface AdminTabsRequest {
   clientsLabel: string;
   /** Con salas, «Salas y horarios» se abre desde Inicio: sus pantallas cuelgan de él. */
   hasRoomManagement: boolean;
+  /** Sin contenido (centro de citas) no hay pestaña de contenido. */
+  hasContent: boolean;
 }
 
 /** Las pantallas de «Servicios y horario» cuelgan de «Marca» (prototipo); las salas, de la agenda si hay gestión. */
@@ -60,8 +62,8 @@ function listBrandTabPaths(hasRoomManagement: boolean): string[] {
 const MANAGEMENT_PATHS = ['/management', '/rooms', '/schedules'];
 
 function listMainAdminTabs(request: AdminTabsRequest): readonly PathTab[] {
-  const { clientsLabel, hasRoomManagement } = request;
-  return [
+  const { clientsLabel, hasRoomManagement, hasContent } = request;
+  const tabs: PathTab[] = [
     {
       id: 'home',
       label: i18n.t('centerAdmin.tabs.home'),
@@ -90,6 +92,7 @@ function listMainAdminTabs(request: AdminTabsRequest): readonly PathTab[] {
       activePaths: ['/content'],
     },
   ];
+  return hasContent ? tabs : tabs.filter((tab) => tab.id !== 'content');
 }
 
 /** Inicio (donde están la agenda y los accesos del centro), Clientes, Contenido, Marca y Más. */
@@ -139,10 +142,15 @@ export function AdminTabBar(): React.JSX.Element {
   const router = useRouter();
   const sectorId = useActiveCenterSectorId();
   const clientsLabel = capitalize(getSectorVocabulary(sectorId).client.plural);
+  const modules = useActiveCenterModules();
 
   return (
     <PathTabBar
-      tabs={listAdminTabs({ clientsLabel, hasRoomManagement: hasRoomManagement(sectorId) })}
+      tabs={listAdminTabs({
+        clientsLabel,
+        hasRoomManagement: hasRoomManagement(sectorId) && modules.rooms,
+        hasContent: modules.content,
+      })}
       currentPath={usePathname()}
       onTabPress={(href) => {
         router.navigate(href as Href);

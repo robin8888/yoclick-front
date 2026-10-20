@@ -5,6 +5,15 @@ import type {
   MyMembershipsResponseDtoMembershipsItem,
 } from '@/shared/api/generated/model';
 
+/** Centro que usa todos los módulos (el de siempre). */
+export const ALL_MODULES_ON = {
+  content: true,
+  attendance: true,
+  passes: true,
+  waitlist: true,
+  rooms: true,
+};
+
 /** Centro sin fondo ni colmena personalizados. */
 export const NO_APPEARANCE = { backgroundColor: null, backgroundColorEnd: null, hiveColor: null };
 
@@ -20,6 +29,7 @@ export function buildBranding(
     sectorId: 'estudio',
     brandColor: '#E4572E',
     logoUrl: null,
+    modules: ALL_MODULES_ON,
     appearance: NO_APPEARANCE,
     ...overrides,
   };
@@ -41,6 +51,7 @@ export function buildMembership(
       sectorId: 'estudio',
       brandColor: '#E4572E',
       logoUrl: null,
+      modules: ALL_MODULES_ON,
       appearance: NO_APPEARANCE,
     },
     ...overrides,

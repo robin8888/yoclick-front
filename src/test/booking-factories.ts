@@ -25,6 +25,7 @@ export function buildService(
     currency: 'EUR',
     color: null,
     bookingWindowDays: 30,
+    bufferMinutes: 0,
     minNoticeMinutes: 120,
     isVisible: true,
     isRental: false,

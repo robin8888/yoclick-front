@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 
-import { LoadErrorState } from '@/features/join';
+import { LoadErrorState, useActiveCenterModules } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
@@ -37,6 +37,7 @@ export function InstructorAgendaScreen(): React.JSX.Element {
   const router = useRouter();
   const day = useAgendaDay();
   const agenda = useDayAgenda(day.isoDate);
+  const hasAttendance = useActiveCenterModules().attendance;
 
   return (
     <ScreenTemplate
@@ -49,15 +50,17 @@ export function InstructorAgendaScreen(): React.JSX.Element {
         selectedIsoDate={day.isoDate}
         onDaySelect={day.selectDate}
       />
-      <Button
-        variant="primary"
-        leadingIconName="qrCode"
-        isFullWidth
-        label={i18n.t('staffAgenda.instructor.scanAttendanceAction')}
-        onPress={() => {
-          router.push('/(staff)/scan');
-        }}
-      />
+      {hasAttendance ? (
+        <Button
+          variant="primary"
+          leadingIconName="qrCode"
+          isFullWidth
+          label={i18n.t('staffAgenda.instructor.scanAttendanceAction')}
+          onPress={() => {
+            router.push('/(staff)/scan');
+          }}
+        />
+      ) : null}
       <InstructorAgendaBody agenda={agenda} />
     </ScreenTemplate>
   );

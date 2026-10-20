@@ -2,7 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { useForm, type Control } from 'react-hook-form';
 
-import { useAccessCenter, usePendingInvitationStore } from '@/features/join';
+import {
+  useAccessCenter,
+  useAccessCenterUsesContent,
+  usePendingInvitationStore,
+} from '@/features/join';
 
 import { useAuthFlowStore } from '../model/auth-flow-store';
 import {
@@ -15,7 +19,10 @@ import { useRememberAccountRole } from './useRememberAccountRole';
 
 interface RegisterAccountForm {
   control: Control<RegisterAccountFormValues>;
-  /** Un alumno sigue al paso de experiencia; propietario e instructor envían el alta ya. */
+  /**
+   * Un alumno sigue al paso de experiencia, salvo que su centro no use contenido; propietario e
+   * instructor envían el alta ya.
+   */
   isLastStep: boolean;
   submitAccount: () => void;
   isSubmitting: boolean;
@@ -52,6 +59,7 @@ export function useRegisterAccountForm(): RegisterAccountForm {
   const rememberRole = useRememberAccountRole();
   const hasInvitationLink = usePendingInvitationStore((state) => state.invitationCode !== null);
   const accessRole = useAccessCenter()?.role;
+  const hasExperienceStep = useAccessCenterUsesContent();
   const { registerAccount, isRegistering, registrationErrorMessage } = useRegisterAccountRequest();
   const { control, handleSubmit } = useForm<RegisterAccountFormValues>({
     resolver: zodResolver(registerAccountFormSchema),
@@ -69,7 +77,7 @@ export function useRegisterAccountForm(): RegisterAccountForm {
       hasMarketingConsent: account.isMarketingAccepted,
     };
     rememberRole(selectedRole);
-    if (selectedRole !== 'client') {
+    if (selectedRole !== 'client' || !hasExperienceStep) {
       registerAccount(accountToRegister);
       return;
     }
@@ -79,7 +87,7 @@ export function useRegisterAccountForm(): RegisterAccountForm {
 
   return {
     control,
-    isLastStep: selectedRole !== 'client',
+    isLastStep: selectedRole !== 'client' || !hasExperienceStep,
     submitAccount: () => void submitAccount(),
     isSubmitting: isRegistering,
     errorMessage: registrationErrorMessage,

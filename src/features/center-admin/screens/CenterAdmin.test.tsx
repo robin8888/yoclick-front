@@ -158,12 +158,44 @@ describe('ServiceEditorScreen', () => {
     expect(findApiCall('POST', SERVICES_PATH)?.body).toEqual({
       name: 'Valoración inicial',
       durationMinutes: 30,
+      bufferMinutes: 0,
       priceCents: 2550,
       isVisible: true,
       isRental: false,
       mode: 'private',
       staffMembershipIds: [],
     });
+  });
+
+  it('sends the margin the owner leaves between appointments', async () => {
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [] },
+      [`POST ${SERVICES_PATH}`]: buildService(),
+    });
+    renderScreen(<ServiceEditorScreen />);
+    fireEvent.changeText(screen.getByLabelText('Nombre del servicio'), 'Revisión');
+    fireEvent.changeText(screen.getByLabelText('Margen entre citas (minutos)'), '15');
+
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('POST', SERVICES_PATH)?.body).toMatchObject({ bufferMinutes: 15 });
+    });
+  });
+
+  it('does not save a margin that is not a multiple of five', async () => {
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [] },
+      [`POST ${SERVICES_PATH}`]: buildService(),
+    });
+    renderScreen(<ServiceEditorScreen />);
+    fireEvent.changeText(screen.getByLabelText('Nombre del servicio'), 'Revisión');
+    fireEvent.changeText(screen.getByLabelText('Margen entre citas (minutos)'), '7');
+
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    expect(await screen.findByText(/entre 0 y 240, de 5 en 5/)).toBeOnTheScreen();
+    expect(findApiCall('POST', SERVICES_PATH)).toBeUndefined();
   });
 
   it('lets the owner choose who gives the service and sends it', async () => {

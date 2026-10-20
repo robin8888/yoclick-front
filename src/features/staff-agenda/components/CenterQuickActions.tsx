@@ -6,6 +6,8 @@ import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsG
 interface CenterQuickActionsProps {
   /** «Salas y horarios» solo existe en los sectores con salas. */
   canManageSpaces: boolean;
+  /** Sin bonos (centro de citas) no sale el acceso a «Bonos». */
+  hasPasses: boolean;
   /** «clases», «sesiones»…: la palabra del sector para lo que se da en las salas. */
   sessionsWord: string;
   onAgendaPress: () => void;
@@ -62,6 +64,19 @@ function buildManagementActions(props: CenterQuickActionsProps): QuickAction[] {
   ];
 }
 
+function buildPassesActions(props: CenterQuickActionsProps): QuickAction[] {
+  if (!props.hasPasses) return [];
+  return [
+    {
+      id: 'passes',
+      iconName: 'creditCard',
+      label: i18n.t('staffAgenda.center.passesAction'),
+      hint: i18n.t('staffAgenda.center.passesHint'),
+      onPress: props.onPassesPress,
+    },
+  ];
+}
+
 function buildSecondaryActions(
   props: CenterQuickActionsProps,
   unreadMessageCount: number,
@@ -74,13 +89,7 @@ function buildSecondaryActions(
       hint: i18n.t('staffAgenda.center.agendaHint'),
       onPress: props.onAgendaPress,
     },
-    {
-      id: 'passes',
-      iconName: 'creditCard',
-      label: i18n.t('staffAgenda.center.passesAction'),
-      hint: i18n.t('staffAgenda.center.passesHint'),
-      onPress: props.onPassesPress,
-    },
+    ...buildPassesActions(props),
     {
       id: 'services',
       iconName: 'file',
