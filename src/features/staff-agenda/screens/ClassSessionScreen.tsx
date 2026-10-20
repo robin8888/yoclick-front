@@ -8,6 +8,8 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { useActiveCenterModules } from '@/features/join';
+import { SessionWaitlistPanel } from '@/features/waitlist';
 import { ClassSessionBody } from '../components/ClassSessionBody';
 import { SessionAttendanceSection } from '../components/SessionAttendanceSection';
 import { listSessionAttendees, type SessionAttendee } from '../model/attendance';
@@ -50,7 +52,9 @@ function ClassSessionMain({
   isoDate,
   canAddPeople,
 }: Readonly<ClassSessionMainProps>): React.JSX.Element {
-  const hasAttendance = booking.status !== 'cancelled' && attendees.length > 0;
+  const modules = useActiveCenterModules();
+  const hasAttendance =
+    modules.attendance && booking.status !== 'cancelled' && attendees.length > 0;
 
   return (
     <>
@@ -62,6 +66,9 @@ function ClassSessionMain({
         />
       ) : null}
       <ClassSessionBody {...{ booking, timeZone, isoDate, canAddPeople }} />
+      {modules.waitlist && booking.session.mode === 'group' && booking.status !== 'cancelled' ? (
+        <SessionWaitlistPanel classSessionId={booking.session.id} timeZone={timeZone} />
+      ) : null}
     </>
   );
 }
