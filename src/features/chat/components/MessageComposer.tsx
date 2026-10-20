@@ -7,6 +7,7 @@ import { useTheme } from '@/shared/theme';
 import { useIsKeyboardVisible } from '@/ui/hooks/useIsKeyboardVisible';
 import { IconButton } from '@/ui/atoms/IconButton';
 import { useTextStyle } from '@/ui/atoms/Text';
+import { useTabBarOverlap } from '@/ui/organisms/TabBar';
 
 import type { AttachmentSource } from '../hooks/useSendAttachment';
 import {
@@ -26,10 +27,14 @@ interface MessageComposerProps {
   isSendDisabled?: boolean;
 }
 
-/** Con el teclado abierto ya no hay barra de inicio debajo: sin hueco extra sobre las teclas. */
+/**
+ * Deja libre lo que tapa la barra de navegación flotante (que ya cuenta la barra de inicio). Con
+ * el teclado abierto no hay ni una ni otra debajo: sin hueco extra sobre las teclas.
+ */
 function useComposerBottomInset(): number {
   const { bottom: safeAreaBottom } = useSafeAreaInsets();
-  return useIsKeyboardVisible() ? 0 : safeAreaBottom;
+  const tabBarOverlap = useTabBarOverlap();
+  return useIsKeyboardVisible() ? 0 : Math.max(safeAreaBottom, tabBarOverlap);
 }
 
 function AttachButtons({
