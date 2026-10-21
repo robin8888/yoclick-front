@@ -86,7 +86,11 @@ describe('booking flow', () => {
     });
 
     it('goes straight to the day and class step with the chosen service', async () => {
-      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      mockApi({
+        [SERVICES_PATH]: {
+          services: [buildService(), buildService({ id: 'otro', name: 'Valoración' })],
+        },
+      });
       renderScreen(<BookServiceScreen />);
 
       expect(await screen.findByRole('button', { name: 'Continuar' })).toBeDisabled();
@@ -98,6 +102,26 @@ describe('booking flow', () => {
         pathname: '/(client)/book/slot',
         params: { serviceId: SERVICE_ID },
       });
+    });
+
+    it('has the only service already chosen so one tap less is needed', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService()] } });
+      renderScreen(<BookServiceScreen />);
+
+      expect(await screen.findByRole('radio', { name: /Entrenamiento personal/ })).toBeChecked();
+      fireEvent.press(screen.getByRole('button', { name: 'Continuar' }));
+
+      expect(getMockRouter().push).toHaveBeenCalledWith({
+        pathname: '/(client)/book/slot',
+        params: { serviceId: SERVICE_ID },
+      });
+    });
+
+    it('does not choose for the person when the only service has no schedule yet', async () => {
+      mockApi({ [SERVICES_PATH]: { services: [buildService({ hasSchedule: false })] } });
+      renderScreen(<BookServiceScreen />);
+
+      expect(await screen.findByRole('button', { name: 'Continuar' })).toBeDisabled();
     });
 
     it('explains there are no services yet and offers a retry', async () => {

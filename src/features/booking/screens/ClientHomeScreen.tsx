@@ -7,6 +7,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { HomeHeader } from '../components/HomeHeader';
 import { HomeNextAppointment } from '../components/HomeNextAppointment';
 import { HomeShortcuts } from '../components/HomeShortcuts';
+import { RepeatLastBookingCard } from '../components/RepeatLastBookingCard';
 import { WeeklyProgressCard } from '../components/WeeklyProgressCard';
 import { useAttendedThisWeek } from '../hooks/useAttendedThisWeek';
 import { useClientFullName } from '../hooks/useClientFullName';
@@ -38,6 +39,7 @@ export function ClientHomeScreen(): React.JSX.Element {
         fullName={fullName}
       />
       <HomeNextAppointment nextBooking={nextBooking} onBookAction={openBookTab} />
+      <RepeatLastBookingCard />
       <WeeklyProgressCard completedCount={attendedThisWeek} goalCount={WEEKLY_GOAL_SESSION_COUNT} />
       <HomeShortcuts nextBooking={nextBooking} />
     </ScreenTemplate>

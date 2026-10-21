@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { LoadErrorState } from '@/features/join';
 import { i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
@@ -13,6 +11,7 @@ import { ActingForSelector } from '@/features/guardians';
 import { ContinueToClassesButton } from '../components/ContinueToClassesButton';
 import { ServiceOptionList } from '../components/ServiceOptionList';
 import { useCenterServices } from '../hooks/useCenterServices';
+import { useServiceChoice } from '../hooks/useServiceChoice';
 
 const BOOKING_STEP_COUNT = 2;
 
@@ -20,7 +19,7 @@ const BOOKING_STEP_COUNT = 2;
 export function BookServiceScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
   const services = useCenterServices();
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
+  const { selectedServiceId, selectService } = useServiceChoice(services.data?.services);
 
   return (
     <ScreenTemplate
@@ -50,7 +49,7 @@ export function BookServiceScreen(): React.JSX.Element {
         <ServiceOptionList
           services={services.data.services}
           selectedServiceId={selectedServiceId}
-          onServiceSelect={setSelectedServiceId}
+          onServiceSelect={selectService}
           onRetry={() => void services.refetch()}
         />
       )}
