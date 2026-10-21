@@ -49,6 +49,34 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (21 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 20 oct; lo que no aparece aquí no ha cambiado. Todo subido con `git push` (back `26c9fee`, front `11abb92`). Back: lint, tsc, 1228 unitarios y 1056 e2e en verde; front: lint, typecheck y 2416 tests en verde (307 suites).
+
+### Hecho el 21 de octubre
+- ✅ **Direcciones con sugerencias** mientras se escribe (España y Colombia) y **coordenadas del centro**: proxy en el back con **Geoapify** (la clave `GEOAPIFY_API_KEY` es obligatoria en todos los entornos, el mismo proveedor en desarrollo y producción), campo reutilizable en los formularios, crédito de OpenStreetMap y Geoapify bajo las sugerencias y en las dos pantallas de privacidad, filtro de «Perímetro Urbano».
+- ✅ **Menos toques al reservar**: «Repetir tu última cita» en el inicio (clase o hora libre, misma persona, día de la semana y hora) y servicio único ya elegido.
+- ✅ **Reserva por hora libre** para negocios de citas (elegir con quién, día y hora; confirmar, cambiar y cancelar) frente a las clases con horario de sala.
+- ✅ **Ejemplos de servicios por tipo de negocio** (15 tipos, editables, sin precio) y **4 sectores nuevos de citas** con vocabulario propio: peluquería, estética, fisioterapia y psicología.
+- ✅ **Plan de lanzamiento** (`16-plan-de-lanzamiento.md`): fases A a H, qué hace Claude y qué solo puede hacer Robin.
+- ✅ **Administración de la plataforma, P1 a P3** (`17-administracion-de-plataforma-y-cobro-del-plan.md`): usuario especial `platform_role` (`admin` o `accountant`) que solo concede el comando `npm run platform:role`, segundo factor obligatorio, auditoría, estadísticas agregadas sin datos personales y zona «Plataforma» en la app (Resumen, Centros, Actividad y Detalle con ampliar prueba, suspender, reactivar y tope de clientes).
+- ✅ **Diseño del cobro del plan**: 14 días de prueba con Pro sin tarjeta, Stripe Billing en la web, 7 días de gracia y suspensión; Stripe solo cobra y la factura con VeriFactu la emite un proveedor o el gestor (Stripe Invoicing por sí solo no cumple VeriFactu).
+
+### Decisiones
+- La administración vive en la app con un usuario especial; solo cifras agregadas de los clientes finales.
+- El gestor tendrá un usuario `accountant` de solo lectura (cobros e informes).
+- Yoclick no emite facturas: sería software de facturación certificable.
+- VeriFactu: sociedades 1 ene 2027 y resto 1 jul 2027 según la norma vigente; Hacienda prevé aplazarlo hasta oct 2028 pero no hay norma publicada (mirar el BOE).
+
+### Pendiente
+1. 🟡 **Probar en el móvil**: direcciones, atajo de repetir cita, reserva por hora libre, ejemplos de servicios y la zona «Plataforma».
+2. ⬜ **Plataforma P4**: registro de cobros del plan e informes para el gestor (CSV), usuario `accountant`.
+3. ⬜ **Plataforma P5**: Stripe Billing (Checkout, portal, webhooks, estados, barrido y avisos); espera a la cuenta de Stripe, el dominio, Brevo y el proveedor de facturación.
+4. ⬜ **Plataforma P6**: pantalla «Mi suscripción» del centro con el estado real.
+5. ⬜ **Facturas**: probar Finseed o BeeL en su entorno de pruebas con Stripe y preguntar al gestor qué programa usa.
+6. ⬜ Bloque de lanzamiento (`16`): cuentas, infraestructura, CI, Sentry, legal y RGPD de menores, Stripe real, tiendas.
+7. ⚠️ Aplicar `npm run db:deploy` en cada entorno (hoy: `20261121090000_platform_admin`); para usar la zona, activar el segundo factor y ejecutar `npm run platform:role -- grant <correo> admin`.
+
 ## Estado de avance (20 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 19 oct; lo que no aparece aquí no ha cambiado. Commiteado en ambos repos, sin subir. Back: lint, tsc, 1198 unitarios y 1031 e2e en verde; front: lint, typecheck y 2271 tests en verde.
@@ -63,15 +91,11 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a 
 - ❌ **Vocabulario editable del centro**: descartado (se mantiene el del sector).
 
 ### Pendiente
-1. ✅ Probar en el móvil lo del 19 y el 20 de octubre.
-2. ✅ Menos toques al reservar: «Repetir tu última cita» en el inicio (misma clase, día de la semana y hora) y servicio único ya elegido.
-3. ✅ Plantillas de servicios por tipo de negocio (15 tipos, solo ejemplos editables, el precio lo pone el centro) y 4 sectores nuevos de citas: peluquería, estética, fisioterapia y psicología, con vocabulario propio («cita», «paciente»).
-4. ✅ **Reserva por hora libre** para negocios de citas: un servicio individual sin horario de sala (o cualquiera si el centro no usa salas) se reserva eligiendo con quién (si hay varias personas), día y hora libres; la hora se confirma, se cambia (`bookings_reschedule`) y se cancela como el resto. Los servicios con horario de sala siguen por clase. «Repetir tu última cita» también vale para citas individuales (misma persona, día de la semana y hora). Falta probarlo en el móvil.
-5. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
-6. ⬜ **Administración de la plataforma y cobro del plan** (usuario especial, estadísticas, cobros e informes para el gestor, 14 días de prueba y pago con Stripe): diseño en `docs/spec/17-administracion-de-plataforma-y-cobro-del-plan.md`, P1 a P3 construidas (rol de plataforma, estadísticas y zona «Plataforma» en la app); faltan P4 (cobros e informes para el gestor), P5 (Stripe Billing) y P6 (pantalla «Mi suscripción»).
-7. ⬜ **Plan de lanzamiento** (cuentas, infraestructura, legal, pagos reales, tiendas): `docs/spec/16-plan-de-lanzamiento.md`.
-8. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
-9. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+1. ⬜ Probar en el móvil lo del 19 y el 20 de octubre.
+2. ⬜ Menos toques al reservar y «repetir mi última cita».
+3. ⬜ Plantillas de servicios por tipo de negocio (solo ejemplos editables), si se quiere.
+4. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+5. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
 
 ---
 
