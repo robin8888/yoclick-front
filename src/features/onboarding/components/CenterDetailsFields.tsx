@@ -1,5 +1,6 @@
 import type { Control } from 'react-hook-form';
 
+import { FormCityField } from '@/features/address';
 import { i18n } from '@/shared/i18n';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 
@@ -26,12 +27,7 @@ export function CenterDetailsFields({
       />
       <WorkModePicker control={control} />
       <SectorPicker control={control} />
-      <FormTextField
-        control={control}
-        name="city"
-        label={i18n.t('onboarding.center.cityLabel')}
-        autoCapitalize="words"
-      />
+      <FormCityField control={control} name="city" label={i18n.t('onboarding.center.cityLabel')} />
       <ListedInSearchField control={control} />
     </>
   );

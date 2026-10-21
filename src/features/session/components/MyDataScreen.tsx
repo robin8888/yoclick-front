@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
+import { AddressField, buildTypedAddress, getDeviceCountryCode } from '@/features/address';
 import { useActiveCenterSummary } from '@/features/auth';
 import { LoadErrorState } from '@/features/join';
 import type { MyProfileResponseDto } from '@/shared/api/generated/model';
@@ -84,19 +85,21 @@ function ContactFields({
         keyboardType="phone-pad"
         autoComplete="tel"
       />
-      <FormField
+      <AddressField
         label={i18n.t('session.myData.addressLabel')}
+        kind="address"
+        countryCode={getDeviceCountryCode()}
         helperText={i18n.t('session.myData.optionalHelper')}
         errorMessage={
           problems.includes('address-too-long')
             ? i18n.t('session.myData.addressTooLong', { max: MAX_ADDRESS_LENGTH })
             : undefined
         }
-        value={draft.address}
-        onChangeText={(address) => {
-          onDraftChange({ address });
+        // Es el domicilio de una persona: se guarda el texto, no sus coordenadas.
+        value={buildTypedAddress(draft.address)}
+        onChange={(address) => {
+          onDraftChange({ address: address.text });
         }}
-        autoComplete="street-address"
       />
     </>
   );

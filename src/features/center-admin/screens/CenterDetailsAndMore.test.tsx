@@ -18,6 +18,8 @@ const SETTINGS = {
   sectorId: 'yoga',
   timezone: 'Europe/Madrid',
   address: 'Calle Mayor 1',
+  latitude: null,
+  longitude: null,
   phone: null,
   contactEmail: null,
   legalName: null,
@@ -118,6 +120,66 @@ describe('CenterDetailsScreen', () => {
         taxId: 'b12345678',
         sectorId: 'yoga',
         phone: null,
+      });
+    });
+  });
+
+  it('saves the coordinates of the suggested address with the details', async () => {
+    mockApi({
+      [`GET ${SETTINGS_PATH}`]: SETTINGS,
+      [`PATCH ${SETTINGS_PATH}`]: SETTINGS,
+      'POST /v1/geocode/suggestions': {
+        suggestions: [
+          {
+            label: 'Calle Alcalá 3, 28014 Madrid',
+            street: 'Calle Alcalá',
+            houseNumber: '3',
+            city: 'Madrid',
+            postcode: '28014',
+            latitude: 40.4168,
+            longitude: -3.7038,
+          },
+        ],
+      },
+    });
+    renderScreen(<CenterDetailsScreen />);
+
+    fireEvent.changeText(await screen.findByDisplayValue('Calle Mayor 1'), 'calle alcala 3');
+    fireEvent.press(
+      await screen.findByRole(
+        'button',
+        { name: 'Calle Alcalá 3, 28014 Madrid' },
+        { timeout: 3000 },
+      ),
+    );
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', SETTINGS_PATH)?.body).toMatchObject({
+        address: 'Calle Alcalá 3, 28014 Madrid',
+        latitude: 40.4168,
+        longitude: -3.7038,
+      });
+    });
+  });
+
+  it('clears the old coordinates when the address is typed by hand', async () => {
+    mockApi({
+      [`GET ${SETTINGS_PATH}`]: { ...SETTINGS, latitude: 40.4, longitude: -3.7 },
+      [`PATCH ${SETTINGS_PATH}`]: SETTINGS,
+      'POST /v1/geocode/suggestions': { suggestions: [] },
+    });
+    renderScreen(<CenterDetailsScreen />);
+
+    fireEvent.changeText(await screen.findByDisplayValue('Calle Mayor 1'), 'Otra calle 5');
+    await screen.findByText(/No encontramos esa dirección/, {}, { timeout: 3000 });
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', SETTINGS_PATH)?.body).toMatchObject({
+        address: 'Otra calle 5',
+        latitude: null,
+        longitude: null,
       });
     });
   });

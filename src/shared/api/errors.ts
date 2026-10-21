@@ -108,6 +108,7 @@ export const KNOWN_API_ERROR_CODES = [
   'STAFF_NOT_FOR_SERVICE',
   'PAYMENTS_NOT_INCLUDED',
   'PAYMENTS_NOT_READY',
+  'GEOCODING_UNAVAILABLE',
 ] as const;
 
 export type KnownApiErrorCode = (typeof KNOWN_API_ERROR_CODES)[number];

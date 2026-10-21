@@ -6,6 +6,7 @@ export * from './centers/centers.zod.ts';
 export * from './chat/chat.zod.ts';
 export * from './clients/clients.zod.ts';
 export * from './content/content.zod.ts';
+export * from './geocode/geocode.zod.ts';
 export * from './guardians/guardians.zod.ts';
 export * from './health/health.zod.ts';
 export * from './join/join.zod.ts';
