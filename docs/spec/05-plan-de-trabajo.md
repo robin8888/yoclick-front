@@ -68,9 +68,10 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a 
 3. ✅ Plantillas de servicios por tipo de negocio (15 tipos, solo ejemplos editables, el precio lo pone el centro) y 4 sectores nuevos de citas: peluquería, estética, fisioterapia y psicología, con vocabulario propio («cita», «paciente»).
 4. ✅ **Reserva por hora libre** para negocios de citas: un servicio individual sin horario de sala (o cualquiera si el centro no usa salas) se reserva eligiendo con quién (si hay varias personas), día y hora libres; la hora se confirma, se cambia (`bookings_reschedule`) y se cancela como el resto. Los servicios con horario de sala siguen por clase. «Repetir tu última cita» también vale para citas individuales (misma persona, día de la semana y hora). Falta probarlo en el móvil.
 5. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
-6. ⬜ **Plan de lanzamiento** (cuentas, infraestructura, legal, pagos reales, tiendas): `docs/spec/16-plan-de-lanzamiento.md`.
-7. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
-8. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+6. ⬜ **Administración de la plataforma y cobro del plan** (usuario especial, estadísticas, cobros e informes para el gestor, 14 días de prueba y pago con Stripe): diseño en `docs/spec/17-administracion-de-plataforma-y-cobro-del-plan.md`, P1 a P3 construidas (rol de plataforma, estadísticas y zona «Plataforma» en la app); faltan P4 (cobros e informes para el gestor), P5 (Stripe Billing) y P6 (pantalla «Mi suscripción»).
+7. ⬜ **Plan de lanzamiento** (cuentas, infraestructura, legal, pagos reales, tiendas): `docs/spec/16-plan-de-lanzamiento.md`.
+8. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+9. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
 
 ---
 

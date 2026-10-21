@@ -70,7 +70,7 @@ Lo que más tarda **no es código**: verificar la organización (D-U-N-S), la pr
 - [ ] **D3 · Registro de tratamientos** y plazos de conservación.
 - [ ] **D4 · Direcciones y mapas:** mencionar a Geoapify/OpenStreetMap en la política (ya se cita en pantalla).
 - [ ] **D5 · URLs públicas** de privacidad, soporte, términos y borrado de cuenta (las exigen ambas fichas). *Claude:* páginas estáticas con el texto final.
-- [ ] **D6 · Facturación de Yoclick a los centros:** el plan (39/79/149 €) se cobra **en la web con Stripe Billing**, no dentro de la app. Falta decidir si el primer piloto se factura a mano y la web de alta/pago se construye después (ver Fase F).
+- [ ] **D6 · Facturación de Yoclick a los centros** (diseño completo en `17-administracion-de-plataforma-y-cobro-del-plan.md`; Stripe cobra y un proveedor o el gestor emite la factura con VeriFactu): el plan (39/79/149 €) se cobra **en la web con Stripe Billing**, no dentro de la app. Falta decidir si el primer piloto se factura a mano y la web de alta/pago se construye después (ver Fase F).
 
 ### Fase E · Pagos reales (cuando B esté hecho)
 
