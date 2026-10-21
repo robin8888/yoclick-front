@@ -78,6 +78,13 @@ describe('PrivacySettingsScreen', () => {
     expect(screen.getByRole('switch', { name: 'Promociones y novedades' })).not.toBeDisabled();
   });
 
+  it('credits the OpenStreetMap and Geoapify data behind the address suggestions', async () => {
+    mockPrivacyApi();
+    renderScreen(<PrivacySettingsScreen />);
+
+    expect(await screen.findByText(/OpenStreetMap contributors, licencia ODbL/)).toBeOnTheScreen();
+  });
+
   it('withdraws and grants an optional consent', async () => {
     mockPrivacyApi({
       'PUT /v1/me/consents': {

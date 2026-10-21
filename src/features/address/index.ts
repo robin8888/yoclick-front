@@ -1,4 +1,5 @@
 // API pública de la feature: lo único que otras features pueden importar.
+export { AddressDataCredit } from './components/AddressDataCredit';
 export { AddressField } from './components/AddressField';
 export { FormAddressField } from './components/FormAddressField';
 export { FormCityField } from './components/FormCityField';

@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
+import { AddressDataCredit } from '@/features/address';
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
 import type { ConsentSummaryResponseDto } from '@/shared/api/generated/model';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
@@ -81,6 +82,7 @@ export function PrivacyLegalScreen(): React.JSX.Element {
           {i18n.t('centerAdmin.privacy.legalNote')}
         </Text>
       </View>
+      <AddressDataCredit />
     </ScreenTemplate>
   );
 }

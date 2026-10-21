@@ -133,5 +133,6 @@ describe('PrivacyLegalScreen', () => {
     expect(screen.getByText('96')).toBeOnTheScreen();
     expect(screen.getByText('Consentimiento parental')).toBeOnTheScreen();
     expect(screen.getByText(/revísalas con tu asesor/)).toBeOnTheScreen();
+    expect(screen.getByText(/OpenStreetMap contributors, licencia ODbL/)).toBeOnTheScreen();
   });
 });

@@ -6,6 +6,7 @@ import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
+import { AddressDataCredit } from '@/features/address';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ConsentsSection } from '../components/ConsentsSection';
@@ -63,6 +64,7 @@ export function PrivacySettingsScreen(): React.JSX.Element {
       backLabel={i18n.t('actions.back')}
     >
       <PrivacySettingsContent />
+      <AddressDataCredit />
     </ScreenTemplate>
   );
 }

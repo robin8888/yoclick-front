@@ -2,6 +2,7 @@
   "address": {
     "searching": "Buscando direcciones…",
     "attribution": "© OpenStreetMap contributors · Powered by Geoapify",
+    "credit": "Las sugerencias de dirección usan datos de OpenStreetMap (© OpenStreetMap contributors, licencia ODbL) y el servicio Geoapify.",
     "noResults": "No encontramos esa dirección. Puedes dejarla como la has escrito."
   },
   "errors": {
