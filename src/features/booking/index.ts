@@ -1,6 +1,8 @@
 // API pública de la feature: lo único que `app/` y otras features pueden importar.
 export { ClientTabBar } from './components/ClientTabBar';
 export { BookConfirmScreen } from './screens/BookConfirmScreen';
+export { BookHourConfirmScreen } from './screens/BookHourConfirmScreen';
+export { BookHourScreen } from './screens/BookHourScreen';
 export { BookedScreen } from './screens/BookedScreen';
 export { BookServiceScreen } from './screens/BookServiceScreen';
 export { BookSlotScreen } from './screens/BookSlotScreen';

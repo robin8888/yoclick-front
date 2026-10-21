@@ -14,6 +14,7 @@ jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 const LIST_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/bookings/mine`;
 const OPEN_SESSIONS_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/services/${SERVICE_ID}/open-sessions`;
 // La cita de ejemplo es un jueves a las 18:00 de Madrid; esta clase es otro jueves a esa hora, lejos.
+const AVAILABILITY_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/availability`;
 const SAME_WEEKDAY_AND_TIME = '2099-01-08T17:00:00.000Z';
 
 function buildOpenSessions(startsAt: string): unknown {
@@ -138,6 +139,47 @@ describe('ClientHomeScreen', () => {
     expect(await screen.findByText('Entrenamiento personal')).toBeOnTheScreen();
     await waitFor(() => {
       expect(screen.queryByText('Repetir tu última cita')).not.toBeOnTheScreen();
+    });
+  });
+  it('offers to repeat an individual appointment with the same person and opens its summary', async () => {
+    mockApi({
+      [LIST_PATH]: { bookings: [buildBooking()] },
+      [OPEN_SESSIONS_PATH]: {
+        timezone: 'Europe/Madrid',
+        isScheduled: false,
+        sessions: [],
+        nextOpenStartsAt: null,
+      },
+      [AVAILABILITY_PATH]: {
+        timezone: 'Europe/Madrid',
+        days: [
+          {
+            date: '2099-01-08',
+            slots: [
+              {
+                startsAt: SAME_WEEKDAY_AND_TIME,
+                endsAt: SAME_WEEKDAY_AND_TIME,
+                staffMembershipId: STAFF_MEMBERSHIP_ID,
+                staffName: 'Álex Moreno',
+              },
+            ],
+          },
+        ],
+      },
+      'GET /v1/me/memberships': { memberships: [buildMembership()] },
+    });
+    renderScreen(<ClientHomeScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: /Repetir tu última cita/ }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(client)/book/hour-confirm',
+      params: {
+        serviceId: SERVICE_ID,
+        startsAt: SAME_WEEKDAY_AND_TIME,
+        staffMembershipId: STAFF_MEMBERSHIP_ID,
+        staffName: 'Álex Moreno',
+      },
     });
   });
 });

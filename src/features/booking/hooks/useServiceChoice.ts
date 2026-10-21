@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
-import { useActiveCenterSectorId } from '@/features/join';
+import { useActiveCenterModules } from '@/features/join';
 import type { ServiceListResponseDtoServicesItem } from '@/shared/api/generated/model';
-import { hasRoomManagement } from '@/shared/i18n';
+
+import { getBookingMethod, type BookingMethod } from '../model/booking-method';
 
 export interface ServiceChoice {
   selectedServiceId: string | null;
+  /** Cómo se reserva el servicio elegido; `null` mientras no hay ninguno. */
+  bookingMethod: BookingMethod | null;
   selectService: (serviceId: string) => void;
 }
 
@@ -17,15 +20,20 @@ export function useServiceChoice(
   services: readonly ServiceListResponseDtoServicesItem[] | undefined,
 ): ServiceChoice {
   const [pickedServiceId, setPickedServiceId] = useState<string | null>(null);
-  const isScheduleRequired = hasRoomManagement(useActiveCenterSectorId());
+  const isRoomsModuleOn = useActiveCenterModules().rooms;
   const [onlyService, ...others] = services ?? [];
   const isOnlyServiceBookable =
     onlyService !== undefined &&
     others.length === 0 &&
-    (!isScheduleRequired || onlyService.hasSchedule);
+    getBookingMethod(onlyService, { isRoomsModuleOn }) !== 'unavailable';
+
+  const selectedServiceId = pickedServiceId ?? (isOnlyServiceBookable ? onlyService.id : null);
+  const selectedService = services?.find((service) => service.id === selectedServiceId);
 
   return {
-    selectedServiceId: pickedServiceId ?? (isOnlyServiceBookable ? onlyService.id : null),
+    selectedServiceId,
+    bookingMethod:
+      selectedService === undefined ? null : getBookingMethod(selectedService, { isRoomsModuleOn }),
     selectService: setPickedServiceId,
   };
 }

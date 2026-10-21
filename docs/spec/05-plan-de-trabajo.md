@@ -66,9 +66,10 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a 
 1. ✅ Probar en el móvil lo del 19 y el 20 de octubre.
 2. ✅ Menos toques al reservar: «Repetir tu última cita» en el inicio (misma clase, día de la semana y hora) y servicio único ya elegido.
 3. ✅ Plantillas de servicios por tipo de negocio (15 tipos, solo ejemplos editables, el precio lo pone el centro) y 4 sectores nuevos de citas: peluquería, estética, fisioterapia y psicología, con vocabulario propio («cita», «paciente»).
-4. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
-5. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
-6. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+4. ✅ **Reserva por hora libre** para negocios de citas: un servicio individual sin horario de sala (o cualquiera si el centro no usa salas) se reserva eligiendo con quién (si hay varias personas), día y hora libres; la hora se confirma, se cambia (`bookings_reschedule`) y se cancela como el resto. Los servicios con horario de sala siguen por clase. «Repetir tu última cita» también vale para citas individuales (misma persona, día de la semana y hora). Falta probarlo en el móvil.
+5. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
+6. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+7. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
 
 ---
 

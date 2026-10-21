@@ -3,7 +3,12 @@ import type {
   ServiceSessionsResponseDtoSessionsItem,
 } from '@/shared/api/generated/model';
 
-import { findRepeatableClass, pickLastRepeatableBooking } from './repeat-booking';
+import {
+  findRepeatableClass,
+  findRepeatableSlot,
+  pickLastRepeatableBooking,
+} from './repeat-booking';
+import type { SlotOption } from './slot-option';
 
 const TIME_ZONE = 'Europe/Madrid';
 const ANA_ID = '11111111-1111-4111-8111-111111111111';
@@ -105,5 +110,61 @@ describe('findRepeatableClass', () => {
     const found = findRepeatableClass({ ...request, openClasses: [afterClockChange] });
 
     expect(found?.id).toBe('winter');
+  });
+});
+
+describe('findRepeatableSlot', () => {
+  const lastBooking = buildBooking({});
+  const request = {
+    lastBooking,
+    bookedStartsAt: new Set<string>(),
+    timeZone: TIME_ZONE,
+    now: NOW,
+  };
+
+  function buildSlot(overrides: Partial<SlotOption>): SlotOption {
+    return {
+      // Jueves 22 oct 2026, 18:00 en Madrid.
+      startsAt: '2026-10-22T16:00:00Z',
+      staffMembershipId: ANA_ID,
+      staffName: 'Ana',
+      ...overrides,
+    };
+  }
+
+  it('offers the next free hour of the same person on the same weekday and time', () => {
+    const days = [
+      {
+        slots: [
+          buildSlot({ startsAt: '2026-10-22T17:00:00Z' }),
+          buildSlot({ startsAt: '2026-10-23T16:00:00Z' }),
+        ],
+      },
+      { slots: [buildSlot({})] },
+    ];
+
+    expect(findRepeatableSlot({ ...request, availableDays: days })?.startsAt).toBe(
+      '2026-10-22T16:00:00Z',
+    );
+  });
+
+  it('skips another person, an hour already booked and one that already passed', () => {
+    const days = [
+      {
+        slots: [
+          buildSlot({ staffMembershipId: LUIS_ID }),
+          buildSlot({ startsAt: '2026-10-15T16:00:00Z' }),
+          buildSlot({}),
+        ],
+      },
+    ];
+
+    expect(
+      findRepeatableSlot({
+        ...request,
+        availableDays: days,
+        bookedStartsAt: new Set(['2026-10-22T16:00:00Z']),
+      }),
+    ).toBeNull();
   });
 });

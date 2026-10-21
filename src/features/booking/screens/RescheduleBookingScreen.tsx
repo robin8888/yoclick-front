@@ -12,7 +12,7 @@ import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ClassChoiceFields } from '../components/ClassChoiceFields';
-import { NoScheduleYet } from '../components/NoScheduleYet';
+import { RescheduleHourStep } from '../components/RescheduleHourStep';
 import { useClassChoice } from '../hooks/useClassChoice';
 import { useRescheduleBooking } from '../hooks/useRescheduleBooking';
 import { useServiceSessions } from '../hooks/useServiceSessions';
@@ -106,7 +106,8 @@ function RescheduleBookingContent({
   if (sessions.isPending) {
     return <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />;
   }
-  if (!sessions.data.isScheduled) return <NoScheduleYet />;
+  // Sin horario de clases, la cita es individual y se cambia a otra hora libre de la misma persona.
+  if (!sessions.data.isScheduled) return <RescheduleHourStep params={params} />;
   return <MoveStep params={params} sessions={sessions.data} />;
 }
 

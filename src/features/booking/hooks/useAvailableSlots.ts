@@ -15,6 +15,8 @@ interface AvailableSlotsRequest {
   staffMembershipId?: string | undefined;
   /** Solo el equipo: cada cuántos minutos puede empezar un hueco (15 → 10:00, 10:15, 10:30…). */
   stepMinutes?: number | undefined;
+  /** Falso para no pedirlas todavía (p. ej. mientras se decide si hacen falta). */
+  isEnabled?: boolean | undefined;
 }
 
 /** Huecos libres de un servicio entre dos fechas; los calcula el servidor (nunca el móvil). */
@@ -24,6 +26,7 @@ export function useAvailableSlots({
   toDate,
   staffMembershipId,
   stepMinutes,
+  isEnabled = true,
 }: AvailableSlotsRequest): UseQueryResult<AvailabilityResponseDto, ErrorType> {
   const centerId = useActiveCenterId();
   return useQuery(
@@ -36,7 +39,7 @@ export function useAvailableSlots({
         ...(staffMembershipId === undefined ? {} : { staffMembershipId }),
         ...(stepMinutes === undefined ? {} : { stepMinutes }),
       },
-      { query: { enabled: centerId !== null } },
+      { query: { enabled: centerId !== null && isEnabled } },
     ),
   );
 }

@@ -15,25 +15,20 @@ import { useServiceChoice } from '../hooks/useServiceChoice';
 
 const BOOKING_STEP_COUNT = 2;
 
-/** Prototipo `book1`: paso 1 de 3, el servicio que se quiere reservar con su duración y precio. */
-export function BookServiceScreen(): React.JSX.Element {
-  const onBackPress = useBackAction();
-  const services = useCenterServices();
-  const { selectedServiceId, selectService } = useServiceChoice(services.data?.services);
+interface ServicesStepBodyProps {
+  services: ReturnType<typeof useCenterServices>;
+  selectedServiceId: string | null;
+  onServiceSelect: (serviceId: string) => void;
+}
 
+/** Los tres estados de la lista: error con reintento, cargando y los servicios a elegir. */
+function ServicesStepBody({
+  services,
+  selectedServiceId,
+  onServiceSelect,
+}: Readonly<ServicesStepBodyProps>): React.JSX.Element {
   return (
-    <ScreenTemplate
-      onBackPress={onBackPress}
-      title={i18n.t('booking.book.title')}
-      subtitle={i18n.t('booking.book.subtitle')}
-      footer={<ContinueToClassesButton selectedServiceId={selectedServiceId} />}
-    >
-      <ActingForSelector />
-      <StepProgress
-        currentStep={1}
-        stepCount={BOOKING_STEP_COUNT}
-        accessibilityLabel={i18n.t('booking.book.stepLabel')}
-      />
+    <>
       {services.isError ? (
         <LoadErrorState
           title={i18n.t('booking.book.errorTitle')}
@@ -49,10 +44,45 @@ export function BookServiceScreen(): React.JSX.Element {
         <ServiceOptionList
           services={services.data.services}
           selectedServiceId={selectedServiceId}
-          onServiceSelect={selectService}
+          onServiceSelect={onServiceSelect}
           onRetry={() => void services.refetch()}
         />
       )}
+    </>
+  );
+}
+
+/** Prototipo `book1`: paso 1 de 3, el servicio que se quiere reservar con su duración y precio. */
+export function BookServiceScreen(): React.JSX.Element {
+  const onBackPress = useBackAction();
+  const services = useCenterServices();
+  const { selectedServiceId, bookingMethod, selectService } = useServiceChoice(
+    services.data?.services,
+  );
+
+  return (
+    <ScreenTemplate
+      onBackPress={onBackPress}
+      title={i18n.t('booking.book.title')}
+      subtitle={i18n.t('booking.book.subtitle')}
+      footer={
+        <ContinueToClassesButton
+          selectedServiceId={selectedServiceId}
+          bookingMethod={bookingMethod}
+        />
+      }
+    >
+      <ActingForSelector />
+      <StepProgress
+        currentStep={1}
+        stepCount={BOOKING_STEP_COUNT}
+        accessibilityLabel={i18n.t('booking.book.stepLabel')}
+      />
+      <ServicesStepBody
+        services={services}
+        selectedServiceId={selectedServiceId}
+        onServiceSelect={selectService}
+      />
     </ScreenTemplate>
   );
 }

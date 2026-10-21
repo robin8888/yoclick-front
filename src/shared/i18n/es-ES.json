@@ -554,6 +554,10 @@
       "anyDescription": "Te asignamos quien tenga hueco",
       "continueLabel": "Continuar"
     },
+    "hour": {
+      "title": "Día y hora",
+      "staffLabel": "¿Con quién?"
+    },
     "slot": {
       "title": "Día y clase",
       "subtitle": "Paso 2 de 2 · {{staffLabel}}",
@@ -640,7 +644,9 @@
       "title": "Cambiar de clase",
       "subtitle": "{{serviceName}} · ahora {{whenLabel}}",
       "confirmLabel": "Confirmar cambio",
-      "announcement": "Cita cambiada de clase."
+      "announcement": "Cita cambiada de clase.",
+      "hourTitle": "Cambiar de hora",
+      "hourAnnouncement": "Cita cambiada de hora."
     },
     "cancel": {
       "title": "¿Cancelar esta cita?",
