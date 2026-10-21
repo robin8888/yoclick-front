@@ -16,6 +16,7 @@ export * from './notifications/notifications.ts';
 export * from './onboarding/onboarding.ts';
 export * from './passes/passes.ts';
 export * from './payments/payments.ts';
+export * from './platform/platform.ts';
 export * from './privacy/privacy.ts';
 export * from './rates/rates.ts';
 export * from './reports/reports.ts';

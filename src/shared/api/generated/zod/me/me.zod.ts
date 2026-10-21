@@ -64,6 +64,7 @@ export const MeGetProfileResponse = zod.object({
   "locale": zod.string(),
   "photoUrl": zod.string().nullable(),
   "isEmailVerified": zod.boolean(),
+  "platformRole": zod.enum(['none', 'admin', 'accountant']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(meGetProfileResponseCreatedAtRegExp)
 })
 
@@ -102,6 +103,7 @@ export const MeUpdateProfileResponse = zod.object({
   "locale": zod.string(),
   "photoUrl": zod.string().nullable(),
   "isEmailVerified": zod.boolean(),
+  "platformRole": zod.enum(['none', 'admin', 'accountant']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(meUpdateProfileResponseCreatedAtRegExp)
 })
 
@@ -243,6 +245,7 @@ export const MeExportDataResponse = zod.object({
   "locale": zod.string(),
   "photoUrl": zod.string().nullable(),
   "isEmailVerified": zod.boolean(),
+  "platformRole": zod.enum(['none', 'admin', 'accountant']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(meExportDataResponseProfileCreatedAtRegExp)
 }),
   "memberships": zod.array(zod.object({
