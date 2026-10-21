@@ -18,6 +18,7 @@ import { SECTION_STYLE } from './AdminMoreScreen.styles';
 /** Las palabras del sector que llevan los textos del menú. */
 interface MoreMenuWords {
   clientWord: string;
+  staffWord: string;
   routineWordPlural: string;
   clientSingular: string;
   staffSingular: string;
@@ -27,6 +28,7 @@ function useMoreMenuWords(): MoreMenuWords {
   const { client, routine, staff } = getSectorVocabulary(useActiveCenterSectorId());
   return {
     clientWord: client.plural,
+    staffWord: staff.plural,
     routineWordPlural: routine.plural,
     clientSingular: client.singular,
     staffSingular: staff.singular,
@@ -49,7 +51,7 @@ function MoreMenuSection({
           key={entry.textKey}
           leadingIconName={entry.iconName}
           title={i18n.t(`centerAdmin.more.${entry.textKey}Title`, { ...words })}
-          subtitle={i18n.t(`centerAdmin.more.${entry.textKey}Subtitle`)}
+          subtitle={i18n.t(`centerAdmin.more.${entry.textKey}Subtitle`, { ...words })}
           onPress={() => {
             router.push(entry.route);
           }}
