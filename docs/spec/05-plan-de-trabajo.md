@@ -68,8 +68,9 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a 
 3. ✅ Plantillas de servicios por tipo de negocio (15 tipos, solo ejemplos editables, el precio lo pone el centro) y 4 sectores nuevos de citas: peluquería, estética, fisioterapia y psicología, con vocabulario propio («cita», «paciente»).
 4. ✅ **Reserva por hora libre** para negocios de citas: un servicio individual sin horario de sala (o cualquiera si el centro no usa salas) se reserva eligiendo con quién (si hay varias personas), día y hora libres; la hora se confirma, se cambia (`bookings_reschedule`) y se cancela como el resto. Los servicios con horario de sala siguen por clase. «Repetir tu última cita» también vale para citas individuales (misma persona, día de la semana y hora). Falta probarlo en el móvil.
 5. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
-6. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
-7. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+6. ⬜ **Plan de lanzamiento** (cuentas, infraestructura, legal, pagos reales, tiendas): `docs/spec/16-plan-de-lanzamiento.md`.
+7. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+8. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
 
 ---
 
