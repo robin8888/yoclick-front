@@ -51,6 +51,23 @@ describe('SessionGateScreen', () => {
     },
   );
 
+  it.each([
+    { platformRole: 'admin', memberships: [] },
+    { platformRole: 'accountant', memberships: [buildMembership({ role: 'client' })] },
+  ] as const)(
+    'sends a $platformRole of the platform to the administration zone, whatever centers they belong to',
+    async ({ platformRole, memberships }) => {
+      mockApi({
+        'GET /v1/me/memberships': { memberships },
+        'GET /v1/me': { platformRole },
+      });
+      signIn();
+      renderScreen(<SessionGateScreen />);
+
+      expect(await screen.findByText('redirect:/(platform)/home')).toBeOnTheScreen();
+    },
+  );
+
   it('sends people who asked to create a center to the center creation screen', async () => {
     mockApi({ 'GET /v1/me/memberships': { memberships: [] } });
     signIn();

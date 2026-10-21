@@ -5,5 +5,6 @@ export const HOME_ROUTE_BY_KIND = {
   client: '/(client)/(tabs)/home',
   staff: '/(staff)/(tabs)/agenda',
   admin: '/(admin)/(tabs)/agenda',
+  platform: '/(platform)/home',
   none: '/join',
 } as const satisfies Record<HomeDestinationKind, string>;

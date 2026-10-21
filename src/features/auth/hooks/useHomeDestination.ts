@@ -1,6 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { useMyCenters } from '@/features/join';
+import { getMeGetProfileQueryOptions } from '@/shared/api/generated/endpoints/me/me';
 import { useSessionStore } from '@/shared/auth/session-store';
 
 import { resolveHomeDestination, type HomeDestination } from '../model/resolve-home-destination';
@@ -18,12 +20,16 @@ export function useHomeDestination(): HomeDestinationState {
   const activeCenterId = useSessionStore((state) => state.activeCenterId);
   const selectActiveCenter = useSessionStore((state) => state.selectActiveCenter);
   const myCenters = useMyCenters({ isEnabled: isSignedIn });
+  // El rol de plataforma viene del perfil. Si el perfil falla no se bloquea la entrada: se entra como
+  // cualquier persona, y la API es la que decide lo que se puede hacer.
+  const profile = useQuery(getMeGetProfileQueryOptions({ query: { enabled: isSignedIn } }));
   const destination =
-    myCenters.data === undefined
+    myCenters.data === undefined || profile.isPending
       ? null
       : resolveHomeDestination({
           memberships: myCenters.data.memberships,
           preferredCenterId: activeCenterId,
+          platformRole: profile.data?.platformRole ?? 'none',
         });
   const resolvedCenterId = destination?.centerId ?? null;
 

@@ -28,6 +28,32 @@ function buildMembership(
 }
 
 describe('resolveHomeDestination', () => {
+  it.each(['admin', 'accountant'] as const)(
+    'sends a %s of the platform to its own zone, with or without centers',
+    (platformRole) => {
+      expect(
+        resolveHomeDestination({ memberships: [], preferredCenterId: null, platformRole }),
+      ).toEqual({ kind: 'platform', centerId: null });
+      expect(
+        resolveHomeDestination({
+          memberships: [buildMembership({})],
+          preferredCenterId: 'center-norte',
+          platformRole,
+        }),
+      ).toEqual({ kind: 'platform', centerId: null });
+    },
+  );
+
+  it('does not change anything for a person without a platform role', () => {
+    expect(
+      resolveHomeDestination({
+        memberships: [buildMembership({ role: 'staff' })],
+        preferredCenterId: null,
+        platformRole: 'none',
+      }),
+    ).toEqual({ kind: 'staff', centerId: 'center-norte' });
+  });
+
   it('has no destination without memberships', () => {
     expect(resolveHomeDestination({ memberships: [], preferredCenterId: null })).toEqual({
       kind: 'none',
