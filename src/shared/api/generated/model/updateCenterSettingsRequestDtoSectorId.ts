@@ -20,5 +20,9 @@ export const UpdateCenterSettingsRequestDtoSectorId = {
   marciales: 'marciales',
   musica: 'musica',
   cocina: 'cocina',
+  peluqueria: 'peluqueria',
+  estetica: 'estetica',
+  fisioterapia: 'fisioterapia',
+  psicologia: 'psicologia',
   otro: 'otro',
 } as const;

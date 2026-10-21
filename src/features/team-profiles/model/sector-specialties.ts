@@ -13,6 +13,10 @@ const SPECIALTIES_BY_SECTOR: Readonly<Record<string, readonly string[]>> = {
   marciales: ['Katas', 'Técnica', 'Combate', 'Defensa personal', 'Preparación física'],
   musica: ['Guitarra', 'Piano', 'Canto', 'Lenguaje musical', 'Batería'],
   cocina: ['Técnicas', 'Panadería', 'Repostería', 'Cocina del mundo', 'Menús'],
+  peluqueria: ['Corte', 'Color', 'Peinados', 'Barbería', 'Tratamientos'],
+  estetica: ['Facial', 'Corporal', 'Manicura', 'Depilación', 'Masajes'],
+  fisioterapia: ['Columna', 'Deportiva', 'Suelo pélvico', 'Neurológica', 'Pediátrica'],
+  psicologia: ['Ansiedad', 'Pareja', 'Infanto-juvenil', 'Duelo', 'Hábitos'],
 };
 
 const GENERAL_SPECIALTIES: readonly string[] = ['General', 'Guías', 'Vídeos'];

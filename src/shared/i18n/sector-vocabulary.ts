@@ -12,6 +12,10 @@ export const SECTOR_IDS = [
   'marciales',
   'musica',
   'cocina',
+  'peluqueria',
+  'estetica',
+  'fisioterapia',
+  'psicologia',
   'otro',
 ] as const;
 
@@ -64,6 +68,8 @@ const MARTIAL_NEEDS = [
 ] as const;
 const MUSIC_NEEDS = ['Guitarra', 'Piano', 'Canto', 'Lenguaje musical', 'Batería'] as const;
 const COOKING_NEEDS = ['Técnicas', 'Panadería', 'Repostería', 'Cocina del mundo', 'Menús'] as const;
+const PHYSIO_NEEDS = ['Espalda', 'Cuello', 'Hombro', 'Rodilla', 'Movilidad'] as const;
+const THERAPY_NEEDS = ['Ansiedad', 'Relajación', 'Respiración', 'Sueño', 'Hábitos'] as const;
 const OTHER_NEEDS = ['General', 'Guías', 'Vídeos'] as const;
 
 const INSTRUCTOR: WordForms = { singular: 'instructor', plural: 'instructores' };
@@ -78,6 +84,8 @@ const PRACTICE: WordForms = { singular: 'práctica', plural: 'prácticas' };
 const SEQUENCE: WordForms = { singular: 'secuencia', plural: 'secuencias' };
 const TASK: WordForms = { singular: 'tarea', plural: 'tareas' };
 const PLAN: WordForms = { singular: 'plan', plural: 'planes' };
+const APPOINTMENT: WordForms = { singular: 'cita', plural: 'citas' };
+const PATIENT: WordForms = { singular: 'paciente', plural: 'pacientes' };
 
 export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
   gym: {
@@ -179,6 +187,46 @@ export const SECTOR_VOCABULARY: Readonly<Record<SectorId, SectorVocabulary>> = {
     routine: PRACTICE,
     levels: PRACTICE_LEVELS,
     needs: COOKING_NEEDS,
+  },
+  peluqueria: {
+    sectorId: 'peluqueria',
+    staff: { singular: 'estilista', plural: 'estilistas' },
+    client: CLIENT,
+    session: APPOINTMENT,
+    contentTabLabel: 'Contenido',
+    routine: PLAN,
+    levels: BASIC_LEVELS,
+    needs: OTHER_NEEDS,
+  },
+  estetica: {
+    sectorId: 'estetica',
+    staff: { singular: 'esteticista', plural: 'esteticistas' },
+    client: CLIENT,
+    session: APPOINTMENT,
+    contentTabLabel: 'Contenido',
+    routine: PLAN,
+    levels: BASIC_LEVELS,
+    needs: OTHER_NEEDS,
+  },
+  fisioterapia: {
+    sectorId: 'fisioterapia',
+    staff: { singular: 'fisioterapeuta', plural: 'fisioterapeutas' },
+    client: PATIENT,
+    session: APPOINTMENT,
+    contentTabLabel: 'Contenido',
+    routine: PLAN,
+    levels: BASIC_LEVELS,
+    needs: PHYSIO_NEEDS,
+  },
+  psicologia: {
+    sectorId: 'psicologia',
+    staff: PROFESSIONAL,
+    client: PATIENT,
+    session: APPOINTMENT,
+    contentTabLabel: 'Contenido',
+    routine: PLAN,
+    levels: BASIC_LEVELS,
+    needs: THERAPY_NEEDS,
   },
   otro: {
     sectorId: 'otro',

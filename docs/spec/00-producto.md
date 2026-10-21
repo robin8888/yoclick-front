@@ -64,6 +64,10 @@ El tipo de centro **no cambia el diseño**; cambia palabras, niveles y contenido
 | `marciales` | Artes marciales | Academia | maestro / maestros | alumno | clases | Practicar | Principiante · Intermedio · Avanzado |
 | `musica` | Escuela de música | Academia | profesor | alumno | clases | Practicar | Iniciación · Intermedio · Avanzado |
 | `cocina` | Escuela de cocina | Academia | chef / chefs | alumno | clases | Aprender | Iniciación · Intermedio · Avanzado |
+| `peluqueria` | Peluquería | Belleza y bienestar | estilista / estilistas | cliente | citas | Contenido | Básico · Intermedio · Avanzado |
+| `estetica` | Centro de estética | Belleza y bienestar | esteticista / esteticistas | cliente | citas | Contenido | Básico · Intermedio · Avanzado |
+| `fisioterapia` | Clínica de fisioterapia | Belleza y bienestar | fisioterapeuta / fisioterapeutas | paciente / pacientes | citas | Contenido | Básico · Intermedio · Avanzado |
+| `psicologia` | Consulta de psicología | Belleza y bienestar | profesional | paciente | citas | Contenido | Básico · Intermedio · Avanzado |
 | `otro` | Otro centro con clases o citas | Otros | profesional | cliente | clases | Contenido | Básico · Intermedio · Avanzado |
 
 \* Yoga se agrupa con Deporte en el selector pero usa vocabulario de academia.

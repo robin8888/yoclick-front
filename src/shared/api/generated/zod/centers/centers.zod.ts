@@ -223,7 +223,7 @@ export const centersUpdateSettingsBodyHiveColorRegExp = new RegExp('^#[0-9A-Fa-f
 
 export const CentersUpdateSettingsBody = zod.object({
   "name": zod.string().min(centersUpdateSettingsBodyNameMin).max(centersUpdateSettingsBodyNameMax).optional(),
-  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']).optional(),
+  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'peluqueria', 'estetica', 'fisioterapia', 'psicologia', 'otro']).optional(),
   "brandColor": zod.string().regex(centersUpdateSettingsBodyBrandColorRegExp).optional(),
   "timezone": zod.string().max(centersUpdateSettingsBodyTimezoneMax).optional(),
   "isListed": zod.boolean().optional(),

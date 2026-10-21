@@ -26,7 +26,7 @@ export const onboardingCreateCenterBodyWorkModeDefault = `both`;
 
 export const OnboardingCreateCenterBody = zod.object({
   "name": zod.string().min(onboardingCreateCenterBodyNameMin).max(onboardingCreateCenterBodyNameMax),
-  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']),
+  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'peluqueria', 'estetica', 'fisioterapia', 'psicologia', 'otro']),
   "brandColor": zod.string().regex(onboardingCreateCenterBodyBrandColorRegExp).optional(),
   "city": zod.string().min(1).max(onboardingCreateCenterBodyCityMax).optional(),
   "isListed": zod.boolean().default(onboardingCreateCenterBodyIsListedDefault),
@@ -43,7 +43,7 @@ export const OnboardingCreateCenterResponse = zod.object({
   "ownerMembershipId": zod.uuid().regex(onboardingCreateCenterResponseOwnerMembershipIdRegExp),
   "slug": zod.string(),
   "name": zod.string(),
-  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'otro']),
+  "sectorId": zod.enum(['gym', 'estudio', 'readap', 'box', 'yoga', 'academia', 'baile', 'marciales', 'musica', 'cocina', 'peluqueria', 'estetica', 'fisioterapia', 'psicologia', 'otro']),
   "brandColor": zod.string(),
   "isListed": zod.boolean(),
   "modules": zod.object({

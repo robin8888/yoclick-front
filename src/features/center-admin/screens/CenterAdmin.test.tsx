@@ -167,6 +167,33 @@ describe('ServiceEditorScreen', () => {
     });
   });
 
+  it('fills the form from an example of any business type, which stays editable', async () => {
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [] },
+      [`POST ${SERVICES_PATH}`]: buildService(),
+    });
+    renderScreen(<ServiceEditorScreen />);
+
+    fireEvent.press(screen.getByRole('radio', { name: 'Peluquería' }));
+    fireEvent.press(screen.getByRole('button', { name: 'Corte de pelo' }));
+
+    expect(screen.getByLabelText('Nombre del servicio')).toHaveDisplayValue('Corte de pelo');
+    expect(screen.getByLabelText('Precio en euros (opcional)')).toHaveDisplayValue('');
+    fireEvent.changeText(screen.getByLabelText('Precio en euros (opcional)'), '18');
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(getMockRouter().back).toHaveBeenCalled();
+    });
+    expect(findApiCall('POST', SERVICES_PATH)?.body).toMatchObject({
+      name: 'Corte de pelo',
+      durationMinutes: 30,
+      bufferMinutes: 10,
+      priceCents: 1800,
+      mode: 'private',
+    });
+  });
+
   it('sends the margin the owner leaves between appointments', async () => {
     mockApi({
       [`GET ${SERVICES_PATH}`]: { services: [] },

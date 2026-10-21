@@ -439,6 +439,7 @@
     "sectorGroups": {
       "sport": "Deporte y salud",
       "school": "Academias y escuelas",
+      "beauty": "Belleza y bienestar",
       "other": "Otros"
     },
     "sectors": {
@@ -452,6 +453,10 @@
       "marciales": "Artes marciales",
       "musica": "Escuela de música",
       "cocina": "Escuela de cocina",
+      "peluqueria": "Peluquería",
+      "estetica": "Centro de estética",
+      "fisioterapia": "Clínica de fisioterapia",
+      "psicologia": "Consulta de psicología",
       "otro": "Otro centro con clases o citas"
     },
     "ready": {
@@ -666,6 +671,10 @@
       "weekOfGoal": "de {{goalCount}} sesiones",
       "weekRemaining": "Te queda {{remainingCount}} para tu objetivo.",
       "weekGoalReached": "¡Objetivo semanal cumplido!",
+      "repeatTitle": "Repetir tu última cita",
+      "repeatSummary": "{{serviceName}} · {{whenLabel}} con {{staffName}}",
+      "repeatAction": "Repetir",
+      "repeatAccessibilityLabel": "Repetir tu última cita: {{summary}}",
       "passTitle": "Bono",
       "passEmpty": "Sin bono activo. Toca para pedir uno.",
       "passBookable": "Por agendar: {{count}}",
@@ -2039,6 +2048,190 @@
       "closed": "Cerrado",
       "modeGroup": "En grupo",
       "modeBoth": "Privado o en grupo"
+    },
+    "serviceTemplates": {
+      "title": "Empieza desde un ejemplo",
+      "hint": "Elige tu tipo de negocio y toca un ejemplo para rellenar el formulario; luego cámbialo como quieras. El precio lo pones tú.",
+      "packsLabel": "Tipo de negocio",
+      "packs": {
+        "gym": "Gimnasio",
+        "estudio": "Estudio de entrenamiento",
+        "readap": "Readaptación",
+        "box": "Box",
+        "yoga": "Yoga y pilates",
+        "academia": "Academia",
+        "baile": "Baile",
+        "marciales": "Artes marciales",
+        "musica": "Música",
+        "cocina": "Cocina",
+        "peluqueria": "Peluquería",
+        "estetica": "Estética",
+        "fisioterapia": "Fisioterapia",
+        "psicologia": "Psicología",
+        "generic": "Otro negocio"
+      },
+      "items": {
+        "haircut": {
+          "name": "Corte de pelo",
+          "description": "Corte con lavado y secado incluidos."
+        },
+        "hairColouring": {
+          "name": "Color",
+          "description": "Tinte o mechas; la duración depende del trabajo."
+        },
+        "hairStyling": {
+          "name": "Peinado",
+          "description": "Peinado para el día a día o para un evento."
+        },
+        "manicure": {
+          "name": "Manicura",
+          "description": "Cuidado de manos y uñas con esmaltado."
+        },
+        "facialTreatment": {
+          "name": "Tratamiento facial",
+          "description": "Limpieza e hidratación de la piel del rostro."
+        },
+        "waxing": {
+          "name": "Depilación",
+          "description": "Depilación con cera de la zona que elijas."
+        },
+        "physioSession": {
+          "name": "Sesión de fisioterapia",
+          "description": "Tratamiento individual de la zona que te duele."
+        },
+        "physioFirstVisit": {
+          "name": "Primera visita de fisioterapia",
+          "description": "Valoración completa y primer tratamiento."
+        },
+        "therapeuticMassage": {
+          "name": "Masaje terapéutico",
+          "description": "Masaje para aliviar contracturas y tensión."
+        },
+        "therapySession": {
+          "name": "Sesión de terapia",
+          "description": "Sesión individual de psicología."
+        },
+        "firstTherapyVisit": {
+          "name": "Primera visita",
+          "description": "Primer encuentro para conocer tu caso y acordar cómo trabajar."
+        },
+        "individualSession": {
+          "name": "Sesión individual",
+          "description": "Una sesión a solas con quien la da."
+        },
+        "groupClass": {
+          "name": "Clase en grupo",
+          "description": "Una clase con varias personas a la vez."
+        },
+        "firstConsultation": {
+          "name": "Primera consulta",
+          "description": "Un primer encuentro para conocerte y ver qué necesitas."
+        },
+        "personalTraining": {
+          "name": "Entrenamiento personal",
+          "description": "Sesión individual con plan adaptado a tu objetivo."
+        },
+        "fitnessClass": {
+          "name": "Clase de fitness",
+          "description": "Clase dirigida en grupo para todos los niveles."
+        },
+        "initialAssessment": {
+          "name": "Valoración inicial",
+          "description": "Primera sesión para conocer tu punto de partida y tus objetivos."
+        },
+        "smallGroupTraining": {
+          "name": "Entrenamiento en grupo reducido",
+          "description": "Entrenamiento guiado con muy pocas personas."
+        },
+        "rehabSession": {
+          "name": "Sesión de readaptación",
+          "description": "Trabajo guiado para recuperarte de una lesión con seguridad."
+        },
+        "functionalAssessment": {
+          "name": "Valoración funcional",
+          "description": "Pruebas de movilidad y fuerza para planificar tu recuperación."
+        },
+        "followUpSession": {
+          "name": "Sesión de seguimiento",
+          "description": "Revisión corta de cómo evolucionas y ajuste del plan."
+        },
+        "boxClass": {
+          "name": "Clase de box",
+          "description": "Entrenamiento funcional en grupo con calentamiento, técnica y WOD."
+        },
+        "introClass": {
+          "name": "Clase de introducción",
+          "description": "Para quien empieza: técnica básica y primeros movimientos."
+        },
+        "yogaClass": {
+          "name": "Clase de yoga",
+          "description": "Clase en grupo de posturas, respiración y relajación."
+        },
+        "privateYogaClass": {
+          "name": "Clase de yoga individual",
+          "description": "Una clase de yoga a tu ritmo y adaptada a ti."
+        },
+        "workshop": {
+          "name": "Taller",
+          "description": "Sesión larga sobre un tema concreto, con plazas limitadas."
+        },
+        "privateLesson": {
+          "name": "Clase particular",
+          "description": "Una clase a solas, centrada en lo que necesitas."
+        },
+        "groupLesson": {
+          "name": "Clase en grupo",
+          "description": "Clase con otras personas del mismo nivel."
+        },
+        "tutoring": {
+          "name": "Tutoría",
+          "description": "Un rato corto para resolver dudas y revisar tu progreso."
+        },
+        "danceClass": {
+          "name": "Clase de baile",
+          "description": "Clase en grupo con coreografía y técnica."
+        },
+        "privateDanceClass": {
+          "name": "Clase de baile particular",
+          "description": "Una clase a solas para avanzar más rápido."
+        },
+        "martialArtsClass": {
+          "name": "Clase de artes marciales",
+          "description": "Clase en grupo de técnica, combinaciones y condición física."
+        },
+        "privateMartialArtsClass": {
+          "name": "Clase particular de artes marciales",
+          "description": "Una clase a solas centrada en tu técnica."
+        },
+        "trialClass": {
+          "name": "Clase de prueba",
+          "description": "Para conocer el centro y probar antes de apuntarte."
+        },
+        "instrumentLesson": {
+          "name": "Clase de instrumento",
+          "description": "Clase individual de tu instrumento, a tu nivel."
+        },
+        "musicTheoryClass": {
+          "name": "Clase de lenguaje musical",
+          "description": "Clase en grupo de lectura, ritmo y teoría."
+        },
+        "singingLesson": {
+          "name": "Clase de canto",
+          "description": "Clase individual de técnica vocal y repertorio."
+        },
+        "cookingWorkshop": {
+          "name": "Taller de cocina",
+          "description": "Cocinamos juntos un menú y nos lo comemos."
+        },
+        "privateCookingClass": {
+          "name": "Clase de cocina privada",
+          "description": "Una clase para ti o tu grupo, con el menú que elijas."
+        },
+        "tasting": {
+          "name": "Cata",
+          "description": "Probamos y aprendemos a distinguir productos."
+        }
+      }
     },
     "serviceEditor": {
       "newTitle": "Nuevo servicio",

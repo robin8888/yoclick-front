@@ -78,6 +78,34 @@ describe('getSectorVocabulary', () => {
       tab: 'Aprender',
     },
     {
+      sectorId: 'peluqueria',
+      staff: ['estilista', 'estilistas'],
+      client: 'clientes',
+      sessions: 'citas',
+      tab: 'Contenido',
+    },
+    {
+      sectorId: 'estetica',
+      staff: ['esteticista', 'esteticistas'],
+      client: 'clientes',
+      sessions: 'citas',
+      tab: 'Contenido',
+    },
+    {
+      sectorId: 'fisioterapia',
+      staff: ['fisioterapeuta', 'fisioterapeutas'],
+      client: 'pacientes',
+      sessions: 'citas',
+      tab: 'Contenido',
+    },
+    {
+      sectorId: 'psicologia',
+      staff: ['profesional', 'profesionales'],
+      client: 'pacientes',
+      sessions: 'citas',
+      tab: 'Contenido',
+    },
+    {
       sectorId: 'otro',
       staff: ['profesional', 'profesionales'],
       client: 'clientes',
@@ -94,7 +122,7 @@ describe('getSectorVocabulary', () => {
   });
 
   it('defines every sector id from the product spec', () => {
-    expect(SECTOR_IDS).toHaveLength(11);
+    expect(SECTOR_IDS).toHaveLength(15);
     expect(
       Object.keys(SECTOR_VOCABULARY).sort((first, second) => first.localeCompare(second)),
     ).toEqual([...SECTOR_IDS].sort((first, second) => first.localeCompare(second)));

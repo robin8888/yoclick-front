@@ -63,11 +63,12 @@ Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a 
 - ❌ **Vocabulario editable del centro**: descartado (se mantiene el del sector).
 
 ### Pendiente
-1. ⬜ Probar en el móvil lo del 19 y el 20 de octubre.
-2. ⬜ Menos toques al reservar y «repetir mi última cita».
-3. ⬜ Plantillas de servicios por tipo de negocio (solo ejemplos editables), si se quiere.
-4. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
-5. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
+1. ✅ Probar en el móvil lo del 19 y el 20 de octubre.
+2. ✅ Menos toques al reservar: «Repetir tu última cita» en el inicio (misma clase, día de la semana y hora) y servicio único ya elegido.
+3. ✅ Plantillas de servicios por tipo de negocio (15 tipos, solo ejemplos editables, el precio lo pone el centro) y 4 sectores nuevos de citas: peluquería, estética, fisioterapia y psicología, con vocabulario propio («cita», «paciente»).
+4. ⬜ Direcciones con sugerencias (Geoapify, `GEOAPIFY_API_KEY` obligatoria en el back en todos los entornos) y coordenadas del centro: hecho; falta probarlo en el móvil.
+5. ⬜ Lo pendiente del 19 oct que sigue igual (RGPD de menores, Stripe real, Redis, `yoclick.app`).
+6. ⚠️ En cualquier entorno hay que lanzar `npm run db:deploy` en el back para las migraciones nuevas.
 
 ---
 

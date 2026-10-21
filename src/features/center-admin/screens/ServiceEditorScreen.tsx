@@ -7,6 +7,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { EditServicesSection } from '../components/ManagementEditSections';
 import { ServiceEditorFields } from '../components/ServiceEditorFields';
+import { ServiceTemplatePicker } from '../components/ServiceTemplatePicker';
 import { useServiceCatalog } from '../hooks/useServiceCatalog';
 import { useServiceEditorForm } from '../hooks/useServiceEditorForm';
 import { parseServiceRouteParams } from '../model/service-route-params';
@@ -51,6 +52,7 @@ export function ServiceEditorScreen(): React.JSX.Element {
         />
       }
     >
+      {isNewService ? <ServiceTemplatePicker form={form} /> : null}
       <ServiceEditorFields form={form} />
       {form.saveErrorMessage === null ? null : <FormErrorBanner message={form.saveErrorMessage} />}
       {isNewService ? <EditServicesSection /> : null}

@@ -25,6 +25,10 @@ export const SECTOR_CHOICE_IDS = [
   'marciales',
   'musica',
   'cocina',
+  'peluqueria',
+  'estetica',
+  'fisioterapia',
+  'psicologia',
   'otro',
 ] as const;
 
