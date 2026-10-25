@@ -4,7 +4,6 @@ import { formatStorageSize } from '@/features/videos';
 import type { PlatformPlanListResponseDtoPlansItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { formatEuros } from '@/shared/lib/format';
-import { useTheme } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
@@ -14,7 +13,9 @@ import {
   countAllCenters,
   getPlanName,
 } from '../model/plan-labels';
-import { createPlanCardStyle, PLAN_HEADER_STYLE, PLAN_LINES_STYLE } from './PlanCard.styles';
+import { Panel } from './Panel';
+import { FLEXIBLE_TEXT_STYLE } from './Panel.styles';
+import { PLAN_HEADER_STYLE, PLAN_LINES_STYLE } from './PlanCard.styles';
 
 type Plan = PlatformPlanListResponseDtoPlansItem;
 
@@ -45,23 +46,9 @@ function buildCentersLine(plan: Plan): string {
   return i18n.t('platform.plans.centersByStatus', { trial, active, pastDue, suspended });
 }
 
-/** Un plan: su precio, cuántos centros lo tienen por estado, lo que aporta al mes y sus límites. */
-export function PlanCard({ plan, onEditPress }: Readonly<PlanCardProps>): React.JSX.Element {
-  const theme = useTheme();
-  const name = getPlanName(plan.id);
-  const totalCenters = countAllCenters(plan);
-
+function PlanFigures({ plan }: Readonly<{ plan: Plan }>): React.JSX.Element {
   return (
-    <View style={createPlanCardStyle(theme)}>
-      <View style={PLAN_HEADER_STYLE}>
-        <Text variant="titleMd">{name}</Text>
-        <View
-          accessible
-          accessibilityLabel={i18n.t('platform.plans.centersCount', { count: totalCenters })}
-        >
-          <Text variant="metric">{String(totalCenters)}</Text>
-        </View>
-      </View>
+    <>
       <View style={PLAN_LINES_STYLE}>
         {buildPriceLines(plan).map((line) => (
           <Text key={line} variant="bodyStrong">
@@ -78,12 +65,37 @@ export function PlanCard({ plan, onEditPress }: Readonly<PlanCardProps>): React.
       <Text variant="caption" color="ink2">
         {buildLimitsLine(plan)}
       </Text>
+    </>
+  );
+}
+
+/** Un plan: su precio, cuántos centros lo tienen por estado, lo que aporta al mes y sus límites. */
+export function PlanCard({ plan, onEditPress }: Readonly<PlanCardProps>): React.JSX.Element {
+  const name = getPlanName(plan.id);
+  const totalCenters = countAllCenters(plan);
+
+  return (
+    <Panel>
+      <View style={PLAN_HEADER_STYLE}>
+        <View style={FLEXIBLE_TEXT_STYLE}>
+          <Text variant="titleMd">{name}</Text>
+        </View>
+        <View
+          accessible
+          accessibilityLabel={i18n.t('platform.plans.centersCount', { count: totalCenters })}
+        >
+          <Text variant="metric" maxFontSizeMultiplier={1.4}>
+            {String(totalCenters)}
+          </Text>
+        </View>
+      </View>
+      <PlanFigures plan={plan} />
       <Button
         variant="outline"
         label={i18n.t('platform.plans.editPrices')}
         accessibilityLabel={i18n.t('platform.plans.editPricesOf', { name })}
         onPress={onEditPress}
       />
-    </View>
+    </Panel>
   );
 }

@@ -11,13 +11,13 @@ import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
 import { Logo } from '@/ui/atoms/Logo';
 import { Text } from '@/ui/atoms/Text';
-import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ActivityTab } from '../components/ActivityTab';
 import { CentersTab } from '../components/CentersTab';
 import { OverviewTab } from '../components/OverviewTab';
+import { PlatformTabs } from '../components/PlatformTabs';
 import { PlansTab } from '../components/PlansTab';
 import { usePlatformOverview } from '../hooks/usePlatformOverview';
 
@@ -71,7 +71,7 @@ function AdministrationHome(): React.JSX.Element {
   if (isSecondFactorMissing) return <SecondFactorNotice />;
   return (
     <>
-      <SegmentedControl options={TAB_OPTIONS} selectedValue={tab} onValueChange={setTab} />
+      <PlatformTabs options={TAB_OPTIONS} selectedValue={tab} onValueChange={setTab} />
       <AdministrationTabs
         tab={tab}
         onCenterOpen={(centerId) => {

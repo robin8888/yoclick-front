@@ -1,10 +1,7 @@
-import { View } from 'react-native';
-
 import { i18n } from '@/shared/i18n';
-import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
-import { createPlanCardStyle } from './PlanCard.styles';
+import { Panel } from './Panel';
 
 interface RevenueCardProps {
   /** Ya escrito en euros: «1.250,00 €». */
@@ -17,23 +14,17 @@ export function RevenueCard({
   amountText,
   payingCenterCount,
 }: Readonly<RevenueCardProps>): React.JSX.Element {
-  const theme = useTheme();
-
   return (
-    <View
-      style={createPlanCardStyle(theme)}
-      accessible
-      accessibilityLabel={`${i18n.t('platform.plans.revenueTitle')}, ${amountText}`}
-    >
+    <Panel accessibilityLabel={`${i18n.t('platform.plans.revenueTitle')}, ${amountText}`}>
       <Text variant="caption" color="ink2">
         {i18n.t('platform.plans.revenueTitle')}
       </Text>
-      <Text variant="display" maxFontSizeMultiplier={1.5}>
+      <Text variant="display" maxFontSizeMultiplier={1.4} numberOfLines={1} adjustsFontSizeToFit>
         {amountText}
       </Text>
       <Text color="ink2">
         {i18n.t('platform.plans.payingCenters', { count: payingCenterCount })}
       </Text>
-    </View>
+    </Panel>
   );
 }

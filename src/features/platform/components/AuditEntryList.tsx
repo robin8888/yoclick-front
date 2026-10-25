@@ -2,11 +2,11 @@ import { Pressable, View } from 'react-native';
 
 import type { PlatformAuditListResponseDtoDataItem } from '@/shared/api/generated/model';
 import { formatShortDate, formatTime24h } from '@/shared/lib/format';
-import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
 import { describeAuditEntry } from '../model/audit-description';
-import { createAuditRowStyle, AUDIT_LIST_STYLE } from './AuditEntryList.styles';
+import { AUDIT_LIST_STYLE, AUDIT_PRESSED_STYLE } from './AuditEntryList.styles';
+import { Panel } from './Panel';
 
 const PLATFORM_TIME_ZONE = 'Europe/Madrid';
 
@@ -21,8 +21,6 @@ export function AuditEntryList({
   entries,
   onCenterOpen,
 }: Readonly<AuditEntryListProps>): React.JSX.Element {
-  const theme = useTheme();
-
   return (
     <View style={AUDIT_LIST_STYLE}>
       {entries.map((entry) => {
@@ -38,12 +36,16 @@ export function AuditEntryList({
             onPress={() => {
               if (isOpenable) onCenterOpen(centerId);
             }}
-            style={createAuditRowStyle(theme)}
+            style={({ pressed: isPressed }) =>
+              isPressed && isOpenable ? AUDIT_PRESSED_STYLE : undefined
+            }
           >
-            <Text variant="bodyStrong">{describeAuditEntry(entry)}</Text>
-            <Text variant="caption" color="ink2">
-              {when}
-            </Text>
+            <Panel>
+              <Text variant="bodyStrong">{describeAuditEntry(entry)}</Text>
+              <Text variant="caption" color="ink2">
+                {when}
+              </Text>
+            </Panel>
           </Pressable>
         );
       })}

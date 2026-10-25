@@ -1,4 +1,5 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { Image } from 'expo-image';
 import { useLocalSearchParams } from 'expo-router';
 
 import { useSessionStore } from '@/shared/auth/session-store';
@@ -11,6 +12,7 @@ import { PlatformCenterScreen } from './PlatformCenterScreen';
 import { PlatformHomeScreen } from './PlatformHomeScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
+jest.mock('@/shared/api/api-config', () => ({ getApiBaseUrl: () => 'https://api.test' }));
 
 const CENTER_ID = '0191d6a0-0000-7000-8000-000000000a01';
 const OTHER_CENTER_ID = '0191d6a0-0000-7000-8000-000000000a02';
@@ -88,6 +90,7 @@ function buildCenter(overrides: Record<string, unknown> = {}): Record<string, un
     sectorId: 'yoga',
     city: 'Madrid',
     status: 'active',
+    logoUrl: null,
     planId: 'pro',
     createdAt: '2026-09-01T10:00:00.000Z',
     trialEndsAt: null,
@@ -246,6 +249,54 @@ describe('PlatformHomeScreen', () => {
     expect(await screen.findByText(/Tu usuario es de solo lectura/)).toBeOnTheScreen();
     expect(screen.queryByRole('tab', { name: 'Centros' })).toBeNull();
     expect(findApiCall('GET', '/v1/platform/overview')).toBeUndefined();
+  });
+});
+
+/** Las imágenes de logo de centro en pantalla (el logotipo de Yoclick de la cabecera no cuenta). */
+function listCenterLogoUris(): string[] {
+  return screen
+    .UNSAFE_queryAllByType(Image)
+    .map((image) => (image.props as { source?: { uri?: string } }).source?.uri ?? '')
+    .filter((uri) => uri.includes('/logo?v='));
+}
+
+describe('center logos', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signIn();
+  });
+
+  it('shows the logo of a center in the list when it has one', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/centers': {
+        data: [buildCenter({ logoUrl: `/v1/centers/${CENTER_ID}/logo?v=1` })],
+        nextCursor: null,
+      },
+    });
+    renderScreen(<PlatformHomeScreen />);
+
+    fireEvent.press(await screen.findByRole('tab', { name: 'Centros' }));
+    await waitFor(() => {
+      expect(listCenterLogoUris()).toEqual([
+        expect.stringContaining(`/v1/centers/${CENTER_ID}/logo?v=1`),
+      ]);
+    });
+  });
+
+  it('falls back to the initials when the center has no logo', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/centers': { data: [buildCenter()], nextCursor: null },
+    });
+    renderScreen(<PlatformHomeScreen />);
+
+    fireEvent.press(await screen.findByRole('tab', { name: 'Centros' }));
+    await screen.findByText('Yoga Norte');
+
+    expect(listCenterLogoUris()).toEqual([]);
   });
 });
 

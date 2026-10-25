@@ -8,9 +8,10 @@ import {
   BAR_COLUMN_STYLE,
   BARS_HEADER_STYLE,
   BARS_ROW_STYLE,
-  createBarsCardStyle,
   createBarStyle,
 } from './MonthlyBars.styles';
+import { Panel } from './Panel';
+import { FLEXIBLE_TEXT_STYLE } from './Panel.styles';
 
 interface MonthlyBarsProps {
   title: string;
@@ -31,10 +32,12 @@ export function MonthlyBars({ title, months }: Readonly<MonthlyBarsProps>): Reac
   const total = months.reduce((sum, { count }) => sum + count, 0);
 
   return (
-    <View style={createBarsCardStyle(theme)}>
+    <Panel>
       <View style={BARS_HEADER_STYLE}>
-        <Text variant="bodyStrong">{title}</Text>
-        <Text variant="caption" color="ink2">
+        <View style={FLEXIBLE_TEXT_STYLE}>
+          <Text variant="bodyStrong">{title}</Text>
+        </View>
+        <Text variant="caption" color="ink2" numberOfLines={1}>
           {i18n.t('platform.overview.barsTotal', { total })}
         </Text>
       </View>
@@ -46,7 +49,7 @@ export function MonthlyBars({ title, months }: Readonly<MonthlyBarsProps>): Reac
             accessible
             accessibilityLabel={i18n.t('platform.overview.barLabel', { month, count })}
           >
-            <Text variant="caption" color="ink2">
+            <Text variant="caption" color="ink2" numberOfLines={1} adjustsFontSizeToFit>
               {String(count)}
             </Text>
             <View
@@ -61,6 +64,6 @@ export function MonthlyBars({ title, months }: Readonly<MonthlyBarsProps>): Reac
           </View>
         ))}
       </View>
-    </View>
+    </Panel>
   );
 }

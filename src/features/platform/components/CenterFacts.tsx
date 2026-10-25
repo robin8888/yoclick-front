@@ -4,7 +4,6 @@ import { formatStorageSize } from '@/features/videos';
 import type { PlatformCenterDetailResponseDto } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { formatShortDate } from '@/shared/lib/format';
-import { useTheme } from '@/shared/theme';
 import { Badge } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
@@ -16,7 +15,13 @@ import {
   getStatusLabel,
   getStatusTone,
 } from '../model/center-labels';
-import { createFactsCardStyle, FACT_ROW_STYLE, FACTS_STYLE } from './CenterFacts.styles';
+import {
+  FACT_LABEL_STYLE,
+  FACT_ROW_STYLE,
+  FACT_VALUE_STYLE,
+  FACTS_STYLE,
+} from './CenterFacts.styles';
+import { Panel } from './Panel';
 
 const PLATFORM_TIME_ZONE = 'Europe/Madrid';
 
@@ -27,8 +32,12 @@ interface CenterFactsProps {
 function FactRow({ label, value }: Readonly<{ label: string; value: string }>): React.JSX.Element {
   return (
     <View style={FACT_ROW_STYLE} accessible accessibilityLabel={`${label}: ${value}`}>
-      <Text color="ink2">{label}</Text>
-      <Text variant="bodyStrong">{value}</Text>
+      <View style={FACT_LABEL_STYLE}>
+        <Text color="ink2">{label}</Text>
+      </View>
+      <View style={FACT_VALUE_STYLE}>
+        <Text variant="bodyStrong">{value}</Text>
+      </View>
     </View>
   );
 }
@@ -37,15 +46,13 @@ function FactsCard({
   title,
   children,
 }: Readonly<{ title: string; children: React.ReactNode }>): React.JSX.Element {
-  const theme = useTheme();
-
   return (
-    <View style={createFactsCardStyle(theme)}>
+    <Panel>
       <Text variant="overline" color="ink2">
         {title}
       </Text>
       {children}
-    </View>
+    </Panel>
   );
 }
 

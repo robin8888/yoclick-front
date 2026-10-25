@@ -6,8 +6,9 @@ import { useTheme, type ThemeColors } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
 import { buildStatusShares, type CenterStatusId } from '../model/status-distribution';
+import { Panel } from './Panel';
+import { FLEXIBLE_TEXT_STYLE } from './Panel.styles';
 import {
-  createDistributionCardStyle,
   createLegendDotStyle,
   createSegmentStyle,
   DISTRIBUTION_TRACK_STYLE,
@@ -27,6 +28,36 @@ interface StatusDistributionProps {
   byStatus: PlatformOverviewResponseDto['centers']['byStatus'];
 }
 
+function StatusLegend({
+  shares,
+}: Readonly<{ shares: ReturnType<typeof buildStatusShares> }>): React.JSX.Element {
+  const theme = useTheme();
+
+  return (
+    <View style={LEGEND_STYLE}>
+      {shares.map(({ statusId, count }) => {
+        const label = i18n.t(`platform.status.${statusId}`);
+        return (
+          <View
+            key={statusId}
+            style={LEGEND_ROW_STYLE}
+            accessible
+            accessibilityLabel={`${label}: ${String(count)}`}
+          >
+            <View style={LEGEND_LABEL_STYLE}>
+              <View style={createLegendDotStyle(theme.colors[STATUS_COLOR_KEYS[statusId]])} />
+              <View style={FLEXIBLE_TEXT_STYLE}>
+                <Text color="ink2">{label}</Text>
+              </View>
+            </View>
+            <Text variant="bodyStrong">{String(count)}</Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
 /** Cómo se reparten los centros por estado: una barra de tramos y, debajo, cada estado con su cifra. */
 export function StatusDistribution({
   byStatus,
@@ -35,7 +66,7 @@ export function StatusDistribution({
   const shares = buildStatusShares(byStatus);
 
   return (
-    <View style={createDistributionCardStyle(theme)}>
+    <Panel>
       <Text variant="bodyStrong">{i18n.t('platform.overview.statusTitle')}</Text>
       <View style={DISTRIBUTION_TRACK_STYLE} accessibilityElementsHidden>
         {shares
@@ -47,25 +78,7 @@ export function StatusDistribution({
             />
           ))}
       </View>
-      <View style={LEGEND_STYLE}>
-        {shares.map(({ statusId, count }) => {
-          const label = i18n.t(`platform.status.${statusId}`);
-          return (
-            <View
-              key={statusId}
-              style={LEGEND_ROW_STYLE}
-              accessible
-              accessibilityLabel={`${label}: ${String(count)}`}
-            >
-              <View style={LEGEND_LABEL_STYLE}>
-                <View style={createLegendDotStyle(theme.colors[STATUS_COLOR_KEYS[statusId]])} />
-                <Text color="ink2">{label}</Text>
-              </View>
-              <Text variant="bodyStrong">{String(count)}</Text>
-            </View>
-          );
-        })}
-      </View>
-    </View>
+      <StatusLegend shares={shares} />
+    </Panel>
   );
 }

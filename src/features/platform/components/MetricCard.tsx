@@ -5,18 +5,19 @@ import { Icon, type IconName } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 
 import {
-  createMetricCardStyle,
+  createMetricCellStyle,
   createMetricIconTileStyle,
   METRIC_HEADER_STYLE,
-  type MetricTone,
 } from './MetricCard.styles';
+import { Panel } from './Panel';
+import { FLEXIBLE_TEXT_STYLE, type PanelTone } from './Panel.styles';
 
 interface MetricCardProps {
   label: string;
   value: number;
   iconName?: IconName;
   /** `warning` y `danger` solo se aplican con la cifra distinta de cero: avisan de algo que mirar. */
-  tone?: MetricTone;
+  tone?: PanelTone;
   /** La cifra principal de la pantalla: ocupa todo el ancho y se escribe más grande. */
   isFeatured?: boolean;
 }
@@ -34,22 +35,29 @@ export function MetricCard({
   const iconColor = shownTone === 'default' ? 'ink2' : shownTone;
 
   return (
-    <View
-      style={createMetricCardStyle(theme, { tone: shownTone, isFeatured })}
-      accessible
-      accessibilityLabel={`${label}, ${String(value)}`}
-    >
-      <View style={METRIC_HEADER_STYLE}>
-        <Text variant="caption" color="ink2">
-          {label}
-        </Text>
-        {iconName === undefined ? null : (
-          <View style={createMetricIconTileStyle(theme)}>
-            <Icon name={iconName} size="navigation" color={iconColor} />
+    <View style={createMetricCellStyle(isFeatured)}>
+      <Panel tone={shownTone} accessibilityLabel={`${label}, ${String(value)}`}>
+        <View style={METRIC_HEADER_STYLE}>
+          <View style={FLEXIBLE_TEXT_STYLE}>
+            <Text variant="caption" color="ink2">
+              {label}
+            </Text>
           </View>
-        )}
-      </View>
-      <Text variant={isFeatured ? 'display' : 'metric'}>{String(value)}</Text>
+          {iconName === undefined ? null : (
+            <View style={createMetricIconTileStyle(theme)}>
+              <Icon name={iconName} size="navigation" color={iconColor} />
+            </View>
+          )}
+        </View>
+        <Text
+          variant={isFeatured ? 'display' : 'metric'}
+          maxFontSizeMultiplier={1.4}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
+          {String(value)}
+        </Text>
+      </Panel>
     </View>
   );
 }

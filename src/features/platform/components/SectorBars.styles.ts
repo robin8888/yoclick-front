@@ -11,7 +11,9 @@ export const SECTOR_ROW_STYLE: ViewStyle = { gap: 6 };
 
 export const SECTOR_LABEL_ROW_STYLE: ViewStyle = {
   flexDirection: 'row',
+  alignItems: 'center',
   justifyContent: 'space-between',
+  gap: 8,
 };
 
 export function createSectorTrackStyle(theme: Theme): ViewStyle {

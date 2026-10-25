@@ -5,12 +5,13 @@ import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
-import { createDistributionCardStyle } from './StatusDistribution.styles';
+import { Panel } from './Panel';
+import { FLEXIBLE_TEXT_STYLE } from './Panel.styles';
 import {
   createSectorFillStyle,
+  createSectorTrackStyle,
   SECTOR_LABEL_ROW_STYLE,
   SECTOR_ROW_STYLE,
-  createSectorTrackStyle,
 } from './SectorBars.styles';
 
 interface SectorBarsProps {
@@ -23,7 +24,7 @@ export function SectorBars({ sectors }: Readonly<SectorBarsProps>): React.JSX.El
   const highest = Math.max(1, ...sectors.map(({ count }) => count));
 
   return (
-    <View style={createDistributionCardStyle(theme)}>
+    <Panel>
       <Text variant="bodyStrong">{i18n.t('platform.overview.sectorsTitle')}</Text>
       {sectors.map(({ sectorId, count }) => {
         const sectorLabel = i18n.t(`onboarding.sectors.${sectorId as 'gym'}`);
@@ -35,7 +36,9 @@ export function SectorBars({ sectors }: Readonly<SectorBarsProps>): React.JSX.El
             accessibilityLabel={`${sectorLabel}: ${String(count)}`}
           >
             <View style={SECTOR_LABEL_ROW_STYLE}>
-              <Text color="ink2">{sectorLabel}</Text>
+              <View style={FLEXIBLE_TEXT_STYLE}>
+                <Text color="ink2">{sectorLabel}</Text>
+              </View>
               <Text variant="bodyStrong">{String(count)}</Text>
             </View>
             <View style={createSectorTrackStyle(theme)}>
@@ -44,6 +47,6 @@ export function SectorBars({ sectors }: Readonly<SectorBarsProps>): React.JSX.El
           </View>
         );
       })}
-    </View>
+    </Panel>
   );
 }

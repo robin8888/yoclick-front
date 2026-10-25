@@ -8,30 +8,25 @@ const BAR_WIDTH = 10;
 const BAR_COLUMN_GAP = 4;
 const PAST_MONTH_OPACITY = 0.55;
 
-export function createBarsCardStyle(theme: Theme): ViewStyle {
-  return {
-    gap: theme.space[3],
-    padding: theme.space[4],
-    borderRadius: theme.radius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.line,
-    backgroundColor: theme.colors.surface,
-  };
-}
-
 export const BARS_HEADER_STYLE: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'baseline',
   justifyContent: 'space-between',
+  gap: 8,
 };
 
 export const BARS_ROW_STYLE: ViewStyle = {
   flexDirection: 'row',
   alignItems: 'flex-end',
-  justifyContent: 'space-between',
 };
 
-export const BAR_COLUMN_STYLE: ViewStyle = { alignItems: 'center', gap: BAR_COLUMN_GAP };
+/** Cada mes reparte el ancho a partes iguales, así 12 columnas caben siempre. */
+export const BAR_COLUMN_STYLE: ViewStyle = {
+  flex: 1,
+  minWidth: 0,
+  alignItems: 'center',
+  gap: BAR_COLUMN_GAP,
+};
 
 interface BarStyleRequest {
   ratio: number;
