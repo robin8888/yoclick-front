@@ -1,15 +1,12 @@
-import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
-import type { ContactListResponseDto } from '@/shared/api/generated/model';
+import { LoadErrorState } from '@/features/join';
 import { useBackAction } from '@/shared/hooks/useBackAction';
-import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
-import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
-import { useCenterName } from '../hooks/useCenterName';
+import { ContactList } from '../components/ContactList';
 import { useOpenConversation } from '../hooks/useChatMutations';
 import { useChatContacts } from '../hooks/useChatQueries';
 
@@ -18,64 +15,6 @@ interface NewConversationScreenProps {
   onConversationOpened: (conversationId: string) => void;
   /** Solo la administración: escribir a todas las personas de un grupo. */
   onGroupMessagePress?: (() => void) | undefined;
-}
-
-interface ContactListProps {
-  contacts: ContactListResponseDto;
-  onContactPress: (membershipId: string | null) => void;
-  onGroupMessagePress: (() => void) | undefined;
-}
-
-function GroupMessageEntry({
-  onPress,
-}: Readonly<{ onPress: (() => void) | undefined }>): React.JSX.Element | null {
-  if (onPress === undefined) return null;
-  return (
-    <ListItem
-      leadingIconName="users"
-      title={i18n.t('chat.group.entryTitle')}
-      subtitle={i18n.t('chat.group.entrySubtitle')}
-      onPress={onPress}
-    />
-  );
-}
-
-function ContactList({
-  contacts,
-  onContactPress,
-  onGroupMessagePress,
-}: Readonly<ContactListProps>): React.JSX.Element {
-  const centerName = useCenterName();
-  const { client, staff } = getSectorVocabulary(useActiveCenterSectorId());
-  const hasNobody = contacts.people.length === 0 && !contacts.canWriteToCenter;
-  if (hasNobody) return <FormErrorBanner message={i18n.t('chat.noContacts')} />;
-
-  return (
-    <>
-      <GroupMessageEntry onPress={onGroupMessagePress} />
-      {contacts.canWriteToCenter ? (
-        <ListItem
-          leadingIconName="messageCircle"
-          title={centerName === '' ? i18n.t('chat.theCenter') : centerName}
-          subtitle={i18n.t('chat.writeToCenter')}
-          onPress={() => {
-            onContactPress(null);
-          }}
-        />
-      ) : null}
-      {contacts.people.map((person) => (
-        <ListItem
-          key={person.membershipId}
-          leading={<Avatar name={person.fullName} photoUrl={person.photoUrl} isDecorative />}
-          title={person.fullName}
-          subtitle={person.role === 'client' ? client.singular : staff.singular}
-          onPress={() => {
-            onContactPress(person.membershipId);
-          }}
-        />
-      ))}
-    </>
-  );
 }
 
 /** «Nuevo mensaje»: el centro (si se puede) y las personas a las que quien mira puede escribir. */

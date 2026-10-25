@@ -14,6 +14,7 @@ jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
 
 const CONVERSATION_ID = '0198f4a0-0000-7000-8000-000000000010';
 const TEACHER_ID = '0198f4a0-0000-7000-8000-000000000011';
+const OTHER_PERSON_ID = '0198f4a0-0000-7000-8000-000000000012';
 const BASE = `/v1/centers/${NORTE_CENTER_ID}/conversations`;
 
 const TEACHER = {
@@ -111,6 +112,45 @@ describe('chat', () => {
       expect(onConversationOpened).toHaveBeenCalledWith(CONVERSATION_ID);
     });
     expect(findApiCall('POST', BASE)?.body).toEqual({ withMembershipId: TEACHER_ID });
+  });
+
+  it('searches people by name, ignoring accents, and picks one to write to', async () => {
+    mockApi({
+      [`GET ${BASE}/contacts`]: {
+        canWriteToCenter: true,
+        people: [
+          { membershipId: TEACHER_ID, fullName: 'María Pérez', role: 'client', photoUrl: null },
+          { membershipId: OTHER_PERSON_ID, fullName: 'Luis Pardo', role: 'client', photoUrl: null },
+        ],
+      },
+      [`POST ${BASE}`]: { conversationId: CONVERSATION_ID },
+    });
+    const onConversationOpened = jest.fn();
+    renderScreen(<NewConversationScreen onConversationOpened={onConversationOpened} />);
+
+    fireEvent.changeText(await screen.findByLabelText('Buscar por nombre'), 'maria');
+
+    expect(screen.queryByText('Luis Pardo')).not.toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: /María Pérez/ }));
+    await waitFor(() => {
+      expect(findApiCall('POST', BASE)?.body).toEqual({ withMembershipId: TEACHER_ID });
+    });
+  });
+
+  it('says nobody matches when the search finds no one', async () => {
+    mockApi({
+      [`GET ${BASE}/contacts`]: {
+        canWriteToCenter: false,
+        people: [
+          { membershipId: TEACHER_ID, fullName: 'María Pérez', role: 'client', photoUrl: null },
+        ],
+      },
+    });
+    renderScreen(<NewConversationScreen onConversationOpened={jest.fn()} />);
+
+    fireEvent.changeText(await screen.findByLabelText('Buscar por nombre'), 'zzz');
+
+    expect(screen.getByText('Nadie se llama «zzz».')).toBeOnTheScreen();
   });
 
   it('shows the thread and sends a message', async () => {
