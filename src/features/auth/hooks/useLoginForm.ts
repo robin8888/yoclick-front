@@ -5,6 +5,7 @@ import { useForm, type Control } from 'react-hook-form';
 import { getDeviceName } from '@/shared/auth/device-name';
 import { useAuthLogin } from '@/shared/api/generated/endpoints/auth/auth';
 import { i18n } from '@/shared/i18n';
+import { isApiError } from '@/shared/api/api-error';
 import { getApiErrorMessage } from '@/shared/api/errors';
 
 import { isMfaChallenge } from '../model/login-outcome';
@@ -24,6 +25,7 @@ export function useLoginForm(): LoginForm {
   const loginMutation = useAuthLogin();
   const { completeSignIn, hasSessionStartFailed } = useCompleteSignIn();
   const saveMfaChallenge = useAuthFlowStore((state) => state.saveMfaChallenge);
+  const savePendingEmail = useAuthFlowStore((state) => state.savePendingEmail);
   const { control, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
@@ -40,6 +42,13 @@ export function useLoginForm(): LoginForm {
           }
           saveMfaChallenge(response);
           router.push('/(auth)/mfa');
+        },
+        // La cuenta existe pero no confirmó el correo: se lleva a escribir el código en vez de
+        // dejarla con un aviso sin salida.
+        onError: (failure) => {
+          if (!isApiError(failure) || failure.code !== 'EMAIL_NOT_VERIFIED') return;
+          savePendingEmail(credentials.email);
+          router.push('/(auth)/verify-email');
         },
       },
     );

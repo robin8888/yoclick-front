@@ -51,6 +51,22 @@ describe('LoginScreen', () => {
     ).toBeOnTheScreen();
   });
 
+  it('sends someone with an unconfirmed email to type the code', async () => {
+    mockApi({
+      'POST /v1/auth/login': () => {
+        throw buildApiError('EMAIL_NOT_VERIFIED', 403);
+      },
+    });
+    renderScreen(<LoginScreen />);
+
+    signInWith('marta@correo.es', 'una-clave-larga-1');
+
+    await waitFor(() => {
+      expect(getMockRouter().push).toHaveBeenCalledWith('/(auth)/verify-email');
+    });
+    expect(useAuthFlowStore.getState().pendingEmail).toBe('marta@correo.es');
+  });
+
   it('starts the session with the returned tokens and goes to the root', async () => {
     mockApi({ 'POST /v1/auth/login': buildAuthenticatedLoginResponse() });
     renderScreen(<LoginScreen />);
