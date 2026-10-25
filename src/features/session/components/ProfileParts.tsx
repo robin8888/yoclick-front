@@ -91,7 +91,7 @@ export function ProfileFooter({
   return (
     <>
       <Button
-        variant="outline"
+        variant="danger"
         leadingIconName="logOut"
         label={i18n.t('actions.signOut')}
         isFullWidth

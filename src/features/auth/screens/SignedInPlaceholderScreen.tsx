@@ -62,7 +62,7 @@ export function SignedInPlaceholderScreen({
       }
       footer={
         <Button
-          variant="outline"
+          variant="danger"
           leadingIconName="logOut"
           label={i18n.t('actions.signOut')}
           isFullWidth

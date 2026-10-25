@@ -15,7 +15,7 @@ export function SignOutAction({ flow }: Readonly<SignOutActionProps>): React.JSX
   if (!flow.isSignedIn) return null;
   return (
     <Button
-      variant="ghost"
+      variant="danger"
       leadingIconName="logOut"
       label={i18n.t('actions.signOut')}
       isFullWidth
