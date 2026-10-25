@@ -1,5 +1,6 @@
 import { Pressable, View } from 'react-native';
 
+import { useActiveCenterModules } from '@/features/join';
 import type { ClientListResponseDtoClientsItem } from '@/shared/api/generated/model';
 import { i18n } from '@/shared/i18n';
 import { useTheme } from '@/shared/theme';
@@ -8,6 +9,7 @@ import { Badge } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
 import { resolveClientBadge } from '../model/client-display';
+import { ClientPassLine } from './ClientPassLine';
 import { CLIENT_ROW_TEXT_STYLE, createClientRowStyle } from './ClientRow.styles';
 
 const BADGE_TEXT_KEYS = {
@@ -31,6 +33,7 @@ export function ClientRow({
   onPress,
 }: Readonly<ClientRowProps>): React.JSX.Element {
   const theme = useTheme();
+  const modules = useActiveCenterModules();
   const badge = resolveClientBadge(client);
   const subtitle = i18n.t('clients.rowSubtitle', {
     level: levelLabel ?? i18n.t('clients.noLevel'),
@@ -53,6 +56,7 @@ export function ClientRow({
         <Text variant="caption" color="ink2" numberOfLines={1}>
           {subtitle}
         </Text>
+        {modules.passes ? <ClientPassLine passSummary={client.passSummary} /> : null}
       </View>
       <Badge label={badgeLabel} tone={badge.tone} />
     </Pressable>

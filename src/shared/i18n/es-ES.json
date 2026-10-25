@@ -1228,6 +1228,11 @@
     "newSubtitle": "Elige a quién quieres escribir.",
     "theCenter": "El centro",
     "writeToCenter": "Escribe a la administración del centro",
+    "search": {
+      "label": "Buscar por nombre",
+      "placeholder": "Buscar por nombre",
+      "noResults": "Nadie se llama «{{searchText}}»."
+    },
     "noContacts": "Todavía no tienes a nadie a quien escribir. Aparecerán las personas con las que coincidas en una clase.",
     "emptyTitle": "Aún no tienes mensajes",
     "emptyDescription": "Escribe al centro o a quien te da clase y la conversación aparecerá aquí.",
@@ -1449,6 +1454,17 @@
       "new": "Nuevo",
       "inactive": "Inactivo 30 d",
       "blocked": "Bloqueado"
+    },
+    "passBadges": {
+      "none": "Sin bono",
+      "pending": "Bono pedido",
+      "active": "Bono activo",
+      "ended": "Bono terminado"
+    },
+    "passDetail": {
+      "sessions_one": "{{count}} clase",
+      "sessions_other": "{{count}} clases",
+      "until": "hasta el {{date}}"
     },
     "rowSubtitle": "{{level}} · Grupo: {{group}}",
     "noLevel": "Sin nivel",

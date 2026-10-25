@@ -63,6 +63,10 @@ export const clientsListResponseClientsItemBookingCountMax = 9007199254740991;
 
 export const clientsListResponseClientsItemLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const clientsListResponseClientsItemNextBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const clientsListResponseClientsItemPassSummaryRemainingSessionsMin = -9007199254740991;
+export const clientsListResponseClientsItemPassSummaryRemainingSessionsMax = 9007199254740991;
+
+export const clientsListResponseClientsItemPassSummaryExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const ClientsListResponse = zod.object({
@@ -85,7 +89,12 @@ export const ClientsListResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}).regex(clientsListResponseClientsItemJoinedAtRegExp),
   "bookingCount": zod.int().min(clientsListResponseClientsItemBookingCountMin).max(clientsListResponseClientsItemBookingCountMax),
   "lastBookingAt": zod.iso.datetime({"offset":true}).regex(clientsListResponseClientsItemLastBookingAtRegExp).nullable(),
-  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsListResponseClientsItemNextBookingAtRegExp).nullable()
+  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsListResponseClientsItemNextBookingAtRegExp).nullable(),
+  "passSummary": zod.object({
+  "state": zod.enum(['none', 'pending', 'active', 'ended']),
+  "remainingSessions": zod.int().min(clientsListResponseClientsItemPassSummaryRemainingSessionsMin).max(clientsListResponseClientsItemPassSummaryRemainingSessionsMax).nullable(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(clientsListResponseClientsItemPassSummaryExpiresAtRegExp).nullable()
+})
 }))
 })
 
@@ -172,6 +181,10 @@ export const clientsGetResponseBookingCountMax = 9007199254740991;
 
 export const clientsGetResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const clientsGetResponseNextBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const clientsGetResponsePassSummaryRemainingSessionsMin = -9007199254740991;
+export const clientsGetResponsePassSummaryRemainingSessionsMax = 9007199254740991;
+
+export const clientsGetResponsePassSummaryExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const ClientsGetResponse = zod.object({
@@ -190,7 +203,12 @@ export const ClientsGetResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}).regex(clientsGetResponseJoinedAtRegExp),
   "bookingCount": zod.int().min(clientsGetResponseBookingCountMin).max(clientsGetResponseBookingCountMax),
   "lastBookingAt": zod.iso.datetime({"offset":true}).regex(clientsGetResponseLastBookingAtRegExp).nullable(),
-  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsGetResponseNextBookingAtRegExp).nullable()
+  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsGetResponseNextBookingAtRegExp).nullable(),
+  "passSummary": zod.object({
+  "state": zod.enum(['none', 'pending', 'active', 'ended']),
+  "remainingSessions": zod.int().min(clientsGetResponsePassSummaryRemainingSessionsMin).max(clientsGetResponsePassSummaryRemainingSessionsMax).nullable(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(clientsGetResponsePassSummaryExpiresAtRegExp).nullable()
+})
 })
 
 /**
@@ -226,6 +244,10 @@ export const clientsUpdateResponseBookingCountMax = 9007199254740991;
 
 export const clientsUpdateResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const clientsUpdateResponseNextBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const clientsUpdateResponsePassSummaryRemainingSessionsMin = -9007199254740991;
+export const clientsUpdateResponsePassSummaryRemainingSessionsMax = 9007199254740991;
+
+export const clientsUpdateResponsePassSummaryExpiresAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const ClientsUpdateResponse = zod.object({
@@ -244,7 +266,12 @@ export const ClientsUpdateResponse = zod.object({
   "joinedAt": zod.iso.datetime({"offset":true}).regex(clientsUpdateResponseJoinedAtRegExp),
   "bookingCount": zod.int().min(clientsUpdateResponseBookingCountMin).max(clientsUpdateResponseBookingCountMax),
   "lastBookingAt": zod.iso.datetime({"offset":true}).regex(clientsUpdateResponseLastBookingAtRegExp).nullable(),
-  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsUpdateResponseNextBookingAtRegExp).nullable()
+  "nextBookingAt": zod.iso.datetime({"offset":true}).regex(clientsUpdateResponseNextBookingAtRegExp).nullable(),
+  "passSummary": zod.object({
+  "state": zod.enum(['none', 'pending', 'active', 'ended']),
+  "remainingSessions": zod.int().min(clientsUpdateResponsePassSummaryRemainingSessionsMin).max(clientsUpdateResponsePassSummaryRemainingSessionsMax).nullable(),
+  "expiresAt": zod.iso.datetime({"offset":true}).regex(clientsUpdateResponsePassSummaryExpiresAtRegExp).nullable()
+})
 })
 
 /**

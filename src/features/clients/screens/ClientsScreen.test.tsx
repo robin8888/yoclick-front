@@ -29,6 +29,7 @@ function buildClient(overrides: Record<string, unknown>): Record<string, unknown
     joinedAt: '2026-01-10T09:00:00.000Z',
     bookingCount: 12,
     lastBookingAt: '2026-10-03T09:00:00.000Z',
+    passSummary: { state: 'none', remainingSessions: null, expiresAt: null },
     ...overrides,
   };
 }
@@ -82,6 +83,33 @@ describe('ClientsScreen', () => {
     expect(screen.getByText('Inactivo 30 d')).toBeOnTheScreen();
     expect(screen.getByRole('tab', { name: 'Clientes: 212' })).toBeOnTheScreen();
     expect(await screen.findByRole('tab', { name: 'Grupos: 1' })).toBeOnTheScreen();
+  });
+
+  it('shows whether each person has an active, requested or finished pass', async () => {
+    const activePass = {
+      state: 'active',
+      remainingSessions: 4,
+      expiresAt: '2026-12-12T10:00:00.000Z',
+    };
+    mockApi({
+      [CLIENTS_PATH]: {
+        ...CLIENT_LIST,
+        clients: [
+          buildClient({ passSummary: activePass }),
+          buildClient({
+            membershipId: '0191d6a0-0000-7000-8000-0000000000d2',
+            fullName: 'Luis Pardo',
+            passSummary: { state: 'ended', remainingSessions: null, expiresAt: null },
+          }),
+        ],
+      },
+      [GROUPS_PATH]: GROUP_LIST,
+    });
+    renderScreen(<ClientsScreen />);
+
+    expect(await screen.findByText('Bono activo')).toBeOnTheScreen();
+    expect(screen.getByText(/4 clases · hasta el/)).toBeOnTheScreen();
+    expect(screen.getByText('Bono terminado')).toBeOnTheScreen();
   });
 
   it('searches by name and filters by status on the server', async () => {
