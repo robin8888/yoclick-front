@@ -49,6 +49,26 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (25 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 21 oct; lo que no aparece aquí no ha cambiado. Back: lint, tsc, 1253 unitarios y e2e de plataforma en verde; front: lint, typecheck y tests en verde. Lo del día está commiteado pero **sin push**.
+
+### Hecho el 25 de octubre
+- ✅ **Bonos en la lista de clientes**: estado (sin bono, pendiente, activo, terminado), sesiones restantes y caducidad; el centro ve quién solicitó cada bono.
+- ✅ **Buscador por nombre** al iniciar una conversación en Mensajes (sin distinguir tildes).
+- ✅ **Cerrar sesión** en rojo con texto blanco para todos los roles; el login con correo sin verificar lleva a la pantalla del código.
+- ✅ **Plataforma: pestaña Planes** (Basic/Pro/Premium): centros por estado, ingreso mensual, precios editables y cambio de plan por centro, con auditoría. Tabla global `platform_plans`.
+- ✅ **Plataforma: rediseño responsive** (`Panel`, `PlatformTabs` de una sola línea con desplazamiento, tarjetas con texto flexible) y **logos de los centros** en la lista y la ficha.
+
+### Decisiones
+- Premium con 20 GiB de vídeo es una suposición (no está en la especificación).
+- Cambiar precios no cobra a nadie todavía: falta Stripe Billing (P5).
+
+### Pendiente
+1. 🟡 **Probar en el móvil** la zona Plataforma con letra grande, la pestaña Planes y los logos.
+2. ⬜ **Fallos de la prueba con nora@yopmail.com** (mañana): push en toda acción de centro, profesor y alumno (citas, bonos, mensajes…); editar clases (hora, anular); selector de hora que no se desliza en Android (revisar iPhone); botón de cerrar en el modal de escanear asistencia; al crear una clase, elegir solo entre los profesores que prestan ese servicio.
+3. ⬜ Plataforma P4, P5 y P6 como en la sección del 21 oct.
+
 ## Estado de avance (21 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 20 oct; lo que no aparece aquí no ha cambiado. Todo subido con `git push` (back `26c9fee`, front `11abb92`). Back: lint, tsc, 1228 unitarios y 1056 e2e en verde; front: lint, typecheck y 2416 tests en verde (307 suites).
