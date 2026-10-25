@@ -6,6 +6,7 @@ import { Text } from '@/ui/atoms/Text';
 
 import {
   BAR_COLUMN_STYLE,
+  BARS_HEADER_STYLE,
   BARS_ROW_STYLE,
   createBarsCardStyle,
   createBarStyle,
@@ -27,12 +28,18 @@ function readMonthInitial(monthKey: string): string {
 export function MonthlyBars({ title, months }: Readonly<MonthlyBarsProps>): React.JSX.Element {
   const theme = useTheme();
   const highest = Math.max(1, ...months.map(({ count }) => count));
+  const total = months.reduce((sum, { count }) => sum + count, 0);
 
   return (
     <View style={createBarsCardStyle(theme)}>
-      <Text variant="bodyStrong">{title}</Text>
+      <View style={BARS_HEADER_STYLE}>
+        <Text variant="bodyStrong">{title}</Text>
+        <Text variant="caption" color="ink2">
+          {i18n.t('platform.overview.barsTotal', { total })}
+        </Text>
+      </View>
       <View style={BARS_ROW_STYLE}>
-        {months.map(({ month, count }) => (
+        {months.map(({ month, count }, index) => (
           <View
             key={month}
             style={BAR_COLUMN_STYLE}
@@ -42,7 +49,12 @@ export function MonthlyBars({ title, months }: Readonly<MonthlyBarsProps>): Reac
             <Text variant="caption" color="ink2">
               {String(count)}
             </Text>
-            <View style={createBarStyle(theme, count / highest)} />
+            <View
+              style={createBarStyle(theme, {
+                ratio: count / highest,
+                isLatest: index === months.length - 1,
+              })}
+            />
             <Text variant="caption" color="ink2">
               {readMonthInitial(month)}
             </Text>

@@ -9,6 +9,7 @@ import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
 import { i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
+import { Logo } from '@/ui/atoms/Logo';
 import { Text } from '@/ui/atoms/Text';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
@@ -17,13 +18,17 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 import { ActivityTab } from '../components/ActivityTab';
 import { CentersTab } from '../components/CentersTab';
 import { OverviewTab } from '../components/OverviewTab';
+import { PlansTab } from '../components/PlansTab';
 import { usePlatformOverview } from '../hooks/usePlatformOverview';
 
-type PlatformTab = 'overview' | 'centers' | 'activity';
+const PLATFORM_LOGO_HEIGHT = 56;
+
+type PlatformTab = 'overview' | 'centers' | 'plans' | 'activity';
 
 const TAB_OPTIONS = [
   { value: 'overview', label: i18n.t('platform.tabs.overview') },
   { value: 'centers', label: i18n.t('platform.tabs.centers') },
+  { value: 'plans', label: i18n.t('platform.tabs.plans') },
   { value: 'activity', label: i18n.t('platform.tabs.activity') },
 ] as const;
 
@@ -32,6 +37,7 @@ function AdministrationTabs({
   onCenterOpen,
 }: Readonly<{ tab: PlatformTab; onCenterOpen: (centerId: string) => void }>): React.JSX.Element {
   if (tab === 'centers') return <CentersTab onCenterOpen={onCenterOpen} />;
+  if (tab === 'plans') return <PlansTab />;
   if (tab === 'activity') return <ActivityTab onCenterOpen={onCenterOpen} />;
   return <OverviewTab />;
 }
@@ -95,6 +101,8 @@ export function PlatformHomeScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate
+      hasPlatformHeroBackground
+      headerAccessory={<Logo variant="lockup" height={PLATFORM_LOGO_HEIGHT} />}
       title={i18n.t('platform.title')}
       subtitle={i18n.t('platform.subtitle')}
       isLoading={signOut.isSigningOut}

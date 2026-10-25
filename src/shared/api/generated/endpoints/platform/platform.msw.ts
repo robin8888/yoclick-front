@@ -17,7 +17,9 @@ import type {
   PlatformAuditListResponseDto,
   PlatformCenterDetailResponseDto,
   PlatformCenterListResponseDto,
-  PlatformOverviewResponseDto
+  PlatformOverviewResponseDto,
+  PlatformPlanListResponseDto,
+  PlatformPlanResponseDto
 } from '../../model';
 
 import {
@@ -25,10 +27,12 @@ import {
   getPlatformGetOverviewResponseMock,
   getPlatformListAuditLogResponseMock,
   getPlatformListCentersResponseMock,
-  getPlatformUpdateCenterResponseMock
+  getPlatformListPlansResponseMock,
+  getPlatformUpdateCenterResponseMock,
+  getPlatformUpdatePlanResponseMock
 } from './platform.faker.ts';
 
-export { getPlatformGetOverviewResponseMock, getPlatformListCentersResponseMock, getPlatformGetCenterResponseMock, getPlatformUpdateCenterResponseMock, getPlatformListAuditLogResponseMock } from './platform.faker.ts';
+export { getPlatformGetOverviewResponseMock, getPlatformListCentersResponseMock, getPlatformGetCenterResponseMock, getPlatformUpdateCenterResponseMock, getPlatformListAuditLogResponseMock, getPlatformListPlansResponseMock, getPlatformUpdatePlanResponseMock } from './platform.faker.ts';
 
 
 export const getPlatformGetOverviewMockHandler = (overrideResponse?: PlatformOverviewResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlatformOverviewResponseDto> | PlatformOverviewResponseDto), options?: RequestHandlerOptions) => {
@@ -90,10 +94,36 @@ export const getPlatformListAuditLogMockHandler = (overrideResponse?: PlatformAu
       })
   }, options)
 }
+
+export const getPlatformListPlansMockHandler = (overrideResponse?: PlatformPlanListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlatformPlanListResponseDto> | PlatformPlanListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/platform/plans', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformListPlansResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPlatformUpdatePlanMockHandler = (overrideResponse?: PlatformPlanResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<PlatformPlanResponseDto> | PlatformPlanResponseDto), options?: RequestHandlerOptions) => {
+  return http.patch('*/v1/platform/plans/:planId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformUpdatePlanResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getPlatformMock = () => [
   getPlatformGetOverviewMockHandler(),
   getPlatformListCentersMockHandler(),
   getPlatformGetCenterMockHandler(),
   getPlatformUpdateCenterMockHandler(),
-  getPlatformListAuditLogMockHandler()
+  getPlatformListAuditLogMockHandler(),
+  getPlatformListPlansMockHandler(),
+  getPlatformUpdatePlanMockHandler()
 ]

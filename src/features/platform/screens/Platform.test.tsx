@@ -41,6 +41,45 @@ const OVERVIEW = {
   centersBySector: [{ sectorId: 'yoga', count: 7 }],
 };
 
+const PLANS = {
+  plans: [
+    {
+      id: 'basic',
+      name: 'Básico',
+      monthlyPriceCents: 3900,
+      annualMonthlyPriceCents: 3200,
+      setupFeeCents: 0,
+      maxClients: 150,
+      documentStorageLimitBytes: 1_073_741_824,
+      videoStorageLimitBytes: null,
+      centerCountByStatus: { trial: 0, active: 2, past_due: 0, suspended: 0 },
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      monthlyPriceCents: 7900,
+      annualMonthlyPriceCents: 6500,
+      setupFeeCents: 0,
+      maxClients: 500,
+      documentStorageLimitBytes: 5_368_709_120,
+      videoStorageLimitBytes: null,
+      centerCountByStatus: { trial: 3, active: 1, past_due: 1, suspended: 0 },
+    },
+    {
+      id: 'premium',
+      name: 'Premium',
+      monthlyPriceCents: 14900,
+      annualMonthlyPriceCents: 12400,
+      setupFeeCents: 29000,
+      maxClients: null,
+      documentStorageLimitBytes: 21_474_836_480,
+      videoStorageLimitBytes: 21_474_836_480,
+      centerCountByStatus: { trial: 0, active: 1, past_due: 0, suspended: 1 },
+    },
+  ],
+  monthlyRecurringRevenueCents: 2 * 3900 + 2 * 7900 + 14900,
+};
+
 function buildCenter(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     id: CENTER_ID,
@@ -49,6 +88,7 @@ function buildCenter(overrides: Record<string, unknown> = {}): Record<string, un
     sectorId: 'yoga',
     city: 'Madrid',
     status: 'active',
+    planId: 'pro',
     createdAt: '2026-09-01T10:00:00.000Z',
     trialEndsAt: null,
     maxClients: 150,
@@ -209,6 +249,92 @@ describe('PlatformHomeScreen', () => {
   });
 });
 
+describe('PlansTab', () => {
+  const PLAN_PATH = '/v1/platform/plans/premium';
+
+  beforeEach(() => {
+    resetMockRouter();
+    signIn();
+  });
+
+  async function openPlansTab(): Promise<void> {
+    renderScreen(<PlatformHomeScreen />);
+    fireEvent.press(await screen.findByRole('tab', { name: 'Planes' }));
+  }
+
+  it('shows the monthly revenue and how many centers each plan has', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/plans': PLANS,
+    });
+    await openPlansTab();
+
+    expect(await screen.findByLabelText(/^Ingresos al mes, 385/)).toBeOnTheScreen();
+    expect(screen.getByLabelText('5 centros con este plan')).toBeOnTheScreen();
+    expect(screen.getByText(/Alta 290/)).toBeOnTheScreen();
+    expect(screen.getAllByText(/Sin vídeo/)).toHaveLength(2);
+    expect(
+      screen.getByText('1 activos · 3 en prueba · 1 en gracia · 0 suspendidos'),
+    ).toBeOnTheScreen();
+  });
+
+  it('sends only the prices that changed when saving a plan', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/plans': PLANS,
+      [`PATCH ${PLAN_PATH}`]: PLANS.plans[2],
+    });
+    await openPlansTab();
+
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Cambiar los precios del plan Premium' }),
+    );
+    fireEvent.changeText(await screen.findByLabelText('Cuota de alta (€)'), '190');
+    fireEvent.changeText(screen.getByLabelText('Precio mensual (€)'), '159,50');
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar precios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', PLAN_PATH)?.body).toEqual({
+        monthlyPriceCents: 15950,
+        setupFeeCents: 19000,
+      });
+    });
+  });
+
+  it('does not send a price that is not an amount', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/plans': PLANS,
+    });
+    await openPlansTab();
+
+    fireEvent.press(
+      await screen.findByRole('button', { name: 'Cambiar los precios del plan Pro' }),
+    );
+    fireEvent.changeText(await screen.findByLabelText('Precio mensual (€)'), 'mucho');
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar precios' }));
+
+    expect(await screen.findByText(/Escribe un importe en euros/)).toBeOnTheScreen();
+    expect(findApiCall('PATCH', '/v1/platform/plans')).toBeUndefined();
+  });
+
+  it('shows an error with retry when the plans cannot be loaded', async () => {
+    mockApi({
+      'GET /v1/me': PROFILE,
+      'GET /v1/platform/overview': OVERVIEW,
+      'GET /v1/platform/plans': () => {
+        throw buildApiError('INTERNAL_ERROR', 500);
+      },
+    });
+    await openPlansTab();
+
+    expect(await screen.findByText('No hemos podido cargar los planes')).toBeOnTheScreen();
+  });
+});
+
 describe('PlatformCenterScreen', () => {
   const CENTER_PATH = `/v1/platform/centers/${CENTER_ID}`;
 
@@ -252,6 +378,18 @@ describe('PlatformCenterScreen', () => {
       expect(findApiCall('PATCH', CENTER_PATH)?.body).toEqual({
         trialEndsAt: '2026-11-01T10:00:00.000Z',
       });
+    });
+  });
+
+  it('moves a center to another plan only after confirming', async () => {
+    mockCenter();
+    renderScreen(<PlatformCenterScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Pasar al plan Premium' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Sí, cambiar de plan' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', CENTER_PATH)?.body).toEqual({ planId: 'premium' });
     });
   });
 

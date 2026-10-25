@@ -65,6 +65,7 @@ export function PlatformCenterScreen(): React.JSX.Element {
   if (!params.success) return <Redirect href="/(platform)/home" />;
   return (
     <ScreenTemplate
+      hasPlatformHeroBackground
       title={i18n.t('platform.center.title')}
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}

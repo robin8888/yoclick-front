@@ -15,6 +15,7 @@ import {
   useCenterActions,
   type CenterActionKind,
 } from '../hooks/useCenterActions';
+import { CenterPlanPicker } from './CenterPlanPicker';
 import { ClientCapForm } from './ClientCapForm';
 
 const PLATFORM_TIME_ZONE = 'Europe/Madrid';
@@ -116,6 +117,7 @@ export function CenterActions({ center }: Readonly<CenterActionsProps>): React.J
           }}
         />
       ))}
+      <CenterPlanPicker center={center} />
       <ClientCapForm
         currentMaxClients={center.maxClients}
         isSaving={actions.isUpdating}

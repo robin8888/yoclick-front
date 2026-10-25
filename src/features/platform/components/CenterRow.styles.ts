@@ -6,7 +6,7 @@ const BADGES_GAP = 6;
 
 export function createCenterRowStyle(theme: Theme): ViewStyle {
   return {
-    gap: theme.space[1],
+    gap: theme.space[2],
     padding: theme.space[4],
     borderRadius: theme.radius.lg,
     borderWidth: 1,
@@ -24,3 +24,12 @@ export const HEADER_STYLE: ViewStyle = {
 };
 
 export const BADGES_STYLE: ViewStyle = { flexDirection: 'row', flexWrap: 'wrap', gap: BADGES_GAP };
+
+export const IDENTITY_STYLE: ViewStyle = {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 12,
+  flexShrink: 1,
+};
+
+export const NAME_BLOCK_STYLE: ViewStyle = { flexShrink: 1 };

@@ -133,6 +133,7 @@ export const PlatformListCentersResponse = zod.object({
   "sectorId": zod.string(),
   "city": zod.string().nullable(),
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
+  "planId": zod.enum(['basic', 'pro', 'premium']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(platformListCentersResponseDataItemCreatedAtRegExp),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(platformListCentersResponseDataItemTrialEndsAtRegExp).nullable(),
   "maxClients": zod.int().min(platformListCentersResponseDataItemMaxClientsMin).max(platformListCentersResponseDataItemMaxClientsMax).nullable(),
@@ -188,6 +189,7 @@ export const PlatformGetCenterResponse = zod.object({
   "sectorId": zod.string(),
   "city": zod.string().nullable(),
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
+  "planId": zod.enum(['basic', 'pro', 'premium']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(platformGetCenterResponseCreatedAtRegExp),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(platformGetCenterResponseTrialEndsAtRegExp).nullable(),
   "maxClients": zod.int().min(platformGetCenterResponseMaxClientsMin).max(platformGetCenterResponseMaxClientsMax).nullable(),
@@ -222,6 +224,7 @@ export const platformUpdateCenterBodyMaxClientsMax = 1000000;
 export const PlatformUpdateCenterBody = zod.object({
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']).optional(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterBodyTrialEndsAtRegExp).nullish(),
+  "planId": zod.enum(['basic', 'pro', 'premium']).optional(),
   "maxClients": zod.int().min(platformUpdateCenterBodyMaxClientsMin).max(platformUpdateCenterBodyMaxClientsMax).nullish()
 })
 
@@ -259,6 +262,7 @@ export const PlatformUpdateCenterResponse = zod.object({
   "sectorId": zod.string(),
   "city": zod.string().nullable(),
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
+  "planId": zod.enum(['basic', 'pro', 'premium']),
   "createdAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterResponseCreatedAtRegExp),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterResponseTrialEndsAtRegExp).nullable(),
   "maxClients": zod.int().min(platformUpdateCenterResponseMaxClientsMin).max(platformUpdateCenterResponseMaxClientsMax).nullable(),
@@ -305,5 +309,136 @@ export const PlatformListAuditLogResponse = zod.object({
   "createdAt": zod.iso.datetime({"offset":true}).regex(platformListAuditLogResponseDataItemCreatedAtRegExp)
 })),
   "nextCursor": zod.string().nullable()
+})
+
+/**
+ * @summary Los planes con su precio mensual, anual y cuota de alta, sus límites, cuántos centros tiene cada uno por estado y los ingresos recurrentes al mes.
+ */
+export const platformListPlansResponsePlansItemMonthlyPriceCentsMin = -9007199254740991;
+export const platformListPlansResponsePlansItemMonthlyPriceCentsMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemAnnualMonthlyPriceCentsMin = -9007199254740991;
+export const platformListPlansResponsePlansItemAnnualMonthlyPriceCentsMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemSetupFeeCentsMin = -9007199254740991;
+export const platformListPlansResponsePlansItemSetupFeeCentsMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemMaxClientsMin = -9007199254740991;
+export const platformListPlansResponsePlansItemMaxClientsMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemDocumentStorageLimitBytesMin = -9007199254740991;
+export const platformListPlansResponsePlansItemDocumentStorageLimitBytesMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemVideoStorageLimitBytesMin = -9007199254740991;
+export const platformListPlansResponsePlansItemVideoStorageLimitBytesMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemCenterCountByStatusTrialMin = -9007199254740991;
+export const platformListPlansResponsePlansItemCenterCountByStatusTrialMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemCenterCountByStatusActiveMin = -9007199254740991;
+export const platformListPlansResponsePlansItemCenterCountByStatusActiveMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemCenterCountByStatusPastDueMin = -9007199254740991;
+export const platformListPlansResponsePlansItemCenterCountByStatusPastDueMax = 9007199254740991;
+
+export const platformListPlansResponsePlansItemCenterCountByStatusSuspendedMin = -9007199254740991;
+export const platformListPlansResponsePlansItemCenterCountByStatusSuspendedMax = 9007199254740991;
+
+export const platformListPlansResponseMonthlyRecurringRevenueCentsMin = -9007199254740991;
+export const platformListPlansResponseMonthlyRecurringRevenueCentsMax = 9007199254740991;
+
+
+
+export const PlatformListPlansResponse = zod.object({
+  "plans": zod.array(zod.object({
+  "id": zod.enum(['basic', 'pro', 'premium']),
+  "name": zod.string(),
+  "monthlyPriceCents": zod.int().min(platformListPlansResponsePlansItemMonthlyPriceCentsMin).max(platformListPlansResponsePlansItemMonthlyPriceCentsMax),
+  "annualMonthlyPriceCents": zod.int().min(platformListPlansResponsePlansItemAnnualMonthlyPriceCentsMin).max(platformListPlansResponsePlansItemAnnualMonthlyPriceCentsMax),
+  "setupFeeCents": zod.int().min(platformListPlansResponsePlansItemSetupFeeCentsMin).max(platformListPlansResponsePlansItemSetupFeeCentsMax),
+  "maxClients": zod.int().min(platformListPlansResponsePlansItemMaxClientsMin).max(platformListPlansResponsePlansItemMaxClientsMax).nullable(),
+  "documentStorageLimitBytes": zod.int().min(platformListPlansResponsePlansItemDocumentStorageLimitBytesMin).max(platformListPlansResponsePlansItemDocumentStorageLimitBytesMax),
+  "videoStorageLimitBytes": zod.int().min(platformListPlansResponsePlansItemVideoStorageLimitBytesMin).max(platformListPlansResponsePlansItemVideoStorageLimitBytesMax).nullable(),
+  "centerCountByStatus": zod.object({
+  "trial": zod.int().min(platformListPlansResponsePlansItemCenterCountByStatusTrialMin).max(platformListPlansResponsePlansItemCenterCountByStatusTrialMax),
+  "active": zod.int().min(platformListPlansResponsePlansItemCenterCountByStatusActiveMin).max(platformListPlansResponsePlansItemCenterCountByStatusActiveMax),
+  "past_due": zod.int().min(platformListPlansResponsePlansItemCenterCountByStatusPastDueMin).max(platformListPlansResponsePlansItemCenterCountByStatusPastDueMax),
+  "suspended": zod.int().min(platformListPlansResponsePlansItemCenterCountByStatusSuspendedMin).max(platformListPlansResponsePlansItemCenterCountByStatusSuspendedMax)
+})
+})),
+  "monthlyRecurringRevenueCents": zod.int().min(platformListPlansResponseMonthlyRecurringRevenueCentsMin).max(platformListPlansResponseMonthlyRecurringRevenueCentsMax)
+})
+
+/**
+ * @summary Cambia el precio mensual, el anual o la cuota de alta de un plan (en céntimos, sin IVA). Cada cambio queda en el registro de auditoría.
+ */
+export const PlatformUpdatePlanParams = zod.object({
+  "planId": zod.enum(['basic', 'pro', 'premium'])
+})
+
+export const platformUpdatePlanBodyMonthlyPriceCentsMin = 0;
+export const platformUpdatePlanBodyMonthlyPriceCentsMax = 1000000;
+
+export const platformUpdatePlanBodyAnnualMonthlyPriceCentsMin = 0;
+export const platformUpdatePlanBodyAnnualMonthlyPriceCentsMax = 1000000;
+
+export const platformUpdatePlanBodySetupFeeCentsMin = 0;
+export const platformUpdatePlanBodySetupFeeCentsMax = 1000000;
+
+
+
+export const PlatformUpdatePlanBody = zod.object({
+  "monthlyPriceCents": zod.int().min(platformUpdatePlanBodyMonthlyPriceCentsMin).max(platformUpdatePlanBodyMonthlyPriceCentsMax).optional(),
+  "annualMonthlyPriceCents": zod.int().min(platformUpdatePlanBodyAnnualMonthlyPriceCentsMin).max(platformUpdatePlanBodyAnnualMonthlyPriceCentsMax).optional(),
+  "setupFeeCents": zod.int().min(platformUpdatePlanBodySetupFeeCentsMin).max(platformUpdatePlanBodySetupFeeCentsMax).optional()
+})
+
+export const platformUpdatePlanResponseMonthlyPriceCentsMin = -9007199254740991;
+export const platformUpdatePlanResponseMonthlyPriceCentsMax = 9007199254740991;
+
+export const platformUpdatePlanResponseAnnualMonthlyPriceCentsMin = -9007199254740991;
+export const platformUpdatePlanResponseAnnualMonthlyPriceCentsMax = 9007199254740991;
+
+export const platformUpdatePlanResponseSetupFeeCentsMin = -9007199254740991;
+export const platformUpdatePlanResponseSetupFeeCentsMax = 9007199254740991;
+
+export const platformUpdatePlanResponseMaxClientsMin = -9007199254740991;
+export const platformUpdatePlanResponseMaxClientsMax = 9007199254740991;
+
+export const platformUpdatePlanResponseDocumentStorageLimitBytesMin = -9007199254740991;
+export const platformUpdatePlanResponseDocumentStorageLimitBytesMax = 9007199254740991;
+
+export const platformUpdatePlanResponseVideoStorageLimitBytesMin = -9007199254740991;
+export const platformUpdatePlanResponseVideoStorageLimitBytesMax = 9007199254740991;
+
+export const platformUpdatePlanResponseCenterCountByStatusTrialMin = -9007199254740991;
+export const platformUpdatePlanResponseCenterCountByStatusTrialMax = 9007199254740991;
+
+export const platformUpdatePlanResponseCenterCountByStatusActiveMin = -9007199254740991;
+export const platformUpdatePlanResponseCenterCountByStatusActiveMax = 9007199254740991;
+
+export const platformUpdatePlanResponseCenterCountByStatusPastDueMin = -9007199254740991;
+export const platformUpdatePlanResponseCenterCountByStatusPastDueMax = 9007199254740991;
+
+export const platformUpdatePlanResponseCenterCountByStatusSuspendedMin = -9007199254740991;
+export const platformUpdatePlanResponseCenterCountByStatusSuspendedMax = 9007199254740991;
+
+
+
+export const PlatformUpdatePlanResponse = zod.object({
+  "id": zod.enum(['basic', 'pro', 'premium']),
+  "name": zod.string(),
+  "monthlyPriceCents": zod.int().min(platformUpdatePlanResponseMonthlyPriceCentsMin).max(platformUpdatePlanResponseMonthlyPriceCentsMax),
+  "annualMonthlyPriceCents": zod.int().min(platformUpdatePlanResponseAnnualMonthlyPriceCentsMin).max(platformUpdatePlanResponseAnnualMonthlyPriceCentsMax),
+  "setupFeeCents": zod.int().min(platformUpdatePlanResponseSetupFeeCentsMin).max(platformUpdatePlanResponseSetupFeeCentsMax),
+  "maxClients": zod.int().min(platformUpdatePlanResponseMaxClientsMin).max(platformUpdatePlanResponseMaxClientsMax).nullable(),
+  "documentStorageLimitBytes": zod.int().min(platformUpdatePlanResponseDocumentStorageLimitBytesMin).max(platformUpdatePlanResponseDocumentStorageLimitBytesMax),
+  "videoStorageLimitBytes": zod.int().min(platformUpdatePlanResponseVideoStorageLimitBytesMin).max(platformUpdatePlanResponseVideoStorageLimitBytesMax).nullable(),
+  "centerCountByStatus": zod.object({
+  "trial": zod.int().min(platformUpdatePlanResponseCenterCountByStatusTrialMin).max(platformUpdatePlanResponseCenterCountByStatusTrialMax),
+  "active": zod.int().min(platformUpdatePlanResponseCenterCountByStatusActiveMin).max(platformUpdatePlanResponseCenterCountByStatusActiveMax),
+  "past_due": zod.int().min(platformUpdatePlanResponseCenterCountByStatusPastDueMin).max(platformUpdatePlanResponseCenterCountByStatusPastDueMax),
+  "suspended": zod.int().min(platformUpdatePlanResponseCenterCountByStatusSuspendedMin).max(platformUpdatePlanResponseCenterCountByStatusSuspendedMax)
+})
 })
 
