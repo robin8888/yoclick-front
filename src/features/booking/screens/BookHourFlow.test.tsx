@@ -208,6 +208,24 @@ describe('booking by free hour', () => {
       });
     });
 
+    it('asks to get a pass first when the center sells them, and takes the person to the passes', async () => {
+      mockApi({
+        [SERVICES_PATH]: { services: [buildAppointmentService()] },
+        [CREATE_BOOKING_PATH]: () => {
+          throw buildApiError('PASS_NEEDED_TO_BOOK', 409);
+        },
+      });
+      renderScreen(<BookHourConfirmScreen />);
+
+      expect(await screen.findByText(/Corte de pelo/)).toBeOnTheScreen();
+      fireEvent.press(screen.getByRole('button', { name: 'Confirmar reserva' }));
+
+      expect(await screen.findByText('Primero necesitas un bono')).toBeOnTheScreen();
+      expect(screen.queryByText('No se ha podido guardar')).not.toBeOnTheScreen();
+      fireEvent.press(screen.getByRole('button', { name: 'Ver bonos' }));
+      expect(getMockRouter().push).toHaveBeenCalledWith('/(client)/my-passes');
+    });
+
     it('explains that the hour was taken meanwhile and stays on the screen', async () => {
       mockApi({
         [SERVICES_PATH]: { services: [buildAppointmentService()] },

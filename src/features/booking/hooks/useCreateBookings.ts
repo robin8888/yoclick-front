@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
-import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   bookingsJoinSession,
   getBookingsListMineQueryKey,
@@ -10,6 +9,7 @@ import {
 import type { BookingResponseDto } from '@/shared/api/generated/model';
 import { createIdempotencyIntention, type IdempotencyIntention } from '@/shared/api/idempotency';
 
+import { describeBookingFailure } from '../model/pass-needed';
 import { useActiveCenterId } from './useActiveCenterId';
 
 interface JoinClassesInput {
@@ -61,6 +61,8 @@ interface CreateBookings {
   createBookings: (onCreated: (bookings: BookingResponseDto[]) => void) => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+  /** El centro vende bonos y falta uno: se pide adquirirlo en vez de enseñar un error. */
+  isPassNeeded: boolean;
   /** Cierra el aviso del error para poder volver a intentarlo. */
   clearError: () => void;
 }
@@ -108,7 +110,7 @@ export function useCreateBookings(input: {
       });
     },
     isCreating: createMutation.isPending,
-    createErrorMessage: createMutation.isError ? getApiErrorMessage(createMutation.error) : null,
+    ...describeBookingFailure(createMutation.isError ? createMutation.error : null),
     clearError: createMutation.reset,
   };
 }

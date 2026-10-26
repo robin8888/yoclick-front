@@ -1,13 +1,12 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
-import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { BookingSummary } from '../components/BookingSummary';
+import { BookingFailureModals } from '../components/BookingFailureModals';
 import { useCenterServices } from '../hooks/useCenterServices';
 import { useCreateBookings } from '../hooks/useCreateBookings';
 import { DEFAULT_CENTER_TIME_ZONE } from '../model/booking-labels';
@@ -20,6 +19,7 @@ function useConfirmBooking(params: ConfirmBookingRouteParams): {
   createAndOpenDoneScreen: () => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+  isPassNeeded: boolean;
   clearError: () => void;
 } {
   const router = useRouter();
@@ -45,6 +45,7 @@ function useConfirmBooking(params: ConfirmBookingRouteParams): {
     },
     isCreating: bookings.isCreating,
     createErrorMessage: bookings.createErrorMessage,
+    isPassNeeded: bookings.isPassNeeded,
     clearError: bookings.clearError,
   };
 }
@@ -101,10 +102,10 @@ function BookConfirmContent({
         />
       }
     >
-      <ProblemModal
-        message={confirmation.createErrorMessage}
+      <BookingFailureModals
+        createErrorMessage={confirmation.createErrorMessage}
+        isPassNeeded={confirmation.isPassNeeded}
         onDismiss={confirmation.clearError}
-        {...getProblemModalCopy()}
       />
       <ChosenClassSummaries params={params} />
     </ScreenTemplate>

@@ -1,13 +1,12 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { i18n } from '@/shared/i18n';
-import { getProblemModalCopy } from '@/shared/i18n/problem-modal-copy';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { Button } from '@/ui/atoms/Button';
-import { ProblemModal } from '@/ui/organisms/ProblemModal';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { BookingSummary } from '../components/BookingSummary';
+import { BookingFailureModals } from '../components/BookingFailureModals';
 import { useCenterServices } from '../hooks/useCenterServices';
 import { useCreateHourBooking } from '../hooks/useCreateHourBooking';
 import { DEFAULT_CENTER_TIME_ZONE } from '../model/booking-labels';
@@ -20,6 +19,7 @@ function useConfirmHourBooking(params: ConfirmHourRouteParams): {
   confirmAndOpenDoneScreen: () => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+  isPassNeeded: boolean;
   clearError: () => void;
 } {
   const router = useRouter();
@@ -40,6 +40,7 @@ function useConfirmHourBooking(params: ConfirmHourRouteParams): {
     },
     isCreating: booking.isCreating,
     createErrorMessage: booking.createErrorMessage,
+    isPassNeeded: booking.isPassNeeded,
     clearError: booking.clearError,
   };
 }
@@ -69,10 +70,10 @@ function BookHourConfirmContent({
         />
       }
     >
-      <ProblemModal
-        message={booking.createErrorMessage}
+      <BookingFailureModals
+        createErrorMessage={booking.createErrorMessage}
+        isPassNeeded={booking.isPassNeeded}
         onDismiss={booking.clearError}
-        {...getProblemModalCopy()}
       />
       <BookingSummary
         serviceName={service?.name ?? ''}

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
-import { getApiErrorMessage } from '@/shared/api/errors';
 import {
   bookingsCreate,
   getBookingsListMineQueryKey,
@@ -10,6 +9,7 @@ import { getAvailabilityGetQueryKey } from '@/shared/api/generated/endpoints/sch
 import type { BookingResponseDto } from '@/shared/api/generated/model';
 import { createIdempotencyIntention, type IdempotencyIntention } from '@/shared/api/idempotency';
 
+import { describeBookingFailure } from '../model/pass-needed';
 import { useActiveCenterId } from './useActiveCenterId';
 
 export interface HourBookingRequest {
@@ -22,6 +22,8 @@ interface CreateHourBooking {
   createHourBooking: (onCreated: (booking: BookingResponseDto) => void) => void;
   isCreating: boolean;
   createErrorMessage: string | null;
+  /** El centro vende bonos y falta uno: se pide adquirirlo en vez de enseñar un error. */
+  isPassNeeded: boolean;
   clearError: () => void;
 }
 
@@ -60,7 +62,7 @@ export function useCreateHourBooking(request: HourBookingRequest): CreateHourBoo
       });
     },
     isCreating: createMutation.isPending,
-    createErrorMessage: createMutation.isError ? getApiErrorMessage(createMutation.error) : null,
+    ...describeBookingFailure(createMutation.isError ? createMutation.error : null),
     clearError: createMutation.reset,
   };
 }
