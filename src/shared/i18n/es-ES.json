@@ -267,6 +267,8 @@
     "SESSION_MODE_NOT_ALLOWED": "Este servicio no se da de esa forma (privada o en grupo). Cámbialo en el servicio",
     "SCHEDULE_HAS_BOOKINGS": "Hay citas sueltas en sesiones futuras de este horario. Cancélalas o muévelas antes",
     "SESSION_NOT_CANCELLABLE": "Esta sesión ya ha empezado o ya estaba cancelada",
+    "SESSION_NOT_MOVABLE": "Esta sesión ya ha empezado, está cancelada o la nueva hora ya ha pasado",
+    "SESSION_MOVE_CLIENT_BUSY": "Alguien con plaza ya tiene otra cita a esa hora. Elige otra hora",
     "ROOM_HAS_BOOKINGS": "Hay clases o citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
     "SERVICE_ONLY_IN_SCHEDULE": "Este servicio solo se da en sus horarios. Elige una de sus clases con plazas",
     "MODULE_DISABLED": "Tu centro no usa esta función. Puede activarla desde Módulos del centro",
@@ -857,6 +859,12 @@
     "room": {
       "label": "Sala {{name}}",
       "seats": "{{booked}} de {{capacity}} plazas"
+    },
+    "location": {
+      "label": "Lugar: {{name}}",
+      "labelWithAddress": "Lugar: {{name}} · {{address}}",
+      "directionsAction": "Cómo llegar",
+      "directionsActionLabel": "Cómo llegar a {{name}}"
     }
   },
   "routines": {
@@ -1127,6 +1135,8 @@
       "assignAppointmentsHint": "Reserva en nombre de alguien",
       "managementAction": "Salas y {{sessions}}",
       "managementHint": "Crea y edita salas, servicios y {{sessions}}",
+      "teamAction": "Equipo",
+      "teamHint": "Verlo, escribirle e invitar",
       "servicesAction": "Servicios",
       "servicesHint": "Qué ofreces y su precio",
       "passesAction": "Bonos",
@@ -1180,6 +1190,7 @@
       "endConfirmAction": "Sí, terminar",
       "keepGoingAction": "Seguir",
       "finishedSummary": "Clase registrada: {{actual}} de {{planned}} previstos.",
+      "locationLabel": "Lugar",
       "roomLabel": "Sala",
       "seatsLabel": "Plazas",
       "seatsValue": "{{booked}} de {{capacity}} ocupadas",
@@ -1229,6 +1240,7 @@
       "scheduleSession": "Horario fijo",
       "enrollmentAttendee": "{{name}} · grupo fijo",
       "openAttendeeProfileLabel": "{{name}}. Ver su perfil",
+      "editScheduleAction": "Editar horario",
       "cancelDayAction": "Cancelar este día",
       "cancelDayTitle": "Cancelar la clase de este día",
       "cancelDayHelper": "Se avisa a las personas apuntadas y a quien da la clase. El horario sigue los demás días.",
@@ -1436,6 +1448,10 @@
     "scheduleEnrolledDescription": "{{actorName}} te ha apuntado a {{scheduleName}} con {{staffName}}{{roomSuffix}}.",
     "scheduleUnenrolledTitle": "Cambio en tu horario fijo",
     "scheduleUnenrolledDescription": "{{actorName}} te ha dado de baja de {{scheduleName}} con {{staffName}}{{roomSuffix}}.",
+    "passRejectedTitle": "Tu solicitud de bono no se ha aceptado",
+    "passRejectedDescription": "El centro no ha aceptado tu solicitud del bono {{rateName}}. Habla con el centro si tienes dudas.",
+    "scheduleUpdatedTitle": "Ha cambiado un horario tuyo",
+    "scheduleUpdatedDescription": "{{actorName}} ha cambiado el horario de {{scheduleName}} con {{staffName}}{{roomSuffix}}. Mira tu agenda para ver las nuevas horas.",
     "passRequestedTitle": "Bono pedido",
     "passRequestedDescription": "{{clientName}} ha pedido el bono {{rateName}}. Actívalo cuando lo cobres.",
     "passActivatedTitle": "Tu bono está activo",
@@ -1655,8 +1671,8 @@
       "invalid": "El nombre debe tener entre 2 y 80 caracteres"
     },
     "services": {
-      "title": "Servicios, horario y {{staffWord}}",
-      "subtitle": "{{serviceCount}} servicios · {{staffCount}} {{staffWord}}"
+      "title": "Servicios y horario",
+      "subtitle": "{{serviceCount}} servicios"
     }
   },
   "passes": {
@@ -2505,6 +2521,8 @@
     "team": {
       "guardianWord": "tutor",
       "inviteAction": "Invitar",
+      "messageAction": "Enviar mensaje",
+      "screenSubtitle": "Mira a tus {{staffWord}}, escríbeles o invita a alguien nuevo.",
       "loadError": "No hemos podido cargar el equipo",
       "memberTitle": "Equipo",
       "roleLabel": "Qué hace en el centro",
@@ -2639,6 +2657,23 @@
     },
     "serviceSelection": {
       "empty": "Aún no hay servicios. Créalos en «Servicios y horario»."
+    },
+    "location": {
+      "outsideLabel": "La clase es fuera del centro",
+      "outsideHelper": "Un parque, un auditorio… Las personas apuntadas lo ven en su agenda con un botón para llegar.",
+      "nameLabel": "Nombre del lugar",
+      "namePlaceholder": "Parque del Retiro",
+      "nameRequired": "Escribe el nombre del lugar",
+      "addressLabel": "Dirección",
+      "addressHelper": "Elige una sugerencia para que el mapa lleve al punto exacto."
+    },
+    "moveSession": {
+      "action": "Mover este día",
+      "title": "Mover la clase de este día",
+      "helper": "Solo cambia este día; el resto del horario sigue igual. Se avisa a las personas apuntadas y a quien da la clase.",
+      "dateLabel": "Nuevo día",
+      "confirm": "Mover la clase",
+      "dismiss": "Volver"
     },
     "createClass": {
       "title": "Crear clase",
@@ -2831,6 +2866,7 @@
       "alreadyRegisteredBadge": "Ya está en clase",
       "appointmentSummary": "{{serviceName}} · {{time}}",
       "scanAnotherAction": "Escanear otro",
+      "closeAction": "Cerrar",
       "openAction": "Escanea asistencia QR",
       "clockInBadge": "Entrada registrada",
       "clockOutBadge": "Salida registrada",

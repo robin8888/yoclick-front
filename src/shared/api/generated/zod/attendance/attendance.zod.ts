@@ -70,6 +70,16 @@ export const attendanceCheckInResponseBookingServiceDurationMinutesMax = 9007199
 
 export const attendanceCheckInResponseBookingStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const attendanceCheckInResponseBookingRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const attendanceCheckInResponseBookingLocationNameMax = 120;
+
+export const attendanceCheckInResponseBookingLocationAddressMax = 250;
+
+export const attendanceCheckInResponseBookingLocationLatitudeMin = -90;
+export const attendanceCheckInResponseBookingLocationLatitudeMax = 90;
+
+export const attendanceCheckInResponseBookingLocationLongitudeMin = -180;
+export const attendanceCheckInResponseBookingLocationLongitudeMax = 180;
+
 export const attendanceCheckInResponseBookingSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const attendanceCheckInResponseBookingSessionCapacityMin = -9007199254740991;
 export const attendanceCheckInResponseBookingSessionCapacityMax = 9007199254740991;
@@ -142,6 +152,12 @@ export const AttendanceCheckInResponse = zod.object({
   "room": zod.object({
   "id": zod.uuid().regex(attendanceCheckInResponseBookingRoomIdRegExp),
   "name": zod.string()
+}).nullable(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(attendanceCheckInResponseBookingLocationNameMax),
+  "address": zod.string().min(1).max(attendanceCheckInResponseBookingLocationAddressMax).nullable(),
+  "latitude": zod.number().min(attendanceCheckInResponseBookingLocationLatitudeMin).max(attendanceCheckInResponseBookingLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(attendanceCheckInResponseBookingLocationLongitudeMin).max(attendanceCheckInResponseBookingLocationLongitudeMax).nullable()
 }).nullable(),
   "session": zod.object({
   "id": zod.uuid().regex(attendanceCheckInResponseBookingSessionIdRegExp),

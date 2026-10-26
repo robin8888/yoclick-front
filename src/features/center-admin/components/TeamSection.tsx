@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 
 import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
+import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
 import { useTeamRoster } from '../hooks/useTeamRoster';
@@ -14,7 +15,24 @@ function capitalize(word: string): string {
   return `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
 }
 
-/** Prototipo `asvc`, «Instructores»: el equipo con «Invitar» y acceso para editar a cada persona. */
+/** Abre «Nuevo mensaje», donde se elige a quién del equipo escribir. */
+function MessageTeamButton(): React.JSX.Element {
+  const router = useRouter();
+
+  return (
+    <Button
+      variant="outline"
+      isFullWidth
+      leadingIconName="messageCircle"
+      label={i18n.t('centerAdmin.team.messageAction')}
+      onPress={() => {
+        router.push('/(admin)/messages/new');
+      }}
+    />
+  );
+}
+
+/** El equipo con «Invitar», «Enviar mensaje» y acceso para editar a cada persona. */
 export function TeamSection(): React.JSX.Element {
   const router = useRouter();
   const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
@@ -31,6 +49,7 @@ export function TeamSection(): React.JSX.Element {
           router.push(buildInvitePersonRoute('staff'));
         }}
       />
+      <MessageTeamButton />
       {roster.isError ? <Text color="danger">{i18n.t('centerAdmin.team.loadError')}</Text> : null}
       {members.map((member) => (
         <TeamMemberRow

@@ -48,25 +48,23 @@ export function useInvitationAcceptance({
   const previewQuery = useJoinGetInvitation(invitationCode ?? '', {
     query: { enabled: invitationCode !== null, retry: false },
   });
-  const acceptMutation = useJoinAcceptInvitation();
+  // Las acciones van en la propia mutación y no en `mutate`: así corren aunque la pantalla se
+  // desmonte a mitad (p. ej. al cambiar la sesión) y la marca «en curso» nunca queda colgada.
+  const acceptMutation = useJoinAcceptInvitation({
+    mutation: {
+      onSettled: endAcceptance,
+      onSuccess: async (acceptedInvitation) => {
+        await queryClient.invalidateQueries({ queryKey: getMeListMembershipsQueryKey() });
+        selectActiveCenter(acceptedInvitation.centerId);
+        clearInvitation();
+        onAccepted();
+      },
+    },
+  });
 
   function acceptInvitation(): void {
     if (invitationCode === null || !tryBeginAcceptance()) return;
-    acceptMutation.mutate(
-      { code: invitationCode },
-      {
-        onError: endAcceptance,
-        onSuccess: (acceptedInvitation) => {
-          void queryClient
-            .invalidateQueries({ queryKey: getMeListMembershipsQueryKey() })
-            .then(() => {
-              selectActiveCenter(acceptedInvitation.centerId);
-              clearInvitation();
-              onAccepted();
-            });
-        },
-      },
-    );
+    acceptMutation.mutate({ code: invitationCode });
   }
 
   return {

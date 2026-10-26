@@ -4,6 +4,7 @@ import type {
   ServiceListResponseDtoServicesItem,
 } from '@/shared/api/generated/model';
 
+import { isLocationNameMissing, toLocationRequest, type LocationDraft } from './location-draft';
 import { minutesToTime, timeToMinutes } from './opening-hours-draft';
 
 /** Una franja de la semana que ya ocupa una clase de la sala o del profesor. */
@@ -139,6 +140,8 @@ export interface ClassDraft {
   endsOn: string;
   startsAtTime: string;
   endsAtTime: string;
+  /** Si la clase es fuera del centro (parque, auditorio…): dónde. */
+  location: LocationDraft;
 }
 
 function resolveWeekdays(draft: ClassDraft, weekdayOfStartsOn: number): number[] {
@@ -161,30 +164,52 @@ function isPeriodReversed(period: Period): boolean {
   return period.endsOn !== null && period.endsOn < period.startsOn;
 }
 
+/** Falta algo por elegir: sala, servicio, profesor (salvo en un alquiler) o el nombre del lugar. */
+function isDraftIncomplete(
+  draft: ClassDraft,
+  service: Pick<ServiceListResponseDtoServicesItem, 'isRental'>,
+): boolean {
+  return (
+    draft.roomId === null ||
+    draft.serviceId === null ||
+    isTeacherMissing(draft, service) ||
+    isLocationNameMissing(draft.location)
+  );
+}
+
+/** Lo que solo se envía si se ha rellenado: el profesor, el nombre de la clase y el lugar. */
+function buildOptionalRequestFields(draft: ClassDraft): Partial<CreateScheduleSeriesRequestDto> {
+  const label = draft.label.trim();
+  const location = toLocationRequest(draft.location);
+  return {
+    ...(draft.staffMembershipId === null ? {} : { staffMembershipId: draft.staffMembershipId }),
+    ...(label === '' ? {} : { label }),
+    ...(location === null ? {} : { location }),
+  };
+}
+
 /** Con todo elegido, lo que se envía al servidor; `null` mientras falte algo. */
 export function buildCreateClassRequest(
   draft: ClassDraft,
   service: Pick<ServiceListResponseDtoServicesItem, 'mode' | 'isRental'>,
   weekdayOfStartsOn: number,
 ): CreateScheduleSeriesRequestDto | null {
-  const { roomId, serviceId, staffMembershipId } = draft;
+  const { roomId, serviceId } = draft;
   const weekdays = resolveWeekdays(draft, weekdayOfStartsOn);
   const period = resolvePeriod(draft);
-  const isIncomplete = roomId === null || serviceId === null || isTeacherMissing(draft, service);
-  if (isIncomplete || draft.startsOn === '' || weekdays.length === 0 || isPeriodReversed(period)) {
-    return null;
-  }
-  const label = draft.label.trim();
+  const isScheduleInvalid =
+    draft.startsOn === '' || weekdays.length === 0 || isPeriodReversed(period);
+  if (roomId === null || serviceId === null) return null;
+  if (isDraftIncomplete(draft, service) || isScheduleInvalid) return null;
   return {
     serviceId,
     roomId,
-    ...(staffMembershipId === null ? {} : { staffMembershipId }),
     weekdays,
     startsAtTime: draft.startsAtTime,
     endsAtTime: draft.endsAtTime,
     mode: service.mode === 'private' ? 'private' : 'group',
     startsOn: period.startsOn,
     endsOn: period.endsOn,
-    ...(label === '' ? {} : { label }),
+    ...buildOptionalRequestFields(draft),
   };
 }

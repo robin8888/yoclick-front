@@ -1,6 +1,10 @@
 import { Redirect } from 'expo-router';
 
-import { LoadErrorScreen, usePendingInvitationStore } from '@/features/join';
+import {
+  LoadErrorScreen,
+  useAcceptPendingInvitation,
+  usePendingInvitationStore,
+} from '@/features/join';
 import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { i18n } from '@/shared/i18n';
@@ -18,7 +22,10 @@ import { resolveSignedInGateRedirect } from '../model/resolve-gate-redirect';
  */
 export function SessionGateScreen(): React.JSX.Element {
   const isSignedIn = useSessionStore((state) => state.status === 'signedIn');
-  const hasInvitationLink = usePendingInvitationStore((state) => state.invitationCode !== null);
+  const hasSavedInvitation = usePendingInvitationStore((state) => state.invitationCode !== null);
+  const pendingInvitation = useAcceptPendingInvitation(isSignedIn);
+  // Si se acepta sola no hace falta enseñar la pantalla de invitación: solo la espera.
+  const hasInvitationLink = hasSavedInvitation && !pendingInvitation.isAccepting;
   const isInvitationExpected = usePendingInvitationStore((state) => state.isInvitationExpected);
   const isCenterCreationRequested = useCenterCreationIntentStore(
     (state) => state.isCenterCreationRequested,
@@ -33,6 +40,9 @@ export function SessionGateScreen(): React.JSX.Element {
   });
 
   if (!isSignedIn) return <Redirect href="/(auth)/start" />;
+  if (pendingInvitation.isAccepting) {
+    return <LoadingScreenTemplate loadingLabel={getSharedStateCopy().loadingLabel} />;
+  }
   if (redirect !== null) return <Redirect href={redirect} />;
   if (destination !== null) return <Redirect href={HOME_ROUTE_BY_KIND[destination.kind]} />;
   if (error === null)

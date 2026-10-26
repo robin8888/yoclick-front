@@ -5,7 +5,6 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { OpeningHoursSection } from '../components/OpeningHoursSection';
 import { ServiceCatalogSection } from '../components/ServiceCatalogSection';
-import { TeamSection } from '../components/TeamSection';
 import { useCenterSettings } from '../hooks/useCenterSettings';
 import { useServiceCatalog } from '../hooks/useServiceCatalog';
 
@@ -37,7 +36,6 @@ export function ServicesScreen(): React.JSX.Element {
       {settings.data === undefined ? null : (
         <OpeningHoursSection openingHours={settings.data.openingHours} />
       )}
-      <TeamSection />
     </ScreenTemplate>
   );
 }

@@ -29,6 +29,7 @@ const SESSION = {
   service: { id: 'service-salsa', name: 'Salsa', color: null },
   teacher: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
   schedule: null,
+  location: null,
   cancelledReason: null,
   attendees: [
     {

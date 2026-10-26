@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { Linking } from 'react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { buildBooking, BOOKING_ID } from '@/test/booking-factories';
@@ -40,6 +41,41 @@ describe('MyBookingsScreen', () => {
     expect(screen.getByLabelText('jue 8 oct')).toBeOnTheScreen();
     expect(screen.getByText('18:00 · 60 min · Álex Moreno')).toBeOnTheScreen();
     expect(screen.getByText('Confirmada')).toBeOnTheScreen();
+  });
+
+  it('shows where a class held outside the center is and opens the route in the maps', async () => {
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+    mockApi({
+      [LIST_PATH]: {
+        bookings: [
+          buildBooking({
+            location: {
+              name: 'Parque del Retiro',
+              address: 'Plaza de la Independencia 7, Madrid',
+              latitude: 40.4153,
+              longitude: -3.6844,
+            },
+          }),
+        ],
+      },
+    });
+    renderScreen(<MyBookingsScreen />);
+
+    expect(
+      await screen.findByText('Lugar: Parque del Retiro · Plaza de la Independencia 7, Madrid'),
+    ).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: 'Cómo llegar' }));
+
+    expect(openUrl).toHaveBeenCalledWith(expect.stringContaining('40.4153'));
+    openUrl.mockRestore();
+  });
+
+  it('offers no route when the class is in a room of the center', async () => {
+    mockApi({ [LIST_PATH]: { bookings: [buildBooking()] } });
+    renderScreen(<MyBookingsScreen />);
+
+    expect(await screen.findByText('Entrenamiento personal')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Cómo llegar' })).not.toBeOnTheScreen();
   });
 
   it('offers to book when there are no upcoming appointments', async () => {

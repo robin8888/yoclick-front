@@ -11,6 +11,7 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ChoiceChipsField } from '../components/ChoiceChipsField';
 import { SchedulePeriodFields } from '../components/SchedulePeriodFields';
+import { SessionLocationFields } from '../components/SessionLocationFields';
 import { SkippedOccurrencesSheet } from '../components/SkippedOccurrencesSheet';
 import { TimeRangeStepFields } from '../components/TimeRangeStepFields';
 import { useEditScheduleForm, type EditScheduleForm } from '../hooks/useEditScheduleForm';
@@ -105,6 +106,21 @@ function EditTimingFields({ form }: Readonly<Pick<EditFieldsProps, 'form'>>): Re
   );
 }
 
+/** Si la clase es fuera del centro: dónde. Cambiarlo avisa, pero no rehace las sesiones. */
+function EditLocationField({ form }: Readonly<Pick<EditFieldsProps, 'form'>>): React.JSX.Element {
+  const { errors } = useFormState({ control: form.control });
+
+  return (
+    <SessionLocationFields
+      value={form.values.location}
+      nameErrorMessage={errors.location?.name?.message}
+      onChange={(location) => {
+        form.setValue('location', location, { shouldValidate: true });
+      }}
+    />
+  );
+}
+
 function EditScheduleContent({ series }: Readonly<{ series: ScheduleSeries }>): React.JSX.Element {
   const router = useRouter();
   const form = useEditScheduleForm(series);
@@ -126,6 +142,7 @@ function EditScheduleContent({ series }: Readonly<{ series: ScheduleSeries }>): 
     >
       <EditTimingFields form={form} />
       <EditPlaceFields form={form} series={series} />
+      <EditLocationField form={form} />
       <ProblemModal
         message={form.errorMessage}
         onDismiss={form.clearError}

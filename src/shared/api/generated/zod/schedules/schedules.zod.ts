@@ -71,6 +71,16 @@ export const schedulesListResponseSeriesItemEndsOnRegExp = new RegExp('^(?:(?:\\
 export const schedulesListResponseSeriesItemServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesListResponseSeriesItemStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesListResponseSeriesItemRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const schedulesListResponseSeriesItemLocationNameMax = 120;
+
+export const schedulesListResponseSeriesItemLocationAddressMax = 250;
+
+export const schedulesListResponseSeriesItemLocationLatitudeMin = -90;
+export const schedulesListResponseSeriesItemLocationLatitudeMax = 90;
+
+export const schedulesListResponseSeriesItemLocationLongitudeMin = -180;
+export const schedulesListResponseSeriesItemLocationLongitudeMax = 180;
+
 export const schedulesListResponseSeriesItemDaysItemScheduleIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesListResponseSeriesItemDaysItemWeekdayMax = 7;
 
@@ -100,6 +110,12 @@ export const SchedulesListResponse = zod.object({
   "room": zod.object({
   "id": zod.uuid().regex(schedulesListResponseSeriesItemRoomIdRegExp),
   "name": zod.string()
+}).nullable(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(schedulesListResponseSeriesItemLocationNameMax),
+  "address": zod.string().min(1).max(schedulesListResponseSeriesItemLocationAddressMax).nullable(),
+  "latitude": zod.number().min(schedulesListResponseSeriesItemLocationLatitudeMin).max(schedulesListResponseSeriesItemLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(schedulesListResponseSeriesItemLocationLongitudeMin).max(schedulesListResponseSeriesItemLocationLongitudeMax).nullable()
 }).nullable(),
   "days": zod.array(zod.object({
   "scheduleId": zod.uuid().regex(schedulesListResponseSeriesItemDaysItemScheduleIdRegExp),
@@ -140,6 +156,16 @@ export const schedulesCreateBodyEndsOnDefault = null;
 export const schedulesCreateBodyEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
 export const schedulesCreateBodyLabelMax = 80;
 
+export const schedulesCreateBodyLocationNameMax = 120;
+
+export const schedulesCreateBodyLocationAddressMax = 250;
+
+export const schedulesCreateBodyLocationLatitudeMin = -90;
+export const schedulesCreateBodyLocationLatitudeMax = 90;
+
+export const schedulesCreateBodyLocationLongitudeMin = -180;
+export const schedulesCreateBodyLocationLongitudeMax = 180;
+
 
 
 export const SchedulesCreateBody = zod.object({
@@ -153,7 +179,13 @@ export const SchedulesCreateBody = zod.object({
   "endsAtTime": zod.string(),
   "startsOn": zod.iso.date().regex(schedulesCreateBodyStartsOnRegExp),
   "endsOn": zod.iso.date().regex(schedulesCreateBodyEndsOnRegExp).nullish().default(schedulesCreateBodyEndsOnDefault),
-  "label": zod.string().min(1).max(schedulesCreateBodyLabelMax).optional()
+  "label": zod.string().min(1).max(schedulesCreateBodyLabelMax).optional(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(schedulesCreateBodyLocationNameMax),
+  "address": zod.string().min(1).max(schedulesCreateBodyLocationAddressMax).nullable(),
+  "latitude": zod.number().min(schedulesCreateBodyLocationLatitudeMin).max(schedulesCreateBodyLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(schedulesCreateBodyLocationLongitudeMin).max(schedulesCreateBodyLocationLongitudeMax).nullable()
+}).nullish()
 })
 
 export const schedulesCreateResponseSeriesSeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -165,6 +197,16 @@ export const schedulesCreateResponseSeriesEndsOnRegExp = new RegExp('^(?:(?:\\d\
 export const schedulesCreateResponseSeriesServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesCreateResponseSeriesStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesCreateResponseSeriesRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const schedulesCreateResponseSeriesLocationNameMax = 120;
+
+export const schedulesCreateResponseSeriesLocationAddressMax = 250;
+
+export const schedulesCreateResponseSeriesLocationLatitudeMin = -90;
+export const schedulesCreateResponseSeriesLocationLatitudeMax = 90;
+
+export const schedulesCreateResponseSeriesLocationLongitudeMin = -180;
+export const schedulesCreateResponseSeriesLocationLongitudeMax = 180;
+
 export const schedulesCreateResponseSeriesDaysItemScheduleIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesCreateResponseSeriesDaysItemWeekdayMax = 7;
 
@@ -195,6 +237,12 @@ export const SchedulesCreateResponse = zod.object({
   "room": zod.object({
   "id": zod.uuid().regex(schedulesCreateResponseSeriesRoomIdRegExp),
   "name": zod.string()
+}).nullable(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(schedulesCreateResponseSeriesLocationNameMax),
+  "address": zod.string().min(1).max(schedulesCreateResponseSeriesLocationAddressMax).nullable(),
+  "latitude": zod.number().min(schedulesCreateResponseSeriesLocationLatitudeMin).max(schedulesCreateResponseSeriesLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(schedulesCreateResponseSeriesLocationLongitudeMin).max(schedulesCreateResponseSeriesLocationLongitudeMax).nullable()
 }).nullable(),
   "days": zod.array(zod.object({
   "scheduleId": zod.uuid().regex(schedulesCreateResponseSeriesDaysItemScheduleIdRegExp),
@@ -234,6 +282,16 @@ export const schedulesUpdateBodyCapacityMax = 500;
 export const schedulesUpdateBodyEndsOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
 export const schedulesUpdateBodyStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesUpdateBodyRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const schedulesUpdateBodyLocationNameMax = 120;
+
+export const schedulesUpdateBodyLocationAddressMax = 250;
+
+export const schedulesUpdateBodyLocationLatitudeMin = -90;
+export const schedulesUpdateBodyLocationLatitudeMax = 90;
+
+export const schedulesUpdateBodyLocationLongitudeMin = -180;
+export const schedulesUpdateBodyLocationLongitudeMax = 180;
+
 
 
 export const SchedulesUpdateBody = zod.object({
@@ -243,7 +301,13 @@ export const SchedulesUpdateBody = zod.object({
   "staffMembershipId": zod.uuid().regex(schedulesUpdateBodyStaffMembershipIdRegExp).optional(),
   "roomId": zod.uuid().regex(schedulesUpdateBodyRoomIdRegExp).nullish(),
   "startsAtTime": zod.string().optional(),
-  "endsAtTime": zod.string().optional()
+  "endsAtTime": zod.string().optional(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(schedulesUpdateBodyLocationNameMax),
+  "address": zod.string().min(1).max(schedulesUpdateBodyLocationAddressMax).nullable(),
+  "latitude": zod.number().min(schedulesUpdateBodyLocationLatitudeMin).max(schedulesUpdateBodyLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(schedulesUpdateBodyLocationLongitudeMin).max(schedulesUpdateBodyLocationLongitudeMax).nullable()
+}).nullish()
 })
 
 export const schedulesUpdateResponseSeriesSeriesIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -255,6 +319,16 @@ export const schedulesUpdateResponseSeriesEndsOnRegExp = new RegExp('^(?:(?:\\d\
 export const schedulesUpdateResponseSeriesServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesUpdateResponseSeriesStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesUpdateResponseSeriesRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const schedulesUpdateResponseSeriesLocationNameMax = 120;
+
+export const schedulesUpdateResponseSeriesLocationAddressMax = 250;
+
+export const schedulesUpdateResponseSeriesLocationLatitudeMin = -90;
+export const schedulesUpdateResponseSeriesLocationLatitudeMax = 90;
+
+export const schedulesUpdateResponseSeriesLocationLongitudeMin = -180;
+export const schedulesUpdateResponseSeriesLocationLongitudeMax = 180;
+
 export const schedulesUpdateResponseSeriesDaysItemScheduleIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const schedulesUpdateResponseSeriesDaysItemWeekdayMax = 7;
 
@@ -285,6 +359,12 @@ export const SchedulesUpdateResponse = zod.object({
   "room": zod.object({
   "id": zod.uuid().regex(schedulesUpdateResponseSeriesRoomIdRegExp),
   "name": zod.string()
+}).nullable(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(schedulesUpdateResponseSeriesLocationNameMax),
+  "address": zod.string().min(1).max(schedulesUpdateResponseSeriesLocationAddressMax).nullable(),
+  "latitude": zod.number().min(schedulesUpdateResponseSeriesLocationLatitudeMin).max(schedulesUpdateResponseSeriesLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(schedulesUpdateResponseSeriesLocationLongitudeMin).max(schedulesUpdateResponseSeriesLocationLongitudeMax).nullable()
 }).nullable(),
   "days": zod.array(zod.object({
   "scheduleId": zod.uuid().regex(schedulesUpdateResponseSeriesDaysItemScheduleIdRegExp),
@@ -482,5 +562,55 @@ export const sessionsCancelResponseAffectedBookingCountMax = 9007199254740991;
 
 export const SessionsCancelResponse = zod.object({
   "affectedBookingCount": zod.int().min(sessionsCancelResponseAffectedBookingCountMin).max(sessionsCancelResponseAffectedBookingCountMax)
+})
+
+/**
+ * @summary Mueve una sola sesión que no ha empezado a otra fecha u hora (la serie no cambia). Las plazas se van con ella y se avisa a cada persona y a quien la da. 409 si ya empezó, si la sala o el profesor están ocupados o si alguien con plaza tiene otra cita a esa hora.
+ */
+export const sessionsMovePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const sessionsMovePathSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const SessionsMoveParams = zod.object({
+  "centerId": zod.uuid().regex(sessionsMovePathCenterIdRegExp),
+  "sessionId": zod.uuid().regex(sessionsMovePathSessionIdRegExp)
+})
+
+export const SessionsMoveHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const sessionsMoveBodyDateRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const sessionsMoveBodyLocationNameMax = 120;
+
+export const sessionsMoveBodyLocationAddressMax = 250;
+
+export const sessionsMoveBodyLocationLatitudeMin = -90;
+export const sessionsMoveBodyLocationLatitudeMax = 90;
+
+export const sessionsMoveBodyLocationLongitudeMin = -180;
+export const sessionsMoveBodyLocationLongitudeMax = 180;
+
+
+
+export const SessionsMoveBody = zod.object({
+  "date": zod.iso.date().regex(sessionsMoveBodyDateRegExp),
+  "startsAtTime": zod.string(),
+  "endsAtTime": zod.string(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(sessionsMoveBodyLocationNameMax),
+  "address": zod.string().min(1).max(sessionsMoveBodyLocationAddressMax).nullable(),
+  "latitude": zod.number().min(sessionsMoveBodyLocationLatitudeMin).max(sessionsMoveBodyLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(sessionsMoveBodyLocationLongitudeMin).max(sessionsMoveBodyLocationLongitudeMax).nullable()
+}).nullish()
+})
+
+export const sessionsMoveResponseNotifiedPersonCountMin = -9007199254740991;
+export const sessionsMoveResponseNotifiedPersonCountMax = 9007199254740991;
+
+
+
+export const SessionsMoveResponse = zod.object({
+  "notifiedPersonCount": zod.int().min(sessionsMoveResponseNotifiedPersonCountMin).max(sessionsMoveResponseNotifiedPersonCountMax)
 })
 

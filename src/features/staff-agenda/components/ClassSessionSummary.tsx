@@ -34,6 +34,12 @@ function RoomRows({
       {booking.room === null ? null : (
         <SummaryRow label={i18n.t('staffAgenda.session.roomLabel')} value={booking.room.name} />
       )}
+      {booking.location === null ? null : (
+        <SummaryRow
+          label={i18n.t('staffAgenda.session.locationLabel')}
+          value={booking.location.address ?? booking.location.name}
+        />
+      )}
       {booking.session.mode === 'group' ? (
         <SummaryRow
           label={i18n.t('staffAgenda.session.seatsLabel')}

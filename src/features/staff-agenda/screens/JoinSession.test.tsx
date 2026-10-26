@@ -30,6 +30,7 @@ const SESSION = {
   service: { id: 'service-english', name: 'Inglés B1', color: null },
   teacher: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
   schedule: null,
+  location: null,
   cancelledReason: null,
   attendees: [],
 };

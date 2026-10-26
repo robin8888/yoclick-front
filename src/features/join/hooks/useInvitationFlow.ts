@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 import type { InvitationPreviewResponseDto } from '@/shared/api/generated/model';
 
 import { usePendingInvitationStore } from '../model/pending-invitation-store';
+import { useAutoAcceptInvitation } from './useAutoAcceptInvitation';
 import { useInvitationAcceptance } from './useInvitationAcceptance';
 import { useInvitationCodeForm } from './useInvitationCodeForm';
 
@@ -13,6 +14,8 @@ interface InvitationFlow {
   /** La invitación consultada, o `undefined` mientras falta el código o falla. */
   invitation: InvitationPreviewResponseDto | undefined;
   failure: unknown;
+  /** Se está aceptando sola: no se enseña la vista previa, solo la espera. */
+  isAutoAccepting: boolean;
   handleSecondaryPress: () => void;
 }
 
@@ -21,9 +24,9 @@ export function useInvitationFlow(): InvitationFlow {
   const router = useRouter();
   const savedCode = usePendingInvitationStore((state) => state.invitationCode);
   const clearInvitation = usePendingInvitationStore((state) => state.clearInvitation);
-  const isAutoAcceptAllowed = usePendingInvitationStore((state) => state.isAutoAcceptAllowed);
-  const hasAutoAccepted = useRef(false);
-  const form = useInvitationCodeForm(savedCode);
+  // El código guardado se borra al aceptar; se recuerda el de entrada para distinguir el escrito.
+  const [linkedCode] = useState(savedCode);
+  const form = useInvitationCodeForm(linkedCode);
   const acceptance = useInvitationAcceptance({
     invitationCode: form.submittedCode,
     onAccepted: () => {
@@ -31,14 +34,13 @@ export function useInvitationFlow(): InvitationFlow {
     },
   });
   const invitation = acceptance.previewError === null ? acceptance.preview : undefined;
-  const { acceptInvitation } = acceptance;
-
-  // Aceptar sola es sincronizar con el servidor, y una sola vez: si falla, queda el botón.
-  useEffect(() => {
-    if (!isAutoAcceptAllowed || invitation === undefined || hasAutoAccepted.current) return;
-    hasAutoAccepted.current = true;
-    acceptInvitation();
-  }, [isAutoAcceptAllowed, invitation, acceptInvitation]);
+  const isAutoAccepting = useAutoAcceptInvitation({
+    linkedCode,
+    submittedCode: form.submittedCode,
+    invitation,
+    hasAcceptFailed: acceptance.acceptError !== null,
+    acceptInvitation: acceptance.acceptInvitation,
+  });
 
   function handleSecondaryPress(): void {
     if (invitation !== undefined) {
@@ -54,6 +56,7 @@ export function useInvitationFlow(): InvitationFlow {
     acceptance,
     invitation,
     failure: acceptance.previewError ?? acceptance.acceptError,
+    isAutoAccepting,
     handleSecondaryPress,
   };
 }

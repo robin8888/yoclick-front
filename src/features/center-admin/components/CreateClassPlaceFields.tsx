@@ -5,7 +5,9 @@ import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
+import { isLocationNameMissing } from '../model/location-draft';
 import { RoomCard } from './RoomCard';
+import { SessionLocationFields } from './SessionLocationFields';
 import type { CreateClassForm } from '../hooks/useCreateClassForm';
 
 const SECTION_STYLE = { gap: 8 } as const;
@@ -108,6 +110,15 @@ export function CreateClassPlaceFields({
       <RoomChoice form={form} />
       <ServiceChoice form={form} />
       <TeacherChoice form={form} />
+      <SessionLocationFields
+        value={form.draft.location}
+        onChange={form.setLocation}
+        nameErrorMessage={
+          isLocationNameMissing(form.draft.location)
+            ? i18n.t('centerAdmin.location.nameRequired')
+            : undefined
+        }
+      />
     </>
   );
 }

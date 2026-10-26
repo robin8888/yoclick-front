@@ -10,6 +10,7 @@ import { renderScreen } from '@/test/render-screen';
 
 import { InvitePersonScreen } from './InvitePersonScreen';
 import { ServiceEditorScreen } from './ServiceEditorScreen';
+import { CenterTeamScreen } from './CenterTeamScreen';
 import { ServicesScreen } from './ServicesScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
@@ -61,6 +62,36 @@ function signInAsOwner(): void {
     useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
   });
 }
+
+describe('CenterTeamScreen', () => {
+  beforeEach(() => {
+    resetMockRouter();
+    signInAsOwner();
+  });
+
+  it('shows the team and lets the center invite someone or write a message', async () => {
+    mockApi({ [`GET ${TEAM_PATH}`]: { members: TEAM_MEMBERS } });
+    renderScreen(<CenterTeamScreen />);
+
+    expect(await screen.findByRole('button', { name: /Lucía Ferrer/ })).toBeOnTheScreen();
+    fireEvent.press(screen.getByRole('button', { name: 'Invitar' }));
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/invite-person?role=staff');
+    fireEvent.press(screen.getByRole('button', { name: 'Enviar mensaje' }));
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/messages/new');
+  });
+
+  it('is no longer part of the services screen', async () => {
+    mockApi({
+      [`GET ${SERVICES_PATH}`]: { services: [buildService()] },
+      [`GET ${SETTINGS_PATH}`]: { openingHours: OPENING_HOURS },
+      [`GET ${TEAM_PATH}`]: { members: TEAM_MEMBERS },
+    });
+    renderScreen(<ServicesScreen />);
+
+    expect(await screen.findByText('Entrenamiento personal')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Invitar' })).not.toBeOnTheScreen();
+  });
+});
 
 describe('ServicesScreen', () => {
   beforeEach(() => {

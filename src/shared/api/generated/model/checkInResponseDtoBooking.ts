@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { CheckInResponseDtoBookingCreatedBy } from './checkInResponseDtoBookingCreatedBy.ts';
+import type { CheckInResponseDtoBookingLocation } from './checkInResponseDtoBookingLocation.ts';
 import type { CheckInResponseDtoBookingRoom } from './checkInResponseDtoBookingRoom.ts';
 import type { CheckInResponseDtoBookingService } from './checkInResponseDtoBookingService.ts';
 import type { CheckInResponseDtoBookingSession } from './checkInResponseDtoBookingSession.ts';
@@ -25,6 +26,8 @@ export type CheckInResponseDtoBooking = {
   staff: CheckInResponseDtoBookingStaff;
   /** @nullable */
   room: CheckInResponseDtoBookingRoom;
+  /** @nullable */
+  location: CheckInResponseDtoBookingLocation;
   session: CheckInResponseDtoBookingSession;
   /**
      * @nullable

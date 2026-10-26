@@ -46,6 +46,7 @@ export function buildBooking(overrides: Partial<BookingResponseDto> = {}): Booki
     service: { id: SERVICE_ID, name: 'Entrenamiento personal', durationMinutes: 60, color: null },
     staff: { membershipId: STAFF_MEMBERSHIP_ID, fullName: 'Álex Moreno' },
     room: null,
+    location: null,
     session: { id: SESSION_ID, mode: 'private', capacity: 1, bookedCount: 1 },
     cancelledAt: null,
     cancelWithinPolicy: null,

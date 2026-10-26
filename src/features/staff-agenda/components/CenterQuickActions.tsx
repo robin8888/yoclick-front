@@ -14,6 +14,7 @@ interface CenterQuickActionsProps {
   onAssignAppointmentPress: () => void;
   onManagementPress: () => void;
   onServicesPress: () => void;
+  onTeamPress: () => void;
   onPassesPress: () => void;
   onSetupGuidePress: () => void;
   onMessagesPress: () => void;
@@ -96,6 +97,13 @@ function buildSecondaryActions(
       label: i18n.t('staffAgenda.center.servicesAction'),
       hint: i18n.t('staffAgenda.center.servicesHint'),
       onPress: props.onServicesPress,
+    },
+    {
+      id: 'team',
+      iconName: 'users',
+      label: i18n.t('staffAgenda.center.teamAction'),
+      hint: i18n.t('staffAgenda.center.teamHint'),
+      onPress: props.onTeamPress,
     },
     buildMessagesAction(props, unreadMessageCount),
     ...buildManagementActions(props),

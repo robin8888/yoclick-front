@@ -19,6 +19,7 @@ import type {
   EndSeriesResponseDto,
   EnrollResponseDto,
   EnrollmentListResponseDto,
+  MoveSessionResponseDto,
   ScheduleSeriesListResponseDto,
   ScheduleSeriesWriteResponseDto,
   UnenrollResponseDto
@@ -33,10 +34,11 @@ import {
   getSchedulesListResponseMock,
   getSchedulesUnenrollResponseMock,
   getSchedulesUpdateResponseMock,
-  getSessionsCancelResponseMock
+  getSessionsCancelResponseMock,
+  getSessionsMoveResponseMock
 } from './schedules.faker.ts';
 
-export { getSchedulesBusyTimesResponseMock, getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock } from './schedules.faker.ts';
+export { getSchedulesBusyTimesResponseMock, getSchedulesListResponseMock, getSchedulesCreateResponseMock, getSchedulesUpdateResponseMock, getSchedulesEndResponseMock, getSchedulesListEnrollmentsResponseMock, getSchedulesEnrollResponseMock, getSchedulesUnenrollResponseMock, getSessionsCancelResponseMock, getSessionsMoveResponseMock } from './schedules.faker.ts';
 
 
 export const getSchedulesBusyTimesMockHandler = (overrideResponse?: BusyTimesResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<BusyTimesResponseDto> | BusyTimesResponseDto), options?: RequestHandlerOptions) => {
@@ -146,6 +148,18 @@ export const getSessionsCancelMockHandler = (overrideResponse?: CancelSessionRes
       })
   }, options)
 }
+
+export const getSessionsMoveMockHandler = (overrideResponse?: MoveSessionResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<MoveSessionResponseDto> | MoveSessionResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/sessions/:sessionId/move', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getSessionsMoveResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 export const getSchedulesMock = () => [
   getSchedulesBusyTimesMockHandler(),
   getSchedulesListMockHandler(),
@@ -155,5 +169,6 @@ export const getSchedulesMock = () => [
   getSchedulesListEnrollmentsMockHandler(),
   getSchedulesEnrollMockHandler(),
   getSchedulesUnenrollMockHandler(),
-  getSessionsCancelMockHandler()
+  getSessionsCancelMockHandler(),
+  getSessionsMoveMockHandler()
 ]

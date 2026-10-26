@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import type { UpdateScheduleSeriesRequestDto } from '@/shared/api/generated/model';
+import { addressValueSchema } from '@/features/address';
 import { i18n } from '@/shared/i18n';
 
 import {
@@ -9,6 +10,7 @@ import {
   NO_END_VALUE,
   NO_ROOM_VALUE,
 } from './schedule-form';
+import { buildLocationDraft, isSameLocationRequest, toLocationRequest } from './location-draft';
 import type { ScheduleSeries } from './schedule-summary';
 
 const MAX_LABEL_LENGTH = 80;
@@ -38,10 +40,15 @@ export const scheduleEditSchema = z
     staffMembershipId: z
       .string()
       .min(1, { error: () => i18n.t('centerAdmin.schedules.teacherRequired') }),
+    location: z.object({ isOutside: z.boolean(), name: z.string(), address: addressValueSchema }),
   })
   .refine((form) => isTimeRangeOrdered(form.startsAtTime, form.endsAtTime), {
     error: () => i18n.t('centerAdmin.schedules.timeOrder'),
     path: ['endsAtTime'],
+  })
+  .refine((form) => !form.location.isOutside || form.location.name.trim() !== '', {
+    error: () => i18n.t('centerAdmin.location.nameRequired'),
+    path: ['location', 'name'],
   })
   .refine((form) => form.endsOn === NO_END_VALUE || form.endsOn >= form.startsOn, {
     error: () => i18n.t('centerAdmin.schedules.periodOrder'),
@@ -67,6 +74,7 @@ export function buildScheduleEditForm(series: ScheduleSeries): ScheduleEditValue
     endsOn: series.endsOn ?? NO_END_VALUE,
     roomId: series.room?.id ?? NO_ROOM_VALUE,
     staffMembershipId: series.staff?.membershipId ?? '',
+    location: buildLocationDraft(series.location),
   };
 }
 
@@ -93,6 +101,7 @@ export function mapScheduleEditToUpdateRequest(
   const label = toNullableText(formValues.label);
   const endsOn = toNullableText(formValues.endsOn);
   const roomId = toNullableText(formValues.roomId);
+  const location = toLocationRequest(formValues.location);
   const hasTimeChange =
     formValues.startsAtTime !== times.startsAtTime || formValues.endsAtTime !== times.endsAtTime;
   return {
@@ -106,6 +115,7 @@ export function mapScheduleEditToUpdateRequest(
     ...(endsOn === series.endsOn ? {} : { endsOn }),
     ...(roomId === (series.room?.id ?? null) ? {} : { roomId }),
     ...readTeacherChange(formValues, series),
+    ...(isSameLocationRequest(location, series.location) ? {} : { location }),
   };
 }
 

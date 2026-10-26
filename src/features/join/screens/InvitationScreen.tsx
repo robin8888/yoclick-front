@@ -42,12 +42,20 @@ function InvitationBody({
 export function InvitationScreen(): React.JSX.Element {
   const onBackPress = useBackAction();
   const signOut = useSignOutFlow();
-  const { form, acceptance, invitation, failure, handleSecondaryPress } = useInvitationFlow();
+  const flow = useInvitationFlow();
+  const { form, acceptance, failure, handleSecondaryPress } = flow;
+  // Si se acepta sola no se enseña la vista previa: solo la espera.
+  const invitation = flow.isAutoAccepting ? undefined : flow.invitation;
 
   return (
     <ScreenTemplate
       onBackPress={onBackPress}
-      isLoading={acceptance.isLoadingPreview || acceptance.isAccepting || signOut.isSigningOut}
+      isLoading={
+        acceptance.isLoadingPreview ||
+        acceptance.isAccepting ||
+        flow.isAutoAccepting ||
+        signOut.isSigningOut
+      }
       loadingLabel={getSharedStateCopy().loadingLabel}
       title={i18n.t('join.invitation.title')}
       subtitle={i18n.t('join.invitation.subtitle')}

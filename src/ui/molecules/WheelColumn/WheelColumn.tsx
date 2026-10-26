@@ -95,6 +95,8 @@ export function WheelColumn(props: Readonly<WheelColumnProps>): React.JSX.Elemen
       <ScrollView
         ref={scrollRef}
         showsVerticalScrollIndicator={false}
+        // En Android una rueda dentro de otro scroll (hoja, formulario) no recibe el gesto sin esto.
+        nestedScrollEnabled
         snapToInterval={WHEEL_ITEM_HEIGHT}
         decelerationRate="fast"
         onMomentumScrollEnd={wheel.handleScrollSettle}

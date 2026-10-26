@@ -9,15 +9,12 @@ import { useAssignableStaff } from './useAssignableStaff';
 import { useRoomList } from './useRoomList';
 import { useServiceCatalog } from './useServiceCatalog';
 
-/**
- * Los profesores entre los que el centro puede elegir: los que dan ese servicio. Un servicio sin
- * ningún profesor asignado admite a todo el equipo.
- */
+/** Los profesores entre los que el centro puede elegir: solo los que dan ese servicio. */
 function listTeachersOfService(
   team: AssignableStaffMember[],
   service: ServiceListResponseDtoServicesItem | undefined,
 ): AssignableStaffMember[] {
-  if (service === undefined || service.staff.length === 0) return team;
+  if (service === undefined) return team;
   const teacherIds = new Set(service.staff.map((teacher) => teacher.membershipId));
   return team.filter((member) => teacherIds.has(member.membershipId));
 }

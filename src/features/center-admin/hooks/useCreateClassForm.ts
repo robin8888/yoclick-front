@@ -21,13 +21,13 @@ import {
   type HoursProblem,
   type OpenRangesByWeekday,
 } from '../model/create-class';
+import { EMPTY_LOCATION_DRAFT, type LocationDraft } from '../model/location-draft';
 import { toggleWeekday, type ScheduleWeekday } from '../model/schedule-form';
 import { getEndOfWeeks } from '../model/schedule-week';
 import { useBusyTimes } from './useBusyTimes';
 import { useCenterSettings } from './useCenterSettings';
 import { getDeviceTimeZone } from './useCenterTimeZone';
 import { useCreateScheduleSeries } from './useCreateScheduleSeries';
-import { useAssignableStaff } from './useAssignableStaff';
 import { useRoomList } from './useRoomList';
 import { useServiceCatalog } from './useServiceCatalog';
 
@@ -59,6 +59,7 @@ export interface CreateClassForm {
   chooseRoom: (roomId: string) => void;
   chooseService: (serviceId: string) => void;
   chooseTeacher: (membershipId: string) => void;
+  setLocation: (location: LocationDraft) => void;
   chooseRepeat: (repeat: ClassRepeat) => void;
   toggleDay: (weekday: ScheduleWeekday) => void;
   chooseStartsOn: (isoDate: string) => void;
@@ -78,6 +79,7 @@ type DraftActions = Pick<
   | 'chooseRoom'
   | 'chooseService'
   | 'chooseTeacher'
+  | 'setLocation'
   | 'chooseRepeat'
   | 'toggleDay'
   | 'chooseStartsOn'
@@ -99,6 +101,7 @@ function buildEmptyDraft(todayIsoDate: string, presetRoomId: string | undefined)
     endsOn: NO_END_DATE,
     startsAtTime: DEFAULT_STARTS_AT_TIME,
     endsAtTime: DEFAULT_ENDS_AT_TIME,
+    location: EMPTY_LOCATION_DRAFT,
   };
 }
 
@@ -118,6 +121,9 @@ function buildPlaceActions(draft: ClassDraft, update: Update): Partial<DraftActi
     },
     chooseTeacher: (staffMembershipId) => {
       update({ staffMembershipId });
+    },
+    setLocation: (location) => {
+      update({ location });
     },
     chooseRepeat: (repeat) => {
       update({ repeat });
@@ -228,23 +234,14 @@ function useSubmission(request: CreateScheduleSeriesRequestDto | null): Submissi
   };
 }
 
-/** Quienes dan el servicio; si no tiene a nadie asignado, cualquiera del equipo puede darlo. */
-function useTeachersOfService(
-  service: ServiceListResponseDtoServicesItem | undefined,
-): { membershipId: string; fullName: string }[] {
-  const team = useAssignableStaff().members;
-  if (service === undefined) return [];
-  if (service.staff.length > 0) return service.staff;
-  return team.map(({ membershipId, fullName }) => ({ membershipId, fullName }));
-}
-
 /** El formulario de «Crear clase»: nombre, sala, servicio, profesor y cuándo (días, fechas y horas). */
 export function useCreateClassForm(presetRoomId?: string): CreateClassForm {
   const { draft, actions } = useClassDraftState(presetRoomId);
   const rooms = useRoomList().data?.rooms ?? [];
   const services = useServiceCatalog().data?.services ?? [];
   const service = services.find(({ id }) => id === draft.serviceId);
-  const teachers = useTeachersOfService(service);
+  // Solo quienes dan el servicio: sin nadie asignado no hay profesor que elegir.
+  const teachers = service?.staff ?? [];
   const checks = useChecks(draft);
   const request =
     service === undefined || checks.hoursProblem !== null

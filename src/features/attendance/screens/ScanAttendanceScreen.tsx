@@ -42,6 +42,10 @@ export function ScanAttendanceScreen(): React.JSX.Element {
         checkIn={scannedCheckIn}
         verdict={verdict}
         onScanAnother={scanner.scanAnother}
+        onClose={() => {
+          scanner.scanAnother();
+          router.back();
+        }}
       />
     </ScreenTemplate>
   );

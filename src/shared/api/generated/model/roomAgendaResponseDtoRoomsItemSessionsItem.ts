@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem } from './roomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem.ts';
+import type { RoomAgendaResponseDtoRoomsItemSessionsItemLocation } from './roomAgendaResponseDtoRoomsItemSessionsItemLocation.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemMode } from './roomAgendaResponseDtoRoomsItemSessionsItemMode.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemSchedule } from './roomAgendaResponseDtoRoomsItemSessionsItemSchedule.ts';
 import type { RoomAgendaResponseDtoRoomsItemSessionsItemService } from './roomAgendaResponseDtoRoomsItemSessionsItemService.ts';
@@ -34,6 +35,8 @@ export type RoomAgendaResponseDtoRoomsItemSessionsItem = {
   teacher: RoomAgendaResponseDtoRoomsItemSessionsItemTeacher;
   /** @nullable */
   schedule: RoomAgendaResponseDtoRoomsItemSessionsItemSchedule;
+  /** @nullable */
+  location: RoomAgendaResponseDtoRoomsItemSessionsItemLocation;
   /** @nullable */
   cancelledReason: string | null;
   attendees: RoomAgendaResponseDtoRoomsItemSessionsItemAttendeesItem[];

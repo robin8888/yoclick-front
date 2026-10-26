@@ -34,6 +34,9 @@ function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.El
       onServicesPress={() => {
         router.push('/(admin)/services');
       }}
+      onTeamPress={() => {
+        router.push('/(admin)/team');
+      }}
       onPassesPress={() => {
         router.push('/(admin)/passes');
       }}

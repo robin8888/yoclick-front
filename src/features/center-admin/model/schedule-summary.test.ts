@@ -21,6 +21,7 @@ function buildSeries(overrides: Partial<ScheduleSeries>): ScheduleSeries {
     service: { id: 'service-english', name: 'Inglés B1', color: null },
     staff: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
     room: { id: 'room-2', name: 'Aula 2' },
+    location: null,
     days: [
       { scheduleId: 'd-thu', weekday: 4, startsAtTime: '18:00', endsAtTime: '19:30' },
       { scheduleId: 'd-mon', weekday: 1, startsAtTime: '18:00', endsAtTime: '19:30' },

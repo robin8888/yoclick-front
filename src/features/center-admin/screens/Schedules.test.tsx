@@ -74,7 +74,7 @@ const SERVICES = {
       minNoticeMinutes: 60,
       isVisible: true,
       room: null,
-      staff: [],
+      staff: [{ membershipId: TEACHER_ANA_ID, fullName: 'Ana Ruiz' }],
     },
   ],
 };

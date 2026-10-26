@@ -5,6 +5,7 @@
  * API multi-centro de reservas en marca blanca. Contrato canónico para la app.
  * OpenAPI spec version: 0.1.0
  */
+import type { UpdateScheduleSeriesRequestDtoLocation } from './updateScheduleSeriesRequestDtoLocation.ts';
 
 export interface UpdateScheduleSeriesRequestDto {
   /**
@@ -32,4 +33,6 @@ export interface UpdateScheduleSeriesRequestDto {
   roomId?: string | null;
   startsAtTime?: string;
   endsAtTime?: string;
+  /** @nullable */
+  location?: UpdateScheduleSeriesRequestDtoLocation;
 }

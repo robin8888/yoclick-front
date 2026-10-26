@@ -16,6 +16,7 @@ const ROOM_ID = '0191d6a0-0000-7000-8000-0000000000f1';
 const SESSION_ID = '0191d6a0-0000-7000-8000-0000000000e1';
 const ROOMS_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/agenda/rooms`;
 const CANCEL_PATH = `/v1/centers/${NORTE_CENTER_ID}/sessions/${SESSION_ID}/cancel`;
+const MOVE_PATH = `/v1/centers/${NORTE_CENTER_ID}/sessions/${SESSION_ID}/move`;
 
 const SESSION = {
   id: SESSION_ID,
@@ -27,6 +28,7 @@ const SESSION = {
   service: { id: 'service-english', name: 'Inglés B1', color: null },
   teacher: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
   schedule: { seriesId: 'series-1', label: 'Grupo de tarde' },
+  location: null,
   cancelledReason: null,
   attendees: [
     {
@@ -97,6 +99,63 @@ describe('RoomDayScreen · fixed schedules', () => {
     await waitFor(() => {
       expect(findApiCall('POST', CANCEL_PATH)?.body).toEqual({ reason: 'Profesora enferma' });
     });
+  });
+
+  it('shows where the class is when it is held outside the center', async () => {
+    mockApi({
+      [ROOMS_PATH]: {
+        ...AGENDA,
+        rooms: [
+          {
+            ...AGENDA.rooms[0],
+            sessions: [
+              {
+                ...SESSION,
+                location: {
+                  name: 'Auditorio Municipal',
+                  address: null,
+                  latitude: null,
+                  longitude: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+    renderScreen(<RoomDayScreen />);
+
+    expect(await screen.findByText('Lugar: Auditorio Municipal')).toBeOnTheScreen();
+  });
+
+  it('moves only that day to another hour, keeping the day it already had', async () => {
+    mockApi({ [ROOMS_PATH]: AGENDA, [`POST ${MOVE_PATH}`]: { notifiedPersonCount: 2 } });
+    renderScreen(<RoomDayScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Mover este día' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Mover la clase' }));
+
+    await waitFor(() => {
+      expect(findApiCall('POST', MOVE_PATH)?.body).toEqual({
+        date: '2026-10-12',
+        startsAtTime: '17:00',
+        endsAtTime: '18:30',
+      });
+    });
+  });
+
+  it('offers no way to edit or move a day of a class that was not born from a schedule', async () => {
+    mockApi({
+      [ROOMS_PATH]: {
+        ...AGENDA,
+        rooms: [{ ...AGENDA.rooms[0], sessions: [{ ...SESSION, schedule: null }] }],
+      },
+    });
+    renderScreen(<RoomDayScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Cancelar este día' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Mover este día' })).not.toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Editar horario' })).not.toBeOnTheScreen();
   });
 
   it('says why a day was cancelled instead of offering to cancel it again', async () => {

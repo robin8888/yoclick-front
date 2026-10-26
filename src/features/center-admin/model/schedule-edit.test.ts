@@ -17,6 +17,7 @@ const SERIES: ScheduleSeries = {
   service: { id: 'service-english', name: 'Inglés B1', color: null },
   staff: { membershipId: 'staff-ana', fullName: 'Ana Ruiz' },
   room: { id: 'room-2', name: 'Aula 2' },
+  location: null,
   days: [
     { scheduleId: 'd-mon', weekday: 1, startsAtTime: '18:00', endsAtTime: '19:30' },
     { scheduleId: 'd-thu', weekday: 4, startsAtTime: '18:00', endsAtTime: '19:30' },
@@ -35,6 +36,11 @@ describe('buildScheduleEditForm', () => {
       endsOn: '',
       roomId: 'room-2',
       staffMembershipId: 'staff-ana',
+      location: {
+        isOutside: false,
+        name: '',
+        address: { text: '', latitude: null, longitude: null },
+      },
     });
   });
 
@@ -54,6 +60,25 @@ describe('mapScheduleEditToUpdateRequest', () => {
 
     expect(request).toEqual({});
     expect(hasScheduleChanges(request)).toBe(false);
+  });
+
+  it('sends the new place, or null to say the class is back in the center', () => {
+    const park = { name: 'Parque', address: null, latitude: null, longitude: null };
+    const formWithPark = {
+      ...buildScheduleEditForm(SERIES),
+      location: {
+        isOutside: true,
+        name: 'Parque',
+        address: { text: '', latitude: null, longitude: null },
+      },
+    };
+    const seriesInPark = { ...SERIES, location: park };
+
+    expect(mapScheduleEditToUpdateRequest(formWithPark, SERIES)).toEqual({ location: park });
+    expect(mapScheduleEditToUpdateRequest(formWithPark, seriesInPark)).toEqual({});
+    expect(mapScheduleEditToUpdateRequest(buildScheduleEditForm(SERIES), seriesInPark)).toEqual({
+      location: null,
+    });
   });
 
   it('sends only the fields that changed, with null to clear the room or the end', () => {

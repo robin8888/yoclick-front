@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AgendaResponseDtoEntriesItemBookingCreatedBy } from './agendaResponseDtoEntriesItemBookingCreatedBy.ts';
+import type { AgendaResponseDtoEntriesItemBookingLocation } from './agendaResponseDtoEntriesItemBookingLocation.ts';
 import type { AgendaResponseDtoEntriesItemBookingRoom } from './agendaResponseDtoEntriesItemBookingRoom.ts';
 import type { AgendaResponseDtoEntriesItemBookingService } from './agendaResponseDtoEntriesItemBookingService.ts';
 import type { AgendaResponseDtoEntriesItemBookingSession } from './agendaResponseDtoEntriesItemBookingSession.ts';
@@ -25,6 +26,8 @@ export type AgendaResponseDtoEntriesItemBooking = {
   staff: AgendaResponseDtoEntriesItemBookingStaff;
   /** @nullable */
   room: AgendaResponseDtoEntriesItemBookingRoom;
+  /** @nullable */
+  location: AgendaResponseDtoEntriesItemBookingLocation;
   session: AgendaResponseDtoEntriesItemBookingSession;
   /**
      * @nullable

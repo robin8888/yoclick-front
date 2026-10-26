@@ -33,6 +33,8 @@ import type {
   EnrollRequestDto,
   EnrollResponseDto,
   EnrollmentListResponseDto,
+  MoveSessionRequestDto,
+  MoveSessionResponseDto,
   ProblemDetailsDto,
   ScheduleSeriesListResponseDto,
   ScheduleSeriesWriteResponseDto,
@@ -896,4 +898,94 @@ export const useSessionsCancel = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getSessionsCancelMutationOptions(options), queryClient);
+    }
+    export const getSessionsMoveUrl = (centerId: string,
+    sessionId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/sessions/${sessionId}/move`
+}
+
+/**
+ * @summary Mueve una sola sesión que no ha empezado a otra fecha u hora (la serie no cambia). Las plazas se van con ella y se avisa a cada persona y a quien la da. 409 si ya empezó, si la sala o el profesor están ocupados o si alguien con plaza tiene otra cita a esa hora.
+ */
+export const sessionsMove = async (centerId: string,
+    sessionId: string,
+    moveSessionRequestDto: MoveSessionRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<MoveSessionResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<MoveSessionResponseDto>(getSessionsMoveUrl(centerId,sessionId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(moveSessionRequestDto)
+  }
+);}
+
+
+
+
+
+export const getSessionsMoveMutationKey = () => ['sessionsMove'] as const;
+
+export const getSessionsMoveMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sessionsMove>>, TError,SessionsMoveMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof sessionsMove>>, TError,SessionsMoveMutationVariables, TContext> => {
+
+const mutationKey = getSessionsMoveMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sessionsMove>>, SessionsMoveMutationVariables> = (props) => {
+          const {centerId,sessionId,data} = props ?? {};
+
+          return  sessionsMove(centerId,sessionId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SessionsMoveMutationResult = NonNullable<Awaited<ReturnType<typeof sessionsMove>>>
+    export type SessionsMoveMutationBody = MoveSessionRequestDto
+    export type SessionsMoveMutationError = ErrorType<ProblemDetailsDto>
+    export type SessionsMoveMutationVariables = {centerId: string;sessionId: string;data: MoveSessionRequestDto}
+
+    /**
+ * @summary Mueve una sola sesión que no ha empezado a otra fecha u hora (la serie no cambia). Las plazas se van con ella y se avisa a cada persona y a quien la da. 409 si ya empezó, si la sala o el profesor están ocupados o si alguien con plaza tiene otra cita a esa hora.
+ */
+export const useSessionsMove = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sessionsMove>>, TError,SessionsMoveMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof sessionsMove>>,
+        TError,
+        SessionsMoveMutationVariables,
+        TContext
+      > => {
+      return useMutation(getSessionsMoveMutationOptions(options), queryClient);
     }

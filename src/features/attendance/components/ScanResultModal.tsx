@@ -25,6 +25,7 @@ interface ScanResultModalProps {
   checkIn: CheckInResponseDto | null;
   verdict: ScanVerdict | null;
   onScanAnother: () => void;
+  onClose: () => void;
 }
 
 /** Las fotos firmadas del servidor vienen completas; una ruta relativa se completa con la API. */
@@ -37,12 +38,36 @@ interface ScanResultCardProps {
   checkIn: CheckInResponseDto;
   verdict: ScanVerdict;
   onScanAnother: () => void;
+  onClose: () => void;
+}
+
+function ScanResultActions({
+  onScanAnother,
+  onClose,
+}: Readonly<Pick<ScanResultCardProps, 'onScanAnother' | 'onClose'>>): React.JSX.Element {
+  return (
+    <>
+      <Button
+        variant="secondary"
+        label={i18n.t('attendance.scan.scanAnotherAction')}
+        isFullWidth
+        onPress={onScanAnother}
+      />
+      <Button
+        variant="ghost"
+        label={i18n.t('attendance.scan.closeAction')}
+        isFullWidth
+        onPress={onClose}
+      />
+    </>
+  );
 }
 
 function ScanResultCard({
   checkIn,
   verdict,
   onScanAnother,
+  onClose,
 }: Readonly<ScanResultCardProps>): React.JSX.Element {
   const theme = useTheme();
   const { isGranted } = verdict;
@@ -66,12 +91,7 @@ function ScanResultCard({
       </Text>
       <Badge tone="neutral" label={verdict.roleLabel} />
       <ScanResultDetails checkIn={checkIn} verdict={verdict} />
-      <Button
-        variant="secondary"
-        label={i18n.t('attendance.scan.scanAnotherAction')}
-        isFullWidth
-        onPress={onScanAnother}
-      />
+      <ScanResultActions onScanAnother={onScanAnother} onClose={onClose} />
     </View>
   );
 }
@@ -84,6 +104,7 @@ export function ScanResultModal({
   checkIn,
   verdict,
   onScanAnother,
+  onClose,
 }: Readonly<ScanResultModalProps>): React.JSX.Element {
   const theme = useTheme();
   const announcement =
@@ -104,7 +125,12 @@ export function ScanResultModal({
       <View style={createScanAnchorStyle(theme)}>
         <View style={createScanBackdropVeilStyle(theme)} pointerEvents="none" />
         {checkIn === null || verdict === null ? null : (
-          <ScanResultCard checkIn={checkIn} verdict={verdict} onScanAnother={onScanAnother} />
+          <ScanResultCard
+            checkIn={checkIn}
+            verdict={verdict}
+            onScanAnother={onScanAnother}
+            onClose={onClose}
+          />
         )}
       </View>
     </Modal>

@@ -1,10 +1,11 @@
-import { act, fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
+import { usePendingInvitationStore } from '@/features/join';
 import { useCenterCreationIntentStore } from '@/features/onboarding';
 import { useSessionStore } from '@/shared/auth/session-store';
 import { buildMembership, FORJA_CENTER_ID, NORTE_CENTER_ID } from '@/test/factories';
-import { buildApiError, mockApi } from '@/test/mock-api';
+import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
@@ -12,6 +13,21 @@ import { RoleGate } from '../components/RoleGate';
 import { SessionGateScreen } from './SessionGateScreen';
 
 jest.mock('@/shared/api/api-mutator', () => ({ apiMutator: jest.fn() }));
+
+const INVITATION_CODE = 'INV123';
+const INVITATION_PREVIEW = {
+  role: 'staff',
+  emailHint: 'm***@yopmail.com',
+  expiresAt: '2026-10-12T10:00:00.000Z',
+  center: { id: NORTE_CENTER_ID, name: 'Norte', sectorId: 'marciales', brandColor: '#C8102E' },
+};
+
+function saveInvitationBeforeSignIn(): void {
+  act(() => {
+    usePendingInvitationStore.getState().clearInvitation();
+    usePendingInvitationStore.getState().saveInvitationCode(INVITATION_CODE);
+  });
+}
 
 function signIn(): void {
   act(() => {
@@ -24,6 +40,7 @@ describe('SessionGateScreen', () => {
     resetMockRouter();
     act(() => {
       useSessionStore.getState().resetSession();
+      usePendingInvitationStore.getState().clearInvitation();
     });
   });
 
@@ -88,6 +105,42 @@ describe('SessionGateScreen', () => {
     renderScreen(<SessionGateScreen />);
 
     expect(await screen.findByText('redirect:/join')).toBeOnTheScreen();
+  });
+
+  it('accepts an invitation brought before signing in without showing the invitation screen', async () => {
+    mockApi({
+      [`GET /v1/join/invitations/${INVITATION_CODE}`]: INVITATION_PREVIEW,
+      [`POST /v1/join/invitations/${INVITATION_CODE}/accept`]: {
+        membershipId: 'membership-id',
+        centerId: NORTE_CENTER_ID,
+        role: 'staff',
+        status: 'active',
+      },
+      'GET /v1/me/memberships': { memberships: [buildMembership({ role: 'staff' })] },
+    });
+    saveInvitationBeforeSignIn();
+    signIn();
+    renderScreen(<SessionGateScreen />);
+
+    expect(await screen.findByText('redirect:/(staff)/(tabs)/agenda')).toBeOnTheScreen();
+    expect(screen.queryByText('redirect:/join/invitation')).not.toBeOnTheScreen();
+    expect(findApiCall('POST', `/v1/join/invitations/${INVITATION_CODE}/accept`)).toBeDefined();
+  });
+
+  it('falls back to the invitation screen when the invitation cannot be accepted', async () => {
+    mockApi({
+      [`GET /v1/join/invitations/${INVITATION_CODE}`]: () => {
+        throw buildApiError('INVITATION_INVALID', 404);
+      },
+      'GET /v1/me/memberships': { memberships: [] },
+    });
+    saveInvitationBeforeSignIn();
+    signIn();
+    renderScreen(<SessionGateScreen />);
+
+    await waitFor(() => {
+      expect(screen.getByText('redirect:/join/invitation')).toBeOnTheScreen();
+    });
   });
 
   it('offers a retry when the centers cannot be loaded', async () => {

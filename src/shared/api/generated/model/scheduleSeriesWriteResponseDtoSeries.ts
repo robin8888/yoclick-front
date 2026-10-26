@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { ScheduleSeriesWriteResponseDtoSeriesDaysItem } from './scheduleSeriesWriteResponseDtoSeriesDaysItem.ts';
+import type { ScheduleSeriesWriteResponseDtoSeriesLocation } from './scheduleSeriesWriteResponseDtoSeriesLocation.ts';
 import type { ScheduleSeriesWriteResponseDtoSeriesMode } from './scheduleSeriesWriteResponseDtoSeriesMode.ts';
 import type { ScheduleSeriesWriteResponseDtoSeriesRoom } from './scheduleSeriesWriteResponseDtoSeriesRoom.ts';
 import type { ScheduleSeriesWriteResponseDtoSeriesService } from './scheduleSeriesWriteResponseDtoSeriesService.ts';
@@ -36,6 +37,8 @@ export type ScheduleSeriesWriteResponseDtoSeries = {
   staff: ScheduleSeriesWriteResponseDtoSeriesStaff;
   /** @nullable */
   room: ScheduleSeriesWriteResponseDtoSeriesRoom;
+  /** @nullable */
+  location: ScheduleSeriesWriteResponseDtoSeriesLocation;
   days: ScheduleSeriesWriteResponseDtoSeriesDaysItem[];
   /**
      * @minimum -9007199254740991

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { CancelBookingResponseDtoBookingCreatedBy } from './cancelBookingResponseDtoBookingCreatedBy.ts';
+import type { CancelBookingResponseDtoBookingLocation } from './cancelBookingResponseDtoBookingLocation.ts';
 import type { CancelBookingResponseDtoBookingRoom } from './cancelBookingResponseDtoBookingRoom.ts';
 import type { CancelBookingResponseDtoBookingService } from './cancelBookingResponseDtoBookingService.ts';
 import type { CancelBookingResponseDtoBookingSession } from './cancelBookingResponseDtoBookingSession.ts';
@@ -25,6 +26,8 @@ export type CancelBookingResponseDtoBooking = {
   staff: CancelBookingResponseDtoBookingStaff;
   /** @nullable */
   room: CancelBookingResponseDtoBookingRoom;
+  /** @nullable */
+  location: CancelBookingResponseDtoBookingLocation;
   session: CancelBookingResponseDtoBookingSession;
   /**
      * @nullable

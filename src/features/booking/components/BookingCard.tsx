@@ -7,6 +7,7 @@ import { i18n } from '@/shared/i18n';
 import { describeBookingAssigner } from '@/shared/lib/booking-assigner';
 import { describeBookingRoom } from '@/shared/lib/booking-room';
 import { formatTime24h } from '@/shared/lib/format/format-time';
+import { openDirections } from '@/shared/lib/session-location';
 import { AppointmentCard, type AppointmentButtonAction } from '@/ui/organisms/AppointmentCard';
 
 import { buildBookingDateTileLabels, DEFAULT_CENTER_TIME_ZONE } from '../model/booking-labels';
@@ -76,6 +77,20 @@ function buildQrLinkActions(router: ReturnType<typeof useRouter>, isAvailable: b
   ];
 }
 
+function buildDirectionsLinkActions(booking: Booking) {
+  const { location } = booking;
+  if (location === null) return [];
+  return [
+    {
+      label: i18n.t('booking.location.directionsAction'),
+      iconName: 'mapPin' as const,
+      onPress: () => {
+        openDirections(location);
+      },
+    },
+  ];
+}
+
 interface BookingCardProps {
   booking: Booking;
   /** La hora actual, compartida por la lista: una cita confirmada cuya hora pasó se ve «ya pasada». */
@@ -115,11 +130,12 @@ export function BookingCard({
       statusTone={presentation.tone}
       isPast={displayStatus === 'past'}
       buttonActions={requests !== null && isActionable ? buildButtonActions(booking, requests) : []}
-      linkActions={
-        isActionable && hasAttendance
+      linkActions={[
+        ...(displayStatus === 'past' ? [] : buildDirectionsLinkActions(booking)),
+        ...(isActionable && hasAttendance
           ? buildQrLinkActions(router, qrAvailability?.isAvailable === true)
-          : []
-      }
+          : []),
+      ]}
     />
   );
 }

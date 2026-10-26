@@ -180,6 +180,16 @@ export const waitlistConfirmResponseServiceDurationMinutesMax = 9007199254740991
 
 export const waitlistConfirmResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const waitlistConfirmResponseRoomIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const waitlistConfirmResponseLocationNameMax = 120;
+
+export const waitlistConfirmResponseLocationAddressMax = 250;
+
+export const waitlistConfirmResponseLocationLatitudeMin = -90;
+export const waitlistConfirmResponseLocationLatitudeMax = 90;
+
+export const waitlistConfirmResponseLocationLongitudeMin = -180;
+export const waitlistConfirmResponseLocationLongitudeMax = 180;
+
 export const waitlistConfirmResponseSessionIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const waitlistConfirmResponseSessionCapacityMin = -9007199254740991;
 export const waitlistConfirmResponseSessionCapacityMax = 9007199254740991;
@@ -216,6 +226,12 @@ export const WaitlistConfirmResponse = zod.object({
   "room": zod.object({
   "id": zod.uuid().regex(waitlistConfirmResponseRoomIdRegExp),
   "name": zod.string()
+}).nullable(),
+  "location": zod.object({
+  "name": zod.string().min(1).max(waitlistConfirmResponseLocationNameMax),
+  "address": zod.string().min(1).max(waitlistConfirmResponseLocationAddressMax).nullable(),
+  "latitude": zod.number().min(waitlistConfirmResponseLocationLatitudeMin).max(waitlistConfirmResponseLocationLatitudeMax).nullable(),
+  "longitude": zod.number().min(waitlistConfirmResponseLocationLongitudeMin).max(waitlistConfirmResponseLocationLongitudeMax).nullable()
 }).nullable(),
   "session": zod.object({
   "id": zod.uuid().regex(waitlistConfirmResponseSessionIdRegExp),

@@ -53,6 +53,8 @@ const TITLE_KEYS = {
   message_received: 'notifications.messageReceivedTitle',
   waitlist_offer: 'notifications.waitlistOfferTitle',
   waitlist_offer_expired: 'notifications.waitlistOfferExpiredTitle',
+  pass_rejected: 'notifications.passRejectedTitle',
+  schedule_updated: 'notifications.scheduleUpdatedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -87,6 +89,8 @@ const DESCRIPTION_KEYS = {
   message_received: 'notifications.messageReceivedDescription',
   waitlist_offer: 'notifications.waitlistOfferDescription',
   waitlist_offer_expired: 'notifications.waitlistOfferExpiredDescription',
+  pass_rejected: 'notifications.passRejectedDescription',
+  schedule_updated: 'notifications.scheduleUpdatedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {

@@ -17,6 +17,7 @@ export { useAccessCenter } from './hooks/useAccessCenter';
 export { useClearAccessCenter } from './hooks/useClearAccessCenter';
 export { useInvitedCenterPreview } from './hooks/useInvitedCenterPreview';
 export { describeAccessRole, type AccessCenter } from './model/access-center';
+export { useAcceptPendingInvitation } from './hooks/useAcceptPendingInvitation';
 export { describeInvitedRole } from './model/invitation-role-label';
 export { ScanCameraArea } from './components/ScanCameraArea';
 export { useJoinQrScanner } from './hooks/useJoinQrScanner';

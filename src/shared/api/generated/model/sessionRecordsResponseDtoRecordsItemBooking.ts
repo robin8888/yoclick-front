@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { SessionRecordsResponseDtoRecordsItemBookingCreatedBy } from './sessionRecordsResponseDtoRecordsItemBookingCreatedBy.ts';
+import type { SessionRecordsResponseDtoRecordsItemBookingLocation } from './sessionRecordsResponseDtoRecordsItemBookingLocation.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingRoom } from './sessionRecordsResponseDtoRecordsItemBookingRoom.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingService } from './sessionRecordsResponseDtoRecordsItemBookingService.ts';
 import type { SessionRecordsResponseDtoRecordsItemBookingSession } from './sessionRecordsResponseDtoRecordsItemBookingSession.ts';
@@ -25,6 +26,8 @@ export type SessionRecordsResponseDtoRecordsItemBooking = {
   staff: SessionRecordsResponseDtoRecordsItemBookingStaff;
   /** @nullable */
   room: SessionRecordsResponseDtoRecordsItemBookingRoom;
+  /** @nullable */
+  location: SessionRecordsResponseDtoRecordsItemBookingLocation;
   session: SessionRecordsResponseDtoRecordsItemBookingSession;
   /**
      * @nullable

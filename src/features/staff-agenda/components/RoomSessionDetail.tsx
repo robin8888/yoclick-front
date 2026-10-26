@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { i18n } from '@/shared/i18n';
 import { formatTime24h } from '@/shared/lib/format/format-time';
+import { describeSessionLocation } from '@/shared/lib/session-location';
 import { buildFinishedLook, useTheme } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
@@ -12,6 +13,8 @@ import { describeTeacherLine } from '../model/teacher-line';
 import { createEntryCardStyle } from './AgendaEntryCard.styles';
 import { AttendeeRow } from './AttendeeRow';
 import { CancelSessionDayControl } from './CancelSessionDayControl';
+import { MoveSessionDayControl } from '@/features/center-admin';
+import { EditSessionScheduleButton } from './EditSessionScheduleButton';
 
 interface RoomSessionDetailProps {
   session: RoomSession;
@@ -100,6 +103,11 @@ function SessionStateLines({
           {session.schedule.label ?? i18n.t('staffAgenda.rooms.scheduleSession')}
         </Text>
       )}
+      {session.location === null ? null : (
+        <Text variant="caption" color="info" {...tint}>
+          {describeSessionLocation(session.location)}
+        </Text>
+      )}
       {session.cancelledReason === null ? null : (
         <Text color="danger" role="alert" {...tint}>
           {i18n.t('staffAgenda.rooms.cancelledSession', { reason: session.cancelledReason })}
@@ -114,7 +122,32 @@ function SessionStateLines({
   );
 }
 
-/** Una clase de la sala: horas, servicio, profesor, aforo, alumnos y «Cancelar este día». */
+/** Cambiar el horario fijo de la clase o cancelar solo este día. */
+function SessionChangeActions({
+  session,
+  timeZone,
+  isoDate,
+}: Readonly<{ session: RoomSession; timeZone: string; isoDate: string }>): React.JSX.Element {
+  return (
+    <>
+      {session.schedule === null ? null : (
+        <EditSessionScheduleButton seriesId={session.schedule.seriesId} />
+      )}
+      {session.schedule === null ? null : (
+        <MoveSessionDayControl
+          sessionId={session.id}
+          isoDate={isoDate}
+          startsAtTime={formatTime24h(session.startsAt, timeZone)}
+          endsAtTime={formatTime24h(session.endsAt, timeZone)}
+          location={session.location}
+        />
+      )}
+      <CancelSessionDayControl sessionId={session.id} />
+    </>
+  );
+}
+
+/** Una clase de la sala: horas, servicio, profesor, aforo, alumnos, «Editar horario» y «Cancelar este día». */
 export function RoomSessionDetail({
   session,
   timeZone,
@@ -151,7 +184,9 @@ export function RoomSessionDetail({
       {canJoinSession(session, now) ? (
         <AddPeopleButton isoDate={isoDate} sessionId={session.id} />
       ) : null}
-      {isCancelled || isFinished ? null : <CancelSessionDayControl sessionId={session.id} />}
+      {isCancelled || isFinished ? null : (
+        <SessionChangeActions session={session} timeZone={timeZone} isoDate={isoDate} />
+      )}
     </View>
   );
 }

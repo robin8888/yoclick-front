@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { BookingResponseDtoCreatedBy } from './bookingResponseDtoCreatedBy.ts';
+import type { BookingResponseDtoLocation } from './bookingResponseDtoLocation.ts';
 import type { BookingResponseDtoRoom } from './bookingResponseDtoRoom.ts';
 import type { BookingResponseDtoService } from './bookingResponseDtoService.ts';
 import type { BookingResponseDtoSession } from './bookingResponseDtoSession.ts';
@@ -25,6 +26,8 @@ export interface BookingResponseDto {
   staff: BookingResponseDtoStaff;
   /** @nullable */
   room: BookingResponseDtoRoom;
+  /** @nullable */
+  location: BookingResponseDtoLocation;
   session: BookingResponseDtoSession;
   /**
      * @nullable
