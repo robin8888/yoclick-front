@@ -29,6 +29,14 @@ export const roomsListResponseRoomsItemCapacityMax = 9007199254740991;
 export const roomsListResponseRoomsItemStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsListResponseRoomsItemFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsListResponseRoomsItemServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsListResponseRoomsItemPlaceAddressMax = 250;
+
+export const roomsListResponseRoomsItemPlaceLatitudeMin = -90;
+export const roomsListResponseRoomsItemPlaceLatitudeMax = 90;
+
+export const roomsListResponseRoomsItemPlaceLongitudeMin = -180;
+export const roomsListResponseRoomsItemPlaceLongitudeMax = 180;
+
 
 
 export const RoomsListResponse = zod.object({
@@ -47,7 +55,12 @@ export const RoomsListResponse = zod.object({
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsListResponseRoomsItemServicesItemIdRegExp),
   "name": zod.string()
-}))
+})),
+  "place": zod.object({
+  "address": zod.string().min(1).max(roomsListResponseRoomsItemPlaceAddressMax).nullable(),
+  "latitude": zod.number().min(roomsListResponseRoomsItemPlaceLatitudeMin).max(roomsListResponseRoomsItemPlaceLatitudeMax).nullable(),
+  "longitude": zod.number().min(roomsListResponseRoomsItemPlaceLongitudeMin).max(roomsListResponseRoomsItemPlaceLongitudeMax).nullable()
+}).nullable()
 }))
 })
 
@@ -78,14 +91,27 @@ export const roomsCreateBodyServiceIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-
 export const roomsCreateBodyServiceIdsDefault = [];
 export const roomsCreateBodyServiceIdsMax = 100;
 
+export const roomsCreateBodyPlaceAddressMax = 250;
 
+export const roomsCreateBodyPlaceLatitudeMin = -90;
+export const roomsCreateBodyPlaceLatitudeMax = 90;
+
+export const roomsCreateBodyPlaceLongitudeMin = -180;
+export const roomsCreateBodyPlaceLongitudeMax = 180;
+
+export const roomsCreateBodyPlaceDefault = null;
 
 export const RoomsCreateBody = zod.object({
   "name": zod.string().min(1).max(roomsCreateBodyNameMax),
   "capacity": zod.int().min(1).max(roomsCreateBodyCapacityMax).default(roomsCreateBodyCapacityDefault),
   "staffMembershipId": zod.uuid().regex(roomsCreateBodyStaffMembershipIdRegExp).nullish().default(roomsCreateBodyStaffMembershipIdDefault),
   "serviceId": zod.uuid().regex(roomsCreateBodyServiceIdRegExp).nullish().default(roomsCreateBodyServiceIdDefault),
-  "serviceIds": zod.array(zod.uuid().regex(roomsCreateBodyServiceIdsItemRegExp)).max(roomsCreateBodyServiceIdsMax).default(roomsCreateBodyServiceIdsDefault)
+  "serviceIds": zod.array(zod.uuid().regex(roomsCreateBodyServiceIdsItemRegExp)).max(roomsCreateBodyServiceIdsMax).default(roomsCreateBodyServiceIdsDefault),
+  "place": zod.object({
+  "address": zod.string().min(1).max(roomsCreateBodyPlaceAddressMax).nullable(),
+  "latitude": zod.number().min(roomsCreateBodyPlaceLatitudeMin).max(roomsCreateBodyPlaceLatitudeMax).nullable(),
+  "longitude": zod.number().min(roomsCreateBodyPlaceLongitudeMin).max(roomsCreateBodyPlaceLongitudeMax).nullable()
+}).nullish().default(roomsCreateBodyPlaceDefault)
 })
 
 export const roomsCreateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -95,6 +121,14 @@ export const roomsCreateResponseCapacityMax = 9007199254740991;
 export const roomsCreateResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsCreateResponseFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsCreateResponseServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsCreateResponsePlaceAddressMax = 250;
+
+export const roomsCreateResponsePlaceLatitudeMin = -90;
+export const roomsCreateResponsePlaceLatitudeMax = 90;
+
+export const roomsCreateResponsePlaceLongitudeMin = -180;
+export const roomsCreateResponsePlaceLongitudeMax = 180;
+
 
 
 export const RoomsCreateResponse = zod.object({
@@ -112,7 +146,12 @@ export const RoomsCreateResponse = zod.object({
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsCreateResponseServicesItemIdRegExp),
   "name": zod.string()
-}))
+})),
+  "place": zod.object({
+  "address": zod.string().min(1).max(roomsCreateResponsePlaceAddressMax).nullable(),
+  "latitude": zod.number().min(roomsCreateResponsePlaceLatitudeMin).max(roomsCreateResponsePlaceLatitudeMax).nullable(),
+  "longitude": zod.number().min(roomsCreateResponsePlaceLongitudeMin).max(roomsCreateResponsePlaceLongitudeMax).nullable()
+}).nullable()
 })
 
 /**
@@ -140,6 +179,14 @@ export const roomsUpdateBodyServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a
 export const roomsUpdateBodyServiceIdsItemRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateBodyServiceIdsMax = 100;
 
+export const roomsUpdateBodyPlaceAddressMax = 250;
+
+export const roomsUpdateBodyPlaceLatitudeMin = -90;
+export const roomsUpdateBodyPlaceLatitudeMax = 90;
+
+export const roomsUpdateBodyPlaceLongitudeMin = -180;
+export const roomsUpdateBodyPlaceLongitudeMax = 180;
+
 
 
 export const RoomsUpdateBody = zod.object({
@@ -147,7 +194,12 @@ export const RoomsUpdateBody = zod.object({
   "capacity": zod.int().min(1).max(roomsUpdateBodyCapacityMax).optional(),
   "staffMembershipId": zod.uuid().regex(roomsUpdateBodyStaffMembershipIdRegExp).nullish(),
   "serviceId": zod.uuid().regex(roomsUpdateBodyServiceIdRegExp).nullish(),
-  "serviceIds": zod.array(zod.uuid().regex(roomsUpdateBodyServiceIdsItemRegExp)).max(roomsUpdateBodyServiceIdsMax).optional()
+  "serviceIds": zod.array(zod.uuid().regex(roomsUpdateBodyServiceIdsItemRegExp)).max(roomsUpdateBodyServiceIdsMax).optional(),
+  "place": zod.object({
+  "address": zod.string().min(1).max(roomsUpdateBodyPlaceAddressMax).nullable(),
+  "latitude": zod.number().min(roomsUpdateBodyPlaceLatitudeMin).max(roomsUpdateBodyPlaceLatitudeMax).nullable(),
+  "longitude": zod.number().min(roomsUpdateBodyPlaceLongitudeMin).max(roomsUpdateBodyPlaceLongitudeMax).nullable()
+}).nullish()
 })
 
 export const roomsUpdateResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -157,6 +209,14 @@ export const roomsUpdateResponseCapacityMax = 9007199254740991;
 export const roomsUpdateResponseStaffMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateResponseFixedServiceIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
 export const roomsUpdateResponseServicesItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const roomsUpdateResponsePlaceAddressMax = 250;
+
+export const roomsUpdateResponsePlaceLatitudeMin = -90;
+export const roomsUpdateResponsePlaceLatitudeMax = 90;
+
+export const roomsUpdateResponsePlaceLongitudeMin = -180;
+export const roomsUpdateResponsePlaceLongitudeMax = 180;
+
 
 
 export const RoomsUpdateResponse = zod.object({
@@ -174,7 +234,12 @@ export const RoomsUpdateResponse = zod.object({
   "services": zod.array(zod.object({
   "id": zod.uuid().regex(roomsUpdateResponseServicesItemIdRegExp),
   "name": zod.string()
-}))
+})),
+  "place": zod.object({
+  "address": zod.string().min(1).max(roomsUpdateResponsePlaceAddressMax).nullable(),
+  "latitude": zod.number().min(roomsUpdateResponsePlaceLatitudeMin).max(roomsUpdateResponsePlaceLatitudeMax).nullable(),
+  "longitude": zod.number().min(roomsUpdateResponsePlaceLongitudeMin).max(roomsUpdateResponsePlaceLongitudeMax).nullable()
+}).nullable()
 })
 
 /**

@@ -21,7 +21,6 @@ import {
   type HoursProblem,
   type OpenRangesByWeekday,
 } from '../model/create-class';
-import { EMPTY_LOCATION_DRAFT, type LocationDraft } from '../model/location-draft';
 import { toggleWeekday, type ScheduleWeekday } from '../model/schedule-form';
 import { getEndOfWeeks } from '../model/schedule-week';
 import { useBusyTimes } from './useBusyTimes';
@@ -59,7 +58,6 @@ export interface CreateClassForm {
   chooseRoom: (roomId: string) => void;
   chooseService: (serviceId: string) => void;
   chooseTeacher: (membershipId: string) => void;
-  setLocation: (location: LocationDraft) => void;
   chooseRepeat: (repeat: ClassRepeat) => void;
   toggleDay: (weekday: ScheduleWeekday) => void;
   chooseStartsOn: (isoDate: string) => void;
@@ -79,7 +77,6 @@ type DraftActions = Pick<
   | 'chooseRoom'
   | 'chooseService'
   | 'chooseTeacher'
-  | 'setLocation'
   | 'chooseRepeat'
   | 'toggleDay'
   | 'chooseStartsOn'
@@ -101,7 +98,6 @@ function buildEmptyDraft(todayIsoDate: string, presetRoomId: string | undefined)
     endsOn: NO_END_DATE,
     startsAtTime: DEFAULT_STARTS_AT_TIME,
     endsAtTime: DEFAULT_ENDS_AT_TIME,
-    location: EMPTY_LOCATION_DRAFT,
   };
 }
 
@@ -121,9 +117,6 @@ function buildPlaceActions(draft: ClassDraft, update: Update): Partial<DraftActi
     },
     chooseTeacher: (staffMembershipId) => {
       update({ staffMembershipId });
-    },
-    setLocation: (location) => {
-      update({ location });
     },
     chooseRepeat: (repeat) => {
       update({ repeat });

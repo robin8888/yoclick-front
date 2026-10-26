@@ -27,6 +27,7 @@ const ROOMS = {
       staff: { membershipId: TEACHER_ANA_ID, fullName: 'Ana Ruiz' },
       fixedService: { id: SALSA_ID, name: 'Salsa' },
       services: [{ id: SALSA_ID, name: 'Salsa' }],
+      place: null,
     },
     {
       id: ROOM_FREE_ID,
@@ -35,6 +36,7 @@ const ROOMS = {
       staff: null,
       fixedService: null,
       services: [],
+      place: null,
     },
   ],
 };
@@ -104,6 +106,36 @@ describe('EditRoomScreen', () => {
         staffMembershipId: null,
         serviceIds: [],
         serviceId: null,
+        place: null,
+      });
+    });
+  });
+
+  it('turns a room into an outdoor space with the point of a pasted location link', async () => {
+    const outdoorRoom = {
+      ...ROOMS.rooms[1],
+      place: { address: null, latitude: 40.4153, longitude: -3.6844 },
+    };
+    mockApi({
+      [`GET ${ROOMS_PATH}`]: ROOMS,
+      [`PATCH ${ROOMS_PATH}/${ROOM_FREE_ID}`]: outdoorRoom,
+    });
+    renderScreen(<EditRoomScreen />);
+
+    fireEvent(
+      await screen.findByRole('switch', { name: 'Es un espacio exterior' }),
+      'valueChange',
+      true,
+    );
+    fireEvent.changeText(
+      await screen.findByLabelText('O pega un enlace de ubicación'),
+      'https://maps.google.com/?q=40.4153,-3.6844',
+    );
+    fireEvent.press(screen.getByRole('button', { name: 'Guardar cambios' }));
+
+    await waitFor(() => {
+      expect(findApiCall('PATCH', `${ROOMS_PATH}/${ROOM_FREE_ID}`)?.body).toMatchObject({
+        place: { address: null, latitude: 40.4153, longitude: -3.6844 },
       });
     });
   });

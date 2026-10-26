@@ -176,7 +176,7 @@ function MoveSessionDaySheet(props: Readonly<MoveSessionDaySheetProps>): React.J
   );
 }
 
-/** «Mover este día»: otra fecha u hora solo para esa sesión; el resto de la serie no cambia. */
+/** «Cambiar este día»: otra fecha, hora o lugar solo para esa sesión; el resto de la serie no cambia. */
 export function MoveSessionDayControl(
   props: Readonly<MoveSessionDayControlProps>,
 ): React.JSX.Element {

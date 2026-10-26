@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { RoomListResponseDtoRoomsItemFixedService } from './roomListResponseDtoRoomsItemFixedService.ts';
+import type { RoomListResponseDtoRoomsItemPlace } from './roomListResponseDtoRoomsItemPlace.ts';
 import type { RoomListResponseDtoRoomsItemServicesItem } from './roomListResponseDtoRoomsItemServicesItem.ts';
 import type { RoomListResponseDtoRoomsItemStaff } from './roomListResponseDtoRoomsItemStaff.ts';
 
@@ -23,4 +24,6 @@ export type RoomListResponseDtoRoomsItem = {
   /** @nullable */
   fixedService: RoomListResponseDtoRoomsItemFixedService;
   services: RoomListResponseDtoRoomsItemServicesItem[];
+  /** @nullable */
+  place: RoomListResponseDtoRoomsItemPlace;
 };

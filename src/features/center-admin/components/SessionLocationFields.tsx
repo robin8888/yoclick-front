@@ -7,6 +7,7 @@ import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 
 import type { LocationDraft } from '../model/location-draft';
+import { ExactPointField } from './ExactPointField';
 
 const SECTION_STYLE = { gap: 8 } as const;
 const SWITCH_ROW_STYLE = {
@@ -49,6 +50,12 @@ function OutsideFields({
         helperText={i18n.t('centerAdmin.location.addressHelper')}
         onChange={(address) => {
           onChange({ ...value, address });
+        }}
+      />
+      <ExactPointField
+        point={value.pin}
+        onPointChange={(pin) => {
+          onChange({ ...value, pin });
         }}
       />
     </>

@@ -5,9 +5,7 @@ import { Text } from '@/ui/atoms/Text';
 import { FormField } from '@/ui/molecules/FormField';
 import { OptionCard } from '@/ui/molecules/OptionCard';
 
-import { isLocationNameMissing } from '../model/location-draft';
 import { RoomCard } from './RoomCard';
-import { SessionLocationFields } from './SessionLocationFields';
 import type { CreateClassForm } from '../hooks/useCreateClassForm';
 
 const SECTION_STYLE = { gap: 8 } as const;
@@ -19,6 +17,16 @@ function SectionTitle({ title }: Readonly<{ title: string }>): React.JSX.Element
       {title}
     </Text>
   );
+}
+
+/** «12 personas» y, si la sala es un espacio exterior, también «Exterior · Parque del Retiro». */
+function describeRoom(room: CreateClassForm['rooms'][number]): string {
+  const capacityLabel = i18n.t('centerAdmin.createClass.roomCapacity', { count: room.capacity });
+  if (room.place === null) return capacityLabel;
+  const outdoorLabel = i18n.t('centerAdmin.createClass.roomOutdoor', {
+    place: room.place.address ?? room.name,
+  });
+  return `${capacityLabel} · ${outdoorLabel}`;
 }
 
 function RoomChoice({ form }: Readonly<{ form: CreateClassForm }>): React.JSX.Element {
@@ -33,7 +41,7 @@ function RoomChoice({ form }: Readonly<{ form: CreateClassForm }>): React.JSX.El
           key={room.id}
           name={room.name}
           position={position}
-          subtitle={i18n.t('centerAdmin.createClass.roomCapacity', { count: room.capacity })}
+          subtitle={describeRoom(room)}
           accessibilityLabel={room.name}
           isSelected={form.draft.roomId === room.id}
           onPress={() => {
@@ -110,15 +118,6 @@ export function CreateClassPlaceFields({
       <RoomChoice form={form} />
       <ServiceChoice form={form} />
       <TeacherChoice form={form} />
-      <SessionLocationFields
-        value={form.draft.location}
-        onChange={form.setLocation}
-        nameErrorMessage={
-          isLocationNameMissing(form.draft.location)
-            ? i18n.t('centerAdmin.location.nameRequired')
-            : undefined
-        }
-      />
     </>
   );
 }

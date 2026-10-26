@@ -4,7 +4,6 @@ import type {
   ServiceListResponseDtoServicesItem,
 } from '@/shared/api/generated/model';
 
-import { isLocationNameMissing, toLocationRequest, type LocationDraft } from './location-draft';
 import { minutesToTime, timeToMinutes } from './opening-hours-draft';
 
 /** Una franja de la semana que ya ocupa una clase de la sala o del profesor. */
@@ -140,8 +139,6 @@ export interface ClassDraft {
   endsOn: string;
   startsAtTime: string;
   endsAtTime: string;
-  /** Si la clase es fuera del centro (parque, auditorio…): dónde. */
-  location: LocationDraft;
 }
 
 function resolveWeekdays(draft: ClassDraft, weekdayOfStartsOn: number): number[] {
@@ -164,27 +161,20 @@ function isPeriodReversed(period: Period): boolean {
   return period.endsOn !== null && period.endsOn < period.startsOn;
 }
 
-/** Falta algo por elegir: sala, servicio, profesor (salvo en un alquiler) o el nombre del lugar. */
+/** Falta algo por elegir: sala, servicio o profesor (salvo en un alquiler). */
 function isDraftIncomplete(
   draft: ClassDraft,
   service: Pick<ServiceListResponseDtoServicesItem, 'isRental'>,
 ): boolean {
-  return (
-    draft.roomId === null ||
-    draft.serviceId === null ||
-    isTeacherMissing(draft, service) ||
-    isLocationNameMissing(draft.location)
-  );
+  return draft.roomId === null || draft.serviceId === null || isTeacherMissing(draft, service);
 }
 
-/** Lo que solo se envía si se ha rellenado: el profesor, el nombre de la clase y el lugar. */
+/** Lo que solo se envía si se ha rellenado: el profesor y el nombre de la clase. */
 function buildOptionalRequestFields(draft: ClassDraft): Partial<CreateScheduleSeriesRequestDto> {
   const label = draft.label.trim();
-  const location = toLocationRequest(draft.location);
   return {
     ...(draft.staffMembershipId === null ? {} : { staffMembershipId: draft.staffMembershipId }),
     ...(label === '' ? {} : { label }),
-    ...(location === null ? {} : { location }),
   };
 }
 

@@ -5,7 +5,6 @@ import {
   toOpenRangesByWeekday,
   type BusySlot,
 } from './create-class';
-import { buildLocationDraft, EMPTY_LOCATION_DRAFT } from './location-draft';
 
 const NO_END = null;
 const OPEN_ALL_DAY = { 1: [{ opensAt: '09:00', closesAt: '21:00' }], 7: [] };
@@ -107,31 +106,7 @@ describe('buildCreateClassRequest', () => {
     endsOn: '',
     startsAtTime: '18:00',
     endsAtTime: '19:30',
-    location: EMPTY_LOCATION_DRAFT,
   };
-
-  it('sends the place of a class held outside the center', () => {
-    const park = {
-      name: 'Parque del Retiro',
-      address: 'Plaza de la Independencia 7, Madrid',
-      latitude: 40.4153,
-      longitude: -3.6844,
-    };
-
-    const request = buildCreateClassRequest(
-      { ...base, location: buildLocationDraft(park) },
-      service,
-      2,
-    );
-
-    expect(request?.location).toEqual(park);
-  });
-
-  it('does not build a class held outside the center that has no place name yet', () => {
-    const draft = { ...base, location: { ...EMPTY_LOCATION_DRAFT, isOutside: true } };
-
-    expect(buildCreateClassRequest(draft, service, 2)).toBeNull();
-  });
 
   it('builds a weekly class without end date', () => {
     expect(buildCreateClassRequest(base, service, 2)).toEqual({

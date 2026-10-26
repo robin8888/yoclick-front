@@ -73,6 +73,15 @@ describe('buildExpoConfig (shared variant)', () => {
     ]);
   });
 
+  it('asks for the location only while the app is open, never in the background', () => {
+    const { plugins } = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
+
+    expect(plugins).toContainEqual([
+      'expo-location',
+      { locationWhenInUsePermission: expect.stringMatching(/ubicación/) as string },
+    ]);
+  });
+
   it('plays videos only while the app is open', () => {
     const { plugins } = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
 

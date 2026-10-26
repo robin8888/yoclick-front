@@ -132,8 +132,8 @@ describe('RoomDayScreen · fixed schedules', () => {
     mockApi({ [ROOMS_PATH]: AGENDA, [`POST ${MOVE_PATH}`]: { notifiedPersonCount: 2 } });
     renderScreen(<RoomDayScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Mover este día' }));
-    fireEvent.press(await screen.findByRole('button', { name: 'Mover la clase' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Cambiar este día' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Guardar los cambios' }));
 
     await waitFor(() => {
       expect(findApiCall('POST', MOVE_PATH)?.body).toEqual({
@@ -154,7 +154,7 @@ describe('RoomDayScreen · fixed schedules', () => {
     renderScreen(<RoomDayScreen />);
 
     expect(await screen.findByRole('button', { name: 'Cancelar este día' })).toBeOnTheScreen();
-    expect(screen.queryByRole('button', { name: 'Mover este día' })).not.toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Cambiar este día' })).not.toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Editar horario' })).not.toBeOnTheScreen();
   });
 

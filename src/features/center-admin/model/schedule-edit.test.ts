@@ -40,6 +40,7 @@ describe('buildScheduleEditForm', () => {
         isOutside: false,
         name: '',
         address: { text: '', latitude: null, longitude: null },
+        pin: null,
       },
     });
   });
@@ -70,6 +71,7 @@ describe('mapScheduleEditToUpdateRequest', () => {
         isOutside: true,
         name: 'Parque',
         address: { text: '', latitude: null, longitude: null },
+        pin: null,
       },
     };
     const seriesInPark = { ...SERIES, location: park };

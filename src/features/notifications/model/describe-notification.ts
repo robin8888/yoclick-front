@@ -114,12 +114,18 @@ function resolveDescriptionKey(
 ):
   | (typeof DESCRIPTION_KEYS)[NotificationItem['kind']]
   | 'notifications.privacyRequestRejectedDescription'
-  | 'notifications.staffProfileChangesDescription' {
+  | 'notifications.staffProfileChangesDescription'
+  | 'notifications.scheduleUpdatedPlaceDescription' {
   const isRejected = kind === 'privacy_request_resolved' && noticeData.outcome === 'rejected';
   if (isRejected) return 'notifications.privacyRequestRejectedDescription';
   const hasChangesRequested =
     kind === 'staff_profile_reviewed' && noticeData.outcome === 'changes_requested';
   if (hasChangesRequested) return 'notifications.staffProfileChangesDescription';
+  const isPlaceChange =
+    kind === 'schedule_updated' &&
+    noticeData.placeName !== undefined &&
+    noticeData.placeName !== '';
+  if (isPlaceChange) return 'notifications.scheduleUpdatedPlaceDescription';
   return DESCRIPTION_KEYS[kind];
 }
 
@@ -153,6 +159,8 @@ function describeAbsence(details: NotificationItem['data']): string {
 }
 
 interface NoticeTexts {
+  /** El sitio nuevo cuando lo único que cambia es el lugar de la clase. */
+  placeName: string;
   clientName: string;
   serviceName: string;
   staffName: string;
@@ -217,6 +225,7 @@ function buildNoticeTexts(notification: NotificationItem, timeZone: string): Not
         ? textOf(noticeData.serviceName)
         : noticeData.label,
     roomSuffix: describeRoomSuffix(noticeData.roomName),
+    placeName: textOf(noticeData.placeName),
     rateName: textOf(noticeData.rateName),
     roomName: textOf(noticeData.roomName),
     senderName: textOf(noticeData.senderName),

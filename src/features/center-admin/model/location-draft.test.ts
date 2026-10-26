@@ -29,11 +29,23 @@ describe('toLocationRequest', () => {
         isOutside: true,
         name: 'Parque',
         address: { text: 'Calle Mayor', latitude: 40.4, longitude: null },
+        pin: null,
       },
       { name: 'Parque', address: 'Calle Mayor', latitude: null, longitude: null },
     ],
   ])('sends the right thing when it is %s', (_case, draft, expectedRequest) => {
     expect(toLocationRequest(draft)).toEqual(expectedRequest);
+  });
+});
+
+describe('toLocationRequest with a point fixed by hand', () => {
+  it('uses the fixed point over the one of the address, and keeps it without an address', () => {
+    const pin = { latitude: 40.41, longitude: -3.68 };
+
+    expect(toLocationRequest({ ...buildLocationDraft(PARK), pin })).toEqual({ ...PARK, ...pin });
+    expect(
+      toLocationRequest({ ...EMPTY_LOCATION_DRAFT, isOutside: true, name: 'Parque', pin }),
+    ).toEqual({ name: 'Parque', address: null, ...pin });
   });
 });
 

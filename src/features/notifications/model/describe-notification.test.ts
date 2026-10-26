@@ -26,6 +26,42 @@ const BOOKING_DATA = {
   actorName: 'Carlos Núñez',
 };
 
+describe('describeNotification · a class that changes place', () => {
+  it('says the new place when only where the class is changes', () => {
+    const text = describeNotification(
+      buildNotification('schedule_updated', {
+        actorName: 'Laura',
+        serviceName: 'Yoga',
+        label: 'Yoga',
+        staffName: '',
+        roomName: '',
+        placeName: 'Auditorio Municipal',
+      }),
+      TIME_ZONE,
+    );
+
+    expect(text.title).toBe('Ha cambiado un horario tuyo');
+    expect(text.description).toBe(
+      'Laura ha cambiado el lugar de Yoga. Ahora es en Auditorio Municipal.',
+    );
+  });
+
+  it('talks about the schedule when the times change too', () => {
+    const text = describeNotification(
+      buildNotification('schedule_updated', {
+        actorName: 'Laura',
+        serviceName: 'Yoga',
+        label: 'Yoga',
+        staffName: 'Ana',
+        roomName: 'Aula 2',
+      }),
+      TIME_ZONE,
+    );
+
+    expect(text.description).toContain('ha cambiado el horario de Yoga con Ana');
+  });
+});
+
 describe('describeNotification', () => {
   it('tells the team about a booking made by a client', () => {
     const text = describeNotification(

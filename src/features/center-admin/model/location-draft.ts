@@ -1,4 +1,5 @@
 import { EMPTY_ADDRESS, type AddressValue } from '@/features/address';
+import type { MapPoint } from '@/shared/lib/location-link';
 import type { SessionLocationFacts } from '@/shared/lib/session-location';
 
 /** Lo que se rellena en el formulario: «es fuera del centro», el nombre del sitio y su dirección. */
@@ -6,12 +7,15 @@ export interface LocationDraft {
   isOutside: boolean;
   name: string;
   address: AddressValue;
+  /** El punto fijado a mano (GPS o enlace): manda sobre el de la dirección. */
+  pin: MapPoint | null;
 }
 
 export const EMPTY_LOCATION_DRAFT: LocationDraft = {
   isOutside: false,
   name: '',
   address: EMPTY_ADDRESS,
+  pin: null,
 };
 
 /** El formulario de una ubicación que ya existe (o vacío si la clase es en el centro). */
@@ -25,6 +29,7 @@ export function buildLocationDraft(location: SessionLocationFacts | null): Locat
       latitude: location.latitude,
       longitude: location.longitude,
     },
+    pin: null,
   };
 }
 
@@ -38,7 +43,7 @@ export function toLocationRequest(draft: LocationDraft): SessionLocationFacts | 
   const name = draft.name.trim();
   if (!draft.isOutside || name === '') return null;
   const addressText = draft.address.text.trim();
-  const { latitude, longitude } = draft.address;
+  const { latitude, longitude } = draft.pin ?? draft.address;
   const hasPoint = latitude !== null && longitude !== null;
   return {
     name,

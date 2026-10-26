@@ -23,6 +23,7 @@ function buildRoom(overrides: Partial<RoomListResponseDtoRoomsItem>): RoomListRe
     staff: null,
     fixedService: null,
     services: [],
+    place: null,
     ...overrides,
   };
 }

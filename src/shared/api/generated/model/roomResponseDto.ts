@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { RoomResponseDtoFixedService } from './roomResponseDtoFixedService.ts';
+import type { RoomResponseDtoPlace } from './roomResponseDtoPlace.ts';
 import type { RoomResponseDtoServicesItem } from './roomResponseDtoServicesItem.ts';
 import type { RoomResponseDtoStaff } from './roomResponseDtoStaff.ts';
 
@@ -23,4 +24,6 @@ export interface RoomResponseDto {
   /** @nullable */
   fixedService: RoomResponseDtoFixedService;
   services: RoomResponseDtoServicesItem[];
+  /** @nullable */
+  place: RoomResponseDtoPlace;
 }

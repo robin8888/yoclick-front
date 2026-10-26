@@ -1,15 +1,16 @@
-import type { Control } from 'react-hook-form';
+import { Controller, type Control } from 'react-hook-form';
 
 import { i18n } from '@/shared/i18n';
 import { FormTextField } from '@/ui/molecules/FormTextField';
 
 import type { RoomFormValues } from '../model/room-form';
+import { RoomPlaceFields } from './RoomPlaceFields';
 
 interface RoomFormFieldsProps {
   control: Control<RoomFormValues>;
 }
 
-/** Una sala es solo su nombre y su aforo: el profesor y el servicio se eligen en cada clase. */
+/** Una sala es su nombre, su aforo y, si es exterior, dónde está: el profesor y el servicio se eligen en cada clase. */
 export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): React.JSX.Element {
   return (
     <>
@@ -25,6 +26,11 @@ export function RoomFormFields({ control }: Readonly<RoomFormFieldsProps>): Reac
         label={i18n.t('centerAdmin.rooms.capacityLabel')}
         helperText={i18n.t('centerAdmin.rooms.capacityHelper')}
         keyboardType="number-pad"
+      />
+      <Controller
+        control={control}
+        name="place"
+        render={({ field }) => <RoomPlaceFields value={field.value} onChange={field.onChange} />}
       />
     </>
   );

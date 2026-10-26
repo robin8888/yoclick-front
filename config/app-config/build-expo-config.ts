@@ -25,7 +25,7 @@ const CAMERA_USAGE_DESCRIPTION =
 const PHOTO_LIBRARY_USAGE_DESCRIPTION =
   'Para que puedas elegir de tu galería el logo de tu centro o tu foto de perfil.';
 const LOCATION_USAGE_DESCRIPTION =
-  'Usamos tu ubicación solo mientras usas la app, para encontrar centros cerca de ti.';
+  'Usamos tu ubicación solo mientras usas la app, para encontrar centros cerca de ti o fijar el punto exacto donde das una clase.';
 
 // Permisos que Expo añade por defecto y que la app no necesita (minimización, SEC-22).
 const ANDROID_PERMISSIONS_TO_BLOCK = [
@@ -84,6 +84,8 @@ function buildPlugins(
     ['expo-build-properties', { android: { usesCleartextTraffic: false } }],
     // Avisos push de citas y ausencias: el permiso se pide en el momento de usarlos, con explicación.
     'expo-notifications',
+    // Solo con la app abierta y a petición de quien la usa (fijar dónde es una clase): nunca en segundo plano.
+    ['expo-location', { locationWhenInUsePermission: LOCATION_USAGE_DESCRIPTION }],
     // Vídeos de ejercicios y de presentación del equipo: solo se ven en la app, sin sonido de fondo ni
     // imagen en imagen.
     ['expo-video', { supportsBackgroundPlayback: false, supportsPictureInPicture: false }],

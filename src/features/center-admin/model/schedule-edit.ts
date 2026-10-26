@@ -40,7 +40,12 @@ export const scheduleEditSchema = z
     staffMembershipId: z
       .string()
       .min(1, { error: () => i18n.t('centerAdmin.schedules.teacherRequired') }),
-    location: z.object({ isOutside: z.boolean(), name: z.string(), address: addressValueSchema }),
+    location: z.object({
+      isOutside: z.boolean(),
+      name: z.string(),
+      address: addressValueSchema,
+      pin: z.object({ latitude: z.number(), longitude: z.number() }).nullable(),
+    }),
   })
   .refine((form) => isTimeRangeOrdered(form.startsAtTime, form.endsAtTime), {
     error: () => i18n.t('centerAdmin.schedules.timeOrder'),
