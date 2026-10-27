@@ -15,6 +15,7 @@ import { AuditEntryList } from '../components/AuditEntryList';
 import { CenterActions } from '../components/CenterActions';
 import { CenterFacts } from '../components/CenterFacts';
 import { FLEXIBLE_TEXT_STYLE } from '../components/Panel.styles';
+import { RecordChargeAction } from '../components/RecordChargeAction';
 import { usePlatformAudit } from '../hooks/usePlatformAudit';
 import { usePlatformCenter } from '../hooks/usePlatformCenter';
 
@@ -67,6 +68,7 @@ function CenterContent({ centerId }: Readonly<{ centerId: string }>): React.JSX.
       </View>
       <CenterFacts center={center.data} />
       <CenterActions center={center.data} />
+      <RecordChargeAction center={center.data} />
       <CenterHistory centerId={centerId} />
     </>
   );

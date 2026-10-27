@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
-import { useActiveCenterSectorId } from '@/features/join';
+import { useActiveCenterModules, useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { CountTabs } from '@/ui/molecules/CountTabs';
@@ -99,6 +99,8 @@ export function ClientsScreen(): React.JSX.Element {
   const sectorId = useActiveCenterSectorId();
   const clientWord = capitalize(getSectorVocabulary(sectorId).client.plural);
   const [tab, setTab] = useState<ClientsTab>('clients');
+  // Grupos y familias (tutores) son de centros con clases; uno solo de citas solo tiene clientes.
+  const hasGroups = useActiveCenterModules().rooms;
   const filters = useClientFilters();
   const clients = useClientList(filters);
   const groups = useGroupList();
@@ -112,9 +114,9 @@ export function ClientsScreen(): React.JSX.Element {
 
   return (
     <ScreenTemplate onBackPress={onBackPress} title={i18n.t('clients.title', { clientWord })}>
-      <CountTabs options={tabs} selectedValue={tab} onValueChange={setTab} />
+      {hasGroups ? <CountTabs options={tabs} selectedValue={tab} onValueChange={setTab} /> : null}
       <TabContent
-        tab={tab}
+        tab={hasGroups ? tab : 'clients'}
         sectorId={sectorId}
         clientWord={clientWord}
         filters={filters}

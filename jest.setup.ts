@@ -25,6 +25,7 @@ jest.mock('expo-router', () => {
       react.useEffect(effect, [effect]);
     },
     useLocalSearchParams: jest.fn(() => ({})),
+    usePathname: jest.fn(() => '/'),
     Redirect: ({ href }: { href: string }) =>
       react.createElement(reactNative.Text, null, `redirect:${href}`),
     Stack: () => null,

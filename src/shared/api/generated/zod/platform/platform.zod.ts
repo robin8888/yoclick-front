@@ -172,6 +172,7 @@ export const platformGetCenterResponseBookingsLast30DaysMin = -9007199254740991;
 export const platformGetCenterResponseBookingsLast30DaysMax = 9007199254740991;
 
 export const platformGetCenterResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const platformGetCenterResponseGraceEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformGetCenterResponseDocumentStorageLimitBytesMin = -9007199254740991;
 export const platformGetCenterResponseDocumentStorageLimitBytesMax = 9007199254740991;
 
@@ -202,6 +203,8 @@ export const PlatformGetCenterResponse = zod.object({
   "timezone": zod.string(),
   "disabledModules": zod.array(zod.string()),
   "stripeChargesEnabled": zod.boolean(),
+  "graceEndsAt": zod.iso.datetime({"offset":true}).regex(platformGetCenterResponseGraceEndsAtRegExp).nullable(),
+  "hasSubscription": zod.boolean(),
   "documentStorageLimitBytes": zod.int().min(platformGetCenterResponseDocumentStorageLimitBytesMin).max(platformGetCenterResponseDocumentStorageLimitBytesMax),
   "videoStorageLimitBytes": zod.int().min(platformGetCenterResponseVideoStorageLimitBytesMin).max(platformGetCenterResponseVideoStorageLimitBytesMax).nullable(),
   "photoStorageLimitBytes": zod.int().min(platformGetCenterResponsePhotoStorageLimitBytesMin).max(platformGetCenterResponsePhotoStorageLimitBytesMax)
@@ -246,6 +249,7 @@ export const platformUpdateCenterResponseBookingsLast30DaysMin = -90071992547409
 export const platformUpdateCenterResponseBookingsLast30DaysMax = 9007199254740991;
 
 export const platformUpdateCenterResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const platformUpdateCenterResponseGraceEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformUpdateCenterResponseDocumentStorageLimitBytesMin = -9007199254740991;
 export const platformUpdateCenterResponseDocumentStorageLimitBytesMax = 9007199254740991;
 
@@ -276,6 +280,8 @@ export const PlatformUpdateCenterResponse = zod.object({
   "timezone": zod.string(),
   "disabledModules": zod.array(zod.string()),
   "stripeChargesEnabled": zod.boolean(),
+  "graceEndsAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterResponseGraceEndsAtRegExp).nullable(),
+  "hasSubscription": zod.boolean(),
   "documentStorageLimitBytes": zod.int().min(platformUpdateCenterResponseDocumentStorageLimitBytesMin).max(platformUpdateCenterResponseDocumentStorageLimitBytesMax),
   "videoStorageLimitBytes": zod.int().min(platformUpdateCenterResponseVideoStorageLimitBytesMin).max(platformUpdateCenterResponseVideoStorageLimitBytesMax).nullable(),
   "photoStorageLimitBytes": zod.int().min(platformUpdateCenterResponsePhotoStorageLimitBytesMin).max(platformUpdateCenterResponsePhotoStorageLimitBytesMax)
@@ -444,4 +450,282 @@ export const PlatformUpdatePlanResponse = zod.object({
   "suspended": zod.int().min(platformUpdatePlanResponseCenterCountByStatusSuspendedMin).max(platformUpdatePlanResponseCenterCountByStatusSuspendedMax)
 })
 })
+
+/**
+ * @summary Los cobros de los planes, del más reciente al más antiguo, por mes o por centro.
+ */
+export const platformListChargesQueryLimitDefault = 20;
+export const platformListChargesQueryLimitMax = 100;
+
+export const platformListChargesQueryCursorMax = 512;
+
+export const platformListChargesQueryMonthRegExp = new RegExp('^\\d{4}-(0[1-9]|1[0-2])$');
+export const platformListChargesQueryCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PlatformListChargesQueryParams = zod.object({
+  "limit": zod.int().min(1).max(platformListChargesQueryLimitMax).default(platformListChargesQueryLimitDefault),
+  "cursor": zod.string().max(platformListChargesQueryCursorMax).optional(),
+  "month": zod.string().regex(platformListChargesQueryMonthRegExp).optional(),
+  "centerId": zod.uuid().regex(platformListChargesQueryCenterIdRegExp).optional()
+})
+
+export const platformListChargesResponseDataItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformListChargesResponseDataItemCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformListChargesResponseDataItemChargedOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const platformListChargesResponseDataItemBaseCentsMin = -9007199254740991;
+export const platformListChargesResponseDataItemBaseCentsMax = 9007199254740991;
+
+export const platformListChargesResponseDataItemVatBasisPointsMin = -9007199254740991;
+export const platformListChargesResponseDataItemVatBasisPointsMax = 9007199254740991;
+
+export const platformListChargesResponseDataItemVatCentsMin = -9007199254740991;
+export const platformListChargesResponseDataItemVatCentsMax = 9007199254740991;
+
+export const platformListChargesResponseDataItemTotalCentsMin = -9007199254740991;
+export const platformListChargesResponseDataItemTotalCentsMax = 9007199254740991;
+
+export const platformListChargesResponseDataItemStripeFeeCentsMin = -9007199254740991;
+export const platformListChargesResponseDataItemStripeFeeCentsMax = 9007199254740991;
+
+export const platformListChargesResponseDataItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PlatformListChargesResponse = zod.object({
+  "data": zod.array(zod.object({
+  "id": zod.uuid().regex(platformListChargesResponseDataItemIdRegExp),
+  "centerId": zod.uuid().regex(platformListChargesResponseDataItemCenterIdRegExp),
+  "centerName": zod.string(),
+  "chargedOn": zod.iso.date().regex(platformListChargesResponseDataItemChargedOnRegExp),
+  "concept": zod.string(),
+  "baseCents": zod.int().min(platformListChargesResponseDataItemBaseCentsMin).max(platformListChargesResponseDataItemBaseCentsMax),
+  "vatBasisPoints": zod.int().min(platformListChargesResponseDataItemVatBasisPointsMin).max(platformListChargesResponseDataItemVatBasisPointsMax),
+  "vatCents": zod.int().min(platformListChargesResponseDataItemVatCentsMin).max(platformListChargesResponseDataItemVatCentsMax),
+  "totalCents": zod.int().min(platformListChargesResponseDataItemTotalCentsMin).max(platformListChargesResponseDataItemTotalCentsMax),
+  "stripeFeeCents": zod.int().min(platformListChargesResponseDataItemStripeFeeCentsMin).max(platformListChargesResponseDataItemStripeFeeCentsMax).nullable(),
+  "status": zod.enum(['pending', 'paid', 'void']),
+  "source": zod.enum(['manual', 'stripe']),
+  "paymentMethod": zod.enum(['transfer', 'card', 'cash', 'other']),
+  "invoiceReference": zod.string().nullable(),
+  "stripeId": zod.string().nullable(),
+  "customerLegalName": zod.string().nullable(),
+  "customerTaxId": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(platformListChargesResponseDataItemCreatedAtRegExp)
+})),
+  "nextCursor": zod.string().nullable()
+})
+
+/**
+ * @summary Apunta a mano un cobro de plan a un centro. El IVA y el total los calcula el servidor a partir de la base y el tipo.
+ */
+export const platformRecordChargeBodyCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformRecordChargeBodyChargedOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const platformRecordChargeBodyConceptMax = 200;
+
+export const platformRecordChargeBodyBaseCentsMin = 0;
+export const platformRecordChargeBodyBaseCentsMax = 100000000;
+
+export const platformRecordChargeBodyVatBasisPointsMin = 0;
+export const platformRecordChargeBodyVatBasisPointsMax = 10000;
+
+export const platformRecordChargeBodyStatusDefault = `paid`;
+export const platformRecordChargeBodyInvoiceReferenceMax = 60;
+
+export const platformRecordChargeBodyCustomerLegalNameMax = 200;
+
+export const platformRecordChargeBodyCustomerTaxIdMax = 20;
+
+
+
+export const PlatformRecordChargeBody = zod.object({
+  "centerId": zod.uuid().regex(platformRecordChargeBodyCenterIdRegExp),
+  "chargedOn": zod.iso.date().regex(platformRecordChargeBodyChargedOnRegExp),
+  "concept": zod.string().min(1).max(platformRecordChargeBodyConceptMax),
+  "baseCents": zod.int().min(platformRecordChargeBodyBaseCentsMin).max(platformRecordChargeBodyBaseCentsMax),
+  "vatBasisPoints": zod.int().min(platformRecordChargeBodyVatBasisPointsMin).max(platformRecordChargeBodyVatBasisPointsMax),
+  "status": zod.enum(['pending', 'paid', 'void']).default(platformRecordChargeBodyStatusDefault),
+  "paymentMethod": zod.enum(['transfer', 'card', 'cash', 'other']),
+  "invoiceReference": zod.string().min(1).max(platformRecordChargeBodyInvoiceReferenceMax).nullish(),
+  "customerLegalName": zod.string().min(1).max(platformRecordChargeBodyCustomerLegalNameMax).nullish(),
+  "customerTaxId": zod.string().min(1).max(platformRecordChargeBodyCustomerTaxIdMax).nullish()
+})
+
+export const platformRecordChargeResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformRecordChargeResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformRecordChargeResponseChargedOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const platformRecordChargeResponseBaseCentsMin = -9007199254740991;
+export const platformRecordChargeResponseBaseCentsMax = 9007199254740991;
+
+export const platformRecordChargeResponseVatBasisPointsMin = -9007199254740991;
+export const platformRecordChargeResponseVatBasisPointsMax = 9007199254740991;
+
+export const platformRecordChargeResponseVatCentsMin = -9007199254740991;
+export const platformRecordChargeResponseVatCentsMax = 9007199254740991;
+
+export const platformRecordChargeResponseTotalCentsMin = -9007199254740991;
+export const platformRecordChargeResponseTotalCentsMax = 9007199254740991;
+
+export const platformRecordChargeResponseStripeFeeCentsMin = -9007199254740991;
+export const platformRecordChargeResponseStripeFeeCentsMax = 9007199254740991;
+
+export const platformRecordChargeResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PlatformRecordChargeResponse = zod.object({
+  "id": zod.uuid().regex(platformRecordChargeResponseIdRegExp),
+  "centerId": zod.uuid().regex(platformRecordChargeResponseCenterIdRegExp),
+  "centerName": zod.string(),
+  "chargedOn": zod.iso.date().regex(platformRecordChargeResponseChargedOnRegExp),
+  "concept": zod.string(),
+  "baseCents": zod.int().min(platformRecordChargeResponseBaseCentsMin).max(platformRecordChargeResponseBaseCentsMax),
+  "vatBasisPoints": zod.int().min(platformRecordChargeResponseVatBasisPointsMin).max(platformRecordChargeResponseVatBasisPointsMax),
+  "vatCents": zod.int().min(platformRecordChargeResponseVatCentsMin).max(platformRecordChargeResponseVatCentsMax),
+  "totalCents": zod.int().min(platformRecordChargeResponseTotalCentsMin).max(platformRecordChargeResponseTotalCentsMax),
+  "stripeFeeCents": zod.int().min(platformRecordChargeResponseStripeFeeCentsMin).max(platformRecordChargeResponseStripeFeeCentsMax).nullable(),
+  "status": zod.enum(['pending', 'paid', 'void']),
+  "source": zod.enum(['manual', 'stripe']),
+  "paymentMethod": zod.enum(['transfer', 'card', 'cash', 'other']),
+  "invoiceReference": zod.string().nullable(),
+  "stripeId": zod.string().nullable(),
+  "customerLegalName": zod.string().nullable(),
+  "customerTaxId": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(platformRecordChargeResponseCreatedAtRegExp)
+})
+
+/**
+ * @summary Cambia el estado de un cobro (cobrado, pendiente, anulado) o su referencia de factura. Un cobro anulado ya no se cambia.
+ */
+export const platformUpdateChargePathChargeIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const PlatformUpdateChargeParams = zod.object({
+  "chargeId": zod.uuid().regex(platformUpdateChargePathChargeIdRegExp)
+})
+
+export const platformUpdateChargeBodyInvoiceReferenceMax = 60;
+
+
+
+export const PlatformUpdateChargeBody = zod.object({
+  "status": zod.enum(['pending', 'paid', 'void']).optional(),
+  "invoiceReference": zod.string().min(1).max(platformUpdateChargeBodyInvoiceReferenceMax).nullish()
+})
+
+export const platformUpdateChargeResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformUpdateChargeResponseCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const platformUpdateChargeResponseChargedOnRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$');
+export const platformUpdateChargeResponseBaseCentsMin = -9007199254740991;
+export const platformUpdateChargeResponseBaseCentsMax = 9007199254740991;
+
+export const platformUpdateChargeResponseVatBasisPointsMin = -9007199254740991;
+export const platformUpdateChargeResponseVatBasisPointsMax = 9007199254740991;
+
+export const platformUpdateChargeResponseVatCentsMin = -9007199254740991;
+export const platformUpdateChargeResponseVatCentsMax = 9007199254740991;
+
+export const platformUpdateChargeResponseTotalCentsMin = -9007199254740991;
+export const platformUpdateChargeResponseTotalCentsMax = 9007199254740991;
+
+export const platformUpdateChargeResponseStripeFeeCentsMin = -9007199254740991;
+export const platformUpdateChargeResponseStripeFeeCentsMax = 9007199254740991;
+
+export const platformUpdateChargeResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const PlatformUpdateChargeResponse = zod.object({
+  "id": zod.uuid().regex(platformUpdateChargeResponseIdRegExp),
+  "centerId": zod.uuid().regex(platformUpdateChargeResponseCenterIdRegExp),
+  "centerName": zod.string(),
+  "chargedOn": zod.iso.date().regex(platformUpdateChargeResponseChargedOnRegExp),
+  "concept": zod.string(),
+  "baseCents": zod.int().min(platformUpdateChargeResponseBaseCentsMin).max(platformUpdateChargeResponseBaseCentsMax),
+  "vatBasisPoints": zod.int().min(platformUpdateChargeResponseVatBasisPointsMin).max(platformUpdateChargeResponseVatBasisPointsMax),
+  "vatCents": zod.int().min(platformUpdateChargeResponseVatCentsMin).max(platformUpdateChargeResponseVatCentsMax),
+  "totalCents": zod.int().min(platformUpdateChargeResponseTotalCentsMin).max(platformUpdateChargeResponseTotalCentsMax),
+  "stripeFeeCents": zod.int().min(platformUpdateChargeResponseStripeFeeCentsMin).max(platformUpdateChargeResponseStripeFeeCentsMax).nullable(),
+  "status": zod.enum(['pending', 'paid', 'void']),
+  "source": zod.enum(['manual', 'stripe']),
+  "paymentMethod": zod.enum(['transfer', 'card', 'cash', 'other']),
+  "invoiceReference": zod.string().nullable(),
+  "stripeId": zod.string().nullable(),
+  "customerLegalName": zod.string().nullable(),
+  "customerTaxId": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(platformUpdateChargeResponseCreatedAtRegExp)
+})
+
+/**
+ * @summary Lo cobrado mes a mes entre dos meses (base, IVA, total, comisiones y número de cobros) y el total del rango.
+ */
+export const platformGetChargeReportQueryFromMonthRegExp = new RegExp('^\\d{4}-(0[1-9]|1[0-2])$');
+export const platformGetChargeReportQueryToMonthRegExp = new RegExp('^\\d{4}-(0[1-9]|1[0-2])$');
+
+
+export const PlatformGetChargeReportQueryParams = zod.object({
+  "fromMonth": zod.string().regex(platformGetChargeReportQueryFromMonthRegExp),
+  "toMonth": zod.string().regex(platformGetChargeReportQueryToMonthRegExp)
+})
+
+export const platformGetChargeReportResponseMonthsItemBaseCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseMonthsItemBaseCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseMonthsItemVatCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseMonthsItemVatCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseMonthsItemTotalCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseMonthsItemTotalCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseMonthsItemChargeCountMin = -9007199254740991;
+export const platformGetChargeReportResponseMonthsItemChargeCountMax = 9007199254740991;
+
+export const platformGetChargeReportResponseMonthsItemStripeFeeCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseMonthsItemStripeFeeCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseTotalsBaseCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseTotalsBaseCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseTotalsVatCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseTotalsVatCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseTotalsTotalCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseTotalsTotalCentsMax = 9007199254740991;
+
+export const platformGetChargeReportResponseTotalsChargeCountMin = -9007199254740991;
+export const platformGetChargeReportResponseTotalsChargeCountMax = 9007199254740991;
+
+export const platformGetChargeReportResponseTotalsStripeFeeCentsMin = -9007199254740991;
+export const platformGetChargeReportResponseTotalsStripeFeeCentsMax = 9007199254740991;
+
+
+
+export const PlatformGetChargeReportResponse = zod.object({
+  "months": zod.array(zod.object({
+  "month": zod.string(),
+  "baseCents": zod.int().min(platformGetChargeReportResponseMonthsItemBaseCentsMin).max(platformGetChargeReportResponseMonthsItemBaseCentsMax),
+  "vatCents": zod.int().min(platformGetChargeReportResponseMonthsItemVatCentsMin).max(platformGetChargeReportResponseMonthsItemVatCentsMax),
+  "totalCents": zod.int().min(platformGetChargeReportResponseMonthsItemTotalCentsMin).max(platformGetChargeReportResponseMonthsItemTotalCentsMax),
+  "chargeCount": zod.int().min(platformGetChargeReportResponseMonthsItemChargeCountMin).max(platformGetChargeReportResponseMonthsItemChargeCountMax),
+  "stripeFeeCents": zod.int().min(platformGetChargeReportResponseMonthsItemStripeFeeCentsMin).max(platformGetChargeReportResponseMonthsItemStripeFeeCentsMax)
+})),
+  "totals": zod.object({
+  "baseCents": zod.int().min(platformGetChargeReportResponseTotalsBaseCentsMin).max(platformGetChargeReportResponseTotalsBaseCentsMax),
+  "vatCents": zod.int().min(platformGetChargeReportResponseTotalsVatCentsMin).max(platformGetChargeReportResponseTotalsVatCentsMax),
+  "totalCents": zod.int().min(platformGetChargeReportResponseTotalsTotalCentsMin).max(platformGetChargeReportResponseTotalsTotalCentsMax),
+  "chargeCount": zod.int().min(platformGetChargeReportResponseTotalsChargeCountMin).max(platformGetChargeReportResponseTotalsChargeCountMax),
+  "stripeFeeCents": zod.int().min(platformGetChargeReportResponseTotalsStripeFeeCentsMin).max(platformGetChargeReportResponseTotalsStripeFeeCentsMax)
+})
+})
+
+/**
+ * @summary El CSV de los cobros cobrados entre dos meses, para el gestor (separador «;» y coma decimal).
+ */
+export const platformExportChargesCsvQueryFromMonthRegExp = new RegExp('^\\d{4}-(0[1-9]|1[0-2])$');
+export const platformExportChargesCsvQueryToMonthRegExp = new RegExp('^\\d{4}-(0[1-9]|1[0-2])$');
+
+
+export const PlatformExportChargesCsvQueryParams = zod.object({
+  "fromMonth": zod.string().regex(platformExportChargesCsvQueryFromMonthRegExp),
+  "toMonth": zod.string().regex(platformExportChargesCsvQueryToMonthRegExp)
+})
+
+export const PlatformExportChargesCsvResponse = zod.unknown()
 

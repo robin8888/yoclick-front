@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 
+import { AutoStartSwitch } from '@/features/center-admin';
 import { LoadErrorState, useActiveCenterSectorId } from '@/features/join';
-import type { AgendaResponseDto } from '@/shared/api/generated/model';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { formatShortDate } from '@/shared/lib/format/format-short-date';
@@ -12,46 +12,58 @@ import { CenterDayControl } from '../components/CenterDayControl';
 import { RoomAgendaList } from '../components/RoomAgendaList';
 import { RoomDayGrid } from '../components/RoomDayGrid';
 import { RoomWeekStrip } from '../components/RoomWeekStrip';
-import { StaffAgendaColumns } from '../components/StaffAgendaColumns';
 import { useAgendaDay, type AgendaDay } from '../hooks/useAgendaDay';
 import { useCenterStaff } from '../hooks/useCenterStaff';
 import { useDayAgenda } from '../hooks/useDayAgenda';
 import { useHasCenterRooms } from '../hooks/useHasCenterRooms';
 import { useRoomAgenda } from '../hooks/useRoomAgenda';
-import { buildStaffAgendaColumns } from '../model/center-agenda-summary';
+import type { AgendaStaffMember } from '../model/center-agenda-summary';
+import { groupAgendaByStaff } from '../model/staff-lanes';
 
 interface CenterAgendaContentProps {
-  agenda: AgendaResponseDto;
   day: AgendaDay;
   dayLabel: string;
 }
 
-/** Cada sala con lo que la ocupa ese día; el centro necesita saber qué pasa en cada una. */
-function RoomAgendaSection({ day }: Readonly<{ day: AgendaDay }>): React.JSX.Element | null {
+interface RoomAgendaSectionProps {
+  day: AgendaDay;
+  /** Centro sin salas: el equipo, cuyas citas se ven como si cada profesional fuese una sala. */
+  staffLanes: readonly AgendaStaffMember[] | undefined;
+}
+
+/**
+ * Lo que ocupa cada sala ese día; el centro necesita saber qué pasa en cada una. Un centro sin
+ * salas lo ve igual, con cada profesional en el lugar de la sala.
+ */
+function RoomAgendaSection({
+  day,
+  staffLanes,
+}: Readonly<RoomAgendaSectionProps>): React.JSX.Element | null {
   const roomAgenda = useRoomAgenda(day.isoDate);
 
   if (roomAgenda.data === undefined) return null;
+  const agenda =
+    staffLanes === undefined ? roomAgenda.data : groupAgendaByStaff(roomAgenda.data, staffLanes);
   return (
     <>
       <RoomWeekStrip
         selectedIsoDate={day.isoDate}
-        agenda={roomAgenda.data}
+        agenda={agenda}
         onDaySelect={day.selectDate}
+        {...(staffLanes === undefined ? {} : { staffLanes })}
       />
-      <RoomDayGrid agenda={roomAgenda.data} isoDate={roomAgenda.data.date} />
-      {roomAgenda.data.sessionsWithoutRoom.length === 0 ? null : (
-        <RoomAgendaList agenda={{ ...roomAgenda.data, rooms: [] }} isoDate={roomAgenda.data.date} />
+      <RoomDayGrid agenda={agenda} isoDate={agenda.date} isStaffLane={staffLanes !== undefined} />
+      {agenda.sessionsWithoutRoom.length === 0 ? null : (
+        <RoomAgendaList agenda={{ ...agenda, rooms: [] }} isoDate={agenda.date} />
       )}
     </>
   );
 }
 
 function CenterAgendaContent({
-  agenda,
   dayLabel,
   day,
 }: Readonly<CenterAgendaContentProps>): React.JSX.Element {
-  const router = useRouter();
   const teamStaff = useCenterStaff();
   const hasRooms = useHasCenterRooms();
   const staffWord = getSectorVocabulary(useActiveCenterSectorId()).staff.singular;
@@ -67,20 +79,7 @@ function CenterAgendaContent({
         onPreviousDay={day.goToPreviousDay}
         onNextDay={day.goToNextDay}
       />
-      {hasRooms ? (
-        <RoomAgendaSection day={day} />
-      ) : (
-        <StaffAgendaColumns
-          columns={buildStaffAgendaColumns(agenda.entries, teamStaff)}
-          timeZone={agenda.timezone}
-          onEntryPress={(bookingId) => {
-            router.push({
-              pathname: '/(staff)/sessions/[bookingId]',
-              params: { bookingId, date: agenda.date, isCenterWide: 'true' },
-            });
-          }}
-        />
-      )}
+      <RoomAgendaSection day={day} staffLanes={hasRooms ? undefined : teamStaff} />
     </>
   );
 }
@@ -101,6 +100,7 @@ export function CenterDayAgendaScreen(): React.JSX.Element {
       onBackPress={router.back}
       backLabel={i18n.t('actions.back')}
     >
+      <AutoStartSwitch />
       {agenda.isError ? (
         <LoadErrorState
           title={i18n.t('staffAgenda.agenda.errorTitle')}
@@ -113,11 +113,7 @@ export function CenterDayAgendaScreen(): React.JSX.Element {
         <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} />
       ) : null}
       {agenda.data === undefined ? null : (
-        <CenterAgendaContent
-          agenda={agenda.data}
-          dayLabel={formatShortDate(dayDate, 'UTC')}
-          day={day}
-        />
+        <CenterAgendaContent dayLabel={formatShortDate(dayDate, 'UTC')} day={day} />
       )}
     </ScreenTemplate>
   );

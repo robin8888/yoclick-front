@@ -28,13 +28,21 @@ import type {
   PlatformAuditListResponseDto,
   PlatformCenterDetailResponseDto,
   PlatformCenterListResponseDto,
+  PlatformChargeListResponseDto,
+  PlatformChargeReportResponseDto,
+  PlatformChargeResponseDto,
+  PlatformExportChargesCsvParams,
+  PlatformGetChargeReportParams,
   PlatformListAuditLogParams,
   PlatformListCentersParams,
+  PlatformListChargesParams,
   PlatformOverviewResponseDto,
   PlatformPlanListResponseDto,
   PlatformPlanResponseDto,
   ProblemDetailsDto,
+  RecordPlatformChargeRequestDto,
   UpdatePlatformCenterRequestDto,
+  UpdatePlatformChargeRequestDto,
   UpdatePlatformPlanRequestDto
 } from '../../model';
 
@@ -751,3 +759,499 @@ export const usePlatformUpdatePlan = <TError = ErrorType<ProblemDetailsDto>,
       > => {
       return useMutation(getPlatformUpdatePlanMutationOptions(options), queryClient);
     }
+    export const getPlatformListChargesUrl = (params?: PlatformListChargesParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/platform/charges?${stringifiedParams}` : `/v1/platform/charges`
+}
+
+/**
+ * @summary Los cobros de los planes, del más reciente al más antiguo, por mes o por centro.
+ */
+export const platformListCharges = async (params?: PlatformListChargesParams, options?: Parameters<typeof apiMutator>[1]): Promise<PlatformChargeListResponseDto> => {
+
+  return apiMutator<PlatformChargeListResponseDto>(getPlatformListChargesUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPlatformListChargesQueryKey = (params?: PlatformListChargesParams,) => {
+    return [
+    `/v1/platform/charges`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getPlatformListChargesQueryOptions = <TData = Awaited<ReturnType<typeof platformListCharges>>, TError = ErrorType<ProblemDetailsDto>>(params?: PlatformListChargesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPlatformListChargesQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof platformListCharges>>> = ({ signal }) => platformListCharges(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PlatformListChargesQueryResult = NonNullable<Awaited<ReturnType<typeof platformListCharges>>>
+export type PlatformListChargesQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePlatformListCharges<TData = Awaited<ReturnType<typeof platformListCharges>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: undefined |  PlatformListChargesParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformListCharges>>,
+          TError,
+          Awaited<ReturnType<typeof platformListCharges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformListCharges<TData = Awaited<ReturnType<typeof platformListCharges>>, TError = ErrorType<ProblemDetailsDto>>(
+ params?: PlatformListChargesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformListCharges>>,
+          TError,
+          Awaited<ReturnType<typeof platformListCharges>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformListCharges<TData = Awaited<ReturnType<typeof platformListCharges>>, TError = ErrorType<ProblemDetailsDto>>(
+ params?: PlatformListChargesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los cobros de los planes, del más reciente al más antiguo, por mes o por centro.
+ */
+
+export function usePlatformListCharges<TData = Awaited<ReturnType<typeof platformListCharges>>, TError = ErrorType<ProblemDetailsDto>>(
+ params?: PlatformListChargesParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformListCharges>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPlatformListChargesQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getPlatformRecordChargeUrl = () => {
+
+
+
+
+  return `/v1/platform/charges`
+}
+
+/**
+ * @summary Apunta a mano un cobro de plan a un centro. El IVA y el total los calcula el servidor a partir de la base y el tipo.
+ */
+export const platformRecordCharge = async (recordPlatformChargeRequestDto: RecordPlatformChargeRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PlatformChargeResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PlatformChargeResponseDto>(getPlatformRecordChargeUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(recordPlatformChargeRequestDto)
+  }
+);}
+
+
+
+
+
+export const getPlatformRecordChargeMutationKey = () => ['platformRecordCharge'] as const;
+
+export const getPlatformRecordChargeMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof platformRecordCharge>>, TError,PlatformRecordChargeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof platformRecordCharge>>, TError,PlatformRecordChargeMutationVariables, TContext> => {
+
+const mutationKey = getPlatformRecordChargeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof platformRecordCharge>>, PlatformRecordChargeMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  platformRecordCharge(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PlatformRecordChargeMutationResult = NonNullable<Awaited<ReturnType<typeof platformRecordCharge>>>
+    export type PlatformRecordChargeMutationBody = RecordPlatformChargeRequestDto
+    export type PlatformRecordChargeMutationError = ErrorType<ProblemDetailsDto>
+    export type PlatformRecordChargeMutationVariables = {data: RecordPlatformChargeRequestDto}
+
+    /**
+ * @summary Apunta a mano un cobro de plan a un centro. El IVA y el total los calcula el servidor a partir de la base y el tipo.
+ */
+export const usePlatformRecordCharge = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof platformRecordCharge>>, TError,PlatformRecordChargeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof platformRecordCharge>>,
+        TError,
+        PlatformRecordChargeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPlatformRecordChargeMutationOptions(options), queryClient);
+    }
+    export const getPlatformUpdateChargeUrl = (chargeId: string,) => {
+
+
+
+
+  return `/v1/platform/charges/${chargeId}`
+}
+
+/**
+ * @summary Cambia el estado de un cobro (cobrado, pendiente, anulado) o su referencia de factura. Un cobro anulado ya no se cambia.
+ */
+export const platformUpdateCharge = async (chargeId: string,
+    updatePlatformChargeRequestDto: UpdatePlatformChargeRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<PlatformChargeResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<PlatformChargeResponseDto>(getPlatformUpdateChargeUrl(chargeId),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(updatePlatformChargeRequestDto)
+  }
+);}
+
+
+
+
+
+export const getPlatformUpdateChargeMutationKey = () => ['platformUpdateCharge'] as const;
+
+export const getPlatformUpdateChargeMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof platformUpdateCharge>>, TError,PlatformUpdateChargeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof platformUpdateCharge>>, TError,PlatformUpdateChargeMutationVariables, TContext> => {
+
+const mutationKey = getPlatformUpdateChargeMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof platformUpdateCharge>>, PlatformUpdateChargeMutationVariables> = (props) => {
+          const {chargeId,data} = props ?? {};
+
+          return  platformUpdateCharge(chargeId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PlatformUpdateChargeMutationResult = NonNullable<Awaited<ReturnType<typeof platformUpdateCharge>>>
+    export type PlatformUpdateChargeMutationBody = UpdatePlatformChargeRequestDto
+    export type PlatformUpdateChargeMutationError = ErrorType<ProblemDetailsDto>
+    export type PlatformUpdateChargeMutationVariables = {chargeId: string;data: UpdatePlatformChargeRequestDto}
+
+    /**
+ * @summary Cambia el estado de un cobro (cobrado, pendiente, anulado) o su referencia de factura. Un cobro anulado ya no se cambia.
+ */
+export const usePlatformUpdateCharge = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof platformUpdateCharge>>, TError,PlatformUpdateChargeMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof platformUpdateCharge>>,
+        TError,
+        PlatformUpdateChargeMutationVariables,
+        TContext
+      > => {
+      return useMutation(getPlatformUpdateChargeMutationOptions(options), queryClient);
+    }
+    export const getPlatformGetChargeReportUrl = (params: PlatformGetChargeReportParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/platform/reports/monthly?${stringifiedParams}` : `/v1/platform/reports/monthly`
+}
+
+/**
+ * @summary Lo cobrado mes a mes entre dos meses (base, IVA, total, comisiones y número de cobros) y el total del rango.
+ */
+export const platformGetChargeReport = async (params: PlatformGetChargeReportParams, options?: Parameters<typeof apiMutator>[1]): Promise<PlatformChargeReportResponseDto> => {
+
+  return apiMutator<PlatformChargeReportResponseDto>(getPlatformGetChargeReportUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPlatformGetChargeReportQueryKey = (params?: PlatformGetChargeReportParams,) => {
+    return [
+    `/v1/platform/reports/monthly`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getPlatformGetChargeReportQueryOptions = <TData = Awaited<ReturnType<typeof platformGetChargeReport>>, TError = ErrorType<ProblemDetailsDto>>(params: PlatformGetChargeReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPlatformGetChargeReportQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof platformGetChargeReport>>> = ({ signal }) => platformGetChargeReport(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PlatformGetChargeReportQueryResult = NonNullable<Awaited<ReturnType<typeof platformGetChargeReport>>>
+export type PlatformGetChargeReportQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePlatformGetChargeReport<TData = Awaited<ReturnType<typeof platformGetChargeReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformGetChargeReportParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformGetChargeReport>>,
+          TError,
+          Awaited<ReturnType<typeof platformGetChargeReport>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformGetChargeReport<TData = Awaited<ReturnType<typeof platformGetChargeReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformGetChargeReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformGetChargeReport>>,
+          TError,
+          Awaited<ReturnType<typeof platformGetChargeReport>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformGetChargeReport<TData = Awaited<ReturnType<typeof platformGetChargeReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformGetChargeReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Lo cobrado mes a mes entre dos meses (base, IVA, total, comisiones y número de cobros) y el total del rango.
+ */
+
+export function usePlatformGetChargeReport<TData = Awaited<ReturnType<typeof platformGetChargeReport>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformGetChargeReportParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformGetChargeReport>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPlatformGetChargeReportQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getPlatformExportChargesCsvUrl = (params: PlatformExportChargesCsvParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/platform/reports/export.csv?${stringifiedParams}` : `/v1/platform/reports/export.csv`
+}
+
+/**
+ * @summary El CSV de los cobros cobrados entre dos meses, para el gestor (separador «;» y coma decimal).
+ */
+export const platformExportChargesCsv = async (params: PlatformExportChargesCsvParams, options?: Parameters<typeof apiMutator>[1]): Promise<string> => {
+
+  return apiMutator<string>(getPlatformExportChargesCsvUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getPlatformExportChargesCsvQueryKey = (params?: PlatformExportChargesCsvParams,) => {
+    return [
+    `/v1/platform/reports/export.csv`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getPlatformExportChargesCsvQueryOptions = <TData = Awaited<ReturnType<typeof platformExportChargesCsv>>, TError = ErrorType<ProblemDetailsDto>>(params: PlatformExportChargesCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPlatformExportChargesCsvQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof platformExportChargesCsv>>> = ({ signal }) => platformExportChargesCsv(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PlatformExportChargesCsvQueryResult = NonNullable<Awaited<ReturnType<typeof platformExportChargesCsv>>>
+export type PlatformExportChargesCsvQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function usePlatformExportChargesCsv<TData = Awaited<ReturnType<typeof platformExportChargesCsv>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformExportChargesCsvParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformExportChargesCsv>>,
+          TError,
+          Awaited<ReturnType<typeof platformExportChargesCsv>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformExportChargesCsv<TData = Awaited<ReturnType<typeof platformExportChargesCsv>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformExportChargesCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof platformExportChargesCsv>>,
+          TError,
+          Awaited<ReturnType<typeof platformExportChargesCsv>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlatformExportChargesCsv<TData = Awaited<ReturnType<typeof platformExportChargesCsv>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformExportChargesCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary El CSV de los cobros cobrados entre dos meses, para el gestor (separador «;» y coma decimal).
+ */
+
+export function usePlatformExportChargesCsv<TData = Awaited<ReturnType<typeof platformExportChargesCsv>>, TError = ErrorType<ProblemDetailsDto>>(
+ params: PlatformExportChargesCsvParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof platformExportChargesCsv>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPlatformExportChargesCsvQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+

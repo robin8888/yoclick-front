@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Text, useColorScheme } from 'react-native';
 
+import { useCenterAppearance } from './center-appearance-context';
 import { ThemeProvider, useTheme, useThemePreference } from './ThemeProvider';
 
 jest.mock('react-native/Libraries/Utilities/useColorScheme', () => ({
@@ -92,6 +93,68 @@ describe('ThemeProvider', () => {
 
     expect(screen.getByText('brand:#E4572E')).toBeOnTheScreen();
     expect(screen.getByText('brandInk:#B64625')).toBeOnTheScreen();
+  });
+
+  describe('with a dark background of the center', () => {
+    const DARK_BACKGROUND = {
+      backgroundColor: '#0E0E0E',
+      backgroundColorEnd: null,
+      hiveColor: null,
+    };
+
+    function AppearanceProbe(): React.JSX.Element {
+      const { backgroundColor } = useCenterAppearance();
+      const { setThemePreference } = useThemePreference();
+      return (
+        <>
+          <ThemeProbe />
+          <Text>{`background:${backgroundColor ?? 'none'}`}</Text>
+          <Text
+            onPress={() => {
+              setThemePreference('light');
+            }}
+          >
+            Usar claro
+          </Text>
+        </>
+      );
+    }
+
+    function renderCenter(): void {
+      render(
+        <ThemeProvider centerAppearance={DARK_BACKGROUND}>
+          <AppearanceProbe />
+        </ThemeProvider>,
+      );
+    }
+
+    it('adjusts the mode on its own while the preference is the system one', () => {
+      mockedUseColorScheme.mockReturnValue('light');
+      renderCenter();
+
+      expect(screen.getByText('mode:dark')).toBeOnTheScreen();
+      expect(screen.getByText('background:#0E0E0E')).toBeOnTheScreen();
+    });
+
+    it('respects the light mode the person chooses and drops the background that would not read', () => {
+      mockedUseColorScheme.mockReturnValue('light');
+      renderCenter();
+
+      fireEvent.press(screen.getByText('Usar claro'));
+
+      expect(screen.getByText('mode:light')).toBeOnTheScreen();
+      expect(screen.getByText('background:none')).toBeOnTheScreen();
+    });
+
+    it('keeps the background when the chosen mode reads on it', () => {
+      mockedUseColorScheme.mockReturnValue('light');
+      renderCenter();
+
+      fireEvent.press(screen.getByText('Usar oscuro'));
+
+      expect(screen.getByText('mode:dark')).toBeOnTheScreen();
+      expect(screen.getByText('background:#0E0E0E')).toBeOnTheScreen();
+    });
   });
 
   it('throws a clear error when useTheme is used outside the provider', () => {

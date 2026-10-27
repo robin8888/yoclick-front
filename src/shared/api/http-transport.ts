@@ -25,10 +25,16 @@ export interface HttpTransportConfig {
   onResponseHeaders?: (headers: Headers) => void;
 }
 
+const CSV_CONTENT_TYPE = 'text/csv';
+
 async function readJsonBody(response: Response): Promise<unknown> {
   if (response.status === NO_CONTENT_STATUS) return undefined;
   const responseText = await response.text();
   if (responseText === '') return undefined;
+  // El informe para el gestor es un CSV: se entrega tal cual, no como JSON.
+  if (response.headers.get('content-type')?.startsWith(CSV_CONTENT_TYPE) === true) {
+    return responseText;
+  }
   try {
     return JSON.parse(responseText) as unknown;
   } catch {

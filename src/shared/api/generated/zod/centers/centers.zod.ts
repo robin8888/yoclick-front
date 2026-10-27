@@ -145,6 +145,7 @@ export const CentersGetSettingsResponse = zod.object({
   "waitlist": zod.boolean(),
   "rooms": zod.boolean()
 }),
+  "autoStartSessions": zod.boolean(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSettingsResponseTrialEndsAtRegExp).nullable(),
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),
@@ -281,6 +282,7 @@ export const CentersUpdateSettingsBody = zod.object({
   "waitlist": zod.boolean().optional(),
   "rooms": zod.boolean().optional()
 }).optional(),
+  "autoStartSessions": zod.boolean().optional(),
   "backgroundColor": zod.string().regex(centersUpdateSettingsBodyBackgroundColorRegExp).nullish(),
   "backgroundColorEnd": zod.string().regex(centersUpdateSettingsBodyBackgroundColorEndRegExp).nullish(),
   "hiveColor": zod.string().regex(centersUpdateSettingsBodyHiveColorRegExp).nullish()
@@ -376,6 +378,7 @@ export const CentersUpdateSettingsResponse = zod.object({
   "waitlist": zod.boolean(),
   "rooms": zod.boolean()
 }),
+  "autoStartSessions": zod.boolean(),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersUpdateSettingsResponseTrialEndsAtRegExp).nullable(),
   "backgroundColor": zod.string().nullable(),
   "backgroundColorEnd": zod.string().nullable(),
@@ -457,6 +460,7 @@ export const CentersGetSubscriptionHeader = zod.object({
 })
 
 export const centersGetSubscriptionResponseTrialEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const centersGetSubscriptionResponseGraceEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const centersGetSubscriptionResponseMaxClientsMin = -9007199254740991;
 export const centersGetSubscriptionResponseMaxClientsMax = 9007199254740991;
 
@@ -480,6 +484,12 @@ export const centersGetSubscriptionResponsePhotoStorageLimitBytesMax = 900719925
 export const CentersGetSubscriptionResponse = zod.object({
   "status": zod.enum(['trial', 'active', 'past_due', 'suspended']),
   "trialEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSubscriptionResponseTrialEndsAtRegExp).nullable(),
+  "planId": zod.enum(['basic', 'pro', 'premium']),
+  "billingPeriod": zod.union([zod.literal('monthly'),zod.literal('annual'),zod.literal(null)]).nullable(),
+  "graceEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSubscriptionResponseGraceEndsAtRegExp).nullable(),
+  "hasSubscription": zod.boolean(),
+  "isPlanRequired": zod.boolean(),
+  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'ownApp'])),
   "maxClients": zod.int().min(centersGetSubscriptionResponseMaxClientsMin).max(centersGetSubscriptionResponseMaxClientsMax).nullable(),
   "activeClientCount": zod.int().min(centersGetSubscriptionResponseActiveClientCountMin).max(centersGetSubscriptionResponseActiveClientCountMax),
   "videoStorageLimitBytes": zod.int().min(centersGetSubscriptionResponseVideoStorageLimitBytesMin).max(centersGetSubscriptionResponseVideoStorageLimitBytesMax).nullable(),
@@ -501,4 +511,94 @@ export const CentersGetLogoParams = zod.object({
 })
 
 export const CentersGetLogoResponse = zod.unknown()
+
+/**
+ * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
+ */
+export const centersListSubscriptionPlansPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersListSubscriptionPlansParams = zod.object({
+  "centerId": zod.uuid().regex(centersListSubscriptionPlansPathCenterIdRegExp)
+})
+
+export const CentersListSubscriptionPlansHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemMaxClientsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemMaxClientsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax = 9007199254740991;
+
+
+
+export const CentersListSubscriptionPlansResponse = zod.object({
+  "plans": zod.array(zod.object({
+  "id": zod.enum(['basic', 'pro', 'premium']),
+  "name": zod.string(),
+  "monthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax),
+  "annualMonthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax),
+  "setupFeeCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin).max(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax),
+  "maxClients": zod.int().min(centersListSubscriptionPlansResponsePlansItemMaxClientsMin).max(centersListSubscriptionPlansResponsePlansItemMaxClientsMax).nullable(),
+  "documentStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax),
+  "videoStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax).nullable(),
+  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'ownApp'])),
+  "isAvailable": zod.boolean()
+}))
+})
+
+/**
+ * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
+ */
+export const centersCreateSubscriptionPortalPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersCreateSubscriptionPortalParams = zod.object({
+  "centerId": zod.uuid().regex(centersCreateSubscriptionPortalPathCenterIdRegExp)
+})
+
+export const CentersCreateSubscriptionPortalHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const CentersCreateSubscriptionPortalResponse = zod.object({
+  "url": zod.url()
+})
+
+/**
+ * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
+ */
+export const centersCreateSubscriptionCheckoutPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersCreateSubscriptionCheckoutParams = zod.object({
+  "centerId": zod.uuid().regex(centersCreateSubscriptionCheckoutPathCenterIdRegExp)
+})
+
+export const CentersCreateSubscriptionCheckoutHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const CentersCreateSubscriptionCheckoutBody = zod.object({
+  "planId": zod.enum(['basic', 'pro', 'premium']),
+  "period": zod.enum(['monthly', 'annual'])
+})
+
+export const CentersCreateSubscriptionCheckoutResponse = zod.object({
+  "url": zod.url()
+})
 

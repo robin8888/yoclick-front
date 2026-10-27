@@ -242,11 +242,18 @@ describe('PlatformHomeScreen', () => {
     expect(getMockRouter().push).toHaveBeenCalledWith('/(platform)/mfa-setup');
   });
 
-  it('shows the accountant only a note until the reports arrive', async () => {
-    mockApi({ 'GET /v1/me': { platformRole: 'accountant' } });
+  it('shows the accountant only the charges and the reports, never the administration', async () => {
+    mockApi({
+      'GET /v1/me': { platformRole: 'accountant' },
+      'GET /v1/platform/reports/monthly': {
+        months: [],
+        totals: { baseCents: 0, vatCents: 0, totalCents: 0, chargeCount: 0, stripeFeeCents: 0 },
+      },
+    });
     renderScreen(<PlatformHomeScreen />);
 
-    expect(await screen.findByText(/Tu usuario es de solo lectura/)).toBeOnTheScreen();
+    expect(await screen.findByRole('tab', { name: 'Informes' })).toBeOnTheScreen();
+    expect(screen.getByRole('tab', { name: 'Cobros' })).toBeOnTheScreen();
     expect(screen.queryByRole('tab', { name: 'Centros' })).toBeNull();
     expect(findApiCall('GET', '/v1/platform/overview')).toBeUndefined();
   });

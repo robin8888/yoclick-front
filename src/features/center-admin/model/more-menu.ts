@@ -2,8 +2,12 @@ import type { Href } from 'expo-router';
 
 import type { IconName } from '@/ui/atoms/Icon';
 
+import type { CenterSubscriptionResponseDto } from '@/shared/api/generated/model';
+
 import type { CenterModuleEntry } from './center-module-entries';
 import { buildInvitePersonRoute } from './invite-person-route';
+
+export type PlanFeatureName = CenterSubscriptionResponseDto['features'][number];
 
 export type MoreMenuTextKey =
   | 'messages'
@@ -30,6 +34,8 @@ export interface MoreMenuEntry {
   textKey: MoreMenuTextKey;
   /** Si el centro apaga este módulo, la entrada no sale. */
   requiredModule?: CenterModuleEntry;
+  /** Si el plan del centro no incluye esta función, la entrada no sale. */
+  requiredPlanFeature?: PlanFeatureName;
   /** Se toca pocas veces (ajustes, cuenta, altas): va plegada bajo «Más ajustes». */
   isAdvanced?: true;
   route: Href;
@@ -71,11 +77,13 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
         route: '/(admin)/routines',
         iconName: 'play',
         requiredModule: 'content',
+        requiredPlanFeature: 'routines',
       },
       {
         textKey: 'importClients',
         route: '/(admin)/clients/import',
         iconName: 'file',
+        requiredPlanFeature: 'clientImport',
         isAdvanced: true,
       },
       { textKey: 'brand', route: '/(admin)/(tabs)/brand', iconName: 'palette' },
@@ -91,7 +99,12 @@ export const MORE_MENU_GROUPS: readonly MoreMenuGroup[] = [
         iconName: 'creditCard',
         requiredModule: 'passes',
       },
-      { textKey: 'reports', route: '/(admin)/reports', iconName: 'file' },
+      {
+        textKey: 'reports',
+        route: '/(admin)/reports',
+        iconName: 'file',
+        requiredPlanFeature: 'reports',
+      },
       {
         textKey: 'subscription',
         route: '/(admin)/subscription',

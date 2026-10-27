@@ -52,7 +52,7 @@ describe('AgendaScreen', () => {
     expect(screen.getByRole('heading', { name: 'Mi agenda' })).toBeOnTheScreen();
   });
 
-  it('shows the in-progress phase for a class that was started', async () => {
+  it('counts the time a started class has been running', async () => {
     mockApi({
       [AGENDA_PATH]: buildAgenda([
         buildAgendaEntry(-10, { startedAt: new Date(Date.now() - 600_000).toISOString() }),
@@ -60,7 +60,7 @@ describe('AgendaScreen', () => {
     });
     renderScreen(<AgendaScreen isCenterWide={false} />);
 
-    expect(await screen.findByText('En curso')).toBeOnTheScreen();
+    expect(await screen.findByText(/^En curso · 10:0\d$/)).toBeOnTheScreen();
   });
 
   it('names the professional only in the center-wide agenda', async () => {

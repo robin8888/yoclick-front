@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { CenterAppearanceProvider, CenterIdentityProvider, ThemeProvider } from '@/shared/theme';
+import { CenterIdentityProvider, ThemeProvider } from '@/shared/theme';
 
 import { useActiveCenterAppearance } from '../hooks/useActiveCenterAppearance';
 import { useActiveCenterIdentity } from '../hooks/useActiveCenterIdentity';
@@ -21,9 +21,7 @@ export function AppThemeProvider({ children }: Readonly<AppThemeProviderProps>):
 
   return (
     <ThemeProvider brandHexColor={brandHexColor} centerAppearance={centerAppearance}>
-      <CenterAppearanceProvider centerAppearance={centerAppearance}>
-        <CenterIdentityProvider centerIdentity={centerIdentity}>{children}</CenterIdentityProvider>
-      </CenterAppearanceProvider>
+      <CenterIdentityProvider centerIdentity={centerIdentity}>{children}</CenterIdentityProvider>
     </ThemeProvider>
   );
 }

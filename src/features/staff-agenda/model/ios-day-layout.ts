@@ -24,6 +24,8 @@ export interface DayEvent {
   roomName: string | null;
   /** Cuántas personas hay apuntadas: la agenda no enseña quiénes, eso es del detalle. */
   personCount: number;
+  /** Cuándo se inició la clase y sigue en curso; `null` si no ha empezado o ya terminó. */
+  runningSince: string | null;
   /** Minutos desde las 00:00 en la zona del centro. */
   startMinutes: number;
   endMinutes: number;
@@ -52,6 +54,11 @@ function readDurationMinutes(startsAt: string, endsAt: string): number {
   return Math.round((Date.parse(endsAt) - Date.parse(startsAt)) / MILLISECONDS_PER_MINUTE);
 }
 
+/** Desde cuándo está en marcha la reserva; `null` si no se inició o ya terminó. */
+function readRunningSince(booking: AgendaResponseDtoEntriesItem['booking']): string | null {
+  return booking.startedAt !== null && booking.endedAt === null ? booking.startedAt : null;
+}
+
 /** Agrupa las reservas de una misma clase en un solo bloque, en orden de comienzo. */
 function groupBySession(
   entries: readonly AgendaResponseDtoEntriesItem[],
@@ -63,6 +70,7 @@ function groupBySession(
     const existing = bySession.get(booking.session.id);
     if (existing !== undefined) {
       existing.personCount += 1;
+      existing.runningSince ??= readRunningSince(booking);
       continue;
     }
     const startMinutes = readLocalMinutes(booking.startsAt, timeZone);
@@ -76,6 +84,7 @@ function groupBySession(
       serviceName: booking.service.name,
       roomName: booking.room?.name ?? null,
       personCount: 1,
+      runningSince: readRunningSince(booking),
       startMinutes,
       endMinutes: startMinutes + durationMinutes,
     });
@@ -101,6 +110,7 @@ function toEmptyEvent(
     serviceName: session.service.name,
     roomName: session.room?.name ?? null,
     personCount: 0,
+    runningSince: null,
     startMinutes,
     endMinutes: startMinutes + durationMinutes,
   };

@@ -25,7 +25,7 @@ Los precios, plazos y condiciones de terceros (Stripe, proveedores de facturaci�
 | Pro | 79 € | 65 € | 500 | 5 GB | no |
 | Premium | 149 € | 124 € | ilimitado | 20 GB | sí (tope propio) |
 
-IVA aparte. Premium suma **290 € de alta, una sola vez**, en la primera factura. Los importes **no se escriben en el código**: salen de los *Price* de Stripe y de una tabla de planes en el backend. Al activar o cambiar de plan, el backend ajusta los límites del centro (`max_clients`, `document_storage_limit_bytes`, `video_storage_limit_bytes`) desde esa tabla. Queda pendiente corregir `00-producto.md`, que da vídeo a Pro y la decisión del 7 oct lo dejó solo en Premium.
+IVA aparte. El Premium **no cobra cuota de alta** (decisión del 27 oct; el campo `setup_fee_cents` sigue existiendo y vale 0). Los importes **no se escriben en el código**: salen de los *Price* de Stripe y de una tabla de planes en el backend. Al activar o cambiar de plan, el backend ajusta los límites del centro (`max_clients`, `document_storage_limit_bytes`, `video_storage_limit_bytes`) desde esa tabla. Queda pendiente corregir `00-producto.md`, que da vídeo a Pro y la decisión del 7 oct lo dejó solo en Premium.
 
 ### 2.2 · Ciclo de vida
 
@@ -69,7 +69,7 @@ La app solo **informa** del estado del plan; no tiene botón de comprar (decisi�
    - suscripción con el *Price* elegido y `trial_end = trial_ends_at` del centro, de modo que **no se cobra hasta que acaba la prueba** (si ya pasó, se cobra al momento);
    - recogida obligatoria de **NIF/CIF y dirección fiscal** del centro, necesarios para que la factura sea completa;
    - correo del propietario prellenado y `centerId` en los metadatos;
-   - para Premium, la cuota de alta de 290 € como línea adicional de la primera factura.
+   - si el plan tuviera cuota de alta (hoy 0), una línea adicional en la primera factura.
 5. Para cambiar de plan, cambiar la tarjeta o cancelar se usa el **portal del cliente de Stripe**, de nuevo con un enlace firmado.
 6. IVA: precios sin IVA y 21 % añadido. Decidir con el gestor si se usa Stripe Tax o un tipo fijo.
 
@@ -165,9 +165,9 @@ Todas bajo `/v1/platform/*`, solo con segundo factor y rol de plataforma; `accou
 | **P1** ✅ | Rol de plataforma, guard con segundo factor, script de concesión, auditoría, políticas RLS. | Nada |
 | **P2** ✅ | Estadísticas: resumen y lista de centros con agregados. | Nada |
 | **P3** ✅ | App: zona «Plataforma» con Resumen, Centros, Actividad y Detalle (acciones). | Nada |
-| **P4** | Registro de cobros, perfil de facturación, informes y exportación CSV; usuario del gestor. | Tus datos fiscales y confirmar columnas con el gestor |
-| **P5** | Stripe Billing: tabla de planes, sesiones de Checkout y portal, webhooks, estados y barrido, avisos por correo, límites por plan. | Cuenta de Stripe de Yoclick, productos y precios, Brevo con dominio verificado, página mínima en `yoclick.app` |
-| **P6** | Pantalla «Mi suscripción» del centro con el estado real, avisos de gracia y suspensión. | Texto legal revisado |
+| **P4** ✅ | Registro de cobros, informes y exportación CSV; usuario del gestor. (El perfil de facturación por centro queda para P5; ver «Hecho en P4».) | Confirmar con el gestor las columnas del CSV |
+| **P5** ✅ (modo pruebas) | Stripe Billing: tabla de planes, sesiones de Checkout y portal, webhooks, estados y barrido, avisos por correo, límites por plan. | Cuenta de Stripe de Yoclick, productos y precios, Brevo con dominio verificado, página mínima en `yoclick.app` |
+| **P6** ✅ | Pantalla «Mi suscripción» del centro con el estado real, avisos de gracia y suspensión. | Texto legal revisado |
 
 P1 a P4 son independientes de cualquier cuenta externa y sirven ya para llevar los primeros pilotos a mano. P5 espera a Stripe, al dominio y al proveedor de facturación (fases B y E de `16-plan-de-lanzamiento.md`).
 
@@ -180,10 +180,35 @@ P1 a P4 son independientes de cualquier cuenta externa y sirven ya para llevar l
 
 Hecho en P1 a P3: `users.platform_role` con *trigger* que impide cambiarlo desde la API; tabla de auditoría de solo inserción; políticas RLS de solo lectura para `centers`, `memberships`, `bookings` y `class_sessions` y de cambio en `centers`; guard `@PlatformRoles` con segundo factor obligatorio (un usuario sin rol recibe 404); endpoints `GET overview`, `GET centers`, `GET centers/:id`, `PATCH centers/:id` y `GET audit-log`; y en la app, las pantallas Resumen, Centros (con búsqueda y filtro por estado), Actividad y Detalle de centro (ampliar prueba, suspender, reactivar, cambiar tope). El usuario `accountant` ya entra a su zona, pero solo ve un aviso hasta P4.
 
+### Hecho en P4 (27 oct 2026)
+
+- **Backend**: migración `platform_charges` (importes en céntimos con restricción `total = base + cuota`, estados `pending`/`paid`/`void`, sin `DELETE` para el rol de la API; el `admin` lee, crea y cambia, el `accountant` solo lee). Endpoints `GET/POST /v1/platform/charges`, `PATCH /v1/platform/charges/:id`, `GET /v1/platform/reports/monthly` y `GET /v1/platform/reports/export.csv`. La cuota de IVA y el total los calcula el servidor; no se acepta una fecha futura; un cobro anulado ya no se cambia; cada alta o cambio queda en la auditoría.
+- **CSV** (separador `;`, coma decimal, solo cobros `paid`): fecha de cobro, periodo, centro, razón social, NIF, base, tipo de IVA, cuota, total, comisión de Stripe, método, referencia de factura e id de Stripe. Las celdas de texto que empiezan por `=`, `+`, `-` o `@` se neutralizan con un apóstrofo, porque el nombre de un centro lo escribe un tercero y una hoja de cálculo lo ejecutaría como fórmula.
+- **App**: pestañas «Cobros» (por mes, con edición de la referencia de factura, cobrar un pendiente y anular) e «Informes» (mes o trimestre, totales, desglose por meses y «Compartir CSV»). El cobro se apunta desde la ficha del centro, con concepto e importe sugeridos de su plan. El gestor (`accountant`) entra directo a Cobros e Informes, solo lectura.
+- **Decisiones**: la razón social y el NIF se guardan en cada cobro (son los datos de la factura en ese momento), así que no hace falta todavía la tabla `platform_center_billing`; llegará con P5. El CSV se comparte como texto con el menú del sistema para no escribir un fichero con datos fiscales en el móvil (SEC-M9). Para que el gestor vea el nombre del centro en sus cobros, tiene una política de lectura sobre `centers`; el código solo selecciona el nombre.
+- **Para usarlo**: `npm run db:deploy` en el backend y, para el gestor, `npm run platform:role -- grant correo accountant`.
+
+### Hecho en P5 y P6 (27 oct 2026, modo de pruebas de Stripe)
+
+- **Backend** (`src/modules/billing`): `centers` guarda `stripe_customer_id`, `stripe_subscription_id`, `billing_period` y `grace_ends_at`; `platform_plans` guarda los ids de Stripe (producto, precio mensual y anual, cuota de alta, IVA); `platform_webhook_events` evita procesar dos veces un aviso. Un contexto de base de datos propio (`billing`) con políticas mínimas lo usan solo los avisos de Stripe y el barrido.
+- **`npm run billing:setup`** crea o reutiliza en Stripe los tres productos, sus precios (el importe va en la `lookup_key`, porque un precio de Stripe no se edita) y el IVA del 21 %. Es repetible. El precio anual se cobra como el precio anual por mes por doce.
+- **`GET /centers/:id/subscription/plans`** (propietario) lista los planes con sus precios; `POST /centers/:id/subscription/checkout` da la página de pago de Stripe. Si la prueba sigue en marcha, el primer cobro se aplaza a su fin (Stripe exige al menos 48 h). Un centro con suscripción activa recibe 409 al pedir otro pago: cambia de plan desde el portal.
+- **Avisos** en el mismo `POST /v1/webhooks/stripe`: `checkout.session.completed` (guarda plan y suscripción y copia al centro los límites del plan), `invoice.paid` (activa, quita la gracia y apunta el cobro en la P4; una factura de 0 € se ignora), `invoice.payment_failed` (abre 7 días de gracia, sin alargarlos en los reintentos) y `customer.subscription.updated/deleted`. Los eventos Connect (cobros de bonos de un centro) no se tocan: el dinero de los bonos no pasa por Yoclick.
+- **Barrido** (`BILLING_SWEEP_INTERVAL_SECONDS`, **0 = apagado por defecto**): una prueba acabada sin plan abre la gracia; una gracia agotada suspende. Está apagado para no suspender centros de pruebas.
+- **App**: «Mi suscripción» muestra el plan real, la periodicidad, el fin de la gracia y «Elegir plan»; `/(admin)/subscription/plans` deja elegir plan y pagar mes a mes o una vez al año, abre Stripe en el navegador y recarga la suscripción al volver. Ver el aviso de App Review en §7.
+- **Portal de cliente de Stripe** (`POST /centers/:id/subscription/portal`, solo propietario y solo si ya hay cliente en Stripe): cambiar de plan o de periodicidad (con prorrateo), cambiar la tarjeta, ver facturas y cancelar al final del periodo. `billing:setup` crea o actualiza su configuración por API (etiqueta `yoclick_portal`), así que no hay que tocar el panel de Stripe. Al cambiar de plan, `customer.subscription.updated` trae los productos de la suscripción (`yoclick_plan_<id>`) y el centro recibe el plan y los límites nuevos, con rastro `plan_changed`. En la app: botón «Gestionar suscripción» en Mi suscripción y en Planes cuando ya paga.
+- **Pendiente**: el barrido en producción, y pasar a claves reales cuando haya alta de autónomo, dominio y web mínima.
+
 ## 7 · Pendiente de confirmar
 
-- Revisión de App Review: que la app informe del plan sin botón de compra ni enlace de pago dentro.
+- **Revisión de App Review (decisión del 27 oct 2026 en conflicto con la del 5 oct):** la app ahora tiene la pantalla de planes con «Elegir», que abre Stripe en el navegador. Apple puede rechazar enlaces a pagos externos de servicios digitales; los centros son empresas (guía 3.1.3(c), servicios para organizaciones), pero la misma app la usan sus clientes. Hay que consultar la guía vigente antes de enviar a revisión y, si hace falta, dejar la pantalla de planes solo informativa en iOS.
 - IVA: Stripe Tax o tipo fijo del 21 %; cómo trata Stripe Billing las facturas de importe con IVA.
 - Plazo de conservación de datos tras cancelar (asesor legal).
 - Qué proveedor de facturación usa tu gestor; si ya tiene programa con VeriFactu y conexión a Stripe, no hace falta contratar otro.
 - Columnas exactas del informe y periodicidad (mensual o trimestral) que quiere tu gestor.
+
+## Hecho el 27 oct: prueba acabada, aviso al contratar y funciones por plan
+
+- **Prueba acabada sin plan.** La API calcula `isPlanRequired` con las fechas (no espera al barrido): prueba terminada sin suscripción, gracia agotada o centro suspendido. La app tapa todo con un modal que no se puede cerrar (`PlanRequiredGate`, organismo `BlockingModal`), con un solo botón a la pantalla de planes; en las pantallas de suscripción no sale, para poder elegir y pagar. Al volver del navegador se recarga el estado. La API lo impone de verdad (`PlanGuard`): el propietario y los administradores no pueden cambiar nada (402 `PLAN_REQUIRED`) salvo elegir y pagar el plan, ver avisos y registrar el móvil; leer sí. Clientes y equipo siguen con lo suyo.
+- **Aviso al contratar o cambiar de plan.** Al llegar `checkout.session.completed` se guarda un aviso `plan_subscribed` a cada propietario y se envía el push al momento; un cambio de plan o de periodicidad desde el portal guarda `plan_changed`. Si el aviso del portal llega antes que el del pago, no se duplica. Queda registro en la lista de avisos de la app.
+- **Qué incluye cada plan.** `platform_plans` guarda topes y precios; las funciones están en `plan-features.ts`. La pantalla de planes enseña lo básico en el Básico y, en cada plan superior, «Todo lo del plan X, y además:» con lo que suma, más topes de clientes y espacio.

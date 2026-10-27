@@ -8,6 +8,7 @@ export {
   TeamMemberAvailabilityScreen,
 } from './screens/StaffAvailabilityScreen';
 export { SubscriptionScreen } from './screens/SubscriptionScreen';
+export { SubscriptionPlansScreen } from './screens/SubscriptionPlansScreen';
 export { ReportsScreen } from './screens/ReportsScreen';
 export { InviteClientsScreen } from './screens/InviteClientsScreen';
 export { InvitePersonScreen } from './screens/InvitePersonScreen';
@@ -36,4 +37,6 @@ export { ReceptionPosterScreen } from './screens/ReceptionPosterScreen';
 export { AccountSecurityScreen } from './screens/AccountSecurityScreen';
 export { PrivacyLegalScreen } from './screens/PrivacyLegalScreen';
 export { SetupGuideScreen } from './screens/SetupGuideScreen';
+export { AutoStartSwitch } from './components/AutoStartSwitch';
 export { SetupProgressCard } from './components/SetupProgressCard';
+export { PlanRequiredGate } from './components/PlanRequiredGate';

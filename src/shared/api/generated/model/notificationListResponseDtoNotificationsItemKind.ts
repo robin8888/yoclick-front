@@ -43,4 +43,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   waitlist_offer_expired: 'waitlist_offer_expired',
   pass_rejected: 'pass_rejected',
   schedule_updated: 'schedule_updated',
+  plan_subscribed: 'plan_subscribed',
+  plan_changed: 'plan_changed',
 } as const;

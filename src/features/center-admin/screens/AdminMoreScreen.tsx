@@ -11,6 +11,7 @@ import { Text } from '@/ui/atoms/Text';
 import { ListItem } from '@/ui/molecules/ListItem';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { useCenterSubscription } from '../hooks/useCenterSubscription';
 import { MORE_MENU_GROUPS, type MoreMenuGroup } from '../model/more-menu';
 import { selectMoreMenuGroups } from '../model/more-menu-selection';
 import { SECTION_STYLE } from './AdminMoreScreen.styles';
@@ -61,32 +62,54 @@ function MoreMenuSection({
   );
 }
 
+/** El botón que pliega y despliega «Más ajustes». */
+function AdvancedMenuToggle({
+  areAdvancedShown,
+  onToggle,
+}: Readonly<{ areAdvancedShown: boolean; onToggle: () => void }>): React.JSX.Element {
+  return (
+    <ListItem
+      leadingIconName="settings"
+      title={i18n.t(
+        areAdvancedShown
+          ? 'centerAdmin.more.hideAdvancedTitle'
+          : 'centerAdmin.more.showAdvancedTitle',
+      )}
+      subtitle={i18n.t('centerAdmin.more.advancedSubtitle')}
+      accessibilityLabel={i18n.t(
+        areAdvancedShown
+          ? 'centerAdmin.more.hideAdvancedLabel'
+          : 'centerAdmin.more.showAdvancedLabel',
+      )}
+      onPress={onToggle}
+    />
+  );
+}
+
 /** Lo de cada día, siempre a la vista; lo que se toca pocas veces, plegado bajo «Más ajustes». */
 function MoreMenuGroups({ words }: Readonly<{ words: MoreMenuWords }>): React.JSX.Element {
   const modules = useActiveCenterModules();
+  const planFeatures = useCenterSubscription().data?.features;
   const [areAdvancedShown, setAreAdvancedShown] = useState(false);
-  const everydayGroups = selectMoreMenuGroups(MORE_MENU_GROUPS, { modules, isAdvanced: false });
-  const advancedGroups = selectMoreMenuGroups(MORE_MENU_GROUPS, { modules, isAdvanced: true });
+  const everydayGroups = selectMoreMenuGroups(MORE_MENU_GROUPS, {
+    modules,
+    planFeatures,
+    isAdvanced: false,
+  });
+  const advancedGroups = selectMoreMenuGroups(MORE_MENU_GROUPS, {
+    modules,
+    planFeatures,
+    isAdvanced: true,
+  });
 
   return (
     <>
       {everydayGroups.map((group) => (
         <MoreMenuSection key={group.id} group={group} words={words} />
       ))}
-      <ListItem
-        leadingIconName="settings"
-        title={i18n.t(
-          areAdvancedShown
-            ? 'centerAdmin.more.hideAdvancedTitle'
-            : 'centerAdmin.more.showAdvancedTitle',
-        )}
-        subtitle={i18n.t('centerAdmin.more.advancedSubtitle')}
-        accessibilityLabel={i18n.t(
-          areAdvancedShown
-            ? 'centerAdmin.more.hideAdvancedLabel'
-            : 'centerAdmin.more.showAdvancedLabel',
-        )}
-        onPress={() => {
+      <AdvancedMenuToggle
+        areAdvancedShown={areAdvancedShown}
+        onToggle={() => {
           setAreAdvancedShown((areShown) => !areShown);
         }}
       />

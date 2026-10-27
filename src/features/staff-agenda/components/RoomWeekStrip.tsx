@@ -9,7 +9,9 @@ import { Text } from '@/ui/atoms/Text';
 import { getTodayIsoDate } from '../model/agenda-date';
 import { useRoomWeekAgendas } from '../hooks/useRoomWeekAgendas';
 import { buildAgendaDays, type AgendaDayOption } from '../model/agenda-days';
+import type { AgendaStaffMember } from '../model/center-agenda-summary';
 import { assignRoomMarks, findRoomMark, type RoomMark } from '../model/room-marks';
+import { groupAgendaByStaff } from '../model/staff-lanes';
 import { listRoomIdsWithClasses, listWeekIsoDates, MAX_DOTS_PER_DAY } from '../model/room-week';
 import { createWeekDayStyle, createWeekStripStyle, WEEK_DOTS_STYLE } from './RoomDayGrid.styles';
 import { RoomMarkDot } from './RoomMarkDot';
@@ -79,11 +81,21 @@ function WeekDay({
   );
 }
 
+function toLaneAgenda(
+  agenda: RoomAgendaResponseDto | undefined,
+  staffLanes: readonly AgendaStaffMember[] | undefined,
+): RoomAgendaResponseDto | undefined {
+  if (agenda === undefined || staffLanes === undefined) return agenda;
+  return groupAgendaByStaff(agenda, staffLanes);
+}
+
 interface RoomWeekStripProps {
   selectedIsoDate: string;
   /** La agenda del día elegido: de ella salen las salas (letras y colores) de la semana. */
   agenda: RoomAgendaResponseDto;
   onDaySelect: (isoDate: string) => void;
+  /** Centro sin salas: el equipo, cuyas citas hacen de «salas» de la semana. */
+  staffLanes?: readonly AgendaStaffMember[];
 }
 
 /** La semana del día elegido (lunes a domingo) con puntos de color por sala con clases, como un calendario. */
@@ -91,6 +103,7 @@ export function RoomWeekStrip({
   selectedIsoDate,
   agenda,
   onDaySelect,
+  staffLanes,
 }: Readonly<RoomWeekStripProps>): React.JSX.Element {
   const weekIsoDates = listWeekIsoDates(selectedIsoDate);
   const agendasByDate = useRoomWeekAgendas(weekIsoDates);
@@ -106,7 +119,7 @@ export function RoomWeekStrip({
         <WeekDay
           key={day.isoDate}
           day={day}
-          agendaOfDay={agendasByDate[day.isoDate]}
+          agendaOfDay={toLaneAgenda(agendasByDate[day.isoDate], staffLanes)}
           marks={marks}
           isSelected={day.isoDate === selectedIsoDate}
           isPast={day.isoDate < todayIsoDate}

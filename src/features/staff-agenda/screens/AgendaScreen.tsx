@@ -13,6 +13,7 @@ import { AgendaEntryCard } from '../components/AgendaEntryCard';
 import { DateNavigator } from '../components/DateNavigator';
 import { ScanAttendanceButton } from '../components/ScanAttendanceButton';
 import { useAgendaDay } from '../hooks/useAgendaDay';
+import { buildClassSessionRoute } from '../model/session-route';
 import { useDayAgenda } from '../hooks/useDayAgenda';
 import { useTickingNow } from '@/shared/hooks/useTickingNow';
 
@@ -61,14 +62,13 @@ function AgendaEntries({
           shouldShowStaffName={isCenterWide}
           now={now}
           onPress={() => {
-            router.push({
-              pathname: '/(staff)/sessions/[bookingId]',
-              params: {
+            router.push(
+              buildClassSessionRoute({
                 bookingId: entry.booking.id,
                 date: agenda.date,
-                ...(isCenterWide ? { isCenterWide: 'true' } : {}),
-              },
-            });
+                isCenterWide,
+              }),
+            );
           }}
         />
       ))}

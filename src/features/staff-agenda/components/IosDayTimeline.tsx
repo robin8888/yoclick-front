@@ -5,6 +5,7 @@ import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
 import type { DayEvent, IosDayLayout } from '../model/ios-day-layout';
+import { InProgressText } from './InProgressClock';
 import {
   createEventStyle,
   createHourLabelStyle,
@@ -46,6 +47,8 @@ interface EventBlockTextProps {
   serviceName: string;
   detailLine: string;
   peopleLine: string;
+  /** Con la clase en marcha, desde cuándo: se cuenta el tiempo que lleva. */
+  runningSince: string | null;
 }
 
 /** Los tres renglones de un bloque: servicio en negrita, hora y sala, y cuántos vienen. */
@@ -53,6 +56,7 @@ function EventBlockText({
   serviceName,
   detailLine,
   peopleLine,
+  runningSince,
 }: Readonly<EventBlockTextProps>): React.JSX.Element {
   return (
     <>
@@ -65,6 +69,7 @@ function EventBlockText({
       <Text variant="caption" color="ink2" numberOfLines={1}>
         {peopleLine}
       </Text>
+      {runningSince === null ? null : <InProgressText startedAt={runningSince} />}
     </>
   );
 }
@@ -104,6 +109,7 @@ function EventBlock({ event, firstHour, onPress }: Readonly<EventBlockProps>): R
       serviceName={event.serviceName}
       detailLine={`${timeRange}${place}`}
       peopleLine={people}
+      runningSince={event.runningSince}
     />
   );
 

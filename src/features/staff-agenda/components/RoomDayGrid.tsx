@@ -34,6 +34,7 @@ interface HourRowProps {
   timeZone: string;
   isoDate: string;
   now: Date;
+  isStaffLane: boolean;
 }
 
 /** Una ficha por clase de esa hora, en línea y envueltas si no caben. */
@@ -43,6 +44,7 @@ function HourChips({
   timeZone,
   isoDate,
   now,
+  isStaffLane,
 }: Readonly<HourRowProps>): React.JSX.Element {
   const theme = useTheme();
 
@@ -58,6 +60,7 @@ function HourChips({
             timeZone={timeZone}
             isoDate={isoDate}
             now={now}
+            isStaffLane={isStaffLane}
           />
         );
       })}
@@ -86,6 +89,8 @@ function HourRow(props: Readonly<HourRowProps>): React.JSX.Element {
 interface RoomDayGridProps {
   agenda: RoomAgendaResponseDto;
   isoDate: string;
+  /** Centro sin salas: cada «sala» de la agenda es un profesional. */
+  isStaffLane?: boolean;
 }
 
 /**
@@ -93,7 +98,11 @@ interface RoomDayGridProps {
  * hora con una ficha pequeña por clase, para que muchas salas a la vez quepan de un
  * vistazo. Tocar una sala en la leyenda filtra; tocar una ficha abre el detalle de la sala.
  */
-export function RoomDayGrid({ agenda, isoDate }: Readonly<RoomDayGridProps>): React.JSX.Element {
+export function RoomDayGrid({
+  agenda,
+  isoDate,
+  isStaffLane = false,
+}: Readonly<RoomDayGridProps>): React.JSX.Element {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const marks = assignRoomMarks(agenda.rooms);
   const now = useTickingNow(NOW_REFRESH_MS);
@@ -123,6 +132,7 @@ export function RoomDayGrid({ agenda, isoDate }: Readonly<RoomDayGridProps>): Re
           timeZone={agenda.timezone}
           isoDate={isoDate}
           now={now}
+          isStaffLane={isStaffLane}
         />
       ))}
     </>

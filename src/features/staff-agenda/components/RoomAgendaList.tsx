@@ -7,6 +7,7 @@ import { useTheme } from '@/shared/theme';
 import { Text } from '@/ui/atoms/Text';
 
 import { listTeachersOfRoomDay, type RoomDay } from '../model/room-agenda';
+import { buildClassSessionRoute } from '../model/session-route';
 import { createEntryCardStyle } from './AgendaEntryCard.styles';
 import { RoomSessionRows } from './RoomSessionRows';
 
@@ -74,10 +75,13 @@ export function RoomAgendaList({
           onPress={() => {
             const first = agenda.sessionsWithoutRoom[0]?.attendees[0];
             if (first === undefined) return;
-            router.push({
-              pathname: '/(staff)/sessions/[bookingId]',
-              params: { bookingId: first.bookingId, date: isoDate, isCenterWide: 'true' },
-            });
+            router.push(
+              buildClassSessionRoute({
+                bookingId: first.bookingId,
+                date: isoDate,
+                isCenterWide: true,
+              }),
+            );
           }}
           style={createEntryCardStyle(theme)}
         >

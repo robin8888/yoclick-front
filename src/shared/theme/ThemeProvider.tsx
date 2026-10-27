@@ -2,7 +2,12 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from 're
 import { useColorScheme } from 'react-native';
 
 import { buildTheme } from './build-theme';
-import { resolveThemeModeForBackground, type CenterAppearance } from './center-appearance';
+import {
+  DEFAULT_CENTER_APPEARANCE,
+  resolveThemeModeForBackground,
+  type CenterAppearance,
+} from './center-appearance';
+import { CenterAppearanceProvider } from './center-appearance-context';
 import type { Theme, ThemeColors, ThemeMode, ThemePreference } from './theme.types';
 
 interface ThemeContextValue {
@@ -31,6 +36,32 @@ function resolveThemeMode(
   return systemColorScheme === 'dark' ? 'dark' : 'light';
 }
 
+interface ResolvedLook {
+  mode: ThemeMode;
+  /** El fondo propio que de verdad se pinta; `undefined` si el centro no tiene o se descartó. */
+  appearance: CenterAppearance | undefined;
+}
+
+/**
+ * Con un fondo propio, el modo «Sistema» se ajusta solo para que el texto contraste. Si la persona
+ * elige claro u oscuro, se respeta: si ese modo no contrasta con el fondo del centro, se deja el
+ * fondo de siempre en vez de ignorar su elección (y de pintar texto ilegible).
+ */
+function resolveLook(
+  themePreference: ThemePreference,
+  preferredMode: ThemeMode,
+  centerAppearance: CenterAppearance | undefined,
+): ResolvedLook {
+  if (centerAppearance === undefined) return { mode: preferredMode, appearance: undefined };
+  const adjustedMode = resolveThemeModeForBackground(centerAppearance, preferredMode);
+  if (themePreference === 'system') return { mode: adjustedMode, appearance: centerAppearance };
+  const isBackgroundKept = adjustedMode === preferredMode;
+  return {
+    mode: preferredMode,
+    appearance: isBackgroundKept ? centerAppearance : DEFAULT_CENTER_APPEARANCE,
+  };
+}
+
 export function ThemeProvider({
   children,
   brandHexColor,
@@ -41,23 +72,30 @@ export function ThemeProvider({
   const [themePreference, setThemePreference] = useState<ThemePreference>(initialPreference);
   const systemColorScheme = useColorScheme();
   const preferredMode = resolveThemeMode(themePreference, systemColorScheme);
-  const mode =
-    centerAppearance === undefined
-      ? preferredMode
-      : resolveThemeModeForBackground(centerAppearance, preferredMode);
+  const { mode, appearance } = resolveLook(themePreference, preferredMode, centerAppearance);
 
   // El valor del contexto se memoiza porque lo consume toda la app: un objeto nuevo en cada
   // render repintaría todos los componentes aunque el tema no haya cambiado.
   const contextValue = useMemo<ThemeContextValue>(
     () => ({
-      theme: buildTheme({ mode, brandHexColor, colorOverrides, centerAppearance }),
+      theme: buildTheme({ mode, brandHexColor, colorOverrides, centerAppearance: appearance }),
       themePreference,
       setThemePreference,
     }),
-    [mode, brandHexColor, colorOverrides, centerAppearance, themePreference],
+    [mode, brandHexColor, colorOverrides, appearance, themePreference],
   );
 
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      {appearance === undefined ? (
+        children
+      ) : (
+        <CenterAppearanceProvider centerAppearance={appearance}>
+          {children}
+        </CenterAppearanceProvider>
+      )}
+    </ThemeContext.Provider>
+  );
 }
 
 function useThemeContext(): ThemeContextValue {

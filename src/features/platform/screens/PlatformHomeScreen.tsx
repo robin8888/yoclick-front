@@ -16,20 +16,32 @@ import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ActivityTab } from '../components/ActivityTab';
 import { CentersTab } from '../components/CentersTab';
+import { ChargesTab } from '../components/ChargesTab';
 import { OverviewTab } from '../components/OverviewTab';
 import { PlatformTabs } from '../components/PlatformTabs';
 import { PlansTab } from '../components/PlansTab';
+import { ReportsTab } from '../components/ReportsTab';
+import { usePlatformChargeReport } from '../hooks/usePlatformChargeReport';
 import { usePlatformOverview } from '../hooks/usePlatformOverview';
+import { getCurrentMonthKey, getQuarterRange } from '../model/charge-period';
 
 const PLATFORM_LOGO_HEIGHT = 56;
 
-type PlatformTab = 'overview' | 'centers' | 'plans' | 'activity';
+type PlatformTab = 'overview' | 'centers' | 'plans' | 'charges' | 'reports' | 'activity';
+type AccountantTab = 'charges' | 'reports';
 
-const TAB_OPTIONS = [
+const ADMIN_TAB_OPTIONS = [
   { value: 'overview', label: i18n.t('platform.tabs.overview') },
   { value: 'centers', label: i18n.t('platform.tabs.centers') },
   { value: 'plans', label: i18n.t('platform.tabs.plans') },
+  { value: 'charges', label: i18n.t('platform.tabs.charges') },
+  { value: 'reports', label: i18n.t('platform.tabs.reports') },
   { value: 'activity', label: i18n.t('platform.tabs.activity') },
+] as const;
+
+const ACCOUNTANT_TAB_OPTIONS = [
+  { value: 'charges', label: i18n.t('platform.tabs.charges') },
+  { value: 'reports', label: i18n.t('platform.tabs.reports') },
 ] as const;
 
 function AdministrationTabs({
@@ -38,6 +50,8 @@ function AdministrationTabs({
 }: Readonly<{ tab: PlatformTab; onCenterOpen: (centerId: string) => void }>): React.JSX.Element {
   if (tab === 'centers') return <CentersTab onCenterOpen={onCenterOpen} />;
   if (tab === 'plans') return <PlansTab />;
+  if (tab === 'charges') return <ChargesTab isReadOnly={false} />;
+  if (tab === 'reports') return <ReportsTab />;
   if (tab === 'activity') return <ActivityTab onCenterOpen={onCenterOpen} />;
   return <OverviewTab />;
 }
@@ -61,17 +75,19 @@ function SecondFactorNotice(): React.JSX.Element {
   );
 }
 
+function isSecondFactorError(error: unknown): boolean {
+  return isApiError(error) && error.code === 'MFA_REQUIRED';
+}
+
 function AdministrationHome(): React.JSX.Element {
   const router = useRouter();
   const [tab, setTab] = useState<PlatformTab>('overview');
   const overview = usePlatformOverview();
-  const isSecondFactorMissing =
-    isApiError(overview.error) && overview.error.code === 'MFA_REQUIRED';
 
-  if (isSecondFactorMissing) return <SecondFactorNotice />;
+  if (isSecondFactorError(overview.error)) return <SecondFactorNotice />;
   return (
     <>
-      <PlatformTabs options={TAB_OPTIONS} selectedValue={tab} onValueChange={setTab} />
+      <PlatformTabs options={ADMIN_TAB_OPTIONS} selectedValue={tab} onValueChange={setTab} />
       <AdministrationTabs
         tab={tab}
         onCenterOpen={(centerId) => {
@@ -82,18 +98,33 @@ function AdministrationHome(): React.JSX.Element {
   );
 }
 
-/** Quién entra decide qué ve: el `admin` toda la administración y el gestor, por ahora, solo un aviso. */
+/** El gestor lee los cobros y los informes, nada más. La API es la que le impide cambiar algo. */
+function AccountantHome(): React.JSX.Element {
+  const [tab, setTab] = useState<AccountantTab>('reports');
+  const quarterReport = usePlatformChargeReport(getQuarterRange(getCurrentMonthKey(new Date())));
+
+  if (isSecondFactorError(quarterReport.error)) return <SecondFactorNotice />;
+  return (
+    <>
+      <PlatformTabs options={ACCOUNTANT_TAB_OPTIONS} selectedValue={tab} onValueChange={setTab} />
+      {tab === 'charges' ? <ChargesTab isReadOnly /> : <ReportsTab />}
+    </>
+  );
+}
+
+/** Quién entra decide qué ve: el `admin` toda la administración y el gestor, los cobros e informes. */
 function PlatformHomeContent({
   platformRole,
-}: Readonly<{ platformRole: 'none' | 'admin' | 'accountant' }>): React.JSX.Element {
+}: Readonly<{ platformRole: 'none' | 'admin' | 'accountant' }>): React.JSX.Element | null {
   if (platformRole === 'admin') return <AdministrationHome />;
-  return <Text color="ink2">{i18n.t('platform.accountantNote')}</Text>;
+  if (platformRole === 'accountant') return <AccountantHome />;
+  return null;
 }
 
 /**
- * Inicio de la zona «Plataforma» (docs/spec/17): resumen, centros y actividad para el usuario `admin`.
- * El usuario de solo lectura del gestor entra aquí también, pero por ahora solo ve un aviso: sus informes
- * de cobros llegan con la siguiente fase. Es solo usabilidad: la API decide quién puede qué.
+ * Inicio de la zona «Plataforma» (docs/spec/17): resumen, centros, planes, cobros, informes y actividad
+ * para el usuario `admin`. El usuario de solo lectura del gestor entra aquí también, pero solo ve los
+ * cobros y los informes. Es solo usabilidad: la API decide quién puede qué.
  */
 export function PlatformHomeScreen(): React.JSX.Element {
   const signOut = useSignOutFlow();

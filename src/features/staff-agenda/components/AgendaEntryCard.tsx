@@ -11,6 +11,7 @@ import { Text } from '@/ui/atoms/Text';
 
 import { resolveAgendaPhase, type AgendaPhase } from '../model/session-phase';
 import { createEntryCardStyle, ENTRY_HEADER_STYLE } from './AgendaEntryCard.styles';
+import { InProgressBadge } from './InProgressClock';
 
 const PHASE_TONES: Readonly<Record<AgendaPhase, BadgeTone>> = {
   'not-started': 'neutral',
@@ -69,10 +70,13 @@ function AgendaEntryCaptions({
 function AgendaEntryHeader({
   timeRange,
   phase,
+  startedAt,
   tint,
 }: Readonly<{
   timeRange: string;
   phase: AgendaPhase;
+  /** Cuándo se inició; con la clase en curso, el distintivo cuenta el tiempo que lleva. */
+  startedAt: string | null;
   tint: { tintColor?: string };
 }>): React.JSX.Element {
   return (
@@ -80,9 +84,23 @@ function AgendaEntryHeader({
       <Text variant="titleMd" color="brandInk" {...tint}>
         {timeRange}
       </Text>
-      <Badge label={i18n.t(`staffAgenda.agenda.phase.${phase}`)} tone={PHASE_TONES[phase]} />
+      {phase === 'in-progress' && startedAt !== null ? (
+        <InProgressBadge startedAt={startedAt} />
+      ) : (
+        <Badge label={i18n.t(`staffAgenda.agenda.phase.${phase}`)} tone={PHASE_TONES[phase]} />
+      )}
     </View>
   );
+}
+
+function describeTimeRange(
+  booking: AgendaResponseDtoEntriesItem['booking'],
+  timeZone: string,
+): string {
+  return i18n.t('staffAgenda.agenda.timeRange', {
+    startTime: formatTime24h(booking.startsAt, timeZone),
+    endTime: formatTime24h(booking.endsAt, timeZone),
+  });
 }
 
 /** Las citas que ya terminaron, pasaron o se cancelaron se pintan en gris con texto blanco. */
@@ -102,10 +120,7 @@ export function AgendaEntryCard({
   const { booking, client } = entry;
   const phase = resolveAgendaPhase(booking, now);
   const { tint, cardStyle } = buildFinishedLook(isFinishedPhase(phase));
-  const timeRange = i18n.t('staffAgenda.agenda.timeRange', {
-    startTime: formatTime24h(booking.startsAt, timeZone),
-    endTime: formatTime24h(booking.endsAt, timeZone),
-  });
+  const timeRange = describeTimeRange(booking, timeZone);
 
   return (
     <Pressable
@@ -114,7 +129,12 @@ export function AgendaEntryCard({
       onPress={onPress}
       style={[createEntryCardStyle(theme), cardStyle]}
     >
-      <AgendaEntryHeader timeRange={timeRange} phase={phase} tint={tint} />
+      <AgendaEntryHeader
+        timeRange={timeRange}
+        phase={phase}
+        startedAt={booking.startedAt}
+        tint={tint}
+      />
       <Text variant="bodyStrong" {...tint}>
         {booking.service.name}
       </Text>

@@ -6,7 +6,9 @@
       "overview": "Resumen",
       "centers": "Centros",
       "activity": "Actividad",
-      "plans": "Planes"
+      "plans": "Planes",
+      "charges": "Cobros",
+      "reports": "Informes"
     },
     "status": {
       "trial": "En prueba",
@@ -26,7 +28,6 @@
       "message": "La administración de la plataforma exige entrar con verificación en dos pasos. Actívala y vuelve a iniciar sesión.",
       "action": "Activar segundo factor"
     },
-    "accountantNote": "Tu usuario es de solo lectura. Los informes de cobros llegarán en la siguiente versión.",
     "privacyNote": "Aquí solo hay cifras. Nunca se muestran nombres ni datos de las personas de cada centro.",
     "overview": {
       "errorTitle": "No hemos podido cargar el resumen",
@@ -95,6 +96,73 @@
       "annualAboveMonthly": "Pagando el año, el precio al mes no puede superar al mensual.",
       "saved": "Precios guardados.",
       "vatNote": "Importes sin IVA. Los ingresos cuentan los centros activos y en gracia, a precio mensual."
+    },
+    "charges": {
+      "errorTitle": "No hemos podido cargar los cobros",
+      "emptyTitle": "Sin cobros este mes",
+      "emptyDescription": "Cuando apuntes el cobro de un plan, aparecerá aquí. Se apunta desde la ficha de cada centro.",
+      "emptyReadOnly": "Todavía no hay cobros apuntados este mes.",
+      "loadMore": "Ver más cobros",
+      "previousPeriod": "Periodo anterior",
+      "nextPeriod": "Periodo siguiente",
+      "amounts": "Base {{base}} · IVA {{vat}} ({{rate}} %)",
+      "total": "Total {{total}}",
+      "status": {
+        "pending": "Pendiente",
+        "paid": "Cobrado",
+        "void": "Anulado"
+      },
+      "method": {
+        "transfer": "Transferencia",
+        "card": "Tarjeta",
+        "cash": "Efectivo",
+        "other": "Otra forma de pago"
+      },
+      "invoice": "Factura {{reference}}",
+      "noInvoice": "Sin factura asignada",
+      "edit": "Editar cobro",
+      "editOf": "Editar el cobro de {{name}}",
+      "editTitle": "Editar cobro",
+      "invoiceLabel": "Referencia de factura",
+      "invoiceHelper": "El número de la factura que has emitido para este cobro.",
+      "markPaid": "Marcar como cobrado",
+      "voidCharge": "Anular cobro",
+      "voidWarning": "Un cobro anulado no se puede volver a cambiar y no cuenta en los informes.",
+      "save": "Guardar cambios",
+      "saved": "Cobro guardado",
+      "record": "Apuntar un cobro",
+      "recordTitle": "Apuntar cobro de {{name}}",
+      "recordNote": "Se apunta con la fecha de hoy y como cobrado. El IVA y el total los calcula Yoclick.",
+      "conceptLabel": "Concepto",
+      "defaultConcept": "Suscripción plan {{plan}} · {{month}}",
+      "baseLabel": "Base imponible (€, sin IVA)",
+      "vatLabel": "Tipo de IVA (%)",
+      "methodLabel": "Forma de pago",
+      "legalNameLabel": "Razón social (opcional)",
+      "taxIdLabel": "NIF (opcional)",
+      "conceptError": "Escribe el concepto del cobro.",
+      "baseError": "Escribe un importe válido, por ejemplo 79 o 79,50.",
+      "vatError": "Escribe un porcentaje entre 0 y 100, por ejemplo 21.",
+      "submit": "Apuntar cobro",
+      "recorded": "Cobro apuntado"
+    },
+    "reports": {
+      "errorTitle": "No hemos podido cargar el informe",
+      "month": "Mes",
+      "quarter": "Trimestre",
+      "totalsTitle": "Total del periodo",
+      "base": "Base imponible",
+      "vat": "IVA repercutido",
+      "total": "Total cobrado",
+      "fees": "Comisiones de Stripe",
+      "chargeCount_one": "{{count}} cobro",
+      "chargeCount_other": "{{count}} cobros",
+      "byMonth": "Por meses",
+      "monthLine": "Base {{base}} · IVA {{vat}} · {{count}} cobros",
+      "empty": "No hay cobros cobrados en este periodo.",
+      "exportCsv": "Compartir CSV para el gestor",
+      "exportHint": "Separado por «;» y con coma decimal, para abrirlo en una hoja de cálculo. Solo incluye los cobros marcados como cobrados.",
+      "note": "Yoclick no presenta impuestos ni emite facturas: te da los datos ordenados para tu gestor."
     },
     "center": {
       "title": "Centro",
@@ -272,6 +340,8 @@
     "ROOM_HAS_BOOKINGS": "Hay clases o citas en ese tramo. Cancélalas o muévelas antes de bloquear la sala",
     "SERVICE_ONLY_IN_SCHEDULE": "Este servicio solo se da en sus horarios. Elige una de sus clases con plazas",
     "MODULE_DISABLED": "Tu centro no usa esta función. Puede activarla desde Módulos del centro",
+    "PLAN_REQUIRED": "Tu prueba gratuita ha terminado. Elige un plan en Suscripción para seguir gestionando tu centro",
+    "PLAN_FEATURE_NOT_INCLUDED": "Tu plan no incluye esta función. Cambia a un plan superior en Suscripción",
     "CLIENT_HAS_NO_PASS": "Esa persona no tiene un bono en vigor con clases. Dale un bono desde su ficha para apuntarla",
     "PASS_NEEDED_TO_BOOK": "Para reservar necesitas un bono. Elige uno en Bonos y vuelve a reservar",
     "PASS_FULLY_BOOKED": "Ya tienes agendadas todas las clases de tu bono. Cancela alguna o pide otro bono para agendar más",
@@ -1125,6 +1195,7 @@
       "withClient": "Con {{clientName}}",
       "professional": "Profesional: {{staffName}}",
       "retryTodayAction": "Ir a hoy",
+      "inProgressElapsed": "En curso · {{elapsed}}",
       "phase": {
         "not-started": "Pendiente",
         "in-progress": "En curso",
@@ -1180,6 +1251,8 @@
       "realDurationLabel": "Duración real",
       "startAction": "Iniciar clase",
       "endAction": "Terminar clase",
+      "startServiceAction": "Iniciar {{service}}",
+      "endServiceAction": "Terminar {{service}}",
       "startTooEarlyHint": "Podrás iniciarla 15 minutos antes de la hora.",
       "startTooLateHint": "Esta cita ya terminó y no se registró. Pide a administración que la revise.",
       "cancelledHint": "Esta cita está cancelada.",
@@ -1457,6 +1530,10 @@
     "scheduleUnenrolledDescription": "{{actorName}} te ha dado de baja de {{scheduleName}} con {{staffName}}{{roomSuffix}}.",
     "passRejectedTitle": "Tu solicitud de bono no se ha aceptado",
     "passRejectedDescription": "El centro no ha aceptado tu solicitud del bono {{rateName}}. Habla con el centro si tienes dudas.",
+    "planSubscribedTitle": "Plan contratado",
+    "planSubscribedDescription": "Tu centro ya tiene el plan {{planName}}. Gracias por confiar en Yoclick.",
+    "planChangedTitle": "Tu plan ha cambiado",
+    "planChangedDescription": "Tu centro ha pasado al plan {{planName}}. Puedes ver lo que incluye en Suscripción.",
     "scheduleUpdatedTitle": "Ha cambiado un horario tuyo",
     "scheduleUpdatedPlaceDescription": "{{actorName}} ha cambiado el lugar de {{scheduleName}}. Ahora es en {{placeName}}.",
     "scheduleUpdatedDescription": "{{actorName}} ha cambiado el horario de {{scheduleName}} con {{staffName}}{{roomSuffix}}. Mira tu agenda para ver las nuevas horas.",
@@ -1738,6 +1815,16 @@
     }
   },
   "centerAdmin": {
+    "autoStart": {
+      "classes": {
+        "title": "Iniciar las clases automáticamente",
+        "hint": "Cada clase se inicia sola a su hora y la agenda cuenta el tiempo que lleva."
+      },
+      "services": {
+        "title": "Iniciar los servicios automáticamente",
+        "hint": "Cada cita se inicia sola a su hora y la agenda cuenta el tiempo que lleva."
+      }
+    },
     "setupGuide": {
       "title": "Primeros pasos",
       "subtitle": "Sigue este orden y tu centro funcionará del todo con la app.",
@@ -2102,9 +2189,73 @@
       "usageOutOf": "{{count}} de {{limit}}",
       "usageUnlimited": "{{count}} · sin límite",
       "usageOverLimit": "Has superado el límite de tu plan. Nadie pierde el acceso mientras tanto.",
-      "pastDueNote": "Hay un pago pendiente. Revísalo en la web de Yoclick para no perder el acceso.",
-      "suspendedNote": "Tu centro está suspendido. Escríbenos y lo resolvemos.",
-      "webNote": "La suscripción se gestiona y se paga en la web de Yoclick, no en la app. Te avisamos por correo del fin de la prueba y de cualquier impago."
+      "pastDueNote": "Ha fallado el último pago. Elige un plan antes de que acabe el plazo para no perder el acceso.",
+      "pastDueUntil": "Tienes hasta el {{date}}.",
+      "suspendedNote": "Tu centro está suspendido por falta de pago. Elige un plan para reactivarlo.",
+      "billingPeriodLine": "Pagas {{period}}.",
+      "periods": {
+        "monthly": "mes a mes",
+        "annual": "una vez al año"
+      },
+      "chooseAction": "Elegir plan",
+      "changeAction": "Ver planes",
+      "manageAction": "Gestionar suscripción",
+      "activeNote": "Tu suscripción está activa y se renueva sola. Desde «Gestionar suscripción» puedes cambiar de plan o de periodicidad, cambiar la tarjeta, ver tus facturas o cancelar."
+    },
+    "planRequired": {
+      "trialTitle": "Tu prueba gratuita ha terminado",
+      "trialMessage": "Para seguir gestionando tu centro, elige uno de nuestros planes. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
+      "suspendedTitle": "Tu suscripción está suspendida",
+      "suspendedMessage": "No hemos podido cobrar tu plan. Elige un plan para seguir gestionando tu centro. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
+      "action": "Elegir un plan"
+    },
+    "plans": {
+      "title": "Planes",
+      "subtitle": "Prueba gratis 14 días. Después pagas el plan que elijas.",
+      "errorTitle": "No hemos podido cargar los planes",
+      "periodLabel": "Cómo quieres pagar",
+      "monthly": "Mensual",
+      "annual": "Anual",
+      "annualWithSavings": "Anual · ahorra hasta el {{percent}} %",
+      "pricePerMonth": "{{price}} al mes",
+      "billedAnnually": "{{price}} al año, en un solo pago",
+      "billedMonthly": "Se cobra cada mes",
+      "setupFee": "Cuota de alta de {{price}}, una sola vez",
+      "currentBadge": "Tu plan",
+      "clientLimit": "Hasta {{count}} clientes activos",
+      "unlimitedClients": "Clientes ilimitados",
+      "documentStorage": "{{size}} para documentos",
+      "videoStorage": "{{size}} para vídeos",
+      "noVideo": "Sin vídeos",
+      "choose": "Elegir {{name}}",
+      "chooseA11y": "Elegir el plan {{name}} con pago {{period}}",
+      "includesTitle": "Qué incluye",
+      "includesEverythingOf": "Todo lo del plan {{name}}, y además:",
+      "coreIncludes": {
+        "bookings": "Reservas de citas y de clases, con agenda del equipo",
+        "attendance": "Asistencia con QR y avisos al móvil",
+        "passes": "Bonos y cobros online con tu propia cuenta de Stripe",
+        "chat": "Chat con tus clientes"
+      },
+      "features": {
+        "reports": "Informes del centro",
+        "clientImport": "Importar clientes desde un archivo",
+        "routines": "Rutinas para tus clientes",
+        "contentLibrary": "Biblioteca de contenidos (documentos e imágenes)",
+        "groups": "Grupos de clientes y mensajes a un grupo",
+        "families": "Familias y tutores de menores",
+        "waitlist": "Lista de espera con aviso automático",
+        "rooms": "Salas y alquiler de salas",
+        "customAppearance": "Fondo y colmena con los colores de tu marca",
+        "videos": "Vídeos de presentación del equipo",
+        "ownApp": "App propia con tu icono en las tiendas"
+      },
+      "unavailable": "Todavía no disponible",
+      "currentChoice": "Es tu plan actual",
+      "vatNote": "Importes sin IVA. Se añade el 21 % al pagar.",
+      "browserNote": "Pagarás en una página segura de Stripe que se abre en tu navegador. Al terminar, vuelve a la app.",
+      "activeNote": "Tu suscripción está activa. Para cambiar de plan o de periodicidad, usa «Gestionar suscripción»: se abre en una página segura de Stripe.",
+      "openFailed": "No hemos podido abrir la página de pago. Inténtalo de nuevo."
     },
     "availability": {
       "title": "Disponibilidad",

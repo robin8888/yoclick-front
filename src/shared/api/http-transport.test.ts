@@ -32,6 +32,25 @@ describe('createHttpTransport', () => {
     expect(fakeFetch.requests[0]?.url).toBe(`${BASE_URL}/health`);
   });
 
+  it('returns a CSV body as text instead of trying to parse it as JSON', async () => {
+    const csvText = 'Fecha;Total\r\n2026-10-15;95,59\r\n';
+    const transport = createHttpTransport({
+      baseUrl: BASE_URL,
+      timeoutMs: TIMEOUT_MS,
+      fetchImplementation: () =>
+        Promise.resolve(
+          new Response(csvText, {
+            status: 200,
+            headers: { 'content-type': 'text/csv; charset=utf-8' },
+          }),
+        ),
+    });
+
+    const response = await transport.send('/v1/platform/reports/export.csv', { method: 'GET' });
+
+    expect(response.body).toBe(csvText);
+  });
+
   it('returns an undefined body for 204 responses', async () => {
     const fakeFetch = createFakeFetch({ '/v1/auth/logout': () => ({ status: 204 }) });
     const transport = createHttpTransport({

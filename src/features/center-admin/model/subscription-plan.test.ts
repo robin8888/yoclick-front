@@ -1,21 +1,6 @@
-import {
-  calculateClientUsagePercent,
-  countTrialDaysLeft,
-  resolveSubscriptionPlan,
-} from './subscription-plan';
+import { calculateClientUsagePercent, countTrialDaysLeft } from './subscription-plan';
 
 const NOW = new Date('2026-10-07T10:00:00Z');
-
-describe('resolveSubscriptionPlan', () => {
-  it.each([
-    [150, 'basic'],
-    [500, 'pro'],
-    [null, 'premium'],
-    [300, 'custom'],
-  ] as const)('reads a limit of %s clients as the %s plan', (maxClients, expected) => {
-    expect(resolveSubscriptionPlan(maxClients)).toBe(expected);
-  });
-});
 
 describe('calculateClientUsagePercent', () => {
   it.each([

@@ -2,7 +2,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { getSectorVocabulary } from '@/shared/i18n';
-import { NORTE_CENTER_ID } from '@/test/factories';
+import { ALL_MODULES_ON, buildMembership, NORTE_CENTER_ID } from '@/test/factories';
 import { getRecordedApiCalls, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
@@ -83,6 +83,29 @@ describe('ClientsScreen', () => {
     expect(screen.getByText('Inactivo 30 d')).toBeOnTheScreen();
     expect(screen.getByRole('tab', { name: 'Clientes: 212' })).toBeOnTheScreen();
     expect(await screen.findByRole('tab', { name: 'Grupos: 1' })).toBeOnTheScreen();
+  });
+
+  it('shows only the clients and their email in a center that just gives appointments', async () => {
+    mockApi({
+      'GET /v1/me/memberships': {
+        memberships: [
+          buildMembership({
+            role: 'admin',
+            center: {
+              ...buildMembership().center,
+              modules: { ...ALL_MODULES_ON, rooms: false, passes: false },
+            },
+          }),
+        ],
+      },
+      [CLIENTS_PATH]: CLIENT_LIST,
+      [GROUPS_PATH]: GROUP_LIST,
+    });
+    renderScreen(<ClientsScreen />);
+
+    expect(await screen.findAllByText('marta@example.com')).not.toHaveLength(0);
+    expect(screen.queryByText(/Grupo:/)).not.toBeOnTheScreen();
+    expect(screen.queryByRole('tab', { name: /Grupos/ })).not.toBeOnTheScreen();
   });
 
   it('shows whether each person has an active, requested or finished pass', async () => {

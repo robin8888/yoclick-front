@@ -1,5 +1,6 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 
+import { useActiveCenterModules } from '@/features/join';
 import { ClientPassesSection } from '@/features/passes';
 import { i18n } from '@/shared/i18n';
 import { Button } from '@/ui/atoms/Button';
@@ -21,6 +22,7 @@ function ClientEditorContent({
 }: Readonly<ClientEditorContentProps>): React.JSX.Element {
   const router = useRouter();
   const editor = useClientEditor(membershipId);
+  const hasGroups = useActiveCenterModules().rooms;
 
   return (
     <ScreenTemplate
@@ -47,7 +49,7 @@ function ClientEditorContent({
         onGroupChoose={editor.chooseGroup}
       />
       {editor.errorMessage === null ? null : <FormErrorBanner message={editor.errorMessage} />}
-      <GuardiansSection membershipId={membershipId} />
+      {hasGroups ? <GuardiansSection membershipId={membershipId} /> : null}
       <ClientPassesSection clientMembershipId={membershipId} />
       <ClientDataExportSection membershipId={membershipId} />
     </ScreenTemplate>

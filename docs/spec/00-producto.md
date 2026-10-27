@@ -78,9 +78,11 @@ Cada plantilla incluye además: necesidades, objetivos del registro, grupos suge
 
 | Plan | Mensual | Anual (€/mes) | Límite de clientes activos | Incluye |
 |---|---|---|---|---|
-| Básico | 39 € | 32 € | 150 | App compartida, reservas, cobros, 1 sede |
-| Pro | 79 € | 65 € | 500 | + grupos, familias, perfiles con vídeo, informes, importación |
-| Premium | 149 € | 124 € | Ilimitado | + app propia con su icono (pago único de alta 290 €) |
+| Básico | 39 € | 32 € | 150 | App compartida: reservas de citas y clases, agenda del equipo, asistencia con QR, avisos al móvil, bonos y cobros online (cuenta Stripe del centro), chat |
+| Pro | 79 € | 65 € | 500 | Todo lo del Básico + informes, importar clientes, rutinas, biblioteca de contenidos, grupos, familias y tutores, lista de espera, salas y alquileres |
+| Premium | 149 € | 124 € | Ilimitado | Todo lo del Pro + vídeos del equipo, fondo y colmena de la marca, app propia con su icono. Sin cuota de alta |
+
+Las funciones de cada plan están en `src/shared/centers/plan-features.ts` (back), que es la única fuente: la API niega con 402 `PLAN_FEATURE_NOT_INCLUDED` lo que el plan no da y la app lo enseña en la pantalla de planes y esconde esas entradas del menú «Más». La prueba de 14 días da todo lo del Pro.
 
 IVA no incluido. Prueba de 14 días sin tarjeta. En el código, los precios **nunca se escriben a mano**: vienen de la tabla `plans` y de los *Price* de Stripe.
 

@@ -80,6 +80,7 @@ export interface UpdateCenterSettingsRequestDto {
   holidays?: UpdateCenterSettingsRequestDtoHolidaysItem[];
   cancelPolicy?: UpdateCenterSettingsRequestDtoCancelPolicy;
   modules?: UpdateCenterSettingsRequestDtoModules;
+  autoStartSessions?: boolean;
   /**
      * @nullable
      * @pattern ^#[0-9A-Fa-f]{6}$

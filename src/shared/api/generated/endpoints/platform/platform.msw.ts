@@ -17,22 +17,30 @@ import type {
   PlatformAuditListResponseDto,
   PlatformCenterDetailResponseDto,
   PlatformCenterListResponseDto,
+  PlatformChargeListResponseDto,
+  PlatformChargeReportResponseDto,
+  PlatformChargeResponseDto,
   PlatformOverviewResponseDto,
   PlatformPlanListResponseDto,
   PlatformPlanResponseDto
 } from '../../model';
 
 import {
+  getPlatformExportChargesCsvResponseMock,
   getPlatformGetCenterResponseMock,
+  getPlatformGetChargeReportResponseMock,
   getPlatformGetOverviewResponseMock,
   getPlatformListAuditLogResponseMock,
   getPlatformListCentersResponseMock,
+  getPlatformListChargesResponseMock,
   getPlatformListPlansResponseMock,
+  getPlatformRecordChargeResponseMock,
   getPlatformUpdateCenterResponseMock,
+  getPlatformUpdateChargeResponseMock,
   getPlatformUpdatePlanResponseMock
 } from './platform.faker.ts';
 
-export { getPlatformGetOverviewResponseMock, getPlatformListCentersResponseMock, getPlatformGetCenterResponseMock, getPlatformUpdateCenterResponseMock, getPlatformListAuditLogResponseMock, getPlatformListPlansResponseMock, getPlatformUpdatePlanResponseMock } from './platform.faker.ts';
+export { getPlatformGetOverviewResponseMock, getPlatformListCentersResponseMock, getPlatformGetCenterResponseMock, getPlatformUpdateCenterResponseMock, getPlatformListAuditLogResponseMock, getPlatformListPlansResponseMock, getPlatformUpdatePlanResponseMock, getPlatformListChargesResponseMock, getPlatformRecordChargeResponseMock, getPlatformUpdateChargeResponseMock, getPlatformGetChargeReportResponseMock, getPlatformExportChargesCsvResponseMock } from './platform.faker.ts';
 
 
 export const getPlatformGetOverviewMockHandler = (overrideResponse?: PlatformOverviewResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlatformOverviewResponseDto> | PlatformOverviewResponseDto), options?: RequestHandlerOptions) => {
@@ -118,6 +126,67 @@ export const getPlatformUpdatePlanMockHandler = (overrideResponse?: PlatformPlan
       })
   }, options)
 }
+
+export const getPlatformListChargesMockHandler = (overrideResponse?: PlatformChargeListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlatformChargeListResponseDto> | PlatformChargeListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/platform/charges', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformListChargesResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPlatformRecordChargeMockHandler = (overrideResponse?: PlatformChargeResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<PlatformChargeResponseDto> | PlatformChargeResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/platform/charges', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformRecordChargeResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getPlatformUpdateChargeMockHandler = (overrideResponse?: PlatformChargeResponseDto | ((info: Parameters<Parameters<typeof http.patch>[1]>[0]) => Promise<PlatformChargeResponseDto> | PlatformChargeResponseDto), options?: RequestHandlerOptions) => {
+  return http.patch('*/v1/platform/charges/:chargeId', async (info: Parameters<Parameters<typeof http.patch>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformUpdateChargeResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPlatformGetChargeReportMockHandler = (overrideResponse?: PlatformChargeReportResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlatformChargeReportResponseDto> | PlatformChargeReportResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/platform/reports/monthly', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformGetChargeReportResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getPlatformExportChargesCsvMockHandler = (overrideResponse?: string | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<string> | string), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/platform/reports/export.csv', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+  const resolvedBody = overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getPlatformExportChargesCsvResponseMock();
+    const textBody = typeof resolvedBody === 'string' ? resolvedBody : JSON.stringify(resolvedBody ?? null);
+    return HttpResponse.text(textBody,
+      { status: 200, headers: { 'Content-Type': 'text/csv' }
+      })
+  }, options)
+}
 export const getPlatformMock = () => [
   getPlatformGetOverviewMockHandler(),
   getPlatformListCentersMockHandler(),
@@ -125,5 +194,10 @@ export const getPlatformMock = () => [
   getPlatformUpdateCenterMockHandler(),
   getPlatformListAuditLogMockHandler(),
   getPlatformListPlansMockHandler(),
-  getPlatformUpdatePlanMockHandler()
+  getPlatformUpdatePlanMockHandler(),
+  getPlatformListChargesMockHandler(),
+  getPlatformRecordChargeMockHandler(),
+  getPlatformUpdateChargeMockHandler(),
+  getPlatformGetChargeReportMockHandler(),
+  getPlatformExportChargesCsvMockHandler()
 ]

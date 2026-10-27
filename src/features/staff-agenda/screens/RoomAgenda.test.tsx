@@ -168,6 +168,38 @@ describe('RoomDayGrid', () => {
     });
   });
 
+  it('counts the time of a class that is running instead of showing its seats', () => {
+    const runningAgenda = {
+      ...GRID_AGENDA,
+      rooms: GRID_AGENDA.rooms.map((room) => ({
+        ...room,
+        sessions: room.sessions.map((session) => ({
+          ...session,
+          startedAt: new Date(Date.now() - 125_000).toISOString(),
+          endedAt: null,
+        })),
+      })),
+    };
+    renderScreen(<RoomDayGrid agenda={runningAgenda} isoDate="2026-10-12" />);
+
+    expect(screen.getAllByText(/^En curso · 02:0\d$/).length).toBeGreaterThan(0);
+  });
+
+  it('opens the appointment itself when each lane is a professional', () => {
+    renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" isStaffLane />);
+
+    fireEvent.press(screen.getByRole('button', { name: /Sala de baile, Salsa/ }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith({
+      pathname: '/(admin)/sessions/[bookingId]',
+      params: {
+        bookingId: '0191d6a0-0000-7000-8000-0000000000c1',
+        date: '2026-10-12',
+        isCenterWide: 'true',
+      },
+    });
+  });
+
   it('offers the services of the day as a filter and keeps only the chosen one', () => {
     renderScreen(<RoomDayGrid agenda={GRID_AGENDA} isoDate="2026-10-12" />);
 

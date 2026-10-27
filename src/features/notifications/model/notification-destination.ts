@@ -36,6 +36,7 @@ const AGENDA = byAudience({
 });
 
 const MY_BOOKINGS = byAudience({ client: '/(client)/(tabs)/bookings' });
+const SUBSCRIPTION = byAudience({ admin: '/(admin)/subscription' });
 const MY_PASSES = byAudience({ client: '/(client)/my-passes' });
 const PUBLIC_PROFILE = byAudience({
   staff: '/(staff)/public-profile',
@@ -106,6 +107,8 @@ const DESTINATION_BY_KIND: Readonly<Record<NoticeKind, DestinationRule>> = {
   waitlist_offer_expired: MY_BOOKINGS,
   pass_rejected: MY_PASSES,
   schedule_updated: MY_BOOKINGS,
+  plan_subscribed: SUBSCRIPTION,
+  plan_changed: SUBSCRIPTION,
 };
 
 /** La pantalla a la que lleva un aviso, o `null` si no hay ninguna que mostrar. */

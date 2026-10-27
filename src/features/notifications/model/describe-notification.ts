@@ -55,6 +55,8 @@ const TITLE_KEYS = {
   waitlist_offer_expired: 'notifications.waitlistOfferExpiredTitle',
   pass_rejected: 'notifications.passRejectedTitle',
   schedule_updated: 'notifications.scheduleUpdatedTitle',
+  plan_subscribed: 'notifications.planSubscribedTitle',
+  plan_changed: 'notifications.planChangedTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -91,6 +93,8 @@ const DESCRIPTION_KEYS = {
   waitlist_offer_expired: 'notifications.waitlistOfferExpiredDescription',
   pass_rejected: 'notifications.passRejectedDescription',
   schedule_updated: 'notifications.scheduleUpdatedDescription',
+  plan_subscribed: 'notifications.planSubscribedDescription',
+  plan_changed: 'notifications.planChangedDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {
@@ -159,6 +163,8 @@ function describeAbsence(details: NotificationItem['data']): string {
 }
 
 interface NoticeTexts {
+  /** El nombre del plan contratado, para los avisos de suscripción. */
+  planName: string;
   /** El sitio nuevo cuando lo único que cambia es el lugar de la clase. */
   placeName: string;
   clientName: string;
@@ -204,9 +210,21 @@ function describePrice(priceCents: string | undefined): { price: string; priceSu
   return { price, priceSuffix: i18n.t('notifications.priceSuffix', { price }) };
 }
 
+const PLAN_NAME_KEYS = {
+  basic: 'platform.plans.names.basic',
+  pro: 'platform.plans.names.pro',
+  premium: 'platform.plans.names.premium',
+} as const;
+
+function describePlanName(planId: string | undefined): string {
+  if (planId === undefined || !(planId in PLAN_NAME_KEYS)) return '';
+  return i18n.t(PLAN_NAME_KEYS[planId as keyof typeof PLAN_NAME_KEYS]);
+}
+
 function buildNoticeTexts(notification: NotificationItem, timeZone: string): NoticeTexts {
   const noticeData = notification.data;
   return {
+    planName: describePlanName(noticeData.planId),
     clientName: textOf(noticeData.clientName),
     serviceName: textOf(noticeData.serviceName),
     staffName: textOf(noticeData.staffName),

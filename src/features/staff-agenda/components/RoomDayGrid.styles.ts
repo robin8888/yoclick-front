@@ -86,6 +86,19 @@ export function createBlockChipStyle(theme: Theme): ViewStyle {
 
 export const CHIP_TEXT_STYLE: ViewStyle = { flexShrink: 1 };
 
+/** El texto de la clase centrado; deja a los lados el sitio de la letra de la sala (esquina izquierda). */
+export function createChipHeaderStyle(theme: Theme): ViewStyle {
+  return { alignItems: 'center', paddingHorizontal: theme.space[6] };
+}
+
+/** La letra de la sala, en la esquina superior izquierda de la tarjeta. */
+export function createChipCornerStyle(theme: Theme): ViewStyle {
+  return { position: 'absolute', top: theme.space[2], left: theme.space[2] };
+}
+
+/** El estado (plazas o cronómetro) centrado debajo del texto, con el ancho que pida, sin cortarse. */
+export const CHIP_STATUS_STYLE: ViewStyle = { alignSelf: 'center' };
+
 export function createWeekStripStyle(theme: Theme): ViewStyle {
   return {
     flexDirection: 'row',
@@ -131,18 +144,19 @@ export const WEEK_DOTS_STYLE: ViewStyle = {
 
 const WEEK_DAY_BORDER_WIDTH = 2;
 const SESSION_CARD_ACCENT_WIDTH = 4;
-const SESSION_CARD_MIN_WIDTH = 168;
 
 /** Tarjeta de una clase: borde fino y una franja del color de su sala a la izquierda. */
 export function createSessionCardStyle(theme: Theme, accentColor: string): ViewStyle {
   return {
-    flexGrow: 1,
-    flexBasis: SESSION_CARD_MIN_WIDTH,
-    flexDirection: 'row',
-    alignItems: 'center',
+    // Una tarjeta por fila y a todo el ancho: nombre, horas y cronómetro se leen enteros.
+    width: '100%',
+    // La letra de la sala se coloca en una esquina sobre la tarjeta.
+    position: 'relative',
+    flexDirection: 'column',
+    alignItems: 'stretch',
     gap: theme.space[3],
-    paddingVertical: theme.space[2],
-    paddingHorizontal: theme.space[3],
+    paddingVertical: theme.space[3],
+    paddingHorizontal: theme.space[4],
     borderRadius: theme.radius.md,
     borderWidth: 1,
     borderLeftWidth: SESSION_CARD_ACCENT_WIDTH,

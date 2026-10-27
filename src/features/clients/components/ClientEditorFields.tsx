@@ -1,4 +1,4 @@
-import { useActiveCenterSectorId } from '@/features/join';
+import { useActiveCenterModules, useActiveCenterSectorId } from '@/features/join';
 import type {
   ClientResponseDto,
   GroupListResponseDtoGroupsItem,
@@ -43,6 +43,7 @@ export function ClientEditorFields({
   onGroupChoose,
 }: Readonly<ClientEditorFieldsProps>): React.JSX.Element {
   const vocabulary = getSectorVocabulary(useActiveCenterSectorId());
+  const hasGroups = useActiveCenterModules().rooms;
   const levelChoices = buildLevelChoices(vocabulary.levels, i18n.t('clients.clientEditor.noLevel'));
   const groupChoices = [
     { value: NO_CHOICE, label: i18n.t('clients.clientEditor.noGroup') },
@@ -52,18 +53,22 @@ export function ClientEditorFields({
   return (
     <>
       {client === undefined ? null : <ClientSummary client={client} />}
-      <ChoiceButtons
-        title={i18n.t('clients.clientEditor.levelLabel')}
-        choices={levelChoices}
-        selectedValue={levelChoice}
-        onChoose={onLevelChoose}
-      />
-      <ChoiceButtons
-        title={i18n.t('clients.clientEditor.groupLabel')}
-        choices={groupChoices}
-        selectedValue={groupChoice}
-        onChoose={onGroupChoose}
-      />
+      {hasGroups ? (
+        <>
+          <ChoiceButtons
+            title={i18n.t('clients.clientEditor.levelLabel')}
+            choices={levelChoices}
+            selectedValue={levelChoice}
+            onChoose={onLevelChoose}
+          />
+          <ChoiceButtons
+            title={i18n.t('clients.clientEditor.groupLabel')}
+            choices={groupChoices}
+            selectedValue={groupChoice}
+            onChoose={onGroupChoose}
+          />
+        </>
+      ) : null}
     </>
   );
 }

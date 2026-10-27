@@ -31,6 +31,7 @@ export function ClassProgressControls({
     <>
       <ClassSessionActions
         phase={resolveSessionPhase(booking)}
+        serviceName={booking.service.name}
         canStartNow={isWithinStartWindow({ ...booking, now })}
         isStartWindowPast={now.getTime() > new Date(booking.endsAt).getTime()}
         isStarting={isStarting}

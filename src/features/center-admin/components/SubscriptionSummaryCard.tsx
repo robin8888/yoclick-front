@@ -6,7 +6,7 @@ import { useTheme } from '@/shared/theme';
 import { Badge, type BadgeTone } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
-import { countTrialDaysLeft, resolveSubscriptionPlan } from '../model/subscription-plan';
+import { countTrialDaysLeft } from '../model/subscription-plan';
 import { createReportCardStyle, REPORT_HEADER_ROW_STYLE } from './ReportCard.styles';
 
 const STATUS_TONES: Record<CenterSubscriptionResponseDto['status'], BadgeTone> = {
@@ -29,7 +29,6 @@ export function SubscriptionSummaryCard({
   subscription,
 }: Readonly<{ subscription: CenterSubscriptionResponseDto }>): React.JSX.Element {
   const theme = useTheme();
-  const planId = resolveSubscriptionPlan(subscription.maxClients);
   const trialText =
     subscription.status === 'trial' ? describeTrial(subscription.trialEndsAt, new Date()) : null;
 
@@ -40,7 +39,9 @@ export function SubscriptionSummaryCard({
           <Text variant="overline" color="ink2">
             {i18n.t('centerAdmin.subscription.currentPlan')}
           </Text>
-          <Text variant="titleLg">{i18n.t(`centerAdmin.subscription.plans.${planId}`)}</Text>
+          <Text variant="titleLg">
+            {i18n.t(`centerAdmin.subscription.plans.${subscription.planId}`)}
+          </Text>
         </View>
         <Badge
           label={i18n.t(`centerAdmin.subscription.statuses.${subscription.status}`)}
@@ -48,6 +49,13 @@ export function SubscriptionSummaryCard({
         />
       </View>
       {trialText ? <Text variant="body">{trialText}</Text> : null}
+      {subscription.billingPeriod === null ? null : (
+        <Text variant="body">
+          {i18n.t('centerAdmin.subscription.billingPeriodLine', {
+            period: i18n.t(`centerAdmin.subscription.periods.${subscription.billingPeriod}`),
+          })}
+        </Text>
+      )}
     </View>
   );
 }

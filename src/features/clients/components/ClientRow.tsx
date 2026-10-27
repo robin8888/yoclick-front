@@ -35,10 +35,13 @@ export function ClientRow({
   const theme = useTheme();
   const modules = useActiveCenterModules();
   const badge = resolveClientBadge(client);
-  const subtitle = i18n.t('clients.rowSubtitle', {
-    level: levelLabel ?? i18n.t('clients.noLevel'),
-    group: client.group?.name ?? i18n.t('clients.noGroup'),
-  });
+  // Nivel y grupo son de centros con clases; uno solo de citas enseña el correo.
+  const subtitle = modules.rooms
+    ? i18n.t('clients.rowSubtitle', {
+        level: levelLabel ?? i18n.t('clients.noLevel'),
+        group: client.group?.name ?? i18n.t('clients.noGroup'),
+      })
+    : client.email;
   const badgeLabel = i18n.t(BADGE_TEXT_KEYS[badge.id]);
 
   return (

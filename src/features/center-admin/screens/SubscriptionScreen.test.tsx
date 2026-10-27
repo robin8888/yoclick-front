@@ -1,8 +1,9 @@
-import { act, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen } from '@testing-library/react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { NORTE_CENTER_ID } from '@/test/factories';
 import { mockApi } from '@/test/mock-api';
+import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
 
 import { SubscriptionScreen } from './SubscriptionScreen';
@@ -18,6 +19,10 @@ function mockSubscription(overrides: object): void {
     [`GET ${SUBSCRIPTION_PATH}`]: {
       status: 'active',
       trialEndsAt: null,
+      planId: 'pro',
+      billingPeriod: null,
+      graceEndsAt: null,
+      hasSubscription: false,
       maxClients: 500,
       activeClientCount: 212,
       ...overrides,
@@ -27,6 +32,7 @@ function mockSubscription(overrides: object): void {
 
 describe('SubscriptionScreen', () => {
   beforeEach(() => {
+    resetMockRouter();
     act(() => {
       useSessionStore.getState().startSession({ accessToken: 'token', user: null });
       useSessionStore.getState().selectActiveCenter(NORTE_CENTER_ID);
@@ -40,12 +46,12 @@ describe('SubscriptionScreen', () => {
     expect(await screen.findByText('Pro')).toBeOnTheScreen();
     expect(screen.getByText('Activo')).toBeOnTheScreen();
     expect(screen.getByText('212 de 500')).toBeOnTheScreen();
-    expect(screen.getByText(/se gestiona y se paga en la web/)).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Elegir plan' })).toBeOnTheScreen();
   });
 
   it('counts the days left of the free trial', async () => {
     const trialEndsAt = new Date(Date.now() + 10 * MILLISECONDS_PER_DAY).toISOString();
-    mockSubscription({ status: 'trial', trialEndsAt, maxClients: 150 });
+    mockSubscription({ status: 'trial', trialEndsAt, planId: 'basic', maxClients: 150 });
     renderScreen(<SubscriptionScreen />);
 
     expect(await screen.findByText('Básico')).toBeOnTheScreen();
@@ -61,7 +67,7 @@ describe('SubscriptionScreen', () => {
   });
 
   it('says there is no limit on the premium plan', async () => {
-    mockSubscription({ maxClients: null });
+    mockSubscription({ planId: 'premium', maxClients: null });
     renderScreen(<SubscriptionScreen />);
 
     expect(await screen.findByText('Premium')).toBeOnTheScreen();
@@ -69,11 +75,38 @@ describe('SubscriptionScreen', () => {
   });
 
   it('warns about a pending payment', async () => {
-    mockSubscription({ status: 'past_due' });
+    mockSubscription({ status: 'past_due', graceEndsAt: '2026-11-03T10:00:00.000Z' });
     renderScreen(<SubscriptionScreen />);
 
     expect(await screen.findByText('Pago pendiente')).toBeOnTheScreen();
-    expect(screen.getByText(/Hay un pago pendiente/)).toBeOnTheScreen();
+    expect(screen.getByText(/Ha fallado el último pago.*Tienes hasta el/)).toBeOnTheScreen();
+  });
+
+  it('tells a suspended center to choose a plan to reactivate', async () => {
+    mockSubscription({ status: 'suspended' });
+    renderScreen(<SubscriptionScreen />);
+
+    expect(await screen.findByText(/suspendido por falta de pago/)).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Elegir plan' })).toBeOnTheScreen();
+  });
+
+  it('says how often a paying center is charged and offers no plan button', async () => {
+    mockSubscription({ billingPeriod: 'annual', hasSubscription: true });
+    renderScreen(<SubscriptionScreen />);
+
+    expect(await screen.findByText('Pagas una vez al año.')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Elegir plan' })).toBeNull();
+    expect(screen.getByText(/se renueva sola/)).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Gestionar suscripción' })).toBeOnTheScreen();
+  });
+
+  it('opens the plans to choose from', async () => {
+    mockSubscription({ status: 'trial', trialEndsAt: null });
+    renderScreen(<SubscriptionScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Elegir plan' }));
+
+    expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/subscription/plans');
   });
 
   it('shows an error when the plan cannot be loaded', async () => {
