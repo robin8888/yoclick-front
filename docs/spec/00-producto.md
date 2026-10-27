@@ -19,6 +19,8 @@ Plataforma SaaS de **reservas y gestión en marca blanca** para cualquier centro
 - Premium se publica desde la **cuenta de desarrollador del centro** (Apple 4.2.6 rechaza clones publicados desde una sola cuenta).
 - **Un solo backend y una sola base de datos multi-tenant** (no una base por centro), aislada con `center_id` + Row Level Security.
 
+**Nota (27 oct):** la app propia con icono por centro (Premium) **no se ofrece de momento**: exige compilar y publicar una app por centro desde su cuenta de desarrollador y aún no hay proceso. Si se vuelve a ofrecer, será bajo petición y con precio aparte.
+
 ## Perfiles
 
 | Perfil | Dónde | Qué hace (MVP) |
@@ -78,9 +80,9 @@ Cada plantilla incluye además: necesidades, objetivos del registro, grupos suge
 
 | Plan | Mensual | Anual (€/mes) | Límite de clientes activos | Incluye |
 |---|---|---|---|---|
-| Básico | 39 € | 32 € | 150 | App compartida: reservas de citas y clases, agenda del equipo, asistencia con QR, avisos al móvil, bonos y cobros online (cuenta Stripe del centro), chat |
+| Básico | 39 € | 32 € | 150 | App compartida: reservas de citas y clases, agenda del equipo, asistencia con QR, avisos al móvil, bonos y tarifas con el cobro marcado a mano, chat |
 | Pro | 79 € | 65 € | 500 | Todo lo del Básico + informes, importar clientes, rutinas, biblioteca de contenidos, grupos, familias y tutores, lista de espera, salas y alquileres |
-| Premium | 149 € | 124 € | Ilimitado | Todo lo del Pro + vídeos del equipo, fondo y colmena de la marca, app propia con su icono. Sin cuota de alta |
+| Premium | 149 € | 124 € | Ilimitado | Todo lo del Pro + cobro online de bonos y alquileres (Stripe Connect del centro), vídeos del equipo, fondo y colmena de la marca. Sin cuota de alta |
 
 Las funciones de cada plan están en `src/shared/centers/plan-features.ts` (back), que es la única fuente: la API niega con 402 `PLAN_FEATURE_NOT_INCLUDED` lo que el plan no da y la app lo enseña en la pantalla de planes y esconde esas entradas del menú «Más». La prueba de 14 días da todo lo del Pro.
 

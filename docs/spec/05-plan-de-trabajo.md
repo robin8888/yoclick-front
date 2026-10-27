@@ -49,6 +49,30 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (27 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a las anteriores; lo que no aparece aquí no ha cambiado. Back: lint, tsc, 1358 unitarios y e2e de pagos, ajustes de centro y facturación en verde; front: lint, typecheck y tests de center-admin y notifications en verde. Lo del día está commiteado **sin push**.
+
+### Hecho el 27 de octubre
+- ✅ **P4 (cargos manuales e informes), P5 y P6**: Stripe Billing en modo test, elegir plan mensual o anual, portal del cliente.
+- ✅ **Prueba terminada → modal bloqueante** (`PlanRequiredGate`) que lleva a la pantalla de planes; la API devuelve 402 `PLAN_REQUIRED` a propietario y admin si intentan escribir (`PlanGuard`).
+- ✅ **Push y registro al comprar o cambiar de plan** (`plan_subscribed`, `plan_changed`).
+- ✅ **Qué incluye cada plan**, en una sola tabla en el back (`plan-features.ts`): Básico = lo esencial; Pro suma informes, importar clientes, rutinas, biblioteca, grupos, familias, lista de espera y salas; Premium suma aspecto propio, vídeos y cobro online (Stripe Connect). La API niega las rutas (402 `PLAN_FEATURE_NOT_INCLUDED`) y la app esconde el menú y lo explica en la pantalla de planes.
+- ✅ **Premium sin cuota de alta** (decisión del usuario); primer pago 149 € + 21 % IVA.
+- ✅ **«App propia con tu icono» quitada del Premium**: no hay proceso para compilar y publicar una app por centro.
+
+### Decisiones
+- El cobro de los bonos lo hace cada centro con su Stripe Connect; la app solo cobra los planes de SaaS a los centros.
+- Riesgo con Apple/Google por el enlace de pago a Stripe (guía 3.1.1): antes de subir a las tiendas, quitar el botón de pagar en la app y contratar fuera (correo con enlace de Stripe o web); la app solo muestra el estado del plan. Hay que releer las guías vigentes al subir.
+
+### Pendiente
+1. ⬜ Avisos de fin de prueba (7, 3 y 1 días antes).
+2. ⬜ Qué pasa al bajar de plan con más clientes que el tope del nuevo.
+3. ⬜ Botón de equipo en el inicio del centro (nota `yoclick-todo-team-button-center-home`).
+4. ⬜ Centro de prueba con plan Básico.
+5. ⬜ Bloqueado por el alta de autónomo: Stripe real, dominio `yoclick.app`, Brevo, columnas de Taxfix.
+6. ⬜ Reiniciar el back para cargar el nuevo guard; opcional: suite e2e completa del back y suite completa del front.
+
 ## Estado de avance (25 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a la del 21 oct; lo que no aparece aquí no ha cambiado. Back: lint, tsc, 1253 unitarios y e2e de plataforma en verde; front: lint, typecheck y tests en verde. Lo del día está commiteado pero **sin push**.
