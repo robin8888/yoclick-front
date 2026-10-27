@@ -2234,7 +2234,7 @@
       "coreIncludes": {
         "bookings": "Reservas de citas y de clases, con agenda del equipo",
         "attendance": "Asistencia con QR y avisos al móvil",
-        "passes": "Bonos y cobros online con tu propia cuenta de Stripe",
+        "passes": "Bonos y tarifas, con el cobro marcado a mano",
         "chat": "Chat con tus clientes"
       },
       "features": {
@@ -2248,7 +2248,7 @@
         "rooms": "Salas y alquiler de salas",
         "customAppearance": "Fondo y colmena con los colores de tu marca",
         "videos": "Vídeos de presentación del equipo",
-        "ownApp": "App propia con tu icono en las tiendas"
+        "onlinePayments": "Cobro online de bonos y alquileres con tu cuenta de Stripe"
       },
       "unavailable": "Todavía no disponible",
       "currentChoice": "Es tu plan actual",

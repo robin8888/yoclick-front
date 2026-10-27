@@ -73,7 +73,6 @@ const PLAN_OFFERS = {
         'rooms',
         'customAppearance',
         'videos',
-        'ownApp',
       ],
       isAvailable: true,
     },
@@ -144,7 +143,7 @@ describe('SubscriptionPlansScreen', () => {
     expect(screen.getByText('Todo lo del plan Básico, y además:')).toBeOnTheScreen();
     expect(screen.getByText('• Informes del centro')).toBeOnTheScreen();
     expect(screen.getByText('Todo lo del plan Pro, y además:')).toBeOnTheScreen();
-    expect(screen.getByText('• App propia con tu icono en las tiendas')).toBeOnTheScreen();
+    expect(screen.getByText('• Vídeos de presentación del equipo')).toBeOnTheScreen();
     // Lo que da el Pro no se repite en el Premium.
     expect(screen.getAllByText('• Informes del centro')).toHaveLength(1);
   });

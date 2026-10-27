@@ -20,5 +20,5 @@ export const CenterSubscriptionResponseDtoFeaturesItem = {
   rooms: 'rooms',
   customAppearance: 'customAppearance',
   videos: 'videos',
-  ownApp: 'ownApp',
+  onlinePayments: 'onlinePayments',
 } as const;

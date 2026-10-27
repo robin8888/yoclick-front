@@ -489,7 +489,7 @@ export const CentersGetSubscriptionResponse = zod.object({
   "graceEndsAt": zod.iso.datetime({"offset":true}).regex(centersGetSubscriptionResponseGraceEndsAtRegExp).nullable(),
   "hasSubscription": zod.boolean(),
   "isPlanRequired": zod.boolean(),
-  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'ownApp'])),
+  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'onlinePayments'])),
   "maxClients": zod.int().min(centersGetSubscriptionResponseMaxClientsMin).max(centersGetSubscriptionResponseMaxClientsMax).nullable(),
   "activeClientCount": zod.int().min(centersGetSubscriptionResponseActiveClientCountMin).max(centersGetSubscriptionResponseActiveClientCountMax),
   "videoStorageLimitBytes": zod.int().min(centersGetSubscriptionResponseVideoStorageLimitBytesMin).max(centersGetSubscriptionResponseVideoStorageLimitBytesMax).nullable(),
@@ -556,7 +556,7 @@ export const CentersListSubscriptionPlansResponse = zod.object({
   "maxClients": zod.int().min(centersListSubscriptionPlansResponsePlansItemMaxClientsMin).max(centersListSubscriptionPlansResponsePlansItemMaxClientsMax).nullable(),
   "documentStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax),
   "videoStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax).nullable(),
-  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'ownApp'])),
+  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'onlinePayments'])),
   "isAvailable": zod.boolean()
 }))
 })

@@ -142,9 +142,9 @@ describe('listNewFeatures', () => {
   });
 
   it('lists only what the plan adds to the one below', () => {
-    const premium = buildPlan({ features: ['reports', 'routines', 'ownApp'] });
+    const premium = buildPlan({ features: ['reports', 'routines', 'videos'] });
 
-    expect(listNewFeatures(premium, buildPlan())).toEqual(['ownApp']);
+    expect(listNewFeatures(premium, buildPlan())).toEqual(['videos']);
   });
 
   it('lists nothing when the plans give the same', () => {
