@@ -7,7 +7,7 @@ import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 import { QrCard } from '@/ui/organisms/QrCard';
 
-import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
+import { useCopyToClipboard } from '@/shared/hooks/useCopyToClipboard';
 import { buildInviteMessage, buildWhatsAppShareUrl } from '../model/invite-messages';
 import { BUTTON_ROW_STYLE, CODE_TEXT_STYLE, createShareCardStyle } from './JoinCodeShare.styles';
 

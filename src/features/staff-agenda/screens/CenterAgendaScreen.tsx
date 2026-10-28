@@ -46,6 +46,9 @@ function CenterActions({ isoDate }: Readonly<{ isoDate: string }>): React.JSX.El
       onMessagesPress={() => {
         router.push('/(admin)/messages');
       }}
+      onVoiceReceptionistPress={() => {
+        router.push('/(admin)/voice-receptionist');
+      }}
     />
   );
 }

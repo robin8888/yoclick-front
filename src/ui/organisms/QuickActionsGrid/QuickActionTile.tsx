@@ -63,10 +63,8 @@ export function QuickActionTile({
         <CountBadge count={badgeCount ?? 0} />
       </View>
       <View style={createTileTextStyle(theme)}>
-        <Text variant="bodyStrong" numberOfLines={1}>
-          {label}
-        </Text>
-        <Text variant="caption" color="ink2" numberOfLines={2}>
+        <Text variant="bodyStrong">{label}</Text>
+        <Text variant="caption" color="ink2">
           {hint}
         </Text>
       </View>
@@ -101,10 +99,10 @@ export function PrimaryQuickAction({
         <Icon name={iconName} size="header" color="onBrand" />
       </View>
       <View style={PRIMARY_ACTION_TEXT_STYLE}>
-        <Text variant="titleMd" color="onBrand" numberOfLines={1}>
+        <Text variant="titleMd" color="onBrand">
           {label}
         </Text>
-        <Text variant="caption" color="onBrand" numberOfLines={2}>
+        <Text variant="caption" color="onBrand">
           {hint}
         </Text>
       </View>

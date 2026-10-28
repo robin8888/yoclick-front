@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import { useActiveCenterSummary } from '@/features/auth';
+import { StudentCodeCard } from '@/features/voice-receptionist';
 import { i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
@@ -42,6 +43,7 @@ export function ClientHomeScreen(): React.JSX.Element {
       <RepeatLastBookingCard />
       <WeeklyProgressCard completedCount={attendedThisWeek} goalCount={WEEKLY_GOAL_SESSION_COUNT} />
       <HomeShortcuts nextBooking={nextBooking} />
+      <StudentCodeCard />
     </ScreenTemplate>
   );
 }

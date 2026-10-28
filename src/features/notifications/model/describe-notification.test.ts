@@ -321,3 +321,15 @@ describe('describeNotification · fixed schedules', () => {
     );
   });
 });
+
+describe('describeNotification · minutes of the AI answering service', () => {
+  it.each([
+    ['voice_minutes_80', 'El Contestador IA lleva el 80 % de sus minutos'],
+    ['voice_minutes_100', 'El Contestador IA ha usado todos sus minutos'],
+  ] as const)('says what happened for %s without any invitation to buy', (kind, expectedTitle) => {
+    const text = describeNotification(buildNotification(kind, {}), TIME_ZONE);
+
+    expect(text.title).toBe(expectedTitle);
+    expect(text.description).not.toMatch(/€|precio|contrat|plan/i);
+  });
+});

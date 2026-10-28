@@ -7,7 +7,7 @@ import { useTheme } from '@/shared/theme';
 import { Button } from '@/ui/atoms/Button';
 import { Text } from '@/ui/atoms/Text';
 
-import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
+import { useCopyToClipboard } from '@/shared/hooks/useCopyToClipboard';
 import {
   buildInvitationLink,
   buildSmsShareUrl,

@@ -60,6 +60,8 @@ const TITLE_KEYS = {
   center_closed: 'notifications.centerClosedTitle',
   message_reported: 'notifications.messageReportedTitle',
   plan_over_limit: 'notifications.planOverLimitTitle',
+  voice_minutes_80: 'notifications.voiceMinutes80Title',
+  voice_minutes_100: 'notifications.voiceMinutes100Title',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -101,6 +103,8 @@ const DESCRIPTION_KEYS = {
   center_closed: 'notifications.centerClosedDescription',
   message_reported: 'notifications.messageReportedDescription',
   plan_over_limit: 'notifications.planOverLimitDescription',
+  voice_minutes_80: 'notifications.voiceMinutes80Description',
+  voice_minutes_100: 'notifications.voiceMinutes100Description',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {

@@ -30,6 +30,7 @@ import {
   Palette,
   Paperclip,
   Pencil,
+  Phone,
   Play,
   ImageIcon,
   Plus,
@@ -98,4 +99,5 @@ export const ICON_REGISTRY: Readonly<Record<IconName, LucideIcon>> = {
   messageCircle: MessageCircle,
   paperclip: Paperclip,
   send: Send,
+  phone: Phone,
 };

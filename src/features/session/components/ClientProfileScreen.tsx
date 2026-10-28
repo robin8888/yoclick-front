@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { useActiveCenterSummary, useSignOut } from '@/features/auth';
 import { useActiveCenterSectorId, useMyCenters } from '@/features/join';
+import { StudentCodeCard } from '@/features/voice-receptionist';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { useBackAction } from '@/shared/hooks/useBackAction';
 import { useTheme } from '@/shared/theme';
@@ -93,6 +94,7 @@ export function ClientProfileScreen(): React.JSX.Element {
       isLoading={isSigningOut}
     >
       <ProfileHeader roleLabel={capitalize(clientWord)} centerName={center.name} />
+      <StudentCodeCard />
       <ClientProfileLinks />
       <ProfileFooter isSigningOut={isSigningOut} onSignOut={signOut} />
     </ScreenTemplate>

@@ -5,7 +5,7 @@ import { buildCenterJoinLink } from '@/features/onboarding';
 import { i18n } from '@/shared/i18n';
 import { ListItem } from '@/ui/molecules/ListItem';
 
-import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
+import { useCopyToClipboard } from '@/shared/hooks/useCopyToClipboard';
 import { buildInviteMessage } from '../model/invite-messages';
 import { SHARE_TOOLS_STYLE } from './ShareToolsList.styles';
 

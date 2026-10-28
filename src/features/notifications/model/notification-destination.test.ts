@@ -17,6 +17,8 @@ describe('resolveNotificationDestination', () => {
     ['staff_profile_submitted', 'admin', '/(admin)/team/profiles'],
     ['staff_profile_reviewed', 'staff', '/(staff)/public-profile'],
     ['privacy_request_resolved', 'client', '/(client)/privacy'],
+    ['voice_minutes_80', 'admin', '/(admin)/voice-receptionist'],
+    ['voice_minutes_100', 'admin', '/(admin)/voice-receptionist'],
   ] as const)('%s for %s goes to %s', (kind, audience, expected) => {
     expect(resolveNotificationDestination(kind, { audience, noticeData: {} })).toBe(expected);
   });

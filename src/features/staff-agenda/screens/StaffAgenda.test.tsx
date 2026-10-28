@@ -13,6 +13,7 @@ import { NORTE_CENTER_ID } from '@/test/factories';
 import { buildApiError, findApiCall, mockApi } from '@/test/mock-api';
 import { getMockRouter, resetMockRouter } from '@/test/mock-router';
 import { renderScreen } from '@/test/render-screen';
+import { buildNotContractedVoiceOverview, buildVoiceOverview } from '@/test/voice-factories';
 
 import { AgendaScreen } from './AgendaScreen';
 import { CenterAgendaScreen } from './CenterAgendaScreen';
@@ -173,6 +174,44 @@ describe('CenterAgendaScreen', () => {
 
     fireEvent.press(screen.getByRole('button', { name: 'Bonos' }));
     expect(getMockRouter().push).toHaveBeenLastCalledWith('/(admin)/passes');
+  });
+});
+
+describe('CenterAgendaScreen · Contestador IA button', () => {
+  const NOTIFICATIONS_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/notifications`;
+  const VOICE_PATH = `GET /v1/centers/${NORTE_CENTER_ID}/voice-receptionist`;
+
+  beforeEach(() => {
+    resetMockRouter();
+    signInToCenter();
+  });
+
+  it('shows the button on the home when the center has the service, and opens its screen', async () => {
+    mockApi({
+      [NOTIFICATIONS_PATH]: { unreadCount: 0, notifications: [] },
+      [VOICE_PATH]: buildVoiceOverview(),
+    });
+    renderScreen(<CenterAgendaScreen />);
+
+    fireEvent.press(await screen.findByRole('button', { name: 'Contestador IA' }));
+
+    expect(getMockRouter().push).toHaveBeenLastCalledWith('/(admin)/voice-receptionist');
+  });
+
+  it.each([
+    ['does not have the service', buildNotContractedVoiceOverview()],
+    ['could not be checked', undefined],
+  ])('hides the button when the center %s', async (_label, overview) => {
+    mockApi({
+      [NOTIFICATIONS_PATH]: { unreadCount: 0, notifications: [] },
+      ...(overview === undefined ? {} : { [VOICE_PATH]: overview }),
+    });
+    renderScreen(<CenterAgendaScreen />);
+
+    expect(await screen.findByRole('button', { name: 'Agenda' })).toBeOnTheScreen();
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Contestador IA' })).toBeNull();
+    });
   });
 });
 

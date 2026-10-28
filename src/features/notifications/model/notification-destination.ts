@@ -42,6 +42,7 @@ const PUBLIC_PROFILE = byAudience({
   staff: '/(staff)/public-profile',
   admin: '/(admin)/public-profile',
 });
+const VOICE_RECEPTIONIST = byAudience({ admin: '/(admin)/voice-receptionist' });
 const TEAM_PROFILES = byAudience({ admin: '/(admin)/team/profiles' });
 
 const MESSAGES_ROUTE: Readonly<Record<NotificationAudience, string>> = {
@@ -112,6 +113,8 @@ const DESTINATION_BY_KIND: Readonly<Record<NoticeKind, DestinationRule>> = {
   center_closed: byAudience({}),
   message_reported: byAudience({ admin: '/(admin)/messages/reports' }),
   plan_over_limit: SUBSCRIPTION,
+  voice_minutes_80: VOICE_RECEPTIONIST,
+  voice_minutes_100: VOICE_RECEPTIONIST,
 };
 
 /** La pantalla a la que lleva un aviso, o `null` si no hay ninguna que mostrar. */

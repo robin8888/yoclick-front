@@ -1,4 +1,5 @@
 import { useUnreadMessageCount } from '@/features/chat';
+import { useHasVoiceReceptionist } from '@/features/voice-receptionist';
 import { i18n } from '@/shared/i18n';
 
 import { QuickActionsGrid, type QuickAction } from '@/ui/organisms/QuickActionsGrid';
@@ -18,6 +19,7 @@ interface CenterQuickActionsProps {
   onPassesPress: () => void;
   onSetupGuidePress: () => void;
   onMessagesPress: () => void;
+  onVoiceReceptionistPress: () => void;
 }
 
 function buildPrimaryAction(props: CenterQuickActionsProps): QuickAction {
@@ -78,9 +80,25 @@ function buildPassesActions(props: CenterQuickActionsProps): QuickAction[] {
   ];
 }
 
+function buildVoiceReceptionistActions(
+  props: CenterQuickActionsProps,
+  hasVoiceReceptionist: boolean,
+): QuickAction[] {
+  if (!hasVoiceReceptionist) return [];
+  return [
+    {
+      id: 'voiceReceptionist',
+      iconName: 'phone',
+      label: i18n.t('staffAgenda.center.voiceReceptionistAction'),
+      hint: i18n.t('staffAgenda.center.voiceReceptionistHint'),
+      onPress: props.onVoiceReceptionistPress,
+    },
+  ];
+}
+
 function buildSecondaryActions(
   props: CenterQuickActionsProps,
-  unreadMessageCount: number,
+  extras: { unreadMessageCount: number; hasVoiceReceptionist: boolean },
 ): QuickAction[] {
   return [
     {
@@ -105,8 +123,9 @@ function buildSecondaryActions(
       hint: i18n.t('staffAgenda.center.teamHint'),
       onPress: props.onTeamPress,
     },
-    buildMessagesAction(props, unreadMessageCount),
+    buildMessagesAction(props, extras.unreadMessageCount),
     ...buildManagementActions(props),
+    ...buildVoiceReceptionistActions(props, extras.hasVoiceReceptionist),
     buildSetupGuideAction(props),
   ];
 }
@@ -117,11 +136,13 @@ function buildSecondaryActions(
  */
 export function CenterQuickActions(props: Readonly<CenterQuickActionsProps>): React.JSX.Element {
   const unreadMessageCount = useUnreadMessageCount();
+  // Solo sale el acceso si el centro tiene el servicio contratado (el inicio queda igual si no).
+  const hasVoiceReceptionist = useHasVoiceReceptionist();
 
   return (
     <QuickActionsGrid
       primaryAction={buildPrimaryAction(props)}
-      actions={buildSecondaryActions(props, unreadMessageCount)}
+      actions={buildSecondaryActions(props, { unreadMessageCount, hasVoiceReceptionist })}
     />
   );
 }

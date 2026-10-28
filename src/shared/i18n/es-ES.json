@@ -66,7 +66,11 @@
       "rowLabel": "{{name}}, {{status}}"
     },
     "plans": {
-      "names": { "basic": "Básico", "pro": "Pro", "premium": "Premium" },
+      "names": {
+        "basic": "Básico",
+        "pro": "Pro",
+        "premium": "Premium"
+      },
       "inTrial": "En prueba",
       "errorTitle": "No hemos podido cargar los planes",
       "revenueTitle": "Ingresos al mes",
@@ -1227,7 +1231,9 @@
       "noAppointments": "Sin citas este día",
       "appointmentCount_one": "{{count}} cita",
       "appointmentCount_other": "{{count}} citas",
-      "byRoomTitle": "Por sala"
+      "byRoomTitle": "Por sala",
+      "voiceReceptionistAction": "Contestador IA",
+      "voiceReceptionistHint": "Atiende las llamadas y gestiona citas"
     },
     "attendance": {
       "title": "Asistencia",
@@ -1581,6 +1587,10 @@
     "planOverLimitDescription": "Todos tus clientes siguen con acceso, pero no podrás dar de alta a nadie nuevo hasta volver al límite.",
     "messageReportedTitle": "Han denunciado un mensaje",
     "messageReportedDescription": "Revisa la denuncia en Mensajes, apartado Denuncias.",
+    "voiceMinutes80Title": "El Contestador IA lleva el 80 % de sus minutos",
+    "voiceMinutes80Description": "Entra en Contestador IA para ver el consumo de este periodo.",
+    "voiceMinutes100Title": "El Contestador IA ha usado todos sus minutos",
+    "voiceMinutes100Description": "Entra en Contestador IA para ver qué pasa ahora con las llamadas.",
     "centerClosedTitle": "Un centro tuyo se ha cerrado",
     "centerClosedDescription": "El propietario ha cerrado el centro y ya no tienes acceso a él.",
     "planChangedTitle": "Tu plan ha cambiado",
@@ -3499,6 +3509,121 @@
       "openOut": "—",
       "shareDialogTitle": "Enviar informe de asistencia",
       "errorMessage": "No hemos podido crear el informe. Inténtalo de nuevo."
+    }
+  },
+  "voiceReceptionist": {
+    "title": "Contestador IA",
+    "subtitle": "Atiende las llamadas que desvíes a tu número puente y gestiona citas en tu agenda.",
+    "loadErrorTitle": "No hemos podido cargar el Contestador IA",
+    "states": {
+      "active": "Activo",
+      "inactive": "Apagado",
+      "paused": "En pausa",
+      "cancelled": "No disponible"
+    },
+    "status": {
+      "title": "Estado del servicio",
+      "switchLabel": "Contestador activado",
+      "activeDescription": "El contestador atiende las llamadas que llegan a tu número puente.",
+      "inactiveDescription": "Apagado: las llamadas suenan como siempre y nadie las atiende por ti.",
+      "pausedDescription": "El servicio está en pausa. De momento no atiende llamadas y tu línea suena como siempre.",
+      "cancelledDescription": "El servicio ya no está disponible en tu centro.",
+      "noLineDescription": "Todavía no tienes un número puente asignado, así que no se puede encender."
+    },
+    "locked": {
+      "title": "Este servicio no está activo en tu centro",
+      "description": "El Contestador IA atiende las llamadas desviadas del teléfono del centro y, en tu agenda real, consulta huecos y reserva, cancela o cambia citas. Si una llamada necesita a una persona, la pasa a tu equipo."
+    },
+    "line": {
+      "title": "Número puente",
+      "description": "Es el número al que tu operador debe desviar las llamadas. Tu número de siempre no cambia.",
+      "noLine": "Todavía no tienes un número asignado.",
+      "copyAction": "Copiar número",
+      "copiedAction": "Número copiado",
+      "copyA11y": "Copiar el número puente {{number}}",
+      "callAction": "Llamar para probar",
+      "callA11y": "Llamar al número puente {{number}} para hacer la llamada de prueba",
+      "forwardingTitle": "Cómo desviar las llamadas",
+      "forwardingIntro": "Pide a tu operador, o configúralo en tu teléfono, un desvío al número puente.",
+      "forwardingModes": {
+        "always": "Siempre: todas las llamadas del centro van al contestador.",
+        "no_answer": "Si no contestas: el contestador atiende cuando nadie descuelga.",
+        "busy": "Si comunica: el contestador atiende cuando la línea está ocupada.",
+        "outside_hours": "Fuera de horario: el contestador atiende cuando el centro está cerrado."
+      },
+      "forwardingModeNote": "Tienes elegido: {{mode}}",
+      "testTitle": "Llamada de prueba",
+      "testSteps": {
+        "first": "Llama al número puente desde un móvil que no sea el del centro.",
+        "second": "Escucha el aviso de que es un asistente virtual y pide una cita.",
+        "third": "Comprueba después que la cita aparece en tu agenda y en el historial de llamadas."
+      }
+    },
+    "usage": {
+      "title": "Minutos de este periodo",
+      "summary": "{{used}} de {{included}} minutos",
+      "overage": "Has pasado de lo incluido en {{count}} min.",
+      "emptyPeriod": "Todavía no hay consumo en este periodo.",
+      "levels": {
+        "normal": "Todo en orden",
+        "near_limit": "Cerca del límite: llevas el 80 % o más",
+        "limit_reached": "Minutos incluidos agotados"
+      },
+      "afterLimit": {
+        "continue_and_charge": "Al agotarse, el contestador sigue atendiendo y los minutos de más se contabilizan aparte.",
+        "disable_bot": "Al agotarse, el contestador deja de atender y tu línea suena como siempre hasta el siguiente periodo."
+      },
+      "barA11y": "Minutos usados: {{percent}} %"
+    },
+    "config": {
+      "title": "Ajustes",
+      "greetingLabel": "Saludo",
+      "greetingHelper": "Lo primero que oye quien llama. Si lo dejas vacío, se usa el saludo estándar.",
+      "assistantNameLabel": "Nombre del asistente",
+      "customizeLocked": "El saludo y el nombre del asistente no se pueden cambiar en tu centro.",
+      "legalNoticeLabel": "Aviso al empezar la llamada",
+      "legalNoticeHelper": "Se dice al inicio de cada llamada: que es un asistente virtual y que la llamada se transcribe para gestionar la cita.",
+      "transferPhoneLabel": "Teléfono para pasar la llamada a una persona",
+      "transferPhoneHelper": "Con prefijo, por ejemplo +34600112233. No puede ser el teléfono del centro ni el número puente.",
+      "transferPhoneInvalid": "Escríbelo con prefijo y solo números, por ejemplo +34600112233.",
+      "retentionLabel": "Días que se guardan las transcripciones",
+      "retentionInvalid": "Elige un número de días entre {{min}} y {{max}}.",
+      "textTooLong": "Como máximo {{max}} caracteres.",
+      "forwardingModeLabel": "Cuándo desvías las llamadas",
+      "overagePolicyLabel": "Cuando se acaben los minutos incluidos",
+      "overagePolicyOptions": {
+        "continue_and_charge": "Seguir atendiendo las llamadas",
+        "disable_bot": "Dejar de atender y que la línea suene como siempre"
+      },
+      "saveAction": "Guardar cambios",
+      "savedMessage": "Cambios guardados."
+    },
+    "calls": {
+      "title": "Historial de llamadas",
+      "emptyTitle": "Aún no hay llamadas",
+      "emptyDescription": "Cuando el contestador atienda una, aparecerá aquí con su resultado.",
+      "errorTitle": "No hemos podido cargar el historial",
+      "moreAction": "Ver más llamadas",
+      "unknownCaller": "Sin nombre",
+      "noOutcome": "Sin resultado",
+      "rowA11y": "Llamada de {{caller}}: {{outcome}}",
+      "outcomes": {
+        "booking": "Cita reservada",
+        "cancellation": "Cita cancelada",
+        "reschedule": "Cita cambiada",
+        "transfer": "Pasada a una persona",
+        "waitlist": "Apuntado a la lista de espera",
+        "no_action": "Sin gestión"
+      }
+    },
+    "studentCode": {
+      "title": "Tu código",
+      "description": "Es tu código en este centro. Díctalo cuando llames para que te identifiquen.",
+      "codeA11y": "Tu código es {{digits}}",
+      "copyAction": "Copiar código",
+      "copiedAction": "Código copiado",
+      "errorMessage": "No hemos podido cargar tu código.",
+      "retryAction": "Reintentar"
     }
   }
 }
