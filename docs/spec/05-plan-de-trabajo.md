@@ -49,6 +49,29 @@ Todo subido con `git push` en los dos repos. Back: 876 tests unitarios y ~702 e2
 - ⬜ Escanear el QR con la cámara nativa del móvil: requiere publicar `yoclick.app` con los ficheros de asociación y la ruta `/j/[code]`.
 - ⬜ Pendientes anteriores: correo a las personas importadas, biblioteca de contenido (Bunny Storage), claves push (Apple/FCM, `PUSH_PROVIDER=expo`), `video_storage_limit_bytes`, textos legales, foto de perfil y certificados.
 
+## Estado de avance (28 oct 2026, cierre del día)
+
+Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a las anteriores. Back: lint, tsc, unitarios y e2e completos en verde; front: lint, typecheck y tests de las carpetas tocadas en verde. Lo de la mañana está subido; el contestador IA está commiteado **sin push**.
+
+### Hecho el 28 de octubre
+- ✅ **Cobro del plan fuera de la app** (Apple 3.1.1): enlace firmado por correo, recordatorios de prueba, la app solo informa del plan; tarjeta del plan y «En prueba» en el inicio del centro; borde parpadeante en «Primeros pasos»; campana animada.
+- ✅ **Bajar de plan con más clientes del tope**: baja al final del periodo, aviso `plan_over_limit`, sin borrar clientes; párrafo en los términos.
+- ✅ **Cuatro bloqueantes de la auditoría de tiendas**: sin textos de pago, borrar cuenta del propietario cierra el centro, enlaces legales y contacto, denunciar y bloquear en el chat.
+- ✅ **Variante Premium eliminada** de `app.config`; textos de Apple Pay, Google Pay y Bizum quitados; el nombre del centro ya no se corta.
+- ✅ **Contestador IA de citas (add-on), fases 1 a 5**: módulo de voz con Vapi detrás de `VoiceAgentProvider`, código de alumno, cita de prueba para no alumnos, facturación como líneas de la suscripción (cuota fija + minutos medidos, elegible en la página de pago de Stripe), avisos al 80 % y 100 %, pantalla y botón en el inicio del centro, tarjeta «Tu código», guía de Vapi y lista de pruebas (`docs/guides/contestador-ia-vapi.md` en el back).
+
+### Decisiones
+- El add-on se contrata fuera de la app; dentro, el estado bloqueado solo informa. Solo con plan mensual.
+- Invitados: reserva real solo en servicios marcados «admiten cita de prueba»; no cuentan para el tope de clientes.
+
+### Pendiente
+1. ⬜ Probar el contestador de extremo a extremo con cuentas reales de Vapi y Twilio (número +34 9xx con su trámite) y Stripe de prueba (`billing:setup`); lo no verificado está marcado en la guía.
+2. ⬜ Revisión legal del aviso de la llamada y del contrato de tratamiento de datos (subencargados).
+3. ⬜ Probar en el móvil: botón del inicio, pantalla del contestador, tarjeta «Tu código».
+4. ⬜ Enlazar al invitado con su cuenta si luego se registra; herramienta para reservar a un hijo; enlace de pago por SMS (opcional); automatizar el asistente de Vapi por centro.
+5. ⬜ Endurecer la configuración de producción del back (Stripe y Bunny obligatorios, `trustProxy`, clave propia para el enlace de pago, subir `zod` y `fastify`), cuenta de revisión para Apple, páginas legales publicadas, notas para App Review.
+6. ⬜ Bloqueado por el alta de autónomo: Stripe real, dominio `yoclick.app`, Brevo.
+
 ## Estado de avance (27 oct 2026, cierre del día)
 
 Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Esta sección **añade** a las anteriores; lo que no aparece aquí no ha cambiado. Back: lint, tsc, 1358 unitarios y e2e de pagos, ajustes de centro y facturación en verde; front: lint, typecheck y tests de center-admin y notifications en verde. Lo del día está commiteado **sin push**.
