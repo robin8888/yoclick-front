@@ -48,4 +48,6 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   plan_over_limit: 'plan_over_limit',
   center_closed: 'center_closed',
   message_reported: 'message_reported',
+  voice_minutes_80: 'voice_minutes_80',
+  voice_minutes_100: 'voice_minutes_100',
 } as const;

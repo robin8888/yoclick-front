@@ -30,4 +30,5 @@ export * from './team/team.zod.ts';
 export * from './team-profiles/team-profiles.zod.ts';
 export * from './time-entries/time-entries.zod.ts';
 export * from './videos/videos.zod.ts';
+export * from './voice-receptionist/voice-receptionist.zod.ts';
 export * from './waitlist/waitlist.zod.ts';
