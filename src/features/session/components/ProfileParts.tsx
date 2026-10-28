@@ -44,7 +44,7 @@ export function ProfileHeader({
         </Text>
         <Badge label={roleLabel} tone="brand" />
         {centerName === '' ? null : (
-          <Text variant="caption" color="ink2" numberOfLines={1}>
+          <Text variant="caption" color="ink2">
             {centerName}
           </Text>
         )}

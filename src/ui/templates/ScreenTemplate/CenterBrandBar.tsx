@@ -24,16 +24,12 @@ export function CenterBrandBar(): React.JSX.Element | null {
         isDecorative
       />
       <View style={CENTER_BRAND_TEXT_STYLE}>
-        <Text variant="titleMd" numberOfLines={1}>
-          {centerIdentity.name}
-        </Text>
+        <Text variant="titleMd">{centerIdentity.name}</Text>
         {centerIdentity.personName === null ? null : (
-          <Text color="ink2" numberOfLines={1}>
-            {centerIdentity.personName}
-          </Text>
+          <Text color="ink2">{centerIdentity.personName}</Text>
         )}
         {centerIdentity.roleLabel === null ? null : (
-          <Text variant="caption" color="brandInk" numberOfLines={1}>
+          <Text variant="caption" color="brandInk">
             {centerIdentity.roleLabel}
           </Text>
         )}
