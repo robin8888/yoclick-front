@@ -57,6 +57,9 @@ const TITLE_KEYS = {
   schedule_updated: 'notifications.scheduleUpdatedTitle',
   plan_subscribed: 'notifications.planSubscribedTitle',
   plan_changed: 'notifications.planChangedTitle',
+  center_closed: 'notifications.centerClosedTitle',
+  message_reported: 'notifications.messageReportedTitle',
+  plan_over_limit: 'notifications.planOverLimitTitle',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const DESCRIPTION_KEYS = {
@@ -95,6 +98,9 @@ const DESCRIPTION_KEYS = {
   schedule_updated: 'notifications.scheduleUpdatedDescription',
   plan_subscribed: 'notifications.planSubscribedDescription',
   plan_changed: 'notifications.planChangedDescription',
+  center_closed: 'notifications.centerClosedDescription',
+  message_reported: 'notifications.messageReportedDescription',
+  plan_over_limit: 'notifications.planOverLimitDescription',
 } as const satisfies Record<NotificationItem['kind'], string>;
 
 const PRIVACY_RIGHT_KEYS = {

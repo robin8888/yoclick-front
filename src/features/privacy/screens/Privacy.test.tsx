@@ -1,5 +1,5 @@
 import { act, fireEvent, screen, waitFor } from '@testing-library/react-native';
-import { Share } from 'react-native';
+import { Linking, Share } from 'react-native';
 
 import { useSessionStore } from '@/shared/auth/session-store';
 import { useSignOutFlow } from '@/shared/auth/useSignOutFlow';
@@ -21,6 +21,16 @@ const BASE = `/v1/centers/${NORTE_CENTER_ID}`;
 const MEMBERSHIPS = {
   memberships: [
     { membershipId: 'm1', centerId: NORTE_CENTER_ID, role: 'client', center: { sectorId: 'gym' } },
+  ],
+};
+const OWNER_MEMBERSHIPS = {
+  memberships: [
+    {
+      membershipId: 'm9',
+      centerId: NORTE_CENTER_ID,
+      role: 'owner',
+      center: { name: 'Gimnasio Norte', sectorId: 'gym' },
+    },
   ],
 };
 const CONSENTS = {
@@ -76,6 +86,41 @@ describe('PrivacySettingsScreen', () => {
     expect(await screen.findByText('Tus consentimientos')).toBeOnTheScreen();
     expect(screen.getByRole('switch', { name: 'Privacidad y condiciones' })).toBeDisabled();
     expect(screen.getByRole('switch', { name: 'Promociones y novedades' })).not.toBeDisabled();
+  });
+
+  it('links to the privacy policy and the terms, opened in the browser (Apple 5.1.1(i))', async () => {
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+    mockPrivacyApi();
+    renderScreen(<PrivacySettingsScreen />);
+
+    fireEvent.press(await screen.findByRole('link', { name: 'Política de privacidad' }));
+    fireEvent.press(screen.getByRole('link', { name: 'Condiciones del servicio' }));
+
+    expect(openUrl).toHaveBeenNthCalledWith(1, 'https://yoclick.app/privacidad');
+    expect(openUrl).toHaveBeenNthCalledWith(2, 'https://yoclick.app/condiciones');
+    openUrl.mockRestore();
+  });
+
+  it('publishes a contact address that opens the mail app (Apple 1.2)', async () => {
+    const openUrl = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
+    mockPrivacyApi();
+    renderScreen(<PrivacySettingsScreen />);
+
+    fireEvent.press(await screen.findByRole('link', { name: 'Contacto' }));
+
+    expect(openUrl).toHaveBeenCalledWith('mailto:soporte@yoclick.app');
+    openUrl.mockRestore();
+  });
+
+  it('says so when the browser cannot open a legal text', async () => {
+    const openUrl = jest.spyOn(Linking, 'openURL').mockRejectedValue(new Error('no browser'));
+    mockPrivacyApi();
+    renderScreen(<PrivacySettingsScreen />);
+
+    fireEvent.press(await screen.findByRole('link', { name: 'Política de privacidad' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/No hemos podido abrir el enlace/);
+    openUrl.mockRestore();
   });
 
   it('credits the OpenStreetMap and Geoapify data behind the address suggestions', async () => {
@@ -236,7 +281,66 @@ describe('DeleteAccountScreen', () => {
     });
   });
 
-  it('explains that the owner of a center cannot delete the account yet', async () => {
+  it('tells the owner that deleting the account closes the center, and asks to confirm it', async () => {
+    mockApi({ 'GET /v1/me/memberships': OWNER_MEMBERSHIPS });
+    renderScreen(<DeleteAccountScreen />);
+
+    expect(await screen.findByText('Se cerrará tu centro')).toBeOnTheScreen();
+    expect(screen.getByText(/Eres propietario de Gimnasio Norte/)).toBeOnTheScreen();
+    expect(screen.getByText(/se cancela su suscripción/)).toBeOnTheScreen();
+  });
+
+  it('does not let the owner delete until they confirm the center will be closed', async () => {
+    mockApi({ 'GET /v1/me/memberships': OWNER_MEMBERSHIPS });
+    renderScreen(<DeleteAccountScreen />);
+    await screen.findByText('Se cerrará tu centro');
+    const confirm = screen.getByRole('button', { name: 'Eliminar mi cuenta para siempre' });
+
+    fireEvent.changeText(screen.getByLabelText('Contraseña'), TYPED_SECRET);
+    fireEvent.changeText(screen.getByLabelText('Escribe ELIMINAR para confirmar'), 'ELIMINAR');
+    expect(confirm).toBeDisabled();
+
+    fireEvent.press(
+      screen.getByRole('checkbox', { name: 'Entiendo que se cerrará y que no se puede deshacer' }),
+    );
+    expect(confirm).not.toBeDisabled();
+  });
+
+  it('asks the API to close the owned center together with the account', async () => {
+    const signOut = jest.fn();
+    jest.mocked(useSignOutFlow).mockReturnValue({ signOut, isSigningOut: false, isSignedIn: true });
+    mockApi({ 'GET /v1/me/memberships': OWNER_MEMBERSHIPS, 'DELETE /v1/me': null });
+    renderScreen(<DeleteAccountScreen />);
+    await screen.findByText('Se cerrará tu centro');
+
+    fireEvent.changeText(screen.getByLabelText('Contraseña'), TYPED_SECRET);
+    fireEvent.changeText(screen.getByLabelText('Escribe ELIMINAR para confirmar'), 'ELIMINAR');
+    fireEvent.press(
+      screen.getByRole('checkbox', { name: 'Entiendo que se cerrará y que no se puede deshacer' }),
+    );
+    fireEvent.press(screen.getByRole('button', { name: 'Eliminar mi cuenta para siempre' }));
+
+    await waitFor(() => {
+      expect(signOut).toHaveBeenCalled();
+    });
+    expect(findApiCall('DELETE', '/v1/me')?.body).toEqual({
+      ['password']: TYPED_SECRET,
+      confirmation: 'ELIMINAR',
+      closeOwnedCenters: true,
+    });
+  });
+
+  it('does not show the closing notice to someone who owns no center', async () => {
+    mockApi({ 'GET /v1/me/memberships': MEMBERSHIPS });
+    renderScreen(<DeleteAccountScreen />);
+
+    await waitFor(() => {
+      expect(findApiCall('GET', '/v1/me/memberships')).toBeDefined();
+    });
+    expect(screen.queryByText('Se cerrará tu centro')).toBeNull();
+  });
+
+  it('explains that deleting the account closes the center if the API still asks for it', async () => {
     mockApi({
       'GET /v1/me/memberships': MEMBERSHIPS,
       'DELETE /v1/me': () => {
@@ -249,6 +353,6 @@ describe('DeleteAccountScreen', () => {
     fireEvent.changeText(screen.getByLabelText('Escribe ELIMINAR para confirmar'), 'ELIMINAR');
     fireEvent.press(screen.getByRole('button', { name: 'Eliminar mi cuenta para siempre' }));
 
-    expect(await screen.findByText(/cierra o traspasa el centro/)).toBeOnTheScreen();
+    expect(await screen.findByText(/al eliminar tu cuenta se cerrará/)).toBeOnTheScreen();
   });
 });

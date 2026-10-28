@@ -1,4 +1,6 @@
+export { BlockedPeopleScreen } from './screens/BlockedPeopleScreen';
 export { ConversationScreen } from './screens/ConversationScreen';
+export { MessageReportsScreen } from './screens/MessageReportsScreen';
 export { ConversationsScreen } from './screens/ConversationsScreen';
 export { GroupMessageScreen } from './screens/GroupMessageScreen';
 export { NewConversationScreen } from './screens/NewConversationScreen';

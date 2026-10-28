@@ -17,7 +17,7 @@ import {
   getStatusLabel,
   getStatusTone,
 } from '../model/center-labels';
-import { getPlanName } from '../model/plan-labels';
+import { getCenterPlanLabel } from '../model/plan-labels';
 import { BADGES_STYLE, IDENTITY_STYLE, PRESSED_STYLE } from './CenterRow.styles';
 import { ClientCapMeter } from './ClientCapMeter';
 import { Panel } from './Panel';
@@ -33,7 +33,7 @@ type Center = PlatformCenterListResponseDtoDataItem;
 
 function CenterIdentity({ center }: Readonly<{ center: Center }>): React.JSX.Element {
   const sectorLabel = i18n.t(`onboarding.sectors.${center.sectorId as 'gym'}`);
-  const details = [sectorLabel, center.city, getPlanName(center.planId)]
+  const details = [sectorLabel, center.city, getCenterPlanLabel(center)]
     .filter((part) => part !== null)
     .join(' · ');
 

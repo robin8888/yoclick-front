@@ -11,18 +11,19 @@ const SUBSCRIPTION_PATH_PREFIX = '/subscription';
 
 /**
  * Cuando la prueba gratuita acaba sin plan (o el pago falla y la gracia se agota) tapa la app con un
- * aviso que no se puede cerrar: la única salida es elegir un plan. No sale en las pantallas de
- * suscripción, para poder elegirlo y pagarlo. La API también lo impide: esto es solo la explicación.
+ * aviso que no se puede cerrar. Explica que el enlace de pago le llega por correo (la app no cobra ni
+ * enlaza a pagos: reglas de las tiendas) y deja ver los planes. No sale en las pantallas de suscripción.
+ * La API también lo impide: esto es solo la explicación.
  */
 export function PlanRequiredGate(): React.JSX.Element {
   const router = useRouter();
   const pathname = usePathname();
   const subscription = useCenterSubscription();
-  // El pago se hace en el navegador: al volver a la app se comprueba si ya está pagado.
+  // El pago se hace fuera de la app: al volver a ella se comprueba si ya está pagado.
   useRefreshSubscriptionOnReturn();
 
-  const isChoosingPlan = pathname.startsWith(SUBSCRIPTION_PATH_PREFIX);
-  const isBlocked = subscription.data?.isPlanRequired === true && !isChoosingPlan;
+  const isViewingPlans = pathname.startsWith(SUBSCRIPTION_PATH_PREFIX);
+  const isBlocked = subscription.data?.isPlanRequired === true && !isViewingPlans;
   const isTrialOver = subscription.data?.status === 'trial';
 
   return (

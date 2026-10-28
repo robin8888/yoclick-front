@@ -123,6 +123,7 @@ export const platformListCentersResponseDataItemBookingsLast30DaysMin = -9007199
 export const platformListCentersResponseDataItemBookingsLast30DaysMax = 9007199254740991;
 
 export const platformListCentersResponseDataItemLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const platformListCentersResponseDataItemClosedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 
 
 export const PlatformListCentersResponse = zod.object({
@@ -141,7 +142,8 @@ export const PlatformListCentersResponse = zod.object({
   "activeClientCount": zod.int().min(platformListCentersResponseDataItemActiveClientCountMin).max(platformListCentersResponseDataItemActiveClientCountMax),
   "teamMemberCount": zod.int().min(platformListCentersResponseDataItemTeamMemberCountMin).max(platformListCentersResponseDataItemTeamMemberCountMax),
   "bookingsLast30Days": zod.int().min(platformListCentersResponseDataItemBookingsLast30DaysMin).max(platformListCentersResponseDataItemBookingsLast30DaysMax),
-  "lastBookingAt": zod.iso.datetime({"offset":true}).regex(platformListCentersResponseDataItemLastBookingAtRegExp).nullable()
+  "lastBookingAt": zod.iso.datetime({"offset":true}).regex(platformListCentersResponseDataItemLastBookingAtRegExp).nullable(),
+  "closedAt": zod.iso.datetime({"offset":true}).regex(platformListCentersResponseDataItemClosedAtRegExp).nullable()
 })),
   "nextCursor": zod.string().nullable()
 })
@@ -172,6 +174,7 @@ export const platformGetCenterResponseBookingsLast30DaysMin = -9007199254740991;
 export const platformGetCenterResponseBookingsLast30DaysMax = 9007199254740991;
 
 export const platformGetCenterResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const platformGetCenterResponseClosedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformGetCenterResponseGraceEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformGetCenterResponseDocumentStorageLimitBytesMin = -9007199254740991;
 export const platformGetCenterResponseDocumentStorageLimitBytesMax = 9007199254740991;
@@ -200,6 +203,7 @@ export const PlatformGetCenterResponse = zod.object({
   "teamMemberCount": zod.int().min(platformGetCenterResponseTeamMemberCountMin).max(platformGetCenterResponseTeamMemberCountMax),
   "bookingsLast30Days": zod.int().min(platformGetCenterResponseBookingsLast30DaysMin).max(platformGetCenterResponseBookingsLast30DaysMax),
   "lastBookingAt": zod.iso.datetime({"offset":true}).regex(platformGetCenterResponseLastBookingAtRegExp).nullable(),
+  "closedAt": zod.iso.datetime({"offset":true}).regex(platformGetCenterResponseClosedAtRegExp).nullable(),
   "timezone": zod.string(),
   "disabledModules": zod.array(zod.string()),
   "stripeChargesEnabled": zod.boolean(),
@@ -249,6 +253,7 @@ export const platformUpdateCenterResponseBookingsLast30DaysMin = -90071992547409
 export const platformUpdateCenterResponseBookingsLast30DaysMax = 9007199254740991;
 
 export const platformUpdateCenterResponseLastBookingAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const platformUpdateCenterResponseClosedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformUpdateCenterResponseGraceEndsAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
 export const platformUpdateCenterResponseDocumentStorageLimitBytesMin = -9007199254740991;
 export const platformUpdateCenterResponseDocumentStorageLimitBytesMax = 9007199254740991;
@@ -277,6 +282,7 @@ export const PlatformUpdateCenterResponse = zod.object({
   "teamMemberCount": zod.int().min(platformUpdateCenterResponseTeamMemberCountMin).max(platformUpdateCenterResponseTeamMemberCountMax),
   "bookingsLast30Days": zod.int().min(platformUpdateCenterResponseBookingsLast30DaysMin).max(platformUpdateCenterResponseBookingsLast30DaysMax),
   "lastBookingAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterResponseLastBookingAtRegExp).nullable(),
+  "closedAt": zod.iso.datetime({"offset":true}).regex(platformUpdateCenterResponseClosedAtRegExp).nullable(),
   "timezone": zod.string(),
   "disabledModules": zod.array(zod.string()),
   "stripeChargesEnabled": zod.boolean(),

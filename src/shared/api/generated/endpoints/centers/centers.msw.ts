@@ -36,8 +36,44 @@ import {
   getCentersUpdateSettingsResponseMock
 } from './centers.faker.ts';
 
-export { getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetJoinStatsResponseMock, getCentersRegenerateJoinCodeResponseMock, getCentersGetSubscriptionResponseMock, getCentersGetLogoResponseMock, getCentersListSubscriptionPlansResponseMock, getCentersCreateSubscriptionPortalResponseMock, getCentersCreateSubscriptionCheckoutResponseMock } from './centers.faker.ts';
+export { getCentersListSubscriptionPlansResponseMock, getCentersCreateSubscriptionPortalResponseMock, getCentersCreateSubscriptionCheckoutResponseMock, getCentersGetBrandingResponseMock, getCentersGetSettingsResponseMock, getCentersUpdateSettingsResponseMock, getCentersGetJoinStatsResponseMock, getCentersRegenerateJoinCodeResponseMock, getCentersGetSubscriptionResponseMock, getCentersGetLogoResponseMock } from './centers.faker.ts';
 
+
+export const getCentersListSubscriptionPlansMockHandler = (overrideResponse?: PlanOffersResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlanOffersResponseDto> | PlanOffersResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/subscription/plans', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersListSubscriptionPlansResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCentersCreateSubscriptionPortalMockHandler = (overrideResponse?: CheckoutResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CheckoutResponseDto> | CheckoutResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/subscription/portal', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersCreateSubscriptionPortalResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getCentersCreateSubscriptionCheckoutMockHandler = (overrideResponse?: CheckoutResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CheckoutResponseDto> | CheckoutResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/subscription/checkout', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getCentersCreateSubscriptionCheckoutResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
 
 export const getCentersGetBrandingMockHandler = (overrideResponse?: CenterBrandingResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CenterBrandingResponseDto> | CenterBrandingResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/branding', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
@@ -123,51 +159,15 @@ export const getCentersGetLogoMockHandler = (overrideResponse?: Blob | ((info: P
       })
   }, options)
 }
-
-export const getCentersListSubscriptionPlansMockHandler = (overrideResponse?: PlanOffersResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<PlanOffersResponseDto> | PlanOffersResponseDto), options?: RequestHandlerOptions) => {
-  return http.get('*/v1/centers/:centerId/subscription/plans', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getCentersListSubscriptionPlansResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getCentersCreateSubscriptionPortalMockHandler = (overrideResponse?: CheckoutResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CheckoutResponseDto> | CheckoutResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/subscription/portal', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getCentersCreateSubscriptionPortalResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
-
-export const getCentersCreateSubscriptionCheckoutMockHandler = (overrideResponse?: CheckoutResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CheckoutResponseDto> | CheckoutResponseDto), options?: RequestHandlerOptions) => {
-  return http.post('*/v1/centers/:centerId/subscription/checkout', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
-
-
-    return HttpResponse.json(overrideResponse !== undefined
-    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
-    : getCentersCreateSubscriptionCheckoutResponseMock(),
-      { status: 200
-      })
-  }, options)
-}
 export const getCentersMock = () => [
+  getCentersListSubscriptionPlansMockHandler(),
+  getCentersCreateSubscriptionPortalMockHandler(),
+  getCentersCreateSubscriptionCheckoutMockHandler(),
   getCentersGetBrandingMockHandler(),
   getCentersGetSettingsMockHandler(),
   getCentersUpdateSettingsMockHandler(),
   getCentersGetJoinStatsMockHandler(),
   getCentersRegenerateJoinCodeMockHandler(),
   getCentersGetSubscriptionMockHandler(),
-  getCentersGetLogoMockHandler(),
-  getCentersListSubscriptionPlansMockHandler(),
-  getCentersCreateSubscriptionPortalMockHandler(),
-  getCentersCreateSubscriptionCheckoutMockHandler()
+  getCentersGetLogoMockHandler()
 ]

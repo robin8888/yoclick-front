@@ -9,6 +9,96 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
+ */
+export const centersListSubscriptionPlansPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersListSubscriptionPlansParams = zod.object({
+  "centerId": zod.uuid().regex(centersListSubscriptionPlansPathCenterIdRegExp)
+})
+
+export const CentersListSubscriptionPlansHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemMaxClientsMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemMaxClientsMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax = 9007199254740991;
+
+export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin = -9007199254740991;
+export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax = 9007199254740991;
+
+
+
+export const CentersListSubscriptionPlansResponse = zod.object({
+  "plans": zod.array(zod.object({
+  "id": zod.enum(['basic', 'pro', 'premium']),
+  "name": zod.string(),
+  "monthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax),
+  "annualMonthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax),
+  "setupFeeCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin).max(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax),
+  "maxClients": zod.int().min(centersListSubscriptionPlansResponsePlansItemMaxClientsMin).max(centersListSubscriptionPlansResponsePlansItemMaxClientsMax).nullable(),
+  "documentStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax),
+  "videoStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax).nullable(),
+  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'onlinePayments'])),
+  "isAvailable": zod.boolean()
+}))
+})
+
+/**
+ * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
+ */
+export const centersCreateSubscriptionPortalPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersCreateSubscriptionPortalParams = zod.object({
+  "centerId": zod.uuid().regex(centersCreateSubscriptionPortalPathCenterIdRegExp)
+})
+
+export const CentersCreateSubscriptionPortalHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const CentersCreateSubscriptionPortalResponse = zod.object({
+  "url": zod.url()
+})
+
+/**
+ * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
+ */
+export const centersCreateSubscriptionCheckoutPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const CentersCreateSubscriptionCheckoutParams = zod.object({
+  "centerId": zod.uuid().regex(centersCreateSubscriptionCheckoutPathCenterIdRegExp)
+})
+
+export const CentersCreateSubscriptionCheckoutHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const CentersCreateSubscriptionCheckoutBody = zod.object({
+  "planId": zod.enum(['basic', 'pro', 'premium']),
+  "period": zod.enum(['monthly', 'annual'])
+})
+
+export const CentersCreateSubscriptionCheckoutResponse = zod.object({
+  "url": zod.url()
+})
+
+/**
  * @summary Nombre, sector y color de un centro. Público y cacheable cinco minutos.
  */
 export const centersGetBrandingPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -511,94 +601,4 @@ export const CentersGetLogoParams = zod.object({
 })
 
 export const CentersGetLogoResponse = zod.unknown()
-
-/**
- * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
- */
-export const centersListSubscriptionPlansPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const CentersListSubscriptionPlansParams = zod.object({
-  "centerId": zod.uuid().regex(centersListSubscriptionPlansPathCenterIdRegExp)
-})
-
-export const CentersListSubscriptionPlansHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax = 9007199254740991;
-
-export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax = 9007199254740991;
-
-export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax = 9007199254740991;
-
-export const centersListSubscriptionPlansResponsePlansItemMaxClientsMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemMaxClientsMax = 9007199254740991;
-
-export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax = 9007199254740991;
-
-export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin = -9007199254740991;
-export const centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax = 9007199254740991;
-
-
-
-export const CentersListSubscriptionPlansResponse = zod.object({
-  "plans": zod.array(zod.object({
-  "id": zod.enum(['basic', 'pro', 'premium']),
-  "name": zod.string(),
-  "monthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemMonthlyPriceCentsMax),
-  "annualMonthlyPriceCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMin).max(centersListSubscriptionPlansResponsePlansItemAnnualMonthlyPriceCentsMax),
-  "setupFeeCents": zod.int().min(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMin).max(centersListSubscriptionPlansResponsePlansItemSetupFeeCentsMax),
-  "maxClients": zod.int().min(centersListSubscriptionPlansResponsePlansItemMaxClientsMin).max(centersListSubscriptionPlansResponsePlansItemMaxClientsMax).nullable(),
-  "documentStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemDocumentStorageLimitBytesMax),
-  "videoStorageLimitBytes": zod.int().min(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMin).max(centersListSubscriptionPlansResponsePlansItemVideoStorageLimitBytesMax).nullable(),
-  "features": zod.array(zod.enum(['reports', 'clientImport', 'routines', 'contentLibrary', 'groups', 'families', 'waitlist', 'rooms', 'customAppearance', 'videos', 'onlinePayments'])),
-  "isAvailable": zod.boolean()
-}))
-})
-
-/**
- * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
- */
-export const centersCreateSubscriptionPortalPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const CentersCreateSubscriptionPortalParams = zod.object({
-  "centerId": zod.uuid().regex(centersCreateSubscriptionPortalPathCenterIdRegExp)
-})
-
-export const CentersCreateSubscriptionPortalHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const CentersCreateSubscriptionPortalResponse = zod.object({
-  "url": zod.url()
-})
-
-/**
- * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
- */
-export const centersCreateSubscriptionCheckoutPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
-
-
-export const CentersCreateSubscriptionCheckoutParams = zod.object({
-  "centerId": zod.uuid().regex(centersCreateSubscriptionCheckoutPathCenterIdRegExp)
-})
-
-export const CentersCreateSubscriptionCheckoutHeader = zod.object({
-  "X-Center-Id": zod.string()
-})
-
-export const CentersCreateSubscriptionCheckoutBody = zod.object({
-  "planId": zod.enum(['basic', 'pro', 'premium']),
-  "period": zod.enum(['monthly', 'annual'])
-})
-
-export const CentersCreateSubscriptionCheckoutResponse = zod.object({
-  "url": zod.url()
-})
 

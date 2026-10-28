@@ -40,12 +40,14 @@ describe('PlanRequiredGate', () => {
     });
   });
 
-  it('covers the app when the free trial is over and sends to the plans', async () => {
+  it('covers the app when the free trial is over, without saying how to pay, and shows the plans', async () => {
     mockSubscription();
     renderScreen(<PlanRequiredGate />);
 
     expect(await screen.findByText('Tu prueba gratuita ha terminado')).toBeOnTheScreen();
-    fireEvent.press(screen.getByRole('button', { name: 'Elegir un plan' }));
+    expect(screen.getByText(/no tiene un plan activo/)).toBeOnTheScreen();
+    expect(screen.queryByText(/correo|enlace/i)).toBeNull();
+    fireEvent.press(screen.getByRole('button', { name: 'Ver los planes' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/subscription/plans');
   });
@@ -70,7 +72,7 @@ describe('PlanRequiredGate', () => {
     expect(screen.queryByText('Tu prueba gratuita ha terminado')).not.toBeOnTheScreen();
   });
 
-  it('does not cover the subscription screens, where the plan is chosen and paid', async () => {
+  it('does not cover the subscription screens, where the plans are shown', async () => {
     jest.mocked(expoRouter.usePathname).mockReturnValue('/subscription/plans');
     mockSubscription();
     renderScreen(<PlanRequiredGate />);

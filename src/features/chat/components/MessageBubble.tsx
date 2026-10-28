@@ -18,7 +18,12 @@ interface MessageBubbleProps {
   message: MessageResponseDto;
   /** Hora ya formateada («18:05»). */
   timeLabel: string;
+  /** Denunciar este mensaje (Apple 1.2); solo se ofrece en los de la otra parte. */
+  onReportPress?: (() => void) | undefined;
 }
+
+/** El texto es pequeño: el área pulsable se amplía para llegar al mínimo táctil. */
+const REPORT_HIT_SLOP = { top: 12, bottom: 12, left: 12, right: 12 };
 
 function openAttachment(url: string): void {
   // Si el móvil no puede abrir el enlace no hay nada útil que hacer: el archivo sigue en el hilo.
@@ -68,6 +73,7 @@ function AttachmentContent({
 export function MessageBubble({
   message,
   timeLabel,
+  onReportPress,
 }: Readonly<MessageBubbleProps>): React.JSX.Element {
   const theme = useTheme();
   const textColor = message.isMine ? 'onBrand' : 'ink';
@@ -89,6 +95,18 @@ export function MessageBubble({
         <Text variant="caption" color={message.isMine ? 'onBrand' : 'ink2'}>
           {timeLabel}
         </Text>
+        {message.isMine || onReportPress === undefined ? null : (
+          <Pressable
+            role="button"
+            accessibilityLabel={i18n.t('chat.report.actionA11y', { name: message.senderName })}
+            hitSlop={REPORT_HIT_SLOP}
+            onPress={onReportPress}
+          >
+            <Text variant="caption" color="ink2">
+              {i18n.t('chat.report.action')}
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );

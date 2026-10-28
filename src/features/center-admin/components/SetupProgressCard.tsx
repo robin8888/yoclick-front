@@ -15,6 +15,7 @@ import {
   createProgressHeaderStyle,
   createProgressTextStyle,
 } from './SetupProgressCard.styles';
+import { PulsingBorder } from './PulsingBorder';
 
 interface ProgressSummaryProps {
   counts: { done: number; total: number };
@@ -72,6 +73,7 @@ function ProgressCardBody({
       }}
       style={style}
     >
+      <PulsingBorder isActive={doneCount < totalCount} />
       <ProgressSummary counts={counts} next={next} />
       <StepProgress
         currentStep={doneCount}
@@ -83,8 +85,9 @@ function ProgressCardBody({
 }
 
 /**
- * El avance de «Primeros pasos» en el inicio del centro: cuántos pasos lleva hechos y cuál toca.
- * Desaparece cuando ya está todo, y mientras no se sepa no ocupa sitio.
+ * El avance de «Primeros pasos» en el inicio del centro: cuántos pasos lleva hechos y cuál toca. Su borde
+ * late con el color del centro hasta completar todos los pasos, para que se vea que hay que terminarlos
+ * para operar bien. Desaparece cuando ya está todo, y mientras no se sepa no ocupa sitio.
  */
 export function SetupProgressCard(): React.JSX.Element | null {
   const progress = useSetupProgress();

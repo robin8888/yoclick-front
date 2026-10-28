@@ -7,18 +7,15 @@ import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { getSharedStateCopy } from '@/shared/i18n/shared-state-copy';
 import { formatShortDate } from '@/shared/lib/format';
 import { Button } from '@/ui/atoms/Button';
-import { Icon } from '@/ui/atoms/Icon';
 import { Text } from '@/ui/atoms/Text';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
 import { ClientUsageCard } from '../components/ClientUsageCard';
-import { ManageSubscriptionButton } from '../components/ManageSubscriptionButton';
 import { REPORT_SECTION_STYLE } from '../components/ReportCard.styles';
 import { SubscriptionSummaryCard } from '../components/SubscriptionSummaryCard';
 import { useCenterSubscription } from '../hooks/useCenterSubscription';
 import { useRefreshSubscriptionOnReturn } from '../hooks/useRefreshSubscriptionOnReturn';
-import { NOTE_STYLE } from './PrivacyLegalScreen.styles';
 
 const PLATFORM_TIME_ZONE = 'Europe/Madrid';
 
@@ -45,28 +42,13 @@ function StatusNote({
   );
 }
 
-/** Mientras no pague con una suscripción activa, se le ofrece elegir plan; si ya paga, se le tranquiliza. */
-function PlanAction({
-  subscription,
-}: Readonly<{ subscription: CenterSubscriptionResponseDto }>): React.JSX.Element {
+/** «Ver planes» lleva a lo que incluye cada plan; no dice cómo contratar ni cambiar de plan. */
+function PlanAction(): React.JSX.Element {
   const router = useRouter();
-  const isPaying = subscription.hasSubscription && subscription.status === 'active';
-  if (isPaying) {
-    return (
-      <>
-        <View style={NOTE_STYLE}>
-          <Icon name="info" color="info" />
-          <Text variant="caption" color="ink2">
-            {i18n.t('centerAdmin.subscription.activeNote')}
-          </Text>
-        </View>
-        <ManageSubscriptionButton />
-      </>
-    );
-  }
   return (
     <Button
-      label={i18n.t('centerAdmin.subscription.chooseAction')}
+      label={i18n.t('centerAdmin.subscription.changeAction')}
+      variant="secondary"
       isFullWidth
       onPress={() => {
         router.push('/(admin)/subscription/plans');
@@ -76,8 +58,8 @@ function PlanAction({
 }
 
 /**
- * Prototipo `asubs`: el plan, su estado y el uso. Elegir o cambiar de plan lleva a `aplans`, que abre la
- * página de pago de Stripe en el navegador: dentro de la app no se introducen datos de pago.
+ * Prototipo `asubs`: el plan, su estado y el uso. «Ver planes» lleva a `aplans`, que solo informa: la app
+ * no vende ni dirige a pagos externos (App Store 3.1.1 y Google Play).
  */
 export function SubscriptionScreen(): React.JSX.Element {
   const router = useRouter();
@@ -107,7 +89,7 @@ export function SubscriptionScreen(): React.JSX.Element {
           <SubscriptionSummaryCard subscription={subscription.data} />
           <StatusNote subscription={subscription.data} />
           <ClientUsageCard subscription={subscription.data} clientWord={clientWord} />
-          <PlanAction subscription={subscription.data} />
+          <PlanAction />
         </View>
       )}
     </ScreenTemplate>

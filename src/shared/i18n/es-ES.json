@@ -67,6 +67,7 @@
     },
     "plans": {
       "names": { "basic": "Básico", "pro": "Pro", "premium": "Premium" },
+      "inTrial": "En prueba",
       "errorTitle": "No hemos podido cargar los planes",
       "revenueTitle": "Ingresos al mes",
       "payingCenters_one": "{{count}} centro paga ahora",
@@ -260,7 +261,7 @@
     "PASSWORD_BREACHED": "Esa contraseña aparece en filtraciones públicas. Elige otra",
     "VERIFICATION_CODE_INVALID": "El código no es válido o ha caducado",
     "REAUTHENTICATION_FAILED": "La contraseña no es correcta",
-    "ACCOUNT_OWNS_CENTER": "Antes de eliminar tu cuenta, cierra o traspasa el centro del que eres propietario",
+    "ACCOUNT_OWNS_CENTER": "Eres propietario de un centro: al eliminar tu cuenta se cerrará. Confírmalo para continuar",
     "INVALID_CREDENTIALS": "Correo o contraseña incorrectos",
     "EMAIL_NOT_VERIFIED": "Confirma tu correo para poder entrar",
     "ACCOUNT_LOCKED": "Demasiados intentos. Espera unos minutos y vuelve a probar",
@@ -1357,6 +1358,50 @@
     "emptyDescription": "Cuando el centro te enlace como tutor de un menor, lo verás aquí."
   },
   "chat": {
+    "report": {
+      "action": "Denunciar",
+      "actionA11y": "Denunciar el mensaje de {{name}}",
+      "sheetTitle": "Denunciar mensaje",
+      "intro": "Cuéntanos por qué. Lo revisará quien gestiona el centro y la otra persona no sabrá que lo has denunciado.",
+      "reasons": {
+        "spam": "Es spam o publicidad",
+        "harassment": "Es acoso o me molesta",
+        "inappropriate": "Es ofensivo o inapropiado",
+        "other": "Otro motivo"
+      },
+      "detailsLabel": "Detalles (opcional)",
+      "sendAction": "Enviar denuncia",
+      "sent": "Hemos enviado tu denuncia. Gracias por avisar."
+    },
+    "block": {
+      "menuLabel": "Más opciones de la conversación",
+      "title": "¿Bloquear a {{name}}?",
+      "message": "No recibirás sus mensajes y no podrá escribirte. Puedes desbloquearlo cuando quieras desde Mensajes, en Personas bloqueadas.",
+      "confirm": "Bloquear",
+      "dismiss": "Cancelar"
+    },
+    "blocked": {
+      "link": "Personas bloqueadas",
+      "title": "Personas bloqueadas",
+      "subtitle": "No te llegan sus mensajes y no pueden escribirte.",
+      "emptyTitle": "No has bloqueado a nadie",
+      "emptyDescription": "Si alguien te molesta, puedes bloquearlo desde su conversación.",
+      "unblockAction": "Desbloquear",
+      "unblockA11y": "Desbloquear a {{name}}",
+      "errorTitle": "No hemos podido cargar las personas bloqueadas"
+    },
+    "reports": {
+      "link": "Denuncias",
+      "title": "Denuncias de mensajes",
+      "subtitle": "Mensajes que alguien ha denunciado en el chat.",
+      "emptyTitle": "No hay denuncias abiertas",
+      "emptyDescription": "Cuando alguien denuncie un mensaje, aparecerá aquí.",
+      "errorTitle": "No hemos podido cargar las denuncias",
+      "from": "Mensaje de {{name}}",
+      "attachment": "Archivo adjunto: {{name}}",
+      "reportedBy": "Denunciado por {{name}} el {{date}}",
+      "reviewAction": "Marcar como revisada"
+    },
     "title": "Mensajes",
     "subtitle": "Habla con tu centro y con tu equipo.",
     "newMessage": "Nuevo mensaje",
@@ -1532,6 +1577,12 @@
     "passRejectedDescription": "El centro no ha aceptado tu solicitud del bono {{rateName}}. Habla con el centro si tienes dudas.",
     "planSubscribedTitle": "Plan contratado",
     "planSubscribedDescription": "Tu centro ya tiene el plan {{planName}}. Gracias por confiar en Yoclick.",
+    "planOverLimitTitle": "Tu plan admite menos clientes de los que tienes",
+    "planOverLimitDescription": "Todos tus clientes siguen con acceso, pero no podrás dar de alta a nadie nuevo hasta volver al límite.",
+    "messageReportedTitle": "Han denunciado un mensaje",
+    "messageReportedDescription": "Revisa la denuncia en Mensajes, apartado Denuncias.",
+    "centerClosedTitle": "Un centro tuyo se ha cerrado",
+    "centerClosedDescription": "El propietario ha cerrado el centro y ya no tienes acceso a él.",
     "planChangedTitle": "Tu plan ha cambiado",
     "planChangedDescription": "Tu centro ha pasado al plan {{planName}}. Puedes ver lo que incluye en Suscripción.",
     "scheduleUpdatedTitle": "Ha cambiado un horario tuyo",
@@ -1727,7 +1778,7 @@
     "premium": {
       "title": "Personalización Premium",
       "badge": "Premium",
-      "lockedMessage": "Elige el fondo y el color de la colmena de tu app con el plan Premium. Puedes cambiar de plan desde la web de Yoclick.",
+      "lockedMessage": "Elige el fondo y el color de la colmena de tu app con el plan Premium.",
       "background": {
         "title": "Fondo de las pantallas",
         "kindLabel": "Tipo de fondo",
@@ -1877,7 +1928,7 @@
         },
         "onlinePayments": {
           "title": "Activa los cobros online",
-          "description": "Solo plan Premium: cobra con tarjeta o Bizum. El alta en Stripe se hace desde Bonos."
+          "description": "Solo plan Premium: cobra con tarjeta. El alta en Stripe se hace desde Bonos."
         },
         "inviteClients": {
           "title": "Invita a tus {{clientWord}}",
@@ -1896,7 +1947,7 @@
     "onlinePayments": {
       "title": "Cobros online",
       "not_included": "Cobrar los bonos y los alquileres desde la app con tarjeta es del plan Premium. Mientras tanto, activa cada bono cuando lo cobres a mano.",
-      "not_started": "Cobra los bonos y los alquileres con tarjeta, Apple Pay y Google Pay. El dinero va directo a la cuenta de tu centro. Necesitas completar un alta en Stripe (unos 5 minutos).",
+      "not_started": "Cobra los bonos y los alquileres con tarjeta. El dinero va directo a la cuenta de tu centro. Necesitas completar un alta en Stripe (unos 5 minutos).",
       "pending": "Tu alta en Stripe aún no está completa. Termínala para empezar a cobrar; cuando acabes, pulsa «Comprobar».",
       "ready": "Cobros online activados: quien pida un bono verá «Pagar» y se le activará solo al pagar. También puedes seguir marcando bonos como cobrados a mano.",
       "startAction": "Activar cobros con Stripe",
@@ -2188,47 +2239,39 @@
       "usageTitle": "{{clientWord}} activos",
       "usageOutOf": "{{count}} de {{limit}}",
       "usageUnlimited": "{{count}} · sin límite",
-      "usageOverLimit": "Has superado el límite de tu plan. Nadie pierde el acceso mientras tanto.",
-      "pastDueNote": "Ha fallado el último pago. Elige un plan antes de que acabe el plazo para no perder el acceso.",
+      "usageOverLimit": "Has superado el límite de tu plan. Nadie pierde el acceso, pero no podrás dar de alta a nadie nuevo hasta volver al límite.",
+      "homeInTrial": "En prueba",
+      "homePlan": "Plan {{plan}}",
+      "homeLabel": "{{title}}. {{detail}}. Abrir mi suscripción",
+      "overLimitBannerTitle": "Has superado el límite de tu plan",
+      "overLimitBannerMessage": "Todos tus clientes siguen con acceso, pero no podrás dar de alta a nadie nuevo hasta volver al límite. Quedan {{excess}} de más.",
+      "pastDueNote": "Ha fallado el último pago. Si no se resuelve antes de que acabe el plazo, el centro perderá el acceso.",
       "pastDueUntil": "Tienes hasta el {{date}}.",
-      "suspendedNote": "Tu centro está suspendido por falta de pago. Elige un plan para reactivarlo.",
+      "suspendedNote": "Tu centro está suspendido por falta de pago.",
       "billingPeriodLine": "Pagas {{period}}.",
       "periods": {
         "monthly": "mes a mes",
         "annual": "una vez al año"
       },
-      "chooseAction": "Elegir plan",
-      "changeAction": "Ver planes",
-      "manageAction": "Gestionar suscripción",
-      "activeNote": "Tu suscripción está activa y se renueva sola. Desde «Gestionar suscripción» puedes cambiar de plan o de periodicidad, cambiar la tarjeta, ver tus facturas o cancelar."
+      "changeAction": "Ver planes"
     },
     "planRequired": {
       "trialTitle": "Tu prueba gratuita ha terminado",
-      "trialMessage": "Para seguir gestionando tu centro, elige uno de nuestros planes. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
+      "trialMessage": "Tu centro no tiene un plan activo. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
       "suspendedTitle": "Tu suscripción está suspendida",
-      "suspendedMessage": "No hemos podido cobrar tu plan. Elige un plan para seguir gestionando tu centro. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
-      "action": "Elegir un plan"
+      "suspendedMessage": "Tu suscripción está suspendida. Tus clientes mantienen el acceso a sus reservas y a sus datos.",
+      "action": "Ver los planes"
     },
     "plans": {
       "title": "Planes",
-      "subtitle": "Prueba gratis 14 días. Después pagas el plan que elijas.",
+      "subtitle": "Lo que incluye cada plan.",
       "errorTitle": "No hemos podido cargar los planes",
-      "periodLabel": "Cómo quieres pagar",
-      "monthly": "Mensual",
-      "annual": "Anual",
-      "annualWithSavings": "Anual · ahorra hasta el {{percent}} %",
-      "pricePerMonth": "{{price}} al mes",
-      "billedAnnually": "{{price}} al año, en un solo pago",
-      "billedMonthly": "Se cobra cada mes",
-      "setupFee": "Cuota de alta de {{price}}, una sola vez",
       "currentBadge": "Tu plan",
       "clientLimit": "Hasta {{count}} clientes activos",
       "unlimitedClients": "Clientes ilimitados",
       "documentStorage": "{{size}} para documentos",
       "videoStorage": "{{size}} para vídeos",
       "noVideo": "Sin vídeos",
-      "choose": "Elegir {{name}}",
-      "chooseA11y": "Elegir el plan {{name}} con pago {{period}}",
       "includesTitle": "Qué incluye",
       "includesEverythingOf": "Todo lo del plan {{name}}, y además:",
       "coreIncludes": {
@@ -2250,12 +2293,7 @@
         "videos": "Vídeos de presentación del equipo",
         "onlinePayments": "Cobro online de bonos y alquileres con tu cuenta de Stripe"
       },
-      "unavailable": "Todavía no disponible",
-      "currentChoice": "Es tu plan actual",
-      "vatNote": "Importes sin IVA. Se añade el 21 % al pagar.",
-      "browserNote": "Pagarás en una página segura de Stripe que se abre en tu navegador. Al terminar, vuelve a la app.",
-      "activeNote": "Tu suscripción está activa. Para cambiar de plan o de periodicidad, usa «Gestionar suscripción»: se abre en una página segura de Stripe.",
-      "openFailed": "No hemos podido abrir la página de pago. Inténtalo de nuevo."
+      "currentChoice": "Es tu plan actual"
     },
     "availability": {
       "title": "Disponibilidad",
@@ -3095,9 +3133,16 @@
     },
     "plan": {
       "notIncludedTitle": "Tu plan no incluye vídeo",
-      "notIncludedDescription": "Los vídeos forman parte del plan Premium. Puedes ampliar tu plan desde la web de Yoclick.",
+      "notIncludedDescription": "Los vídeos forman parte del plan Premium.",
       "usage": "Espacio de vídeo: {{used}} de {{limit}}"
     }
+  },
+  "legal": {
+    "title": "Textos legales",
+    "privacyPolicy": "Política de privacidad",
+    "termsOfService": "Condiciones del servicio",
+    "contact": "Contacto",
+    "openFailed": "No hemos podido abrir el enlace. Inténtalo de nuevo."
   },
   "privacy": {
     "title": "Privacidad y datos",
@@ -3156,7 +3201,13 @@
       "explanation": "Se elimina tu cuenta y tus datos personales. No se puede deshacer. Lo que la ley obliga a conservar lo conserva el centro.",
       "passwordLabel": "Contraseña",
       "confirmationLabel": "Escribe ELIMINAR para confirmar",
-      "confirmAction": "Eliminar mi cuenta para siempre"
+      "confirmAction": "Eliminar mi cuenta para siempre",
+      "ownerTitle_one": "Se cerrará tu centro",
+      "ownerTitle_other": "Se cerrarán tus centros",
+      "ownerNotice_one": "Eres propietario de {{centers}}. Al eliminar tu cuenta se cierra: se cancela su suscripción, sus miembros dejan de tener acceso y los datos se conservan solo el tiempo que obliga la ley.",
+      "ownerNotice_other": "Eres propietario de {{centers}}. Al eliminar tu cuenta se cierran: se cancelan sus suscripciones, sus miembros dejan de tener acceso y los datos se conservan solo el tiempo que obliga la ley.",
+      "ownerAcknowledge": "Entiendo que se cerrará y que no se puede deshacer",
+      "staffHint": "Borra tu cuenta y tus datos personales"
     }
   },
   "teamProfiles": {

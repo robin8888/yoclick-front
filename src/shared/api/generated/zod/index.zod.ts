@@ -1,6 +1,7 @@
 export * from './activity/activity.zod.ts';
 export * from './attendance/attendance.zod.ts';
 export * from './auth/auth.zod.ts';
+export * from './billing/billing.zod.ts';
 export * from './bookings/bookings.zod.ts';
 export * from './centers/centers.zod.ts';
 export * from './chat/chat.zod.ts';

@@ -4,12 +4,17 @@ import type { BuildEnvironment } from './parse-build-environment.ts';
 import { resolveAppIdentity, type AppIdentity } from './resolve-app-identity.ts';
 
 const APP_VERSION = '0.1.0';
-// Id público del proyecto «yoclick» en expo.dev (no es un secreto). Cada centro Premium usa su propio proyecto.
+// Id público del proyecto «yoclick» en expo.dev (no es un secreto).
 const SHARED_EAS_PROJECT_ID = 'b1d194fb-d580-45f0-8266-b0e1c7965f54';
 const SHARED_UPDATES_URL = `https://u.expo.dev/${SHARED_EAS_PROJECT_ID}`;
 // Dominio de los universal links https://yoclick.app/j/{code} e /i/{token}.
 // Provisional: hay que publicar apple-app-site-association y assetlinks.json en este dominio.
 const UNIVERSAL_LINK_HOST = 'yoclick.app';
+// Textos legales públicos que enlaza la app (Apple 5.1.1(i)). Provisional: hay que publicarlos en este dominio.
+const LEGAL_URLS = {
+  privacyPolicy: `https://${UNIVERSAL_LINK_HOST}/privacidad`,
+  termsOfService: `https://${UNIVERSAL_LINK_HOST}/condiciones`,
+};
 const UNIVERSAL_LINK_PATH_PREFIXES = ['/j/', '/i/'] as const;
 const SPLASH_IMAGE_WIDTH = 200;
 // Burdeos del logotipo de Yoclick (zona media del degradado del icono): la pantalla de carga y el
@@ -108,9 +113,8 @@ function buildPlugins(
         microphonePermission: false,
       },
     ],
-    // Hoja de pago de Stripe para bonos y alquileres (solo centros Premium). Apple Pay se añade al
-    // dar de alta el identificador de comercio de Apple y Google Pay al activarlo en Stripe. El plugin
-    // exige recibir opciones aunque vayan vacías de comercio.
+    // Hoja de pago de Stripe para bonos y alquileres (solo con tarjeta: Apple Pay y Google Pay no están
+    // activados). El plugin exige recibir opciones aunque vayan vacías de comercio.
     ['@stripe/stripe-react-native', { enableGooglePay: false }],
   ];
   // SEC-32: el dev client y su menú de depuración solo existen en builds de desarrollo.
@@ -118,28 +122,18 @@ function buildPlugins(
   return plugins;
 }
 
+// Buzón de contacto y de denuncias que muestra la app (Apple 1.2). Provisional hasta tener el dominio.
+const SUPPORT_EMAIL = `soporte@${UNIVERSAL_LINK_HOST}`;
+
 function buildExtra(buildEnvironment: BuildEnvironment): Record<string, unknown> {
   // `extra` es público (viaja en el bundle): solo URL y datos no secretos (SEC-01).
-  const extra: Record<string, unknown> = {
+  return {
     appEnvironment: buildEnvironment.appEnvironment,
     apiUrl: buildEnvironment.apiUrl,
+    legalUrls: LEGAL_URLS,
+    supportEmail: SUPPORT_EMAIL,
+    eas: { projectId: SHARED_EAS_PROJECT_ID },
   };
-  if (buildEnvironment.variant.kind === 'shared') {
-    extra.eas = { projectId: SHARED_EAS_PROJECT_ID };
-  }
-  if (buildEnvironment.variant.kind === 'premium') {
-    extra.lockedCenterId = buildEnvironment.variant.centerId;
-  }
-  return extra;
-}
-
-// Los centros Premium tienen su propio proyecto de EAS: sin URL propia no reciben OTA.
-function buildUpdatesConfig(
-  buildEnvironment: BuildEnvironment,
-): NonNullable<ExpoConfig['updates']> {
-  return buildEnvironment.variant.kind === 'shared'
-    ? { url: SHARED_UPDATES_URL }
-    : { enabled: false };
 }
 
 export function buildExpoConfig(buildEnvironment: BuildEnvironment): ExpoConfig {
@@ -176,7 +170,7 @@ export function buildExpoConfig(buildEnvironment: BuildEnvironment): ExpoConfig 
     // SEC-08: runtimeVersion por huella nativa, para que una OTA nunca llegue a un binario incompatible.
     // Pendiente: code signing de las actualizaciones (certificado) antes de publicar OTA.
     runtimeVersion: { policy: 'fingerprint' },
-    updates: buildUpdatesConfig(buildEnvironment),
+    updates: { url: SHARED_UPDATES_URL },
     experiments: { typedRoutes: true },
     extra: buildExtra(buildEnvironment),
   };

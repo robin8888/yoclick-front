@@ -39,4 +39,6 @@ export { PrivacyLegalScreen } from './screens/PrivacyLegalScreen';
 export { SetupGuideScreen } from './screens/SetupGuideScreen';
 export { AutoStartSwitch } from './components/AutoStartSwitch';
 export { SetupProgressCard } from './components/SetupProgressCard';
+export { OverLimitBanner } from './components/OverLimitBanner';
+export { PlanSummaryCard } from './components/PlanSummaryCard';
 export { PlanRequiredGate } from './components/PlanRequiredGate';

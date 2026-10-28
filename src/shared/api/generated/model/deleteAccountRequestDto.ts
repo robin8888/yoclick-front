@@ -14,4 +14,5 @@ export interface DeleteAccountRequestDto {
      */
   password: string;
   confirmation: DeleteAccountRequestDtoConfirmation;
+  closeOwnedCenters?: boolean;
 }

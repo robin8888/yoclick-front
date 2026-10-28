@@ -109,6 +109,9 @@ const DESTINATION_BY_KIND: Readonly<Record<NoticeKind, DestinationRule>> = {
   schedule_updated: MY_BOOKINGS,
   plan_subscribed: SUBSCRIPTION,
   plan_changed: SUBSCRIPTION,
+  center_closed: byAudience({}),
+  message_reported: byAudience({ admin: '/(admin)/messages/reports' }),
+  plan_over_limit: SUBSCRIPTION,
 };
 
 /** La pantalla a la que lleva un aviso, o `null` si no hay ninguna que mostrar. */

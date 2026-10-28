@@ -71,6 +71,13 @@ describe('RegisterAccountScreen', () => {
     ).toBeOnTheScreen();
   });
 
+  it('lets the person read the privacy policy and the terms before accepting them', () => {
+    renderScreen(<RegisterAccountScreen />);
+
+    expect(screen.getByRole('link', { name: 'Política de privacidad' })).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Condiciones del servicio' })).toBeOnTheScreen();
+  });
+
   it('requires the privacy and terms consents before continuing', async () => {
     renderScreen(<RegisterAccountScreen />);
     fillAccount();

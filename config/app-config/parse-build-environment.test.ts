@@ -1,12 +1,5 @@
 import { AppConfigError, parseBuildEnvironment } from './parse-build-environment.ts';
 
-const PREMIUM_ENV = {
-  APP_VARIANT: 'premium',
-  CENTER_SLUG: 'studio-norte',
-  CENTER_NAME: 'Studio Norte',
-  CENTER_ID: '0b8f1c2e-6a3d-4f5e-9c7b-1d2e3f4a5b6c',
-};
-
 describe('parseBuildEnvironment', () => {
   it('defaults to a shared development build against the local API', () => {
     const buildEnvironment = parseBuildEnvironment({});
@@ -14,7 +7,6 @@ describe('parseBuildEnvironment', () => {
     expect(buildEnvironment).toEqual({
       appEnvironment: 'development',
       apiUrl: 'http://localhost:3000',
-      variant: { kind: 'shared' },
     });
   });
 
@@ -56,47 +48,5 @@ describe('parseBuildEnvironment', () => {
 
   it('rejects an unknown APP_ENV instead of silently falling back', () => {
     expect(() => parseBuildEnvironment({ APP_ENV: 'prod' })).toThrow(AppConfigError);
-  });
-
-  it('parses a premium variant with center data', () => {
-    const buildEnvironment = parseBuildEnvironment(PREMIUM_ENV);
-
-    expect(buildEnvironment.variant).toEqual({
-      kind: 'premium',
-      centerSlug: 'studio-norte',
-      centerName: 'Studio Norte',
-      centerId: '0b8f1c2e-6a3d-4f5e-9c7b-1d2e3f4a5b6c',
-    });
-  });
-
-  it.each(['CENTER_SLUG', 'CENTER_NAME', 'CENTER_ID'])(
-    'fails a premium build without %s',
-    (missingVariableName) => {
-      const incompleteEnv: Record<string, string | undefined> = {
-        ...PREMIUM_ENV,
-        [missingVariableName]: undefined,
-      };
-
-      expect(() => parseBuildEnvironment(incompleteEnv)).toThrow(AppConfigError);
-    },
-  );
-
-  it.each(['Studio Norte', 'studio_norte', '-norte', 'norte-', '../etc'])(
-    'rejects the invalid center slug %s',
-    (invalidSlug) => {
-      expect(() => parseBuildEnvironment({ ...PREMIUM_ENV, CENTER_SLUG: invalidSlug })).toThrow(
-        AppConfigError,
-      );
-    },
-  );
-
-  it('rejects a center id that is not a uuid', () => {
-    expect(() => parseBuildEnvironment({ ...PREMIUM_ENV, CENTER_ID: '123' })).toThrow(
-      AppConfigError,
-    );
-  });
-
-  it('rejects an unknown APP_VARIANT', () => {
-    expect(() => parseBuildEnvironment({ APP_VARIANT: 'enterprise' })).toThrow(AppConfigError);
   });
 });

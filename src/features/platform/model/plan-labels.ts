@@ -10,6 +10,17 @@ export function getPlanName(planId: PlanId): string {
   return i18n.t(`platform.plans.names.${planId}`);
 }
 
+/**
+ * El plan que tiene el centro hoy. Durante la prueba el centro lleva un plan asignado pero aún no lo ha
+ * contratado, así que se dice «En prueba» en vez de un plan que no paga.
+ */
+export function getCenterPlanLabel(center: {
+  status: 'trial' | 'active' | 'past_due' | 'suspended';
+  planId: PlanId;
+}): string {
+  return center.status === 'trial' ? i18n.t('platform.plans.inTrial') : getPlanName(center.planId);
+}
+
 /** Los centros que pagan hoy: activos y en gracia. La prueba y los suspendidos no cuentan. */
 export function countPayingCenters(
   plan: Pick<PlatformPlanListResponseDtoPlansItem, 'centerCountByStatus'>,

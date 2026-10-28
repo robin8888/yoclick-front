@@ -38,7 +38,7 @@ Plataforma SaaS de **reservas y gestión en marca blanca** para cualquier centro
 1. Unirse a un centro (QR, código, búsqueda, enlace) y Mis centros.
 2. Autenticación: email + contraseña, Sign in with Apple, Google; recuperación; 2FA para admins.
 3. Reservas: servicios individuales y clases en grupo con plazas, lista de espera, reprogramar, cancelar con política.
-4. Cobros: tarifas (bono, cuota, matrícula), monedero, pago con Stripe (tarjeta, Apple Pay, Google Pay; Bizum vía Stripe cuando esté disponible), cupones, recibos con IVA.
+4. Cobros: tarifas (bono, cuota, matrícula), monedero, pago con Stripe (tarjeta), cupones, recibos con IVA.
 5. Asistencia: QR del cliente firmado y rotativo; escaneo del instructor; pasar lista.
 6. Fichas de cliente, grupos, notas del equipo, salud con consentimiento explícito.
 7. Familias: cuenta de tutor y menores con consentimiento parental (< 14 años).

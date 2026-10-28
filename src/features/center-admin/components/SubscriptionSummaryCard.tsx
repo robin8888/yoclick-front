@@ -9,7 +9,7 @@ import { Text } from '@/ui/atoms/Text';
 import { countTrialDaysLeft } from '../model/subscription-plan';
 import { createReportCardStyle, REPORT_HEADER_ROW_STYLE } from './ReportCard.styles';
 
-const STATUS_TONES: Record<CenterSubscriptionResponseDto['status'], BadgeTone> = {
+export const STATUS_TONES: Record<CenterSubscriptionResponseDto['status'], BadgeTone> = {
   trial: 'info',
   active: 'success',
   past_due: 'warning',

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 
 import { formatLongDate } from '@/features/booking';
-import { SetupProgressCard } from '@/features/center-admin';
+import { OverLimitBanner, PlanSummaryCard, SetupProgressCard } from '@/features/center-admin';
 import { useActiveCenterModules, useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, hasRoomManagement, i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
@@ -64,6 +64,8 @@ export function CenterAgendaScreen(): React.JSX.Element {
         title={title}
         notificationsHref="/(admin)/(tabs)/notifications"
       />
+      <PlanSummaryCard />
+      <OverLimitBanner />
       <SetupProgressCard />
       <CenterActions isoDate={day.isoDate} />
       {hasAttendance ? <ScanAttendanceButton isCenterWide /> : null}

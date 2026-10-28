@@ -1,6 +1,7 @@
 export * from './activity/activity.ts';
 export * from './attendance/attendance.ts';
 export * from './auth/auth.ts';
+export * from './billing/billing.ts';
 export * from './bookings/bookings.ts';
 export * from './centers/centers.ts';
 export * from './chat/chat.ts';

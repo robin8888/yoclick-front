@@ -45,4 +45,7 @@ export const NotificationListResponseDtoNotificationsItemKind = {
   schedule_updated: 'schedule_updated',
   plan_subscribed: 'plan_subscribed',
   plan_changed: 'plan_changed',
+  plan_over_limit: 'plan_over_limit',
+  center_closed: 'center_closed',
+  message_reported: 'message_reported',
 } as const;

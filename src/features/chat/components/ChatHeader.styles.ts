@@ -14,3 +14,6 @@ export function createChatHeaderStyle(theme: Theme): ViewStyle {
     backgroundColor: theme.colors.surface,
   };
 }
+
+/** El nombre ocupa el hueco que queda, para que el menú quede a la derecha. */
+export const CHAT_HEADER_NAME_STYLE: ViewStyle = { flex: 1 };

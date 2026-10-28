@@ -3,7 +3,19 @@ import {
   calculatePlanMonthlyRevenueCents,
   countAllCenters,
   countPayingCenters,
+  getCenterPlanLabel,
 } from './plan-labels';
+
+describe('getCenterPlanLabel', () => {
+  it.each([
+    { status: 'trial', planId: 'pro', expected: 'En prueba' },
+    { status: 'active', planId: 'pro', expected: 'Pro' },
+    { status: 'past_due', planId: 'basic', expected: 'Básico' },
+    { status: 'suspended', planId: 'premium', expected: 'Premium' },
+  ] as const)('is "$expected" for a $status center on $planId', ({ status, planId, expected }) => {
+    expect(getCenterPlanLabel({ status, planId })).toBe(expected);
+  });
+});
 
 const COUNTS = { trial: 3, active: 2, past_due: 1, suspended: 4 };
 

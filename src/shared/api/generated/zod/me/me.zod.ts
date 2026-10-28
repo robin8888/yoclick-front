@@ -108,15 +108,16 @@ export const MeUpdateProfileResponse = zod.object({
 })
 
 /**
- * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible.
+ * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible. Quien es la única propietaria de un centro debe enviar `closeOwnedCenters: true`: el centro se cierra (se cancela su suscripción y se avisa a quienes estaban dentro); sin ello responde 409 `ACCOUNT_OWNS_CENTER`.
  */
 export const meDeleteAccountBodyPasswordMax = 256;
 
-
+export const meDeleteAccountBodyCloseOwnedCentersDefault = false;
 
 export const MeDeleteAccountBody = zod.object({
   "password": zod.string().min(1).max(meDeleteAccountBodyPasswordMax),
-  "confirmation": zod.enum(['ELIMINAR'])
+  "confirmation": zod.enum(['ELIMINAR']),
+  "closeOwnedCenters": zod.boolean().default(meDeleteAccountBodyCloseOwnedCentersDefault)
 })
 
 export const MeDeleteAccountResponse = zod.void()

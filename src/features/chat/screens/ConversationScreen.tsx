@@ -14,6 +14,7 @@ import { FormErrorBanner } from '@/ui/molecules/FormErrorBanner';
 import { ScreenSkeleton } from '@/ui/organisms/ScreenSkeleton';
 
 import { ChatHeader } from '../components/ChatHeader';
+import { ConversationSafetySheets } from '../components/ConversationSafetySheets';
 import { MessageBubble } from '../components/MessageBubble';
 import { MessageComposer } from '../components/MessageComposer';
 import {
@@ -26,6 +27,7 @@ import {
 import { useCenterName } from '../hooks/useCenterName';
 import { useMarkConversationRead, useSendMessage } from '../hooks/useChatMutations';
 import { useConversationMessages, useConversations } from '../hooks/useChatQueries';
+import { useBlockFlow, useReportFlow, type BlockablePerson } from '../hooks/useConversationSafety';
 import { useSendAttachment } from '../hooks/useSendAttachment';
 import { describeCounterpartName } from '../model/conversation-text';
 
@@ -41,6 +43,8 @@ interface ConversationScreenProps {
 interface CounterpartSummary {
   name: string;
   photoUrl: string | null;
+  /** La otra persona, si es una persona y no el centro: es a quien se podría bloquear. */
+  person: BlockablePerson | null;
 }
 
 /** Con quién se habla, sacado de la bandeja (que ya está en caché al llegar aquí). */
@@ -48,11 +52,16 @@ function useCounterpart(conversationId: string): CounterpartSummary {
   const centerName = useCenterName();
   const { data } = useConversations();
   const conversation = data?.conversations.find(({ id }) => id === conversationId);
-  if (conversation === undefined) return { name: i18n.t('chat.title'), photoUrl: null };
+  if (conversation === undefined)
+    return { name: i18n.t('chat.title'), photoUrl: null, person: null };
   const { counterpart } = conversation;
   return {
     name: describeCounterpartName(counterpart, centerName),
     photoUrl: counterpart.kind === 'person' ? counterpart.photoUrl : null,
+    person:
+      counterpart.kind === 'person'
+        ? { membershipId: counterpart.membershipId, role: counterpart.role }
+        : null,
   };
 }
 
@@ -76,7 +85,11 @@ function useMarkReadWhenOtherSideWrites(
 /** Lo más reciente abajo: la lista va invertida y el servidor ya manda lo más nuevo primero. */
 function MessageThread({
   messages,
-}: Readonly<{ messages: readonly ThreadMessage[] }>): React.JSX.Element {
+  onReportPress,
+}: Readonly<{
+  messages: readonly ThreadMessage[];
+  onReportPress: (messageId: string) => void;
+}>): React.JSX.Element {
   const theme = useTheme();
 
   // Fuera de la lista: una lista invertida también da la vuelta a su «vacío».
@@ -102,9 +115,62 @@ function MessageThread({
         <MessageBubble
           message={item}
           timeLabel={formatTime24h(item.createdAt, DEFAULT_CENTER_TIME_ZONE)}
+          onReportPress={() => {
+            onReportPress(item.id);
+          }}
         />
       )}
     />
+  );
+}
+
+/** El hilo con sus estados (carga, error, mensajes); lo que llega de la otra parte, mientras se mira, queda leído. */
+function ConversationBody({
+  conversationId,
+  onReportPress,
+}: Readonly<{
+  conversationId: string;
+  onReportPress: (messageId: string) => void;
+}>): React.JSX.Element {
+  const { data, isPending, isError, error, refetch } = useConversationMessages(conversationId);
+  useMarkReadWhenOtherSideWrites(conversationId, data?.messages);
+
+  return (
+    <>
+      {isPending ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
+      {isError ? (
+        <LoadErrorState
+          title={i18n.t('chat.errorTitle')}
+          error={error}
+          onRetry={() => {
+            void refetch();
+          }}
+        />
+      ) : null}
+      {data === undefined ? null : (
+        <MessageThread messages={data.messages} onReportPress={onReportPress} />
+      )}
+    </>
+  );
+}
+
+/** La barra de escribir, con el aviso de lo que haya fallado al enviar un mensaje o un archivo. */
+function ConversationComposer({
+  conversationId,
+}: Readonly<{ conversationId: string }>): React.JSX.Element {
+  const { send, isSending, errorMessage: sendError } = useSendMessage(conversationId);
+  const { attach, isUploading, errorMessage: attachError } = useSendAttachment(conversationId);
+  const failureMessage = sendError ?? attachError;
+
+  return (
+    <>
+      {failureMessage === null ? null : (
+        <View>
+          <FormErrorBanner message={failureMessage} />
+        </View>
+      )}
+      <MessageComposer isBusy={isSending || isUploading} onSend={send} onAttach={attach} />
+    </>
   );
 }
 
@@ -119,11 +185,10 @@ export function ConversationScreen({
   const theme = useTheme();
   const onBackPress = useBackAction();
   const counterpart = useCounterpart(conversationId);
-  const { data, isPending, isError, error, refetch } = useConversationMessages(conversationId);
-  const { send, isSending, errorMessage: sendError } = useSendMessage(conversationId);
-  const { attach, isUploading, errorMessage: attachError } = useSendAttachment(conversationId);
-  useMarkReadWhenOtherSideWrites(conversationId, data?.messages);
-  const failureMessage = sendError ?? attachError;
+  const report = useReportFlow(conversationId);
+  const block = useBlockFlow(counterpart.person, () => {
+    onBackPress?.();
+  });
 
   return (
     <SafeAreaView edges={['top']} style={createScreenStyle(theme)}>
@@ -132,25 +197,17 @@ export function ConversationScreen({
           name={counterpart.name}
           photoUrl={counterpart.photoUrl}
           onBackPress={onBackPress}
+          onMenuPress={block.canBlock ? block.openConfirm : undefined}
         />
-        {failureMessage === null ? null : (
-          <View>
-            <FormErrorBanner message={failureMessage} />
-          </View>
-        )}
-        {isPending ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
-        {isError ? (
-          <LoadErrorState
-            title={i18n.t('chat.errorTitle')}
-            error={error}
-            onRetry={() => {
-              void refetch();
-            }}
-          />
+        {report.hasSentReport ? (
+          <Text variant="caption" color="success" role="status">
+            {i18n.t('chat.report.sent')}
+          </Text>
         ) : null}
-        {data === undefined ? null : <MessageThread messages={data.messages} />}
-        <MessageComposer isBusy={isSending || isUploading} onSend={send} onAttach={attach} />
+        <ConversationBody conversationId={conversationId} onReportPress={report.open} />
+        <ConversationComposer conversationId={conversationId} />
       </KeyboardAvoidingView>
+      <ConversationSafetySheets counterpartName={counterpart.name} report={report} block={block} />
     </SafeAreaView>
   );
 }

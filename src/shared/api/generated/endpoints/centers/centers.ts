@@ -60,7 +60,268 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getCentersGetBrandingUrl = (centerId: string,) => {
+export const getCentersListSubscriptionPlansUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/subscription/plans`
+}
+
+/**
+ * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
+ */
+export const centersListSubscriptionPlans = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<PlanOffersResponseDto> => {
+
+  return apiMutator<PlanOffersResponseDto>(getCentersListSubscriptionPlansUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersListSubscriptionPlansQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/subscription/plans`
+    ] as const;
+    }
+
+
+export const getCentersListSubscriptionPlansQueryOptions = <TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getCentersListSubscriptionPlansQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersListSubscriptionPlans>>> = ({ signal }) => centersListSubscriptionPlans(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type CentersListSubscriptionPlansQueryResult = NonNullable<Awaited<ReturnType<typeof centersListSubscriptionPlans>>>
+export type CentersListSubscriptionPlansQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersListSubscriptionPlans>>,
+          TError,
+          Awaited<ReturnType<typeof centersListSubscriptionPlans>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof centersListSubscriptionPlans>>,
+          TError,
+          Awaited<ReturnType<typeof centersListSubscriptionPlans>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
+ */
+
+export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getCentersListSubscriptionPlansQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getCentersCreateSubscriptionPortalUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/subscription/portal`
+}
+
+/**
+ * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
+ */
+export const centersCreateSubscriptionPortal = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<CheckoutResponseDto> => {
+
+  return apiMutator<CheckoutResponseDto>(getCentersCreateSubscriptionPortalUrl(centerId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getCentersCreateSubscriptionPortalMutationKey = () => ['centersCreateSubscriptionPortal'] as const;
+
+export const getCentersCreateSubscriptionPortalMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext> => {
+
+const mutationKey = getCentersCreateSubscriptionPortalMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, CentersCreateSubscriptionPortalMutationVariables> = (props) => {
+          const {centerId} = props ?? {};
+
+          return  centersCreateSubscriptionPortal(centerId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CentersCreateSubscriptionPortalMutationResult = NonNullable<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>>
+
+    export type CentersCreateSubscriptionPortalMutationError = ErrorType<ProblemDetailsDto>
+    export type CentersCreateSubscriptionPortalMutationVariables = {centerId: string}
+
+    /**
+ * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
+ */
+export const useCentersCreateSubscriptionPortal = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>,
+        TError,
+        CentersCreateSubscriptionPortalMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCentersCreateSubscriptionPortalMutationOptions(options), queryClient);
+    }
+    export const getCentersCreateSubscriptionCheckoutUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/subscription/checkout`
+}
+
+/**
+ * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
+ */
+export const centersCreateSubscriptionCheckout = async (centerId: string,
+    checkoutRequestDto: CheckoutRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<CheckoutResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<CheckoutResponseDto>(getCentersCreateSubscriptionCheckoutUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(checkoutRequestDto)
+  }
+);}
+
+
+
+
+
+export const getCentersCreateSubscriptionCheckoutMutationKey = () => ['centersCreateSubscriptionCheckout'] as const;
+
+export const getCentersCreateSubscriptionCheckoutMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext> => {
+
+const mutationKey = getCentersCreateSubscriptionCheckoutMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, CentersCreateSubscriptionCheckoutMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  centersCreateSubscriptionCheckout(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CentersCreateSubscriptionCheckoutMutationResult = NonNullable<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>>
+    export type CentersCreateSubscriptionCheckoutMutationBody = CheckoutRequestDto
+    export type CentersCreateSubscriptionCheckoutMutationError = ErrorType<ProblemDetailsDto>
+    export type CentersCreateSubscriptionCheckoutMutationVariables = {centerId: string;data: CheckoutRequestDto}
+
+    /**
+ * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
+ */
+export const useCentersCreateSubscriptionCheckout = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>,
+        TError,
+        CentersCreateSubscriptionCheckoutMutationVariables,
+        TContext
+      > => {
+      return useMutation(getCentersCreateSubscriptionCheckoutMutationOptions(options), queryClient);
+    }
+    export const getCentersGetBrandingUrl = (centerId: string,) => {
 
 
 
@@ -721,264 +982,3 @@ export function useCentersGetLogo<TData = Awaited<ReturnType<typeof centersGetLo
 
 
 
-export const getCentersListSubscriptionPlansUrl = (centerId: string,) => {
-
-
-
-
-  return `/v1/centers/${centerId}/subscription/plans`
-}
-
-/**
- * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
- */
-export const centersListSubscriptionPlans = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<PlanOffersResponseDto> => {
-
-  return apiMutator<PlanOffersResponseDto>(getCentersListSubscriptionPlansUrl(centerId),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getCentersListSubscriptionPlansQueryKey = (centerId: string,) => {
-    return [
-    `/v1/centers/${centerId}/subscription/plans`
-    ] as const;
-    }
-
-
-export const getCentersListSubscriptionPlansQueryOptions = <TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getCentersListSubscriptionPlansQueryKey(centerId);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof centersListSubscriptionPlans>>> = ({ signal }) => centersListSubscriptionPlans(centerId, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type CentersListSubscriptionPlansQueryResult = NonNullable<Awaited<ReturnType<typeof centersListSubscriptionPlans>>>
-export type CentersListSubscriptionPlansQueryError = ErrorType<ProblemDetailsDto>
-
-
-export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
- centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof centersListSubscriptionPlans>>,
-          TError,
-          Awaited<ReturnType<typeof centersListSubscriptionPlans>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
- centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof centersListSubscriptionPlans>>,
-          TError,
-          Awaited<ReturnType<typeof centersListSubscriptionPlans>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
- centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Los planes que se pueden contratar, con su precio mensual y anual (sin IVA), la cuota de alta y lo que incluye cada uno.
- */
-
-export function useCentersListSubscriptionPlans<TData = Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError = ErrorType<ProblemDetailsDto>>(
- centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof centersListSubscriptionPlans>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getCentersListSubscriptionPlansQueryOptions(centerId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return withQueryKey(query, queryOptions.queryKey);
-}
-
-
-
-
-
-
-export const getCentersCreateSubscriptionPortalUrl = (centerId: string,) => {
-
-
-
-
-  return `/v1/centers/${centerId}/subscription/portal`
-}
-
-/**
- * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
- */
-export const centersCreateSubscriptionPortal = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<CheckoutResponseDto> => {
-
-  return apiMutator<CheckoutResponseDto>(getCentersCreateSubscriptionPortalUrl(centerId),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-
-export const getCentersCreateSubscriptionPortalMutationKey = () => ['centersCreateSubscriptionPortal'] as const;
-
-export const getCentersCreateSubscriptionPortalMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
-): UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext> => {
-
-const mutationKey = getCentersCreateSubscriptionPortalMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, CentersCreateSubscriptionPortalMutationVariables> = (props) => {
-          const {centerId} = props ?? {};
-
-          return  centersCreateSubscriptionPortal(centerId,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CentersCreateSubscriptionPortalMutationResult = NonNullable<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>>
-
-    export type CentersCreateSubscriptionPortalMutationError = ErrorType<ProblemDetailsDto>
-    export type CentersCreateSubscriptionPortalMutationVariables = {centerId: string}
-
-    /**
- * @summary Da el enlace al portal de Stripe para cambiar de plan o de periodicidad, cambiar la tarjeta, ver las facturas o cancelar. Solo si el centro ya ha pagado alguna vez; se abre en el navegador.
- */
-export const useCentersCreateSubscriptionPortal = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>, TError,CentersCreateSubscriptionPortalMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof centersCreateSubscriptionPortal>>,
-        TError,
-        CentersCreateSubscriptionPortalMutationVariables,
-        TContext
-      > => {
-      return useMutation(getCentersCreateSubscriptionPortalMutationOptions(options), queryClient);
-    }
-    export const getCentersCreateSubscriptionCheckoutUrl = (centerId: string,) => {
-
-
-
-
-  return `/v1/centers/${centerId}/subscription/checkout`
-}
-
-/**
- * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
- */
-export const centersCreateSubscriptionCheckout = async (centerId: string,
-    checkoutRequestDto: CheckoutRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<CheckoutResponseDto> => {
-
-    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
-    if (!h) return {};
-    if (h instanceof Headers) return Object.fromEntries(h.entries());
-    if (Symbol.iterator in h) {
-      return Object.fromEntries(
-        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
-      );
-    }
-    const headers: Record<string, string | readonly string[]> = {};
-    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
-      if (value !== undefined) headers[name] = value;
-    }
-    return headers;
-  };
-return apiMutator<CheckoutResponseDto>(getCentersCreateSubscriptionCheckoutUrl(centerId),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
-    body: JSON.stringify(checkoutRequestDto)
-  }
-);}
-
-
-
-
-
-export const getCentersCreateSubscriptionCheckoutMutationKey = () => ['centersCreateSubscriptionCheckout'] as const;
-
-export const getCentersCreateSubscriptionCheckoutMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
-): UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext> => {
-
-const mutationKey = getCentersCreateSubscriptionCheckoutMutationKey();
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, CentersCreateSubscriptionCheckoutMutationVariables> = (props) => {
-          const {centerId,data} = props ?? {};
-
-          return  centersCreateSubscriptionCheckout(centerId,data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CentersCreateSubscriptionCheckoutMutationResult = NonNullable<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>>
-    export type CentersCreateSubscriptionCheckoutMutationBody = CheckoutRequestDto
-    export type CentersCreateSubscriptionCheckoutMutationError = ErrorType<ProblemDetailsDto>
-    export type CentersCreateSubscriptionCheckoutMutationVariables = {centerId: string;data: CheckoutRequestDto}
-
-    /**
- * @summary Da la página de pago de Stripe para contratar un plan. Si la prueba sigue en marcha, el primer cobro se aplaza hasta que acabe. El pago se hace en la web, no en la app.
- */
-export const useCentersCreateSubscriptionCheckout = <TError = ErrorType<ProblemDetailsDto>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>, TError,CentersCreateSubscriptionCheckoutMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof centersCreateSubscriptionCheckout>>,
-        TError,
-        CentersCreateSubscriptionCheckoutMutationVariables,
-        TContext
-      > => {
-      return useMutation(getCentersCreateSubscriptionCheckoutMutationOptions(options), queryClient);
-    }

@@ -14,28 +14,72 @@ import type {
 } from 'msw';
 
 import type {
+  BlockedPeopleResponseDto,
+  BlockedPersonResponseDto,
   BroadcastTargetsResponseDto,
   ContactListResponseDto,
   ConversationListResponseDto,
   GroupBroadcastResponseDto,
   MessageListResponseDto,
+  MessageReportListResponseDto,
+  MessageReportResponseDto,
   MessageResponseDto,
-  OpenConversationResponseDto
+  OpenConversationResponseDto,
+  ReportMessageResponseDto
 } from '../../model';
 
 import {
+  getChatBlockPersonResponseMock,
   getChatBroadcastToGroupResponseMock,
+  getChatListBlocksResponseMock,
   getChatListBroadcastTargetsResponseMock,
   getChatListContactsResponseMock,
   getChatListConversationsResponseMock,
+  getChatListMessageReportsResponseMock,
   getChatListMessagesResponseMock,
   getChatOpenConversationResponseMock,
+  getChatReportMessageResponseMock,
+  getChatReviewMessageReportResponseMock,
   getChatSendAttachmentResponseMock,
   getChatSendMessageResponseMock
 } from './chat.faker.ts';
 
-export { getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatListBroadcastTargetsResponseMock, getChatBroadcastToGroupResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
+export { getChatListBlocksResponseMock, getChatBlockPersonResponseMock, getChatListConversationsResponseMock, getChatOpenConversationResponseMock, getChatListContactsResponseMock, getChatListBroadcastTargetsResponseMock, getChatBroadcastToGroupResponseMock, getChatReportMessageResponseMock, getChatListMessageReportsResponseMock, getChatReviewMessageReportResponseMock, getChatListMessagesResponseMock, getChatSendMessageResponseMock, getChatSendAttachmentResponseMock } from './chat.faker.ts';
 
+
+export const getChatListBlocksMockHandler = (overrideResponse?: BlockedPeopleResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<BlockedPeopleResponseDto> | BlockedPeopleResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/chat-blocks', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatListBlocksResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getChatBlockPersonMockHandler = (overrideResponse?: BlockedPersonResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<BlockedPersonResponseDto> | BlockedPersonResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/chat-blocks', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatBlockPersonResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getChatUnblockPersonMockHandler = (overrideResponse?: void | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void), options?: RequestHandlerOptions) => {
+  return http.delete('*/v1/centers/:centerId/chat-blocks/:blockedMembershipId', async (info: Parameters<Parameters<typeof http.delete>[1]>[0]) => {
+  if (typeof overrideResponse === 'function') {await overrideResponse(info); }
+
+    return new HttpResponse(null,
+      { status: 204
+      })
+  }, options)
+}
 
 export const getChatListConversationsMockHandler = (overrideResponse?: ConversationListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<ConversationListResponseDto> | ConversationListResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/conversations', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
@@ -107,6 +151,42 @@ export const getChatBroadcastToGroupMockHandler = (overrideResponse?: GroupBroad
   }, options)
 }
 
+export const getChatReportMessageMockHandler = (overrideResponse?: ReportMessageResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<ReportMessageResponseDto> | ReportMessageResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/conversations/:conversationId/messages/:messageId/report', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatReportMessageResponseMock(),
+      { status: 201
+      })
+  }, options)
+}
+
+export const getChatListMessageReportsMockHandler = (overrideResponse?: MessageReportListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MessageReportListResponseDto> | MessageReportListResponseDto), options?: RequestHandlerOptions) => {
+  return http.get('*/v1/centers/:centerId/message-reports', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatListMessageReportsResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
+export const getChatReviewMessageReportMockHandler = (overrideResponse?: MessageReportResponseDto | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<MessageReportResponseDto> | MessageReportResponseDto), options?: RequestHandlerOptions) => {
+  return http.post('*/v1/centers/:centerId/message-reports/:reportId/review', async (info: Parameters<Parameters<typeof http.post>[1]>[0]) => {
+
+
+    return HttpResponse.json(overrideResponse !== undefined
+    ? (typeof overrideResponse === "function" ? await overrideResponse(info) : overrideResponse)
+    : getChatReviewMessageReportResponseMock(),
+      { status: 200
+      })
+  }, options)
+}
+
 export const getChatListMessagesMockHandler = (overrideResponse?: MessageListResponseDto | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<MessageListResponseDto> | MessageListResponseDto), options?: RequestHandlerOptions) => {
   return http.get('*/v1/centers/:centerId/conversations/:conversationId/messages', async (info: Parameters<Parameters<typeof http.get>[1]>[0]) => {
 
@@ -143,12 +223,18 @@ export const getChatSendAttachmentMockHandler = (overrideResponse?: MessageRespo
   }, options)
 }
 export const getChatMock = () => [
+  getChatListBlocksMockHandler(),
+  getChatBlockPersonMockHandler(),
+  getChatUnblockPersonMockHandler(),
   getChatListConversationsMockHandler(),
   getChatOpenConversationMockHandler(),
   getChatListContactsMockHandler(),
   getChatMarkReadMockHandler(),
   getChatListBroadcastTargetsMockHandler(),
   getChatBroadcastToGroupMockHandler(),
+  getChatReportMessageMockHandler(),
+  getChatListMessageReportsMockHandler(),
+  getChatReviewMessageReportMockHandler(),
   getChatListMessagesMockHandler(),
   getChatSendMessageMockHandler(),
   getChatSendAttachmentMockHandler()

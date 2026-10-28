@@ -129,7 +129,7 @@ Button/
 - Pantallas de **plataforma** (las que no llevan la marca de un centro: inicio, registro, login, verificación, recuperar contraseña, 2FA, unirse, alta de centro, errores de carga): `ScreenTemplate` con `hasPlatformHeroBackground` (degradado burdeos, colmena dorada, texto e iconos blancos). Las de dentro de un centro usan el tema con su color e icono. Las esperas de pantalla completa usan `LoadingScreenTemplate` y los envíos `isLoading` (logotipo con destellos).
 - Modo: claro / oscuro / sistema (`useColorScheme`).
 - Vocabulario de sector: `t('vocab.staff')`, `t('vocab.client_plural')`… Nunca «gimnasio», «instructor» o «entrenar» fijos en pantallas compartidas.
-- Premium: `app.config.ts` lee `APP_VARIANT` y `CENTER_SLUG`; si `extra.lockedCenterId` existe, se salta el flujo «Unirse».
+- Una sola app para todos los centros (no hay app propia por centro): `app.config.ts` solo lee `APP_ENV` y `API_URL`.
 
 ## Navegación (Expo Router)
 

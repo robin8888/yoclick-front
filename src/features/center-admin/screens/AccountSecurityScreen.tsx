@@ -4,11 +4,12 @@ import { useActiveCenterSectorId } from '@/features/join';
 import { getSectorVocabulary, i18n } from '@/shared/i18n';
 import { ScreenTemplate } from '@/ui/templates/ScreenTemplate';
 
+import { AccountDangerSection } from '../components/AccountDangerSection';
 import { ActivityLogSection } from '../components/ActivityLogSection';
 import { OpenSessionsSection } from '../components/OpenSessionsSection';
 import { TwoFactorStatusCard } from '../components/TwoFactorStatusCard';
 
-/** Prototipo `asec`: verificación en dos pasos, sesiones abiertas y registro de actividad. */
+/** Prototipo `asec`: verificación en dos pasos, sesiones abiertas, registro de actividad, textos legales y borrado de la cuenta. */
 export function AccountSecurityScreen(): React.JSX.Element {
   const router = useRouter();
   const clientWord = getSectorVocabulary(useActiveCenterSectorId()).client.plural;
@@ -22,6 +23,7 @@ export function AccountSecurityScreen(): React.JSX.Element {
       <TwoFactorStatusCard clientWord={clientWord} />
       <OpenSessionsSection />
       <ActivityLogSection />
+      <AccountDangerSection />
     </ScreenTemplate>
   );
 }

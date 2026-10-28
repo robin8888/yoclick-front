@@ -422,7 +422,7 @@ export const useMeUpdateProfile = <TError = ErrorType<ProblemDetailsDto>,
 }
 
 /**
- * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible.
+ * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible. Quien es la única propietaria de un centro debe enviar `closeOwnedCenters: true`: el centro se cierra (se cancela su suscripción y se avisa a quienes estaban dentro); sin ello responde 409 `ACCOUNT_OWNS_CENTER`.
  */
 export const meDeleteAccount = async (deleteAccountRequestDto: DeleteAccountRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
 
@@ -488,7 +488,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type MeDeleteAccountMutationVariables = {data: DeleteAccountRequestDto}
 
     /**
- * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible.
+ * @summary Elimina mi cuenta (Apple 5.1.1(v), RGPD art. 17). Pide la contraseña y escribir ELIMINAR. Irreversible. Quien es la única propietaria de un centro debe enviar `closeOwnedCenters: true`: el centro se cierra (se cancela su suscripción y se avisa a quienes estaban dentro); sin ello responde 409 `ACCOUNT_OWNS_CENTER`.
  */
 export const useMeDeleteAccount = <TError = ErrorType<ProblemDetailsDto>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof meDeleteAccount>>, TError,MeDeleteAccountMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}

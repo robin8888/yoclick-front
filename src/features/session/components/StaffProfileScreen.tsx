@@ -21,7 +21,7 @@ function capitalize(word: string): string {
 interface ProfileLink {
   label: string;
   hint?: string;
-  iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode' | 'messageCircle';
+  iconName: 'play' | 'file' | 'calendar' | 'user' | 'clock' | 'qrCode' | 'messageCircle' | 'trash';
   route:
     | '/(staff)/routines'
     | '/(staff)/content'
@@ -30,6 +30,7 @@ interface ProfileLink {
     | '/(staff)/attendance'
     | '/(staff)/work-qr'
     | '/(staff)/my-data'
+    | '/(staff)/delete-account'
     | '/(staff)/messages';
 }
 
@@ -90,6 +91,12 @@ const STAFF_LINK_SPECS: readonly ProfileLinkSpec[] = [
     hintKey: 'staffAgenda.instructor.home.availabilityHint',
     iconName: 'calendar',
     route: '/(staff)/availability',
+  },
+  {
+    labelKey: 'privacy.delete.openAction',
+    hintKey: 'privacy.delete.staffHint',
+    iconName: 'trash',
+    route: '/(staff)/delete-account',
   },
 ];
 

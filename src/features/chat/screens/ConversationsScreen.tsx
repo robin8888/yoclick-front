@@ -20,6 +20,8 @@ import {
 interface ConversationsScreenProps {
   onConversationOpen: (conversationId: string) => void;
   onNewConversationPress: () => void;
+  /** Acceso secundario de seguridad: «Personas bloqueadas» (alumno, profesor) o «Denuncias» (centro). */
+  safetyLink?: { label: string; onPress: () => void } | undefined;
 }
 
 interface ConversationListProps {
@@ -68,6 +70,7 @@ function ConversationList({
 export function ConversationsScreen({
   onConversationOpen,
   onNewConversationPress,
+  safetyLink,
 }: Readonly<ConversationsScreenProps>): React.JSX.Element {
   const onBackPress = useBackAction();
   const { data, isPending, isError, error, refetch } = useConversations();
@@ -79,6 +82,9 @@ export function ConversationsScreen({
       onBackPress={onBackPress}
       footer={<Button label={i18n.t('chat.newMessage')} onPress={onNewConversationPress} />}
     >
+      {safetyLink === undefined ? null : (
+        <Button variant="ghost" label={safetyLink.label} onPress={safetyLink.onPress} />
+      )}
       {isPending ? <ScreenSkeleton loadingLabel={getSharedStateCopy().loadingLabel} /> : null}
       {isError ? (
         <LoadErrorState

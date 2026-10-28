@@ -9,6 +9,85 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Las personas a las que has bloqueado en el chat de este centro, de la más reciente a la más antigua.
+ */
+export const chatListBlocksPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatListBlocksParams = zod.object({
+  "centerId": zod.uuid().regex(chatListBlocksPathCenterIdRegExp)
+})
+
+export const ChatListBlocksHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatListBlocksResponseBlocksItemMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatListBlocksResponseBlocksItemBlockedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const ChatListBlocksResponse = zod.object({
+  "blocks": zod.array(zod.object({
+  "membershipId": zod.uuid().regex(chatListBlocksResponseBlocksItemMembershipIdRegExp),
+  "fullName": zod.string(),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client']),
+  "photoUrl": zod.string().nullable(),
+  "blockedAt": zod.iso.datetime({"offset":true}).regex(chatListBlocksResponseBlocksItemBlockedAtRegExp)
+}))
+})
+
+/**
+ * @summary Bloquea a una persona (un alumno si eres profesor, un profesor si eres alumno). Bloquear a quien ya está bloqueado no falla. 404 si no existe; 403 CHAT_BLOCK_NOT_ALLOWED si eres tú, la administración o alguien de tu mismo rol.
+ */
+export const chatBlockPersonPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatBlockPersonParams = zod.object({
+  "centerId": zod.uuid().regex(chatBlockPersonPathCenterIdRegExp)
+})
+
+export const ChatBlockPersonHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatBlockPersonBodyBlockedMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatBlockPersonBody = zod.object({
+  "blockedMembershipId": zod.uuid().regex(chatBlockPersonBodyBlockedMembershipIdRegExp)
+})
+
+export const chatBlockPersonResponseMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatBlockPersonResponseBlockedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const ChatBlockPersonResponse = zod.object({
+  "membershipId": zod.uuid().regex(chatBlockPersonResponseMembershipIdRegExp),
+  "fullName": zod.string(),
+  "role": zod.enum(['owner', 'admin', 'staff', 'client']),
+  "photoUrl": zod.string().nullable(),
+  "blockedAt": zod.iso.datetime({"offset":true}).regex(chatBlockPersonResponseBlockedAtRegExp)
+})
+
+/**
+ * @summary Quita el bloqueo a una persona. Quitar uno que no existe no falla.
+ */
+export const chatUnblockPersonPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatUnblockPersonPathBlockedMembershipIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatUnblockPersonParams = zod.object({
+  "centerId": zod.uuid().regex(chatUnblockPersonPathCenterIdRegExp),
+  "blockedMembershipId": zod.uuid().regex(chatUnblockPersonPathBlockedMembershipIdRegExp)
+})
+
+export const ChatUnblockPersonHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const ChatUnblockPersonResponse = zod.void()
+
+/**
  * @summary Las conversaciones de quien pregunta, de la más reciente a la más antigua, con los mensajes sin leer. La administración ve solo las dirigidas al centro.
  */
 export const chatListConversationsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
@@ -227,6 +306,119 @@ export const chatBroadcastToGroupResponseSkippedMinorCountMax = 9007199254740991
 export const ChatBroadcastToGroupResponse = zod.object({
   "sentCount": zod.int().min(chatBroadcastToGroupResponseSentCountMin).max(chatBroadcastToGroupResponseSentCountMax),
   "skippedMinorCount": zod.int().min(chatBroadcastToGroupResponseSkippedMinorCountMin).max(chatBroadcastToGroupResponseSkippedMinorCountMax)
+})
+
+/**
+ * @summary Denuncia un mensaje de una conversación en la que participas, con un motivo y, si quieres, unas líneas. Avisa a la administración. Denunciar dos veces el mismo mensaje no duplica la denuncia. 404 si el mensaje no existe o no es tuyo; 403 CHAT_CANNOT_REPORT_OWN_MESSAGE; 429 RATE_LIMITED.
+ */
+export const chatReportMessagePathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatReportMessagePathConversationIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatReportMessagePathMessageIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatReportMessageParams = zod.object({
+  "centerId": zod.uuid().regex(chatReportMessagePathCenterIdRegExp),
+  "conversationId": zod.uuid().regex(chatReportMessagePathConversationIdRegExp),
+  "messageId": zod.uuid().regex(chatReportMessagePathMessageIdRegExp)
+})
+
+export const ChatReportMessageHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatReportMessageBodyDetailsMax = 500;
+
+
+
+export const ChatReportMessageBody = zod.object({
+  "reason": zod.enum(['spam', 'harassment', 'inappropriate', 'other']),
+  "details": zod.string().min(1).max(chatReportMessageBodyDetailsMax).optional()
+})
+
+export const chatReportMessageResponseReportIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatReportMessageResponse = zod.object({
+  "reportId": zod.uuid().regex(chatReportMessageResponseReportIdRegExp),
+  "status": zod.enum(['open', 'reviewed'])
+})
+
+/**
+ * @summary Las denuncias de mensajes del centro, de la más reciente a la más antigua (`status` filtra). Solo dueño y administración. Cada una lleva una copia del mensaje denunciado: es la única forma de leer algo de una conversación privada, y solo porque quien denuncia decidió compartirlo.
+ */
+export const chatListMessageReportsPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatListMessageReportsParams = zod.object({
+  "centerId": zod.uuid().regex(chatListMessageReportsPathCenterIdRegExp)
+})
+
+export const chatListMessageReportsQueryLimitDefault = 50;
+export const chatListMessageReportsQueryLimitMax = 100;
+
+
+
+export const ChatListMessageReportsQueryParams = zod.object({
+  "status": zod.enum(['open', 'reviewed']).optional(),
+  "limit": zod.int().min(1).max(chatListMessageReportsQueryLimitMax).default(chatListMessageReportsQueryLimitDefault)
+})
+
+export const ChatListMessageReportsHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatListMessageReportsResponseReportsItemIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatListMessageReportsResponseReportsItemCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const chatListMessageReportsResponseReportsItemReviewedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const ChatListMessageReportsResponse = zod.object({
+  "reports": zod.array(zod.object({
+  "id": zod.uuid().regex(chatListMessageReportsResponseReportsItemIdRegExp),
+  "reason": zod.enum(['spam', 'harassment', 'inappropriate', 'other']),
+  "details": zod.string().nullable(),
+  "status": zod.enum(['open', 'reviewed']),
+  "reporterName": zod.string(),
+  "reportedSenderName": zod.string(),
+  "reportedBody": zod.string().nullable(),
+  "reportedAttachmentName": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(chatListMessageReportsResponseReportsItemCreatedAtRegExp),
+  "reviewedAt": zod.iso.datetime({"offset":true}).regex(chatListMessageReportsResponseReportsItemReviewedAtRegExp).nullable()
+}))
+})
+
+/**
+ * @summary Marca una denuncia como revisada. Revisar una ya revisada la deja como estaba. 404 si no existe.
+ */
+export const chatReviewMessageReportPathCenterIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatReviewMessageReportPathReportIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+
+
+export const ChatReviewMessageReportParams = zod.object({
+  "centerId": zod.uuid().regex(chatReviewMessageReportPathCenterIdRegExp),
+  "reportId": zod.uuid().regex(chatReviewMessageReportPathReportIdRegExp)
+})
+
+export const ChatReviewMessageReportHeader = zod.object({
+  "X-Center-Id": zod.string()
+})
+
+export const chatReviewMessageReportResponseIdRegExp = new RegExp('^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$');
+export const chatReviewMessageReportResponseCreatedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+export const chatReviewMessageReportResponseReviewedAtRegExp = new RegExp('^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$');
+
+
+export const ChatReviewMessageReportResponse = zod.object({
+  "id": zod.uuid().regex(chatReviewMessageReportResponseIdRegExp),
+  "reason": zod.enum(['spam', 'harassment', 'inappropriate', 'other']),
+  "details": zod.string().nullable(),
+  "status": zod.enum(['open', 'reviewed']),
+  "reporterName": zod.string(),
+  "reportedSenderName": zod.string(),
+  "reportedBody": zod.string().nullable(),
+  "reportedAttachmentName": zod.string().nullable(),
+  "createdAt": zod.iso.datetime({"offset":true}).regex(chatReviewMessageReportResponseCreatedAtRegExp),
+  "reviewedAt": zod.iso.datetime({"offset":true}).regex(chatReviewMessageReportResponseReviewedAtRegExp).nullable()
 })
 
 /**

@@ -36,12 +36,23 @@ export function useExportMyData(): AccountAction {
   };
 }
 
+interface DeleteMyAccountOptions {
+  /** Es propietaria de algún centro: borrar la cuenta lo cierra, y la API lo exige de forma expresa. */
+  shouldCloseOwnedCenters: boolean;
+}
+
 /** Elimina la cuenta (lo exige Apple 5.1.1(v)) y cierra la sesión de este móvil. */
-export function useDeleteMyAccount(): AccountAction & { isSigningOut: boolean } {
+export function useDeleteMyAccount({
+  shouldCloseOwnedCenters,
+}: Readonly<DeleteMyAccountOptions>): AccountAction & { isSigningOut: boolean } {
   const { signOut, isSigningOut } = useSignOutFlow();
   const mutation = useMutation({
     mutationFn: (password: string) =>
-      meDeleteAccount({ password, confirmation: DeleteAccountRequestDtoConfirmation.ELIMINAR }),
+      meDeleteAccount({
+        password,
+        confirmation: DeleteAccountRequestDtoConfirmation.ELIMINAR,
+        ...(shouldCloseOwnedCenters ? { closeOwnedCenters: true } : {}),
+      }),
     onSuccess: signOut,
   });
 

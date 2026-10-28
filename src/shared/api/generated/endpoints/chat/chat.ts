@@ -25,7 +25,11 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  BlockPersonRequestDto,
+  BlockedPeopleResponseDto,
+  BlockedPersonResponseDto,
   BroadcastTargetsResponseDto,
+  ChatListMessageReportsParams,
   ChatListMessagesParams,
   ChatSendAttachmentParams,
   ContactListResponseDto,
@@ -33,10 +37,14 @@ import type {
   GroupBroadcastRequestDto,
   GroupBroadcastResponseDto,
   MessageListResponseDto,
+  MessageReportListResponseDto,
+  MessageReportResponseDto,
   MessageResponseDto,
   OpenConversationRequestDto,
   OpenConversationResponseDto,
   ProblemDetailsDto,
+  ReportMessageRequestDto,
+  ReportMessageResponseDto,
   SendMessageRequestDto
 } from '../../model';
 
@@ -63,7 +71,270 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   return result;
 };
 
-export const getChatListConversationsUrl = (centerId: string,) => {
+export const getChatListBlocksUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/chat-blocks`
+}
+
+/**
+ * @summary Las personas a las que has bloqueado en el chat de este centro, de la más reciente a la más antigua.
+ */
+export const chatListBlocks = async (centerId: string, options?: Parameters<typeof apiMutator>[1]): Promise<BlockedPeopleResponseDto> => {
+
+  return apiMutator<BlockedPeopleResponseDto>(getChatListBlocksUrl(centerId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getChatListBlocksQueryKey = (centerId: string,) => {
+    return [
+    `/v1/centers/${centerId}/chat-blocks`
+    ] as const;
+    }
+
+
+export const getChatListBlocksQueryOptions = <TData = Awaited<ReturnType<typeof chatListBlocks>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getChatListBlocksQueryKey(centerId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatListBlocks>>> = ({ signal }) => chatListBlocks(centerId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ChatListBlocksQueryResult = NonNullable<Awaited<ReturnType<typeof chatListBlocks>>>
+export type ChatListBlocksQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useChatListBlocks<TData = Awaited<ReturnType<typeof chatListBlocks>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListBlocks>>,
+          TError,
+          Awaited<ReturnType<typeof chatListBlocks>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListBlocks<TData = Awaited<ReturnType<typeof chatListBlocks>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListBlocks>>,
+          TError,
+          Awaited<ReturnType<typeof chatListBlocks>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListBlocks<TData = Awaited<ReturnType<typeof chatListBlocks>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las personas a las que has bloqueado en el chat de este centro, de la más reciente a la más antigua.
+ */
+
+export function useChatListBlocks<TData = Awaited<ReturnType<typeof chatListBlocks>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListBlocks>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getChatListBlocksQueryOptions(centerId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getChatBlockPersonUrl = (centerId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/chat-blocks`
+}
+
+/**
+ * @summary Bloquea a una persona (un alumno si eres profesor, un profesor si eres alumno). Bloquear a quien ya está bloqueado no falla. 404 si no existe; 403 CHAT_BLOCK_NOT_ALLOWED si eres tú, la administración o alguien de tu mismo rol.
+ */
+export const chatBlockPerson = async (centerId: string,
+    blockPersonRequestDto: BlockPersonRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<BlockedPersonResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<BlockedPersonResponseDto>(getChatBlockPersonUrl(centerId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(blockPersonRequestDto)
+  }
+);}
+
+
+
+
+
+export const getChatBlockPersonMutationKey = () => ['chatBlockPerson'] as const;
+
+export const getChatBlockPersonMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBlockPerson>>, TError,ChatBlockPersonMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatBlockPerson>>, TError,ChatBlockPersonMutationVariables, TContext> => {
+
+const mutationKey = getChatBlockPersonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatBlockPerson>>, ChatBlockPersonMutationVariables> = (props) => {
+          const {centerId,data} = props ?? {};
+
+          return  chatBlockPerson(centerId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatBlockPersonMutationResult = NonNullable<Awaited<ReturnType<typeof chatBlockPerson>>>
+    export type ChatBlockPersonMutationBody = BlockPersonRequestDto
+    export type ChatBlockPersonMutationError = ErrorType<ProblemDetailsDto>
+    export type ChatBlockPersonMutationVariables = {centerId: string;data: BlockPersonRequestDto}
+
+    /**
+ * @summary Bloquea a una persona (un alumno si eres profesor, un profesor si eres alumno). Bloquear a quien ya está bloqueado no falla. 404 si no existe; 403 CHAT_BLOCK_NOT_ALLOWED si eres tú, la administración o alguien de tu mismo rol.
+ */
+export const useChatBlockPerson = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatBlockPerson>>, TError,ChatBlockPersonMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatBlockPerson>>,
+        TError,
+        ChatBlockPersonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getChatBlockPersonMutationOptions(options), queryClient);
+    }
+    export const getChatUnblockPersonUrl = (centerId: string,
+    blockedMembershipId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/chat-blocks/${blockedMembershipId}`
+}
+
+/**
+ * @summary Quita el bloqueo a una persona. Quitar uno que no existe no falla.
+ */
+export const chatUnblockPerson = async (centerId: string,
+    blockedMembershipId: string, options?: Parameters<typeof apiMutator>[1]): Promise<void> => {
+
+  return apiMutator<void>(getChatUnblockPersonUrl(centerId,blockedMembershipId),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getChatUnblockPersonMutationKey = () => ['chatUnblockPerson'] as const;
+
+export const getChatUnblockPersonMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatUnblockPerson>>, TError,ChatUnblockPersonMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatUnblockPerson>>, TError,ChatUnblockPersonMutationVariables, TContext> => {
+
+const mutationKey = getChatUnblockPersonMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatUnblockPerson>>, ChatUnblockPersonMutationVariables> = (props) => {
+          const {centerId,blockedMembershipId} = props ?? {};
+
+          return  chatUnblockPerson(centerId,blockedMembershipId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatUnblockPersonMutationResult = NonNullable<Awaited<ReturnType<typeof chatUnblockPerson>>>
+
+    export type ChatUnblockPersonMutationError = ErrorType<ProblemDetailsDto>
+    export type ChatUnblockPersonMutationVariables = {centerId: string;blockedMembershipId: string}
+
+    /**
+ * @summary Quita el bloqueo a una persona. Quitar uno que no existe no falla.
+ */
+export const useChatUnblockPerson = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatUnblockPerson>>, TError,ChatUnblockPersonMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatUnblockPerson>>,
+        TError,
+        ChatUnblockPersonMutationVariables,
+        TContext
+      > => {
+      return useMutation(getChatUnblockPersonMutationOptions(options), queryClient);
+    }
+    export const getChatListConversationsUrl = (centerId: string,) => {
 
 
 
@@ -613,6 +884,288 @@ export const useChatBroadcastToGroup = <TError = ErrorType<ProblemDetailsDto>,
         TContext
       > => {
       return useMutation(getChatBroadcastToGroupMutationOptions(options), queryClient);
+    }
+    export const getChatReportMessageUrl = (centerId: string,
+    conversationId: string,
+    messageId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/conversations/${conversationId}/messages/${messageId}/report`
+}
+
+/**
+ * @summary Denuncia un mensaje de una conversación en la que participas, con un motivo y, si quieres, unas líneas. Avisa a la administración. Denunciar dos veces el mismo mensaje no duplica la denuncia. 404 si el mensaje no existe o no es tuyo; 403 CHAT_CANNOT_REPORT_OWN_MESSAGE; 429 RATE_LIMITED.
+ */
+export const chatReportMessage = async (centerId: string,
+    conversationId: string,
+    messageId: string,
+    reportMessageRequestDto: ReportMessageRequestDto, options?: Parameters<typeof apiMutator>[1]): Promise<ReportMessageResponseDto> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return apiMutator<ReportMessageResponseDto>(getChatReportMessageUrl(centerId,conversationId,messageId),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(reportMessageRequestDto)
+  }
+);}
+
+
+
+
+
+export const getChatReportMessageMutationKey = () => ['chatReportMessage'] as const;
+
+export const getChatReportMessageMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatReportMessage>>, TError,ChatReportMessageMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatReportMessage>>, TError,ChatReportMessageMutationVariables, TContext> => {
+
+const mutationKey = getChatReportMessageMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatReportMessage>>, ChatReportMessageMutationVariables> = (props) => {
+          const {centerId,conversationId,messageId,data} = props ?? {};
+
+          return  chatReportMessage(centerId,conversationId,messageId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatReportMessageMutationResult = NonNullable<Awaited<ReturnType<typeof chatReportMessage>>>
+    export type ChatReportMessageMutationBody = ReportMessageRequestDto
+    export type ChatReportMessageMutationError = ErrorType<ProblemDetailsDto>
+    export type ChatReportMessageMutationVariables = {centerId: string;conversationId: string;messageId: string;data: ReportMessageRequestDto}
+
+    /**
+ * @summary Denuncia un mensaje de una conversación en la que participas, con un motivo y, si quieres, unas líneas. Avisa a la administración. Denunciar dos veces el mismo mensaje no duplica la denuncia. 404 si el mensaje no existe o no es tuyo; 403 CHAT_CANNOT_REPORT_OWN_MESSAGE; 429 RATE_LIMITED.
+ */
+export const useChatReportMessage = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatReportMessage>>, TError,ChatReportMessageMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatReportMessage>>,
+        TError,
+        ChatReportMessageMutationVariables,
+        TContext
+      > => {
+      return useMutation(getChatReportMessageMutationOptions(options), queryClient);
+    }
+    export const getChatListMessageReportsUrl = (centerId: string,
+    params?: ChatListMessageReportsParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/centers/${centerId}/message-reports?${stringifiedParams}` : `/v1/centers/${centerId}/message-reports`
+}
+
+/**
+ * @summary Las denuncias de mensajes del centro, de la más reciente a la más antigua (`status` filtra). Solo dueño y administración. Cada una lleva una copia del mensaje denunciado: es la única forma de leer algo de una conversación privada, y solo porque quien denuncia decidió compartirlo.
+ */
+export const chatListMessageReports = async (centerId: string,
+    params?: ChatListMessageReportsParams, options?: Parameters<typeof apiMutator>[1]): Promise<MessageReportListResponseDto> => {
+
+  return apiMutator<MessageReportListResponseDto>(getChatListMessageReportsUrl(centerId,params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getChatListMessageReportsQueryKey = (centerId: string,
+    params?: ChatListMessageReportsParams,) => {
+    return [
+    `/v1/centers/${centerId}/message-reports`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getChatListMessageReportsQueryOptions = <TData = Awaited<ReturnType<typeof chatListMessageReports>>, TError = ErrorType<ProblemDetailsDto>>(centerId: string,
+    params?: ChatListMessageReportsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getChatListMessageReportsQueryKey(centerId,params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof chatListMessageReports>>> = ({ signal }) => chatListMessageReports(centerId,params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: centerId !== null && centerId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ChatListMessageReportsQueryResult = NonNullable<Awaited<ReturnType<typeof chatListMessageReports>>>
+export type ChatListMessageReportsQueryError = ErrorType<ProblemDetailsDto>
+
+
+export function useChatListMessageReports<TData = Awaited<ReturnType<typeof chatListMessageReports>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params: undefined |  ChatListMessageReportsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListMessageReports>>,
+          TError,
+          Awaited<ReturnType<typeof chatListMessageReports>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListMessageReports<TData = Awaited<ReturnType<typeof chatListMessageReports>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ChatListMessageReportsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof chatListMessageReports>>,
+          TError,
+          Awaited<ReturnType<typeof chatListMessageReports>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useChatListMessageReports<TData = Awaited<ReturnType<typeof chatListMessageReports>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ChatListMessageReportsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Las denuncias de mensajes del centro, de la más reciente a la más antigua (`status` filtra). Solo dueño y administración. Cada una lleva una copia del mensaje denunciado: es la única forma de leer algo de una conversación privada, y solo porque quien denuncia decidió compartirlo.
+ */
+
+export function useChatListMessageReports<TData = Awaited<ReturnType<typeof chatListMessageReports>>, TError = ErrorType<ProblemDetailsDto>>(
+ centerId: string,
+    params?: ChatListMessageReportsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof chatListMessageReports>>, TError, TData>>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getChatListMessageReportsQueryOptions(centerId,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+export const getChatReviewMessageReportUrl = (centerId: string,
+    reportId: string,) => {
+
+
+
+
+  return `/v1/centers/${centerId}/message-reports/${reportId}/review`
+}
+
+/**
+ * @summary Marca una denuncia como revisada. Revisar una ya revisada la deja como estaba. 404 si no existe.
+ */
+export const chatReviewMessageReport = async (centerId: string,
+    reportId: string, options?: Parameters<typeof apiMutator>[1]): Promise<MessageReportResponseDto> => {
+
+  return apiMutator<MessageReportResponseDto>(getChatReviewMessageReportUrl(centerId,reportId),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+
+export const getChatReviewMessageReportMutationKey = () => ['chatReviewMessageReport'] as const;
+
+export const getChatReviewMessageReportMutationOptions = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatReviewMessageReport>>, TError,ChatReviewMessageReportMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+): UseMutationOptions<Awaited<ReturnType<typeof chatReviewMessageReport>>, TError,ChatReviewMessageReportMutationVariables, TContext> => {
+
+const mutationKey = getChatReviewMessageReportMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof chatReviewMessageReport>>, ChatReviewMessageReportMutationVariables> = (props) => {
+          const {centerId,reportId} = props ?? {};
+
+          return  chatReviewMessageReport(centerId,reportId,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ChatReviewMessageReportMutationResult = NonNullable<Awaited<ReturnType<typeof chatReviewMessageReport>>>
+
+    export type ChatReviewMessageReportMutationError = ErrorType<ProblemDetailsDto>
+    export type ChatReviewMessageReportMutationVariables = {centerId: string;reportId: string}
+
+    /**
+ * @summary Marca una denuncia como revisada. Revisar una ya revisada la deja como estaba. 404 si no existe.
+ */
+export const useChatReviewMessageReport = <TError = ErrorType<ProblemDetailsDto>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof chatReviewMessageReport>>, TError,ChatReviewMessageReportMutationVariables, TContext>, request?: SecondParameter<typeof apiMutator>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof chatReviewMessageReport>>,
+        TError,
+        ChatReviewMessageReportMutationVariables,
+        TContext
+      > => {
+      return useMutation(getChatReviewMessageReportMutationOptions(options), queryClient);
     }
     export const getChatListMessagesUrl = (centerId: string,
     conversationId: string,

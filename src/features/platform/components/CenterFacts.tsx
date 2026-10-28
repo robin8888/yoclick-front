@@ -7,7 +7,7 @@ import { formatShortDate } from '@/shared/lib/format';
 import { Badge } from '@/ui/atoms/Badge';
 import { Text } from '@/ui/atoms/Text';
 
-import { getPlanName } from '../model/plan-labels';
+import { getCenterPlanLabel } from '../model/plan-labels';
 import {
   buildClientsLine,
   buildLastBookingLine,
@@ -99,7 +99,7 @@ function PlanFacts({ center }: Readonly<CenterFactsProps>): React.JSX.Element {
 
   return (
     <FactsCard title={i18n.t('platform.center.planSection')}>
-      <FactRow label={i18n.t('platform.center.plan')} value={getPlanName(center.planId)} />
+      <FactRow label={i18n.t('platform.center.plan')} value={getCenterPlanLabel(center)} />
       <FactRow label={i18n.t('platform.center.trialEnd')} value={trialEnd} />
       <FactRow label={i18n.t('platform.center.clientCap')} value={capLabel} />
       <FactRow

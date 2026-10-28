@@ -46,7 +46,7 @@ describe('SubscriptionScreen', () => {
     expect(await screen.findByText('Pro')).toBeOnTheScreen();
     expect(screen.getByText('Activo')).toBeOnTheScreen();
     expect(screen.getByText('212 de 500')).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Elegir plan' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Ver planes' })).toBeOnTheScreen();
   });
 
   it('counts the days left of the free trial', async () => {
@@ -82,29 +82,29 @@ describe('SubscriptionScreen', () => {
     expect(screen.getByText(/Ha fallado el último pago.*Tienes hasta el/)).toBeOnTheScreen();
   });
 
-  it('tells a suspended center to choose a plan to reactivate', async () => {
+  it('tells a suspended center it is suspended for lack of payment, without saying how to pay', async () => {
     mockSubscription({ status: 'suspended' });
     renderScreen(<SubscriptionScreen />);
 
     expect(await screen.findByText(/suspendido por falta de pago/)).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Elegir plan' })).toBeOnTheScreen();
+    expect(screen.queryByText(/correo|enlace/i)).toBeNull();
   });
 
-  it('says how often a paying center is charged and offers no plan button', async () => {
+  it('says how often a paying center is charged and offers no payment button', async () => {
     mockSubscription({ billingPeriod: 'annual', hasSubscription: true });
     renderScreen(<SubscriptionScreen />);
 
     expect(await screen.findByText('Pagas una vez al año.')).toBeOnTheScreen();
     expect(screen.queryByRole('button', { name: 'Elegir plan' })).toBeNull();
-    expect(screen.getByText(/se renueva sola/)).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Gestionar suscripción' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Gestionar suscripción' })).toBeNull();
+    expect(screen.queryByText(/correo|enlace/i)).toBeNull();
   });
 
-  it('opens the plans to choose from', async () => {
+  it('opens the plans to see what each one includes', async () => {
     mockSubscription({ status: 'trial', trialEndsAt: null });
     renderScreen(<SubscriptionScreen />);
 
-    fireEvent.press(await screen.findByRole('button', { name: 'Elegir plan' }));
+    fireEvent.press(await screen.findByRole('button', { name: 'Ver planes' }));
 
     expect(getMockRouter().push).toHaveBeenCalledWith('/(admin)/subscription/plans');
   });

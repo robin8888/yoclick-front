@@ -1,15 +1,9 @@
 import { buildExpoConfig } from './build-expo-config.ts';
 import { parseBuildEnvironment } from './parse-build-environment.ts';
 
-const PREMIUM_ENV = {
-  APP_VARIANT: 'premium',
-  CENTER_SLUG: 'studio-norte',
-  CENTER_NAME: 'Studio Norte',
-  CENTER_ID: '0b8f1c2e-6a3d-4f5e-9c7b-1d2e3f4a5b6c',
-};
 const PRODUCTION_ENV = { APP_ENV: 'production', API_URL: 'https://api.yoclick.app' };
 
-describe('buildExpoConfig (shared variant)', () => {
+describe('buildExpoConfig', () => {
   it('uses the placeholder identifiers and the yoclick scheme in production', () => {
     const config = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
 
@@ -21,6 +15,11 @@ describe('buildExpoConfig (shared variant)', () => {
       appEnvironment: 'production',
       apiUrl: PRODUCTION_ENV.API_URL,
       eas: { projectId: 'b1d194fb-d580-45f0-8266-b0e1c7965f54' },
+      legalUrls: {
+        privacyPolicy: 'https://yoclick.app/privacidad',
+        termsOfService: 'https://yoclick.app/condiciones',
+      },
+      supportEmail: 'soporte@yoclick.app',
     });
   });
 
@@ -106,10 +105,13 @@ describe('buildExpoConfig (shared variant)', () => {
     expect(productionPlugins).not.toContain('expo-dev-client');
   });
 
-  it('does not lock the app to a center', () => {
+  it('publishes the legal texts over HTTPS so the app can link them', () => {
     const config = buildExpoConfig(parseBuildEnvironment(PRODUCTION_ENV));
 
-    expect(config.extra).not.toHaveProperty('lockedCenterId');
+    expect(config.extra?.legalUrls).toEqual({
+      privacyPolicy: 'https://yoclick.app/privacidad',
+      termsOfService: 'https://yoclick.app/condiciones',
+    });
   });
 });
 
@@ -121,33 +123,5 @@ describe('buildExpoConfig (updates)', () => {
     expect(config.updates).toEqual({
       url: 'https://u.expo.dev/b1d194fb-d580-45f0-8266-b0e1c7965f54',
     });
-  });
-
-  it('disables OTA updates for premium apps until they have their own EAS project', () => {
-    const config = buildExpoConfig(parseBuildEnvironment({ ...PRODUCTION_ENV, ...PREMIUM_ENV }));
-
-    expect(config.updates).toEqual({ enabled: false });
-  });
-});
-
-describe('buildExpoConfig (premium variant)', () => {
-  it('takes name, slug, identifiers and locked center from the center', () => {
-    const config = buildExpoConfig(parseBuildEnvironment({ ...PRODUCTION_ENV, ...PREMIUM_ENV }));
-
-    expect(config.name).toBe('Studio Norte');
-    expect(config.slug).toBe('studio-norte');
-    expect(config.scheme).toBe('yoclick-studio-norte');
-    expect(config.ios?.bundleIdentifier).toBe('com.yoclick.center.studionorte');
-    expect(config.android?.package).toBe('com.yoclick.center.studionorte');
-    expect(config.icon).toBe('./assets/centers/studio-norte/icon.png');
-    expect(config.extra).toMatchObject({ lockedCenterId: PREMIUM_ENV.CENTER_ID });
-  });
-
-  it('prefixes package segments that would start with a digit', () => {
-    const config = buildExpoConfig(
-      parseBuildEnvironment({ ...PRODUCTION_ENV, ...PREMIUM_ENV, CENTER_SLUG: '24-fit' }),
-    );
-
-    expect(config.android?.package).toBe('com.yoclick.center.c24fit');
   });
 });

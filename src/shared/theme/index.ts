@@ -35,6 +35,8 @@ export type { RoomPaletteColor } from './room-palette';
 export { resolveFontFaceName } from './font-faces';
 export { useAppFonts } from './useAppFonts';
 export { useReducedMotion } from './useReducedMotion';
+export { usePulseOpacity } from './usePulseOpacity';
+export { useBellRingAnimation, type BellRingAnimation } from './useBellRingAnimation';
 export { MIN_TOUCH_TARGET_SIZE } from './touch-target';
 export { motionTokens } from './motion';
 export type { MotionTokens } from './motion';
